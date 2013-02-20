@@ -26,7 +26,7 @@ handlers:
   static_dir: public/img
 
 - url: /js
-  static_dir: public/assets/js
+  static_dir: public/docs/assets/js
 
 - url: /templates
   static_dir: public/templates
