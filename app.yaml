@@ -1,0 +1,35 @@
+application: vn-app
+version: 1-0
+runtime: python27
+threadsafe: true
+api_version: 1
+
+builtins:
+- remote_api: on
+- appstats: on
+
+libraries:
+- name: jinja2
+  version: "latest"
+- name: webapp2
+  version: "2.5.1"
+
+handlers:
+
+- url: /css
+  static_dir: public/docs/assets/css
+
+- url: /font
+  static_dir: public/secure
+
+- url: /img
+  static_dir: public/img
+
+- url: /js
+  static_dir: public/assets/js
+
+- url: /templates
+  static_dir: public/templates
+
+- url: /.*
+  script: app.handler

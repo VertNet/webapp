@@ -335,46 +335,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "public/docs/examples/hero.html",
-			"settings":
-			{
-				"buffer_size": 5023,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "public/docs/base-css.html",
-			"settings":
-			{
-				"buffer_size": 94292,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "public/docs/index.html",
-			"settings":
-			{
-				"buffer_size": 8569,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "public/docs/assets/css/docs.css",
-			"settings":
-			{
-				"buffer_size": 21385,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "public/docs/assets/css/bootstrap.css",
-			"settings":
-			{
-				"buffer_size": 127247,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -420,6 +380,8 @@
 	},
 	"file_history":
 	[
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/base-css.html",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/examples/hero.html",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/assets/css/bootstrap.css",
 		"/home/eightysteele/hylozoic/hylo/hylo/service/currency.py",
 		"/home/eightysteele/hylozoic/hylo/hylo/person.py",
@@ -675,155 +637,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "public/docs/examples/hero.html",
-					"settings":
-					{
-						"buffer_size": 5023,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2855,
-								2855
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 782.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "public/docs/base-css.html",
-					"settings":
-					{
-						"buffer_size": 94292,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								285,
-								285
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 2,
-					"file": "public/docs/index.html",
-					"settings":
-					{
-						"buffer_size": 8569,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3321,
-								3321
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1305.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "public/docs/assets/css/docs.css",
-					"settings":
-					{
-						"buffer_size": 21385,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5591,
-								5591
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3238.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "public/docs/assets/css/bootstrap.css",
-					"settings":
-					{
-						"buffer_size": 127247,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8730,
-								8730
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8233.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -844,18 +659,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.490379476216,
 			1.0
 		],
 		"rows":

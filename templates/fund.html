@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    {% include "partials/messages.html" %}
+    {% if person %}
+      <div class="checkout"
+          data-campaign="{{ campaign|json }}"
+          data-opportunity="{{ opportunity|json }}"
+          data-owner="{{ owner|json }}"
+          data-amount="{{ amount }}"
+          data-fee="{{ fee }}"
+          data-total="{{ total }}">
+        {% include "partials/checkout.html" %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% set type = shell.key.kind().lower() %}
+
+{% if type == "campaign" %}
+  {% set label = 'crowdfunding ' + type %}
+{% else %}
+  {% set label = type %}
+{% endif %}
+
+{% block content %}
+  <div class="container">
+    {% include "partials/messages.html" %}
+    <div class="shell-header">
+      {% if shell.public %}
+      <div class="shell-breadcrum {{ type }}-type">
+        <span class="shell-privacy">Public</span>
+      {% else %}
+      <div class="shell-breadcrum private">
+        <span class="shell-privacy">Private</span>
+      {% endif %}
+        {{ label }}
+      </div>
+    </div>
+    <div class="shell-sidebar">
+      <a href="/{{ campaign.key.id() }}/fund?opportunity={{ shell.key.urlsafe() }}&amount={{ shell.cost_dollars }}"
+          class="button-wrap">
+        <div class="shell-button">
+          <span>Contribute</span>
+        </div>
+      </a>
+      <div class="shell-sidebar-matte dark">
+        <h2 class="shell-metric">{{ shell.contributor_count }}</h2>
+        <span class="shell-metric-label">
+          {% if shell.contributor_count == 1 %}
+            participant
+          {% else %}
+            participants
+          {% endif %}
+        </span>
+        {% if shell.total_cents or shell.total_cents == 0 %}
+          <h2 class="shell-metric">{{ (shell.total_cents/100)|currency_full }}</h2>
+          <span class="shell-metric-label">pledged of {{ shell.goal_dollars|currency }} goal</span>
+        {% endif %}
+        {% if shell.deadline %}
+          <h2 class="shell-metric shell-deadline-value">?</h2>
+          <span class="shell-metric-label shell-deadline-label">time left</span>
+        {% endif %}
+      </div>
+      <div class="shell-sidebar-matte">
+        <div class="shell-by">
+          <span>Campaign by</span>
+          <a href="/{{ campaign.owner_key.get().username }}">
+            {{ campaign.owner_key.get().name }}
+          </a>
+        </div>
+        <a href="/{{ campaign.owner_key.get().username }}">
+          {% if campaign.owner_key.get().avatar_url %}
+            <img class="shell-by-avatar" width="80" height="80"
+                src="{{ campaign.owner_key.get().avatar_url }}" />
+          {% else %}
+            <img class="shell-by-avatar" src="/img/avatar_80.png" width="80" height="80" />
+          {% endif %}
+        </a>
+      </div>
+    </div>
+    <div class="shell-content">
+      <h3 class="shell-title">
+        <a href="/{{ shell.key.id() }}">{{ shell.displayName or shell.description }}</a>
+      </h3>
+      <ul class="shell-info">
+        <li class="person">
+          <a href="/{{ campaign.owner_key.get().username }}">
+            {{ campaign.owner_key.get().name }}
+          </a>
+        </li>
+        {% if shell.location %}
+          <li class="location">
+            {{ shell.location }}
+          </li>
+        {% endif %}
+        <li class="tag">
+          {% for tag in shell.tags %}
+            {% if tag != shell.tags[shell.tags|length - 1] %}
+              {{ tag }},
+            {% else %}
+              {{ tag }}
+            {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+      <p class="shell-subtitle">
+        {{ shell.description }}
+      </p>
+      <button class="bar-button highlight">
+        <span>Ask a question</span>
+        <i class="icon-right"></i>
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+{% endblock %}
+{% block subcontent %}
+  <div class="container lower">
+    <div class="shell-sidebar">
+      <div class="section" id="opportunities" data-parent="{{ campaign.key.urlsafe() }}"></div>
+    </div>
+    <ul class="shell-tabs lower">
+      <li>
+        <a href="/{{ shell.key.id() }}/wall" class="shell-tab counter selected">
+          <div class="shell-tab-icon conversation"></div>
+          Discussion / Activity
+          <span class="counter">{{ shell.comment_count }}</span>
+        </a>
+      </li>
+    </ul>
+    <div class="shell-sections lower">
+      <div class="shell-section selected">
+        <div id="wall"></div>
+        {% include "partials/input.html" %}
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+{% endblock %}
