@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"lis",
+				"list_payload	(local, instance)"
+			],
+			[
+				"or",
+				"organizations"
+			],
+			[
+				"Data",
+				"DatasetPayload	(global, class)"
+			],
+			[
+				"Resour",
+				"ResourcePayload	(global, class)"
+			],
+			[
+				"Org",
+				"OrganizationPayload	(global, class)"
+			],
+			[
+				"Or",
+				"OrganizationPayload	(global, class)"
+			],
+			[
 				"pad",
 				"padding-top"
 			],
@@ -335,6 +359,91 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "app.yaml",
+			"settings":
+			{
+				"buffer_size": 481,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app.py",
+			"settings":
+			{
+				"buffer_size": 955,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/base.html",
+			"settings":
+			{
+				"buffer_size": 7382,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "public/docs/assets/js/vertnet/app.js",
+			"settings":
+			{
+				"buffer_size": 719,
+				"line_ending": "Unix",
+				"name": "/*"
+			}
+		},
+		{
+			"file": "public/docs/assets/js/vertnet/router.js",
+			"settings":
+			{
+				"buffer_size": 5215,
+				"line_ending": "Unix",
+				"name": "/*"
+			}
+		},
+		{
+			"file": "vertnet/model.py",
+			"settings":
+			{
+				"buffer_size": 4524,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "vertnet/api/__init__.py",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "public/docs/assets/js/vertnet/main.js",
+			"settings":
+			{
+				"buffer_size": 785,
+				"line_ending": "Unix",
+				"name": "/*"
+			}
+		},
+		{
+			"contents": "\"\"\"Organization request handlers, RPC services, APIs, and associated stuff.\"\"\"\n\nfrom datetime import timedelta\n\nfrom functools import partial\n\nfrom google.appengine.api import taskqueue\nfrom google.appengine.ext import ndb\nfrom google.appengine.datastore.datastore_query import Cursor\n\nfrom protorpc import remote\nfrom protorpc.message_types import VoidMessage\nfrom protorpc.wsgi import service\n\nfrom time import sleep\n\nfrom vertnet.model import Organization, OrganizationPayload, OrganizationList\n\nimport datetime\nimport webapp2\n\ndef exists(id):\n    \"\"\"Return True if Organization existis for supplied id, else False.\"\"\"\n    return Organization.get_by_id(id) is not None\n\ndef list(limit, cursor=None, format=None):\n    \"\"\"Return list of Organizations.\n\n    Args:\n      limit: The max number of organizations to return.\n      start_cursor: A datastore Cursor object to start query at.\n      message: True if we want an OrganizationList message for RPC payload.      \n\n    If message is True, return an ListPayload for RPC. Otherwise return \n    the triple (organizations, next_cursor, more) where ideas is a list of \n    Organization models, next_cursor is the cursor object for the next query, \n    and more is True if there are likely more, otherwise False.\n    \"\"\"\n    results, next, more = Organization.page(limit, cursor=cursor, format=format)\n    \n    if message:\n        if n:\n            n = n.urlsafe()\n        return IdeaList(items=i, next_cursor=n, more=m)\n    return i, n, m\n\nclass OrganizationRPC(AuthService):\n    \"\"\"Organization RPC.\"\"\"\n    @remote.method(IdeaPayload, IdeaPayload)\n    def exists(self, message):\n        \"\"\"Return IdeaPayload with id if it exsits, else empty IdeaPayload.\n\n        Args:\n          message: IdeaPayload with id to check if it exists.\n        \"\"\"\n        if exists(message.id):\n            return message\n        return IdeaPayload()\n\n    @remote.method(IdeaPayload, IdeaPayload)\n    def create(self, message):\n        \"\"\"Create and return a new idea.\n\n        Args:\n          message: An IdeaPayload message with idea id required.\n\n        Returns an IdeaPayload with all Idea properties.\n        \"\"\"\n        person = self.get_person()\n        props = dict(about=message.about, slug=message.slug,\n            share=message.share, description=message.description, \n            public=message.public, code=message.code, \n            owner_username=person.username, owner_avatar=person.avatar_url, \n            owner_name=person.name, created=datetime.datetime.now())\n        idea = create(person, props)\n        return IdeaPayload(id=idea.key.urlsafe())\n\n    @remote.method(CampaignPayload, VoidMessage)\n    def evolve(self, message):        \n        person = self.get_person()\n        idea = Idea.get_by_id(message.id)\n        evolve(idea)\n        return VoidMessage()\n\n    @remote.method(CampaignPayload, CampaignPayload)\n    def enable_crowdfunding(self, message):\n        person = self.get_person()\n        idea = Idea.get_by_id(message.idea_id)\n        cprops = dict(about=message.about, slug=message.slug, \n            video_url=message.video_url, goal_dollars=message.goal_dollars,\n            description=message.description, public=message.public, \n            share=message.share, idea_id=message.idea_id, \n            owner_username=person.username)\n        c = enable_crowdfunding(idea, cprops, person)\n        return c.message\n\n    @remote.method(IdeaList, IdeaList)\n    def list(self, message):\n        \"\"\"Return list of ideas.\n\n        Args:\n          message: An IdeaList message with limit required.\n\n        Return an IdeaList.\n        \"\"\"\n        self.get_person().key\n        curs = None\n        if message.next_cursor:\n            curs = Cursor(urlsafe=message.next_cursor)\n        return list(message.limit, start_cursor=curs, message=True)        \n\nclass IdeaServiceAsync(webapp2.RequestHandler):\n    \"\"\"Idempotent async services for ideas executed in a TaskQueue.\"\"\"\n\n    def create_async(self, idea):\n        \"\"\"Dispatch async create task.\"\"\"\n        task = IdeaTask.get_or_insert(idea.key.id())\n        if not task.complete:\n            _create_async(idea, task)\n            task.complete = True\n            task.put()\n\n    def evolve_async(self, idea):\n        \"\"\"Dispatch async evolve task.\"\"\"\n        game = Game.get_or_insert(idea.key.id())\n        if not game.notify_owner or not game.trigger_evolution_event:\n            _evolve_async(idea, game)\n\n    def enable_crowdfunding_async(self, c):\n        idea = Idea.get_by_id(c.idea_id)    \n        game = Game.get_or_insert(idea.key.id())\n\n        if not game.crowdfunding_enabled:\n            owner = Person.get_by_id(idea.owner_username)\n\n            # Dispatch:\n            _enable_crowdfunding_async(idea, c, game, owner)\n\n            game.crowdfunding_enabled = True\n            game.put()\n\n    def post(self):\n        \"\"\"Dispatches incoming task job.\"\"\" \n        method, urlsafe = map(self.request.get, ['method', 'urlsafe'])\n        model = ndb.Key(urlsafe=urlsafe).get()\n        if method == 'create':\n            self.create_async(model)\n        elif method == 'evolve':\n            self.evolve_async(model)\n        elif method == 'enable_crowdfunding':\n            self.enable_crowdfunding_async(model)\n\n# RPC service endpoint.\nrpc = service.service_mappings([('/service/idea', IdeaService),],)\n\n# Taskqueue endpoint for async services.\nhandler = webapp2.WSGIApplication([\n    ('/service/async/idea', IdeaServiceAsync),], debug=True)\n",
+			"file": "vertnet/api/organization.py",
+			"file_size": 5463,
+			"file_write_time": 1361404164000000,
+			"settings":
+			{
+				"buffer_size": 5468,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -380,6 +489,14 @@
 	},
 	"file_history":
 	[
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/appengine_config.py",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/vertnet/__init__.py",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/test/test_dataset.py",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/test/testall.py",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/templates/index.html",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/.gitignore",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/index.html",
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/assets/js/google-code-prettify/prettify.js",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/base-css.html",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/examples/hero.html",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/public/docs/assets/css/bootstrap.css",
@@ -484,6 +601,12 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"\n		",
+			"resource",
+			"test",
+			"organization",
+			"assets/",
+			"\n    ",
 			"container",
 			"service.person",
 			"service.",
@@ -605,13 +728,7 @@
 			"clear_for_current_request(",
 			"start_recording",
 			"start_response(",
-			"appstats_start_response",
-			"start_recording",
-			"middle",
-			"Message(",
-			"ndb",
-			"fields",
-			"get_"
+			"appstats_start_response"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -619,6 +736,9 @@
 		"regex": false,
 		"replace_history":
 		[
+			"dataset",
+			"resource",
+			"",
 			"messages.StringField(1)",
 			"NotificationJson",
 			"Comment",
@@ -637,8 +757,348 @@
 	"groups":
 	[
 		{
+			"selected": 5,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "app.yaml",
+					"settings":
+					{
+						"buffer_size": 481,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								387,
+								387
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/YAML/YAML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app.py",
+					"settings":
+					{
+						"buffer_size": 955,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "templates/base.html",
+					"settings":
+					{
+						"buffer_size": 7382,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7242,
+								7242
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2070.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "public/docs/assets/js/vertnet/app.js",
+					"settings":
+					{
+						"buffer_size": 719,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								587,
+								587
+							]
+						],
+						"settings":
+						{
+							"auto_name": "/*",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "public/docs/assets/js/vertnet/router.js",
+					"settings":
+					{
+						"buffer_size": 5215,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								827,
+								827
+							]
+						],
+						"settings":
+						{
+							"auto_name": "/*",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "vertnet/model.py",
+					"settings":
+					{
+						"buffer_size": 4524,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								896,
+								896
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"default_dir": "/home/eightysteele/Dropbox/github/vertnet/webapp/vertnet/api",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "vertnet/api/__init__.py",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "vertnet/model.py",
+					"settings":
+					{
+						"buffer_size": 4524,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2452,
+								2452
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 470.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 8,
+					"file": "public/docs/assets/js/vertnet/main.js",
+					"settings":
+					{
+						"buffer_size": 785,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								767,
+								767
+							]
+						],
+						"settings":
+						{
+							"auto_name": "/*",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "vertnet/api/organization.py",
+					"settings":
+					{
+						"buffer_size": 5468,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								848,
+								848
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "vertnet/model.py",
+					"settings":
+					{
+						"buffer_size": 4524,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4411,
+								4411
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1320.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -659,11 +1119,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -683,6 +1150,26 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"model",
+				"vertnet/model.py"
+			],
+			[
+				"mod",
+				"vertnet/model.py"
+			],
+			[
+				"inde",
+				"templates/index.html"
+			],
+			[
+				"index",
+				"public/docs/index.html"
+			],
+			[
+				"app",
+				"app.py"
+			],
 			[
 				"boot",
 				"docs/assets/css/bootstrap.css"
@@ -746,10 +1233,6 @@
 			[
 				"queue",
 				"queue.yaml"
-			],
-			[
-				"app",
-				"app.yaml"
 			],
 			[
 				"auth",
@@ -1036,14 +1519,6 @@
 				"templates/login.html"
 			],
 			[
-				"inde",
-				"index.yaml"
-			],
-			[
-				"index",
-				"index.yaml"
-			],
-			[
 				"buil",
 				"public/js/views/build.js"
 			],
@@ -1141,7 +1616,7 @@
 		[
 			[
 				"",
-				"/home/eightysteele/Dropbox/github/geomancerproject/geomancer-api/geomancer-api.sublime-project"
+				"/home/eightysteele/hylozoic/hylo/hylo.sublime-project"
 			]
 		],
 		"width": 380.0
@@ -1150,6 +1625,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 205.0,
+	"side_bar_width": 263.0,
 	"status_bar_visible": true
 }
