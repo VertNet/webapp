@@ -63,8 +63,10 @@
 </div>
 
 <div class="bs-docs-social">
+
   <div class="container">
-    
+ <div class="map" id="map"></div>
+  
    <!--  <ul class="bs-docs-social-buttons">
       <li>
         <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=twitter&repo=bootstrap&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
@@ -186,4 +188,43 @@
         src="js/vertnet/libs/store/store.min.js"></script>
     <script type="text/javascript" charset="utf-8" data-main="js/vertnet/main"
         src="js/vertnet/libs/require/require.js"></script>
+
+    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
+    <script>
+
+    function main() {
+
+      var map = L.map('map', { 
+        zoomControl: false,
+        center: [0, 0],
+        zoom: 3
+      })
+
+      // add a nice baselayer from mapbox
+      L.tileLayer("https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png", {
+        attribution: 'MapBox'
+      }).addTo(map);
+
+      var layerUrl = 'http://mongabay.cartodb.com/api/v1/viz/21719/viz.json';
+      cartodb.createLayer(map, layerUrl, {interactivity: null, infowindows: false}, function(layer) {
+        map.addLayer(layer);
+      });
+
+      var mapLayer;
+      var layerUrl = 'http://mongabay.cartodb.com/api/v1/viz/21719/viz.json';
+      cartodb.createLayer(map, layerUrl, function(layer) {
+         mapLayer = layer;
+         mapLayer.infowindow.set('template', $('#infowindow_template').html());
+         mapLayer.on('featureClick', function(e, latlng, pos, data) {
+          var b = map.getBounds();
+          var c = (b.getSouthEast().lng - b.getSouthWest().lng) / 6;
+          var d = (b.getNorthEast().lat - b.getSouthWest().lat) / 4;
+          map.panTo([latlng[0] + d, latlng[1] - c]);
+         });
+         map.addLayer(mapLayer);
+      });
+
+      window.onload = main;
+    }
+    </script>        
 {% endblock %}

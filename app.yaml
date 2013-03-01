@@ -29,7 +29,7 @@ handlers:
   static_dir: public/docs/assets/js
 
 - url: /templates
-  static_dir: public/templates
+  static_dir: public/docs/assets/js/templates
 
 - url: /.*
   script: app.handler
