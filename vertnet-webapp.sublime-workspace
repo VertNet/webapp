@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"Or",
+				"OrganizationRPC	(global, class)"
+			],
+			[
+				"Organi",
+				"OrganizationPayload	(imported, instance)"
+			],
+			[
 				"lis",
 				"list_payload	(local, instance)"
 			],
@@ -21,10 +29,6 @@
 			],
 			[
 				"Org",
-				"OrganizationPayload	(global, class)"
-			],
-			[
-				"Or",
 				"OrganizationPayload	(global, class)"
 			],
 			[
@@ -405,7 +409,7 @@
 			"file": "vertnet/model.py",
 			"settings":
 			{
-				"buffer_size": 4524,
+				"buffer_size": 4483,
 				"line_ending": "Unix"
 			}
 		},
@@ -434,13 +438,13 @@
 			}
 		},
 		{
-			"contents": "\"\"\"Organization request handlers, RPC services, APIs, and associated stuff.\"\"\"\n\nfrom datetime import timedelta\n\nfrom functools import partial\n\nfrom google.appengine.api import taskqueue\nfrom google.appengine.ext import ndb\nfrom google.appengine.datastore.datastore_query import Cursor\n\nfrom protorpc import remote\nfrom protorpc.message_types import VoidMessage\nfrom protorpc.wsgi import service\n\nfrom time import sleep\n\nfrom vertnet.model import Organization, OrganizationPayload, OrganizationList\n\nimport datetime\nimport webapp2\n\ndef exists(id):\n    \"\"\"Return True if Organization existis for supplied id, else False.\"\"\"\n    return Organization.get_by_id(id) is not None\n\ndef list(limit, cursor=None, format=None):\n    \"\"\"Return list of Organizations.\n\n    Args:\n      limit: The max number of organizations to return.\n      start_cursor: A datastore Cursor object to start query at.\n      message: True if we want an OrganizationList message for RPC payload.      \n\n    If message is True, return an ListPayload for RPC. Otherwise return \n    the triple (organizations, next_cursor, more) where ideas is a list of \n    Organization models, next_cursor is the cursor object for the next query, \n    and more is True if there are likely more, otherwise False.\n    \"\"\"\n    results, next, more = Organization.page(limit, cursor=cursor, format=format)\n    \n    if message:\n        if n:\n            n = n.urlsafe()\n        return IdeaList(items=i, next_cursor=n, more=m)\n    return i, n, m\n\nclass OrganizationRPC(AuthService):\n    \"\"\"Organization RPC.\"\"\"\n    @remote.method(IdeaPayload, IdeaPayload)\n    def exists(self, message):\n        \"\"\"Return IdeaPayload with id if it exsits, else empty IdeaPayload.\n\n        Args:\n          message: IdeaPayload with id to check if it exists.\n        \"\"\"\n        if exists(message.id):\n            return message\n        return IdeaPayload()\n\n    @remote.method(IdeaPayload, IdeaPayload)\n    def create(self, message):\n        \"\"\"Create and return a new idea.\n\n        Args:\n          message: An IdeaPayload message with idea id required.\n\n        Returns an IdeaPayload with all Idea properties.\n        \"\"\"\n        person = self.get_person()\n        props = dict(about=message.about, slug=message.slug,\n            share=message.share, description=message.description, \n            public=message.public, code=message.code, \n            owner_username=person.username, owner_avatar=person.avatar_url, \n            owner_name=person.name, created=datetime.datetime.now())\n        idea = create(person, props)\n        return IdeaPayload(id=idea.key.urlsafe())\n\n    @remote.method(CampaignPayload, VoidMessage)\n    def evolve(self, message):        \n        person = self.get_person()\n        idea = Idea.get_by_id(message.id)\n        evolve(idea)\n        return VoidMessage()\n\n    @remote.method(CampaignPayload, CampaignPayload)\n    def enable_crowdfunding(self, message):\n        person = self.get_person()\n        idea = Idea.get_by_id(message.idea_id)\n        cprops = dict(about=message.about, slug=message.slug, \n            video_url=message.video_url, goal_dollars=message.goal_dollars,\n            description=message.description, public=message.public, \n            share=message.share, idea_id=message.idea_id, \n            owner_username=person.username)\n        c = enable_crowdfunding(idea, cprops, person)\n        return c.message\n\n    @remote.method(IdeaList, IdeaList)\n    def list(self, message):\n        \"\"\"Return list of ideas.\n\n        Args:\n          message: An IdeaList message with limit required.\n\n        Return an IdeaList.\n        \"\"\"\n        self.get_person().key\n        curs = None\n        if message.next_cursor:\n            curs = Cursor(urlsafe=message.next_cursor)\n        return list(message.limit, start_cursor=curs, message=True)        \n\nclass IdeaServiceAsync(webapp2.RequestHandler):\n    \"\"\"Idempotent async services for ideas executed in a TaskQueue.\"\"\"\n\n    def create_async(self, idea):\n        \"\"\"Dispatch async create task.\"\"\"\n        task = IdeaTask.get_or_insert(idea.key.id())\n        if not task.complete:\n            _create_async(idea, task)\n            task.complete = True\n            task.put()\n\n    def evolve_async(self, idea):\n        \"\"\"Dispatch async evolve task.\"\"\"\n        game = Game.get_or_insert(idea.key.id())\n        if not game.notify_owner or not game.trigger_evolution_event:\n            _evolve_async(idea, game)\n\n    def enable_crowdfunding_async(self, c):\n        idea = Idea.get_by_id(c.idea_id)    \n        game = Game.get_or_insert(idea.key.id())\n\n        if not game.crowdfunding_enabled:\n            owner = Person.get_by_id(idea.owner_username)\n\n            # Dispatch:\n            _enable_crowdfunding_async(idea, c, game, owner)\n\n            game.crowdfunding_enabled = True\n            game.put()\n\n    def post(self):\n        \"\"\"Dispatches incoming task job.\"\"\" \n        method, urlsafe = map(self.request.get, ['method', 'urlsafe'])\n        model = ndb.Key(urlsafe=urlsafe).get()\n        if method == 'create':\n            self.create_async(model)\n        elif method == 'evolve':\n            self.evolve_async(model)\n        elif method == 'enable_crowdfunding':\n            self.enable_crowdfunding_async(model)\n\n# RPC service endpoint.\nrpc = service.service_mappings([('/service/idea', IdeaService),],)\n\n# Taskqueue endpoint for async services.\nhandler = webapp2.WSGIApplication([\n    ('/service/async/idea', IdeaServiceAsync),], debug=True)\n",
+			"contents": "\"\"\"Organization request handlers, RPC services, APIs, and associated stuff.\"\"\"\n\nfrom google.appengine.datastore.datastore_query import Cursor\n\nfrom protorpc import remote\nfrom protorpc.wsgi import service\n\nfrom vertnet.model import Organization, OrganizationPayload, PagePayload\n\nimport webapp2\n\nclass OrganizationRPC(remote.Service):\n    \"\"\"Organization RPC service.\"\"\"\n\n    @remote.method(OrganizationPayload, OrganizationPayload)\n    def get(self, message):\n        \"\"\"Get organization.\"\"\"\n        props = dict()\n        return OrganizationPayload(**props)\n\n    @remote.method(PagePayload, PagePayload)\n    def page(self, message):\n        \"\"\"Return page of organizations.\"\"\"\n        curs = None\n        if message.cursor:\n            curs = Cursor(urlsafe=message.cursor)\n        page, next, more = Organization.page(message.limit, cursor=curs, \n            format='message')        \n        return page\n\nclass OrganizationAsync(webapp2.RequestHandler):\n    \"\"\"Async organization handler for taskqueue def.\"\"\"\n\n    jobs post(self):\n        \"\"\"Dispatches incoming task job.\"\"\" \n        pass\n\n# RPC service endpoint.\nrpc = service.service_mappings([('/api/organization', OrganizationRPC),],)\n\n# Taskqueue endpoint for async services.\nhandler = webapp2.WSGIApplication([\n    ('/api/async/organization', OrganizationAsync),], debug=True)\n",
 			"file": "vertnet/api/organization.py",
-			"file_size": 5463,
-			"file_write_time": 1361404164000000,
+			"file_size": 1338,
+			"file_write_time": 1361405006000000,
 			"settings":
 			{
-				"buffer_size": 5468,
+				"buffer_size": 1338,
 				"line_ending": "Unix"
 			}
 		}
@@ -489,6 +493,7 @@
 	},
 	"file_history":
 	[
+		"/home/eightysteele/Dropbox/github/vertnet/webapp/vertnet/model.py",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/appengine_config.py",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/vertnet/__init__.py",
 		"/home/eightysteele/Dropbox/github/vertnet/webapp/test/test_dataset.py",
@@ -908,15 +913,15 @@
 					"file": "vertnet/model.py",
 					"settings":
 					{
-						"buffer_size": 4524,
+						"buffer_size": 4483,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								896,
-								896
+								949,
+								949
 							]
 						],
 						"settings":
@@ -925,7 +930,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 135.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -987,15 +992,15 @@
 					"file": "vertnet/model.py",
 					"settings":
 					{
-						"buffer_size": 4524,
+						"buffer_size": 4483,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2452,
-								2452
+								2411,
+								2411
 							]
 						],
 						"settings":
@@ -1012,7 +1017,7 @@
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1049,15 +1054,15 @@
 					"file": "vertnet/api/organization.py",
 					"settings":
 					{
-						"buffer_size": 5468,
+						"buffer_size": 1338,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								848,
-								848
+								1009,
+								1009
 							]
 						],
 						"settings":
@@ -1068,33 +1073,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "vertnet/model.py",
-					"settings":
-					{
-						"buffer_size": 4524,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4411,
-								4411
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1320.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

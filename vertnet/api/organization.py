@@ -29,7 +29,7 @@ class OrganizationRPC(remote.Service):
         return page
 
 class OrganizationAsync(webapp2.RequestHandler):
-    """Async organization handler for taskqueue jobs."""
+    """Async organization handler for taskqueue def."""
 
     def post(self):
         """Dispatches incoming task job.""" 

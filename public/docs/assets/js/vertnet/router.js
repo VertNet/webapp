@@ -6,8 +6,10 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'map',
   //'rpc',
   'mps',
+  'views/mapView',
   // 'notify',
   //'views/header',
   //'views/footer',
@@ -21,7 +23,7 @@ define([
 // ], function ($, _, Backbone, rpc, app, Notify,
 //             Header, Login, Home, Profile, Shell, Fund,
 //             Notifications, Flashes) {
-], function ($, _, Backbone, mps) {
+], function ($, _, Backbone, map, mps, MapView) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -63,6 +65,12 @@ define([
     
     home: function (name) {
       console.log('router.home()');
+
+      map.init(function() {
+        console.log('BOOM');
+        var map = new MapView().render();
+
+      })
       // Kill the page view if it exists.
       //if (this.page)
        // this.page.destroy();
