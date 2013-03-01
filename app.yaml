@@ -16,20 +16,14 @@ libraries:
 
 handlers:
 
-- url: /css
-  static_dir: public/docs/assets/css
-
-- url: /font
-  static_dir: public/secure
-
-- url: /img
-  static_dir: public/img
+- url: /assets
+  static_dir: client/docs/assets
 
 - url: /js
-  static_dir: public/docs/assets/js
+  static_dir: client/js
 
 - url: /templates
-  static_dir: public/docs/assets/js/templates
+  static_dir: client/docs/templates
 
 - url: /.*
   script: app.handler
