@@ -25,5 +25,11 @@ handlers:
 - url: /templates
   static_dir: client/docs/templates
 
+- url: /api/organization.*
+  script: vertnet.api.organization.rpc
+
+- url: /api/stats.*
+  script: vertnet.api.stats.rpc
+
 - url: /.*
   script: app.handler
