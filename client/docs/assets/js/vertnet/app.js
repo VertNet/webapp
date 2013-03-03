@@ -6,14 +6,14 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'router'
+  'router',
   //'bus',
-  //'rpc'
-], function ($, _, Backbone, Router) {
+  'rpc'
+], function ($, _, Backbone, Router, rpc) {
 
   // For dev:
   // window._bus = bus;
-  // window._rpc = rpc;
+  window._rpc = rpc;
 
   var App = function () {
     // NOOP
