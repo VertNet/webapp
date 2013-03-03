@@ -4,6 +4,36 @@ from google.appengine.ext import ndb
 
 from protorpc import messages
 
+import json
+
+# Dummpy stats for testing.
+DUMMY_STATS = dict(
+	record_count=1606374, 
+	publisher_count=20,
+	taxa_count=dict(Kingdom=5,Phylum=5,Class=20,Order=163,Family=1063,
+		Genus=7778,Species=50552),
+	country=dict(USA=605663,Mexico=114520,Ecuador=1975,Peru=35876,
+		Philippines=30913),
+	collection_count=dict(Fish=211844,
+		Herps=178000,Mammals=164787,Birds=79223),
+	class_count=dict(Mammalia=371296,Amphibia=281625,Reptilia=275613,
+		Aves=271059,Actinopterygii=183898,Chondrichthyes=1636,Elasmobranchii=1460))
+
+class Stats(ndb.Model):
+	"""Model for data statitstics."""
+	stats = ndb.JsonProperty(default=DUMMY_STATS)
+
+	@property
+	def json(self):
+		return self.to_dict()
+
+	@property
+	def message(self):
+		return StatsPayload(stats=json.dumps(self.stats))
+
+class StatsPayload(messages.Message):
+	stats = messages.StringField(1)
+
 class Organization(ndb.Model):
 	"""Model for an organization."""
 	description = ndb.StringProperty()
