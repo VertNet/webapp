@@ -10,7 +10,6 @@ require.config({ // VertNet app configuration.
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
     mps: 'libs/minpubsub/minpubsub',
-    balanced: 'libs/balanced/balanced',
     Spin: 'libs/spin/spin',
   },
   
@@ -26,9 +25,6 @@ require.config({ // VertNet app configuration.
     mps: {
       deps: ['jQuery', 'Underscore'],
       exports: 'mps'
-    },
-    balanced: {
-      exports: 'balanced'
     },
     Spin: {
       exports: 'Spin'
