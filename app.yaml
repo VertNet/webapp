@@ -25,6 +25,9 @@ handlers:
 - url: /templates
   static_dir: client/docs/templates
 
+- url: /prototypes
+  static_dir: client/docs/prototypes
+
 - url: /api/organization.*
   script: vertnet.api.organization.rpc
 
