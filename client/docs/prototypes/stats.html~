@@ -48,60 +48,60 @@
             </ol>
             <div class="carousel-inner">
               <div class="item active">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-01.jpg" alt="">
+                <img src="../assets/img/Records.png" alt="">
                 <div class="carousel-caption">
                   <h4>1606374 Records</h4>
                   <p>in the whole network, shared by all the participating institutions.</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-02.jpg" alt="">
+                <img src="../assets/img/Institutions.jpg" alt="">
                 <div class="carousel-caption">
                   <h4>20 Institutions</h4>
                   <p>that have agreed to participate in the VertNet network.</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/Species.jpg" alt="">
                 <div class="carousel-caption">
                   <h4>50552 species</h4>
                   <p>of vertebrates in the whole network.</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/WorldCountries.png" alt="">
                 <div class="carousel-caption">
                   <p>The records in the network come from<p>
-                  <h4>X countries</h4>
+                  <h4>505 countries</h4>
                   <p>(Click for more info)</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/Collections.jpg" alt="">
                 <div class="carousel-caption">
                   <p>All the shared records are held in</p>
-                  <h4>X Collections</h4>
+                  <h4>30 Collections</h4>
                   <p>(Click for more info)</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/Classes.jpg" alt="">
                 <div class="carousel-caption">
                   <p>We ease the access to information on</p>
-                  <h4>X Taxonomic Classes</h4>
+                  <h4>20 Taxonomic Classes</h4>
                   <p>(Click for more info)</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/Search.png" alt="">
                 <div class="carousel-caption">
                   <h4>1000000 records downloaded</h4>
-                  <p>in the last month.</p>
+                  <p>in the last month through the VertNet Portal.</p>
                   <p>(Click to see trend)</p>
                 </div>
               </div>
               <div class="item">
-                <img src="../assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                <img src="../assets/img/NewCollections.png" alt="">
                 <div class="carousel-caption">
                   <h4>10 new datasets</h4>
                   <p>in the last month.</p>
