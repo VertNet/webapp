@@ -1,6 +1,6 @@
 # VertNet webapp
 
-This repo contains code for the VertNet webapp.
+Thiss repo contains code for the VertNet webapp.
 
 ## Developing
 
