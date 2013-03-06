@@ -1,4 +1,5 @@
 *.pyc
 *.sublime-*
 *.*~
+deploy.sh
 node_modules
