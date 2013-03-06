@@ -1,3 +1,4 @@
 *.pyc
 *.sublime-*
+*.*~
 node_modules
