@@ -1,0 +1,1 @@
+echo 'XX' | appcfg.py upload_data --log_file=bulk.log --batch_size=10 --num_threads=10 --config_file=bulkload.yaml --filename=test/nysm_mammals.tsv.aa --kind transformer.Record --url=http://localhost:8080/_ah/remote_api --email=foo@fooey.com --passin --application=dev~vn-app

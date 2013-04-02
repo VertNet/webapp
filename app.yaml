@@ -28,6 +28,9 @@ handlers:
 - url: /prototypes
   static_dir: client/docs/prototypes
 
+- url: /api/search.*
+  script: vertnet.api.search.handler
+
 - url: /api/organization.*
   script: vertnet.api.organization.rpc
 
