@@ -13,7 +13,7 @@ sudo apt-get update
 sudo apt-get install -y unzip git s3cmd sqlite3
 
 # get vertnet webapp project
-git clone git@github.com:VertNet/webapp.git
+git clone git://github.com/VertNet/webapp.git
 
 # install gae sdk
 mkdir ~/bin
