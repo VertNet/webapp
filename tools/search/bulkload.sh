@@ -53,7 +53,7 @@ source ~/.bashrc
 # STEP 5
 # upload data to app engine - run this within a screen instance:
 # screen -m
-# echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --batch_size=10 --num_threads=10 --config_file=bulkload.yaml --filename=/tmp/parts --kind Record --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
+# echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/tmp/parts --kind Record --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
 
 # MONITORING
 # to check the progress of the upload, open the sql3 file that is created in
