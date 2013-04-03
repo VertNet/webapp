@@ -22,3 +22,7 @@ transformers:
       external_name: recjson
       import_transform: transformer.get_rec_json()
 
+    - property: is_indexed
+      external_name: is_indexed
+      import_transform: transformer.get_is_indexed()
+
