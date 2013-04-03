@@ -6,7 +6,7 @@ from google.appengine.ext import db
 
 class Record(db.Model):
     json = db.TextProperty()
-    indexed = db.BooleanProperty()
+    is_indexed = db.BooleanProperty()
 
 def get_rec_json():
     """Returns a JSON object where all keys have values."""
@@ -17,4 +17,9 @@ def get_rec_json():
             if value:
                 val[name] = value
         return db.Text(json.dumps(val))
+    return wrapper
+
+def get_is_indexed():
+    def wrapper(rec, bulkload_state):
+        return False
     return wrapper

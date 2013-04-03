@@ -1,14 +1,13 @@
 import json
 import logging
 
-#from mapreduce import operation as op
-
 from google.appengine.api import search
-from mapreduce import operation as op
+
+# TODO: Pool search api puts?
 
 def build_search_index(entity):
 	# Idempotent guard:
-	if entity.indexed:
+	if entity.is_indexed:
 		return
 
 	data = json.loads(entity.json)
@@ -33,7 +32,7 @@ def build_search_index(entity):
 	
 	try:
 	    search.Index(name='dwc_search').put(doc)
-	    entity.indexed = True
-	    yield op.db.Put(entity)
+	    entity.is_indexed = True
+	    entity.put()
 	except search.Error:
 	    logging.exception('Put failed')
