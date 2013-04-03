@@ -4,8 +4,13 @@ import logging
 #from mapreduce import operation as op
 
 from google.appengine.api import search
+from mapreduce import operation as op
 
 def build_search_index(entity):
+	# Idempotent guard:
+	if entity.indexed:
+		return
+
 	data = json.loads(entity.json)
 	year, genus, collection_code, country, lat, lon = map(data.get, 
 		['year', 'genus', 'collectioncode', 'country', 'decimallatitude', 
@@ -28,5 +33,7 @@ def build_search_index(entity):
 	
 	try:
 	    search.Index(name='dwc_search').put(doc)
+	    entity.indexed = True
+	    yield op.db.Put(entity)
 	except search.Error:
 	    logging.exception('Put failed')
