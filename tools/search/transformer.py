@@ -6,6 +6,7 @@ from google.appengine.ext import db
 
 class Record(db.Model):
     json = db.TextProperty()
+    indexed = db.BooleanProperty()
 
 def get_rec_json():
     """Returns a JSON object where all keys have values."""
