@@ -39,7 +39,7 @@ source ~/.bashrc
 # sync harvested data to instance - run this from a screen instance:
 # screen -m
 # mkdir /tmp/harvest
-# s3cmd sync s3://vertnet/data/staging/ /tmp/harvest
+# s3cmd sync s3://vnproject/data/staging/ /tmp/harvest
 
 # STEP 3
 # cat all part files into one big one:
