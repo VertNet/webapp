@@ -62,6 +62,7 @@ source ~/.bashrc
 # to check the progress of the upload, open the sql3 file that is created in
 # the search directory (this one). it'll look something like 
 # bulkloader-progress-20130402.230158.sql3
-# run this to get the number of records already uploaded:
+# run this to get the number of records already uploaded (replacing the .sql3 filename with the one you have):
+# sqlite3 bulkloader-progress-20130402.230158.sql3
 # sqlite> select max(key_end) from progress;
 # 31010
