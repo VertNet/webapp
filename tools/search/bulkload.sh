@@ -1,7 +1,9 @@
 #! /bin/bash
 
 # before doing anything, add AWS_ID and AWS_SECRET to .bashrc
-# then add $GAE_PASSWORD and $EMAIL
+# then add $GAE_PASSWORD and $EMAIL:
+# export EMAIL="your@email.com"
+# export GAE_PASSWORD="yourpassword"
 # then you can run this setup script, and follow up with the manual steps at the end
 
 ##########
