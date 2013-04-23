@@ -33,6 +33,12 @@ source ~/.bashrc
 # MANUAL STEPS #
 #################
 
+# STEP 0
+# Attach an EBS volume from AWS console
+# sudo mkfs -t ext3 /dev/xvdf
+# sudo mkdir /tmp/beast
+# sudo mount /dev/xvdf /mnt/beast
+
 # STEP 1
 # configure s3cmd - have the aws id and secret handy:
 # s3cmd --configure
