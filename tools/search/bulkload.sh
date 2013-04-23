@@ -51,7 +51,7 @@ source ~/.bashrc
 
 # STEP 3
 # cat all part files into one big one:
-# ls -R /tmp/harvest/*/part* | xargs cat > /tmp/parts
+# ls -R /tmp/harvest/*/part* | xargs cat > /mnt/beast/parts
 
 # STEP 4
 # deploy to app engine - this doesn't usually need to happen
