@@ -36,3 +36,13 @@ def build_search_index(entity):
 	    entity.put()
 	except search.Error:
 	    logging.exception('Put failed')
+
+def build_dwc_index(entity):
+	if entity.is_indexed:
+		return
+
+	data = json.loads(entity.json)
+	year, genus, collection_code, country, lat, lon = map(data.get, 
+		['year', 'genus', 'collectioncode', 'country', 'decimallatitude', 
+		'decimallongitude'])
+	
