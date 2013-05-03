@@ -18,6 +18,10 @@ transformers:
       dialect: excel-tab
 
   property_map:
+    - property: __key__
+      external_name: id
+      import_transform: transformer.create_record_key()  
+
     - property: json
       external_name: recjson
       import_transform: transformer.get_rec_json()
