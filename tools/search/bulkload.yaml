@@ -30,3 +30,35 @@ transformers:
       external_name: is_indexed
       import_transform: transformer.get_is_indexed()
 
+
+- kind: RecordIndex
+  connector: csv
+  connector_options:
+    encoding: utf_8
+    import_options:
+      dialect: excel-tab
+
+  property_map:
+    - property: __key__
+      external_name: id
+      import_transform: transformer.create_record_index_key()
+
+    - property: year
+      external_name: year
+      import_transform: transformer.lower_case()
+
+    - property: genus
+      external_name: genus
+      import_transform: transformer.lower_case()
+
+    - property: country
+      external_name: country
+      import_transform: transformer.lower_case()
+
+    - property: collectioncode
+      external_name: collectioncode
+      import_transform: transformer.lower_case()
+
+    - property: corpus
+      external_name: id
+      import_transform: transformer.get_corpus_list()
