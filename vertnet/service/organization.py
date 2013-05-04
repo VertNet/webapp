@@ -5,7 +5,7 @@ from google.appengine.datastore.datastore_query import Cursor
 from protorpc import remote
 from protorpc.wsgi import service
 
-from vertnet.model import Organization, OrganizationPayload, PagePayload
+from vertnet.service.model import Organization, OrganizationPayload, PagePayload
 
 import webapp2
 
@@ -36,7 +36,7 @@ class OrganizationAsync(webapp2.RequestHandler):
         pass
 
 # RPC service endpoint.
-rpc = service.service_mappings([('/api/organization', OrganizationRPC),],)
+rpc = service.service_mappings([('/service/organization', OrganizationRPC),],)
 
 # Taskqueue endpoint for async services.
 handler = webapp2.WSGIApplication([

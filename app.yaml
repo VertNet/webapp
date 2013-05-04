@@ -6,7 +6,7 @@ api_version: 1
 
 builtins:
 - remote_api: on
-- appstats: on
+#- appstats: on
 
 libraries:
 - name: jinja2
@@ -33,6 +33,9 @@ handlers:
 - url: /service/dwc.*
   script: vertnet.service.dwc.rpc
 
+- url: /service/organization.*
+  script: vertnet.service.organization.rpc
+
 - url: /api/search.*
   script: vertnet.api.search.handler
 
@@ -42,6 +45,6 @@ handlers:
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
 
-- url: /.*
+- url: /
   script: app.handler
   #login: admin

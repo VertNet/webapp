@@ -30,7 +30,7 @@ transformers:
       external_name: title
       import_transform: transform.none_if_empty(unicode)
 
-    - property: json
+    - property: record
       external_name: recjson
       import_transform: transformer.get_rec_json()
 

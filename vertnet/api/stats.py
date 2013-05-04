@@ -4,7 +4,7 @@ from protorpc import remote
 from protorpc.wsgi import service
 from protorpc.message_types import VoidMessage
 
-from vertnet.model import Stats, StatsPayload
+from vertnet.service.model import Stats, StatsPayload
 
 class StatsRPC(remote.Service):
     """Organization RPC service."""
