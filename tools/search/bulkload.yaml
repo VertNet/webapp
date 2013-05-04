@@ -22,6 +22,14 @@ transformers:
       external_name: id
       import_transform: transformer.create_record_key()  
 
+    - property: organization_name
+      external_name: orgname
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: resource_title
+      external_name: title
+      import_transform: transform.none_if_empty(unicode)
+
     - property: json
       external_name: recjson
       import_transform: transformer.get_rec_json()
@@ -62,3 +70,76 @@ transformers:
     - property: corpus
       external_name: id
       import_transform: transformer.get_corpus_list()
+
+- kind: Organization
+  connector: csv
+  connector_options:
+    encoding: utf_8
+    import_options:
+      dialect: excel-tab
+
+  property_map:
+    - property: __key__
+      external_name: id
+      import_transform: transformer.create_org_key()
+
+    - property: name
+      external_name: orgname
+      import_transform: transform.none_if_empty(unicode)
+
+- kind: Resource
+  connector: csv
+  connector_options:
+    encoding: utf_8
+    import_options:
+      dialect: excel-tab
+
+  property_map:
+    - property: __key__
+      external_name: id
+      import_transform: transformer.create_resource_key()
+
+    - property: organization_name
+      external_name: orgname
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: title
+      external_name: title
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: description
+      external_name: description
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: rights
+      external_name: rights
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: url
+      external_name: url
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: count
+      external_name: count
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: contact_name
+      external_name: contact
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: contact_email
+      external_name: email
+      import_transform: transformer.lower_case()
+
+    - property: eml_url
+      external_name: eml
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: dwca_url
+      external_name: dwca
+      import_transform: transform.none_if_empty(unicode)
+
+    - property: pub_date
+      external_name: pubdate
+      import_transform: transform.none_if_empty(unicode)
+
