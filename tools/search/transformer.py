@@ -131,6 +131,7 @@ def create_record_index_key():
         resource_slug = slugify(d['title'])
         d['keyname'] = '%s/%s/%s' % (organization_slug, resource_slug, d['id'])
         return transform.create_deep_key(
+            ('Record', 'keyname'),
             ('RecordIndex', 'keyname'))(value, bulkload_state)
     return wrapper    
     

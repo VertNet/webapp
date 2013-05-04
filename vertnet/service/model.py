@@ -6,7 +6,7 @@ from protorpc import messages
 
 import logging
 import json
-from ndb import model, query, tasklets
+from google.appengine.ext.ndb import model, query, tasklets
 
 # Dummpy stats for testing.
 DUMMY_STATS = dict(
@@ -109,7 +109,7 @@ class Record(ndb.Model):
 
     @property
     def message(self):
-        return RecordPayload(json=self.record)
+        return RecordPayload(id=self.key.id(), json=self.record)
 
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
@@ -134,14 +134,15 @@ class RecordIndex(ndb.Model):
         qry = RecordIndex.query()
 
         # Add darwin core name filters
-        args = params['args']
+        args = params['terms']
         if len(args) > 0:
             gql = 'SELECT * FROM RecordIndex WHERE'
             for k,v in args.iteritems():
                 gql = "%s %s = '%s' AND " % (gql, k, v)
             gql = gql[:-5] # Removes trailing AND
             logging.info(gql)
-            qry = query.parse_gql(gql)[0]
+            # qry = query.parse_gql(gql)[0]
+            qry = ndb.gql(gql)
             
         # Add full text keyword filters
         keywords = params['keywords']
@@ -163,21 +164,17 @@ class RecordIndex(ndb.Model):
             index_keys, next_cursor, more = qry.fetch_page(limit, 
                 keys_only=True)
             record_keys = [x.parent() for x in index_keys]
-            
+
         # Return results
-        records = model.get_multi(record_keys)
+        records = ndb.get_multi(record_keys)
         if message:
             records = [x.message for x in records]
         return (records, next_cursor, more)
 
 class OrganizationPayload(messages.Message):
     """JSON Organization payload for RPC."""
-    description = messages.StringField(1)
-    link = messages.StringField(2)
-    name = messages.StringField(3)
-    address = messages.StringField(4)
-    email = messages.StringField(5)
-    phone = messages.StringField(6)
+    name = messages.StringField(1)
+    name_slug = messages.StringField(2)
 
 class ResourcePayload(messages.Message):
     """JSON Resource payload for RPC."""
@@ -205,6 +202,7 @@ class DatasetPayload(messages.Message):
 
 class RecordPayload(messages.Message):
     json = messages.StringField(1)
+    id = messages.StringField(2)
 
 class RecordList(messages.Message):
     items = messages.MessageField(RecordPayload, 1, repeated=True)
@@ -212,7 +210,7 @@ class RecordList(messages.Message):
     more = messages.BooleanField(3) 
     limit = messages.IntegerField(4)  
     parent = messages.StringField(5)  
-    q = messages.StringProperty(6)   # {terms={}, keywords=[]}
+    q = messages.StringField(6)   # {terms={}, keywords=[]}
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 

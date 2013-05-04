@@ -1,10 +1,12 @@
 """API handlers for Darwin Core records."""
 
 import webapp2
-from vernet.model import RecordIndex, RecordList
+from vertnet.service.model import RecordIndex, RecordList
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
+import logging
+import json
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -24,7 +26,8 @@ class DwcService(remote.Service):
         curs = None
         if message.cursor:
             curs = Cursor(urlsafe=message.cursor)
-        return record_list(message.limit, curs, message.q, message=True)
+        q = json.loads(message.q)
+        return record_list(message.limit, curs, q, message=True)
 
 class Search(webapp2.RequestHandler):
     """Handler for searching Darwin Core records."""
