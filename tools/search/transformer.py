@@ -86,6 +86,24 @@ def slugify(s, length=None, separator="-"):
     ret = re.sub('[ _]+', separator, ret)
     return ret.strip()
 
+def create_org_key():
+    def wrapper(value, bulkload_state):
+        d = bulkload_state.current_dictionary
+        organization_slug = slugify(d['orgname'])
+        d['keyname'] = organization_slug
+        return transform.create_deep_key(
+            ('Organization', 'keyname'))(value, bulkload_state)
+    return wrapper
+
+def create_resource_key():
+    def wrapper(value, bulkload_state):
+        d = bulkload_state.current_dictionary
+        resource_slug = slugify(d['title'])
+        d['keyname'] = resource_slug
+        return transform.create_deep_key(
+            ('Resource', 'keyname'))(value, bulkload_state)
+    return wrapper
+
 def create_record_key():
     def wrapper(value, bulkload_state):
         """Returns a Record key built from value.

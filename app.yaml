@@ -28,6 +28,11 @@ handlers:
 - url: /prototypes
   static_dir: client/docs/prototypes
 
+# services
+
+- url: /service/dwc.*
+  script: vertnet.service.dwc.rpc
+
 - url: /api/search.*
   script: vertnet.api.search.handler
 
@@ -39,4 +44,4 @@ handlers:
 
 - url: /.*
   script: app.handler
-  login: admin
+  #login: admin
