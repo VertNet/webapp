@@ -105,7 +105,9 @@ class Record(ndb.Model):
 
     @property
     def json(self):
-        return json.loads(self.record)
+        rec = json.loads(self.record)
+        rec['key_name'] = self.key.id()
+        return rec
 
     @property
     def message(self):

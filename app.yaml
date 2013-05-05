@@ -30,8 +30,11 @@ handlers:
 
 # services
 
-- url: /service/dwc.*
-  script: vertnet.service.dwc.rpc
+- url: /service/rpc/record.*
+  script: vertnet.service.record.rpc
+
+- url: /service/api/record
+  script: vertnet.service.record.api
 
 - url: /service/organization.*
   script: vertnet.service.organization.rpc
