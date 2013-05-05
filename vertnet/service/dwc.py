@@ -5,7 +5,6 @@ from vertnet.service.model import RecordIndex, RecordList
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
-import logging
 import json
 
 def record_list(limit, cursor, q, message=False):
@@ -18,10 +17,10 @@ def record_list(limit, cursor, q, message=False):
     return i, n, m
 
 class DwcService(remote.Service):
-    """RPC services for working with comments."""
+    """RPC services for working with Darwin Core Records."""
 
     @remote.method(RecordList, RecordList)
-    def list(self, message):
+    def search(self, message):
         """Return a RecordList."""
         curs = None
         if message.cursor:
