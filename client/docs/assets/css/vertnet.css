@@ -8,3 +8,7 @@ h1.stats {
 .carousel.stats {
 	padding-top: 30px;
 }
+
+input.span2.search {
+	width: 400px;
+}
