@@ -12,10 +12,22 @@
     <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="../assets/css/docs.css" rel="stylesheet">
     <link href="../assets/js/google-code-prettify/prettify.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://libs.cartodb.com/cartodb.js/v2/themes/css/cartodb.css" />
+   <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
+    <![endif]-->
+
+
     <style>
       input.span2.search {
         width: 300px;
+      }
+    </style>
+
+    <style>
+      #mapper {
+        height: 800px;
+        width: 100%;
       }
     </style>
 
@@ -39,12 +51,13 @@
 
       <ul id="myTab" class="nav nav-tabs">
         <li class="active"><a href="#results" data-toggle="tab">Table</a></li>
-        <li><a href="#resultsmap" data-toggle="tab">Map view</a></li>
+        <li><a href="#resultsmap" data-toggle="tab">Map</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Download <b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Results <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="#dropdown1" data-toggle="tab">CSV</a></li>
-            <li><a href="#dropdown2" data-toggle="tab">CartDB</a></li>
+            <li><a href="#dropdown1" data-toggle="tab">Download CSV</a></li>
+            <li><a href="#dropdown2" data-toggle="tab">Upload to CartoDB</a></li>
+            <li><a href="#dropdown3" data-toggle="tab">Share via email</a></li>
           </ul>
         </li>
       </ul>
@@ -139,14 +152,17 @@
           </table>
         </div>
         <div class="tab-pane fade" id="resultsmap">
-          <p>Map.</p>
+          <p><div id="mapper"></div></p>
         </div>
         <div class="tab-pane fade" id="dropdown1">
-          <p>Download results as CSV.</p>
+          <p>Download 17,345 search results as a CSV file.</p>
         </div>
         <div class="tab-pane fade" id="dropdown2">
-          <p>Save results to CartoDB.</p>
+          <p>Transfer 17,345 search results to your CartoDB account.</p>
         </div>
+        <div class="tab-pane fade" id="dropdown3">
+          <p>Email a VertNet link to these exact search results.</p>
+        </div>        
       </div>
 
       
@@ -172,5 +188,20 @@
     <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
     <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
     <script data-main="../assets/js/vertnet/main" src="../assets/js/vertnet/libs/require/require.js"></script>  
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
+    <script>
+      var map;
+      var mapOptions = {
+        zoom: 7,
+        center: new google.maps.LatLng(38, -123),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+      var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+      cartodb.createLayer(map, layerUrl, function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+      });
+    </script>
   </body>
 </html>
