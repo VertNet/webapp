@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Record Detail Mock</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="../assets/css/bootstrap.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="../assets/css/docs.css" rel="stylesheet">
+    <link href="../assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+   <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
+    <![endif]-->
+
+
+    <style>
+      input.span2.search {
+        width: 300px;
+      }
+    </style>
+
+    <style>
+      #mapper {
+        height: 200px;
+        width: 100%;
+      }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+  <body data-spy="scroll" data-target=".bs-docs-sidebar">
+    <!-- Prototype stats carosel. -->
+    <div class="container">
+      <h1>Record Detail Mock</h1>
+      <p></p><p></p>
+
+      <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#detail" data-toggle="tab">Detail</a></li>
+        <li><a href="#resultsmap" data-toggle="tab">Comments</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#dropdown1" data-toggle="tab">Download record</a></li>
+            <li><a href="#dropdown2" data-toggle="tab">Email publisher</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="detail">
+          <ul class="breadcrumb" style="margin-bottom: 5px;">
+            <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
+              <span class="divider">/</span>
+            </li>
+            <li><a href="#">TTRS Mammals</a> 
+              <span class="divider">/</span>
+            </li>
+            <li class="active">128cd6f3-24b4-4425-998a-4e751bf366ce</li>
+          </ul>    
+          <p></p>
+          <div class="row-fluid">
+            <ul class="thumbnails">
+              <li class="span3">
+                <a href="#" class="thumbnail">
+                  <img data-src="holder.js/260x180" alt="260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,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">
+                </a>
+              </li>
+              <li class="span3">
+                <a href="#" class="thumbnail">
+                  <img data-src="holder.js/260x180" alt="260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC0CAYAAABytVLLAAAK/ElEQVR4Xu2aB4tUSxdFa8wJA+acc86K+YermBWMmDBizo6KOX/fLrhNzzgzbz/RR8NeF4ZpZk7frrNO1boVuqu7u/tn4YIABCDwfwJdCIF+AAEINAQQAn0BAhBoEUAIdAYIQAAh0AcgAIFfCTBDoFdAAALMEOgDEIAAMwT6AAQgMAABlgx0DwhAgCUDfQACEGDJQB+AAARYMtAHIAABhwB7CA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIYQUmjQh4BBACA4lYiAQQgAhhBSaNCHgEEAIDiViIBBCACGEFJo0IeAQQAgOJWIgEEIAIXRYob99+1Zu375dnj59Wr5+/VpGjhxZpk2bVubOnVsGDRrUau2LFy/KrVu3yvv378vQoUNrzKJFi0pXV1cr5s6dO+XBgwfly5cvZcSIEWXevHllxowZ/zrjT58+lStXrpTu7u4yZMiQsnfv3h730P3V5pcvX5bPnz+XYcOGlUmTJtX2KL65/lR7/nUCvMEmgBBsVP9N4MWLF6sMNLA1iD9+/Fg/ePbs2WXp0qX1tQbeuXPn6uvhw4fXAf/z58864DUIdd27d69cv379l/usXbu2TJ482U7m2bNn5erVq1VOuvoSwpkzZ8qrV69qW8aPH1/FofgpU6aUNWvW/NH22A0n8LcIIITfwvZ33qTBf+zYsXrzzZs3l3HjxpVHjx7Vp7NmB3oy6/epU6fK27dv6+CXBCQIxWgwrl69ur7/yJEj9WndCKARhGI2bdpkJ3D48OEqgenTp9cZSW8haPZw9OjRer/t27eX0aNH9xDWvn37yuDBg/9Ye+yGE/hbBBDCb2H7O2/S4NJSQANIA1DXu3fvysmTJ+vrPXv2lO/fv9cBqJjdu3fX370vLSNOnDhR5aEBqdlG+8DV3548eVKf/HqqayBroCtG79NnrF+/vkycOLEuBbRcef36dZ2V9BZCe/uawd98vtqlNmq28E/t6SuPv0OZuw5EACF0eP+4efNm0dpbA3fXrl1VGOfPny9jxowpK1asKA8fPqwDWMuAqVOn1myaGC05du7cWf+mJcX+/ft7PMnPnj1bp/dz5swpS5YsKRcuXCjPnz8vM2fOLMuXL+9Bplmm9BaC7ithSQK6h/Yo1F79NLMRtz0dXoqI5iGEDi6z9hK0p6BLg1+DrVlCSBB68v748aOVwfz588vChQvrHoTep+m7nv7NdeDAgRrfLEc0I9BgllD0PslHm5hbt27tsRmo9/cnBP1PS51Lly6VN2/etD5Ls4uVK1fWDUa3PR1cipimIYQOLbUGvqb0egLPmjWrLFu2rLa0EYJeN09knSRoMGuJoBmBNvj6EsLBgwfr4G+EoHs8fvy4XL58uUVB+wt6sve+BhLCjRs3yt27d6tMxo4dW8Wg/QsJasGCBf0Koa/2dGg5YpqFEDqw1FoGSAa6tH5fvHhxq5XN07Z96i5pHDp0qOjIcuPGjXXQa1nR35Jh27ZtdcmhS7HagNR7NaPQ/9qPLpsP7k8Iko9OGdSeHTt21CNQyUCbo5qN6H6aibjt6cByRDUJIXRYuTXwNHg0yDUD0Pq+/dLpgk4Z2jcM9X8JQUuIDRs21Ce1BmR7THOCocGuzb/mOw3Xrl0r9+/fr5uTkkNfn6n79yeE5vRCM4MtW7a0mtqccmjZoBmH254OK0dccxBCB5VcA/L48eP1Cdts9PVunkShUwbFaONPG4DNYNVg15JB+wu6z4cPH+r3APR9AG3yaVmhtb1OEHTp5OD06dN1nb9u3br6WvfQwNZsof3qTwjtMxZ9tmYKapvaqLZqxjJhwgSrPR1UitimIIQOKn37/oAGafs3E9XMVatW1adte5wGrp7+mp63nw40Me1fcNJrzSA0QCUfzTQkDT3FdcypI0b96PsP2ktQvE4eNLA1+9DegP4mqejSJqfupftoWdDsIUg0koLapg1K5fFP7emgMkQ3BSF0UPmb6Xd/TWq+G6D/a4BpI08y0LpdMtAmXvv6X/fTj77JOGrUqHqS0HxLUd9i1P80oPUU1yVJ6NRB92yWDjqqlBD6urS3oT0OxWv2of0EiUMykzT0eZqtNNdA7emgMkQ3BSFEl5/kIdCTAEKgR0AAAi0CCIHOAAEIIAT6AAQg8CsBZgj0CghAgBkCfQACEGCGQB+AAAQGIMCSge4BAQiwZKAPQAACLBnoAxCAAEsG+gAEIOAQYA/BoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwCCMGhRAwEQggghJBCkyYEHAIIwaFEDARCCCCEkEKTJgQcAgjBoUQMBEIIIISQQpMmBBwC/wNER+9UOtmw8QAAAABJRU5ErkJggg==">
+                </a>
+              </li>
+              <li class="span3">
+                <a href="#" class="thumbnail">
+                  <img data-src="holder.js/260x180" alt="260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,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">
+                </a>
+              </li>
+              <li class="span3">
+                <a href="#" class="thumbnail">
+                  <img data-src="holder.js/260x180" alt="260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,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">
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="well well-large">
+            <div class="container-fluid">
+              <div class="row-fluid">
+                <div class="span5">
+                  <h1>Record Summary</h1>
+                  <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
+                  <br>
+                  <strong>Resource:</strong> TTRS Mammals 
+                  <br>
+                  <strong>Record Id:</strong> 128cd6f3-24b4-4425-998a-4e751bf366ce
+                  <br>
+                  <strong>IPT:</strong> <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a>
+                  <br>
+                  <strong>EML:</strong> <a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a>
+                  <br>
+                  <strong>DwCA:</strong> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a>
+                </div>
+                <div class="span7">
+                  <div id="mapper"></div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Genus</th>
+                <th>Year</th>
+                <th>Country</th>
+                <th>Collection</th>
+                <th>Georeferenceprotocol</th>
+                <th>Stateprovince</th>
+                <th>Month</th>
+                <th>Decimallongitude</th>
+                <th>Phylum</th>
+                <th>Institutioncode</th>
+                <th>Kingdom</th>
+                <th>Preparations</th>
+                <th>Recordedby</th>
+                <th>Day</th>
+                <th>County</th>
+                <th>Eml</th>
+                <th>Individualcount</th>
+                <th>Pubdate</th>
+                <th>Catalognumber</th>
+                <th>Sex</th>
+                <th>Specificepithet</th>
+                <th>Id</th>
+                <th>Locality</th>
+                <th>Orgname</th>
+                <th>Geodeticdatum</th>
+                <th>Occurrenceremarks</th>
+                <th>Contact</th>
+                <th>Dwca</th>
+                <th>Email</th>
+                <th>Icode</th>
+                <th>Scientificname</th>
+                <th>Vernacularname</th>
+                <th>Decimallatitude</th>
+                <th>Url</th>
+                <th>Basisofrecord</th>
+                <th>Order</th>
+                <th>Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Cryptotis</td>
+                <td>1967</td>
+                <td>United States</td>                
+                <td>Mammals</td>                
+                <td>Manually digitized from known localities</td>
+                <td>FL</td>
+                <td>3</td>
+                <td>-84.2176909195154</td>
+                <td>Chordata</td>
+                <td>TTRS</td>
+                <td>Animalia</td>
+                <td>Skin</td>
+                <td>W.W. Baker</td>
+                <td>28</td>
+                <td>Leon</td>
+                <td>http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</td>
+                <td>1</td>
+                <td>Wed May 16 00:00:00 UTC 2012</td>
+                <td>18</td>
+                <td>Female</td>
+                <td>parva</td>
+                <td>128cd6f3-24b4-4425-998a-4e751bf366ce</td>
+                <td>TTRS, MB66-B2X</td>
+                <td>Tall Timbers Research Station and Land Conservancy</td>
+                <td>WGS84</td>
+                <td>Preparer's identifier WWB-515</td>
+                <td>Jim Cox</td>
+                <td>http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</td>
+                <td>jim@ttrs.org</td>
+                <td>TTRS</td>
+                <td>Cryptotis parva</td>
+                <td>Least Shrew</td>
+                <td>30.6658703040448</td>
+                <td>http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</td>
+                <td>PreservedSpecimen</td>
+                <td>Insectivora</td>
+                <td>Mammalia</td>              
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="resultsmap">
+          <p><div id="mapper"></div></p>
+        </div>
+        <div class="tab-pane fade" id="dropdown1">
+          <h3>Download record</h3>
+          <p>
+            <div class="well well-large">
+              <p>CSV</p>
+              individualcount, georeferenceprotocol, pubdate, stateprovince, year, sex, county, phylum, catalognumber, specificepithet, id, basisofrecord, orgname, geodeticdatum, occurrenceremarks, classs, contact, __record_number__, keyname, email, kingdom, description, decimallongitude, key_name, preparations, icode, scientificname, recordedby, month, day, vernacularname, count, dummy, decimallatitude, url, country, locality, collectioncode, order, dwca, eml, title, genus, institutioncode<br>
+              1, Manually digitized from known localities, Wed May 16 00:00:00 UTC 2012, FL, 1967, Female, Leon, Chordata, 18, parva, 128cd6f3-24b4-4425-998a-4e751bf366ce, PreservedSpecimen, Tall Timbers Research Station and Land Conservancy, WGS84, Preparer's identifier WWB-515, Mammalia, Jim Cox, 18, tall-timbers-research-station-and-land-conservancy/ttrs-mammals/128cd6f3-24b4-4425-998a-4e751bf366ce, jim@ttrs.org, Animalia, Scientists, natural history students, artists, and others interested in the fauna and flora of the southeast are encouraged to visit The Natural History Museum and Scientific Collections at Tall Timbers. Special arrangements must be made to view and work with specimens, and the general hours of operation are 8:30 AM-4:30 PM. Loans are generally discouraged but are allowed occasionally and governed by formal agreements developed on an individual basis., -84.2176909195154, tall-timbers-research-station-and-land-conservancy/ttrs-mammals/128cd6f3-24b4-4425-998a-4e751bf366ce, Skin, TTRS, Cryptotis parva, W.W. Baker, 3, 28, Least Shrew, 968, ;, 30.6658703040448, http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals, United States, TTRS, MB66-B2X, Mammals, Insectivora, http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals, http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals, TTRS Mammals, Cryptotis, TTRS
+            </div>
+          </p>
+          <p>
+            <div class="well well-large">
+              <p>JSON</p>
+              {"key_name": "tall-timbers-research-station-and-land-conservancy/ttrs-mammals/128cd6f3-24b4-4425-998a-4e751bf366ce", "email": "jim@ttrs.org", "decimallatitude": "30.6658703040448", "dummy": ";", "orgname": "Tall Timbers Research Station and Land Conservancy", "sex": "Female", "genus": "Cryptotis", "dwca": "http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals", "count": "968", "geodeticdatum": "WGS84", "month": "3", "vernacularname": "Least Shrew", "country": "United States", "url": "http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals", "recordedby": "W.W. Baker", "phylum": "Chordata", "institutioncode": "TTRS", "basisofrecord": "PreservedSpecimen", "occurrenceremarks": "Preparer's identifier WWB-515", "order": "Insectivora", "scientificname": "Cryptotis parva", "county": "Leon", "individualcount": "1", "catalognumber": "18", "eml": "http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals", "decimallongitude": "-84.2176909195154", "year": "1967", "id": "128cd6f3-24b4-4425-998a-4e751bf366ce", "keyname": "tall-timbers-research-station-and-land-conservancy/ttrs-mammals/128cd6f3-24b4-4425-998a-4e751bf366ce", "description": "Scientists, natural history students, artists, and others interested in the fauna and flora of the southeast are encouraged to visit The Natural History Museum and Scientific Collections at Tall Timbers. Special arrangements must be made to view and work with specimens, and the general hours of operation are 8:30 AM-4:30 PM. Loans are generally discouraged but are allowed occasionally and governed by formal agreements developed on an individual basis.", "kingdom": "Animalia", "stateprovince": "FL", "__record_number__": 18, "locality": "TTRS, MB66-B2X", "contact": "Jim Cox", "preparations": "Skin", "title": "TTRS Mammals", "pubdate": "Wed May 16 00:00:00 UTC 2012", "day": "28", "georeferenceprotocol": "Manually digitized from known localities", "collectioncode": "Mammals", "specificepithet": "parva", "classs": "Mammalia", "icode": "TTRS"}
+            </div>
+          </p>          
+        </div>
+        <div class="tab-pane fade" id="dropdown2">
+          <h3>Email Jim Cox about this record.</h3>
+            <form>
+              <div class="control-group">
+                <div class="controls">
+                  <input type="text" id="inputEmail" placeholder="Your email">
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <input type="password" id="inputName" placeholder="Your name">
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <textarea cols="80" rows="8" placeholder="Message..."></textarea>
+                </div>
+                <button type="submit" class="btn">Send</button>
+              </div>
+            </form>
+        </div>        
+      </div>
+
+      
+    </div>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+    <script src="../assets/js/bootstrap-affix.js"></script>
+    <script src="../assets/js/holder/holder.js"></script>
+    <script src="../assets/js/google-code-prettify/prettify.js"></script>
+    <script src="../assets/js/application.js"></script>
+    <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
+    <script data-main="../assets/js/vertnet/main" src="../assets/js/vertnet/libs/require/require.js"></script>  
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
+    <script>
+      var map;
+      var mapOptions = {
+        zoom: 10,
+        center: new google.maps.LatLng(38, -123),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+      var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+      cartodb.createLayer(map, layerUrl, function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+      });
+    </script>
+  </body>
+</html>
