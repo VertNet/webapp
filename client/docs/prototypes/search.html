@@ -1,158 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Search UI Mock</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+  <meta charset="utf-8">
+  <title>Search UI Mock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <!-- Le styles -->
-    <link href="../assets/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="../assets/css/docs.css" rel="stylesheet">
-    <link href="../assets/js/google-code-prettify/prettify.css" rel="stylesheet">
-   <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css" />
+  <!-- Le styles -->
+  <link href="../assets/css/bootstrap.css" rel="stylesheet">
+  <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+  <link href="../assets/css/docs.css" rel="stylesheet">
+  <link href="../assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css" />
     <!--[if lte IE 8]>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
-    <![endif]-->
+        <![endif]-->
 
 
-    <style>
-      input.span2.search {
-        width: 300px;
-      }
-    </style>
+        <style>
+        input.span2.search {
+          width: 300px;
+        }
+        </style>
 
-    <style>
-      #mapper {
-        height: 800px;
-        width: 100%;
-      }
-    </style>
+        <style>
+        #mapper {
+          height: 800px;
+          width: 100%;
+        }
+        </style>
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="assets/js/html5shiv.js"></script>
-    <![endif]-->
+      <![endif]-->
 
-    <!-- Le fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <!-- Le fav and touch icons -->
+      <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
-  </head>
-  <body data-spy="scroll" data-target=".bs-docs-sidebar">
-    <!-- Prototype stats carosel. -->
-    <div class="container">
-      <h1>Search UI Mock</h1>
-      <p></p><p></p>
+      <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+      <link rel="shortcut icon" href="../assets/ico/favicon.png">
+    </head>
+    <body data-spy="scroll" data-target=".bs-docs-sidebar">
+      <!-- Prototype stats carosel. -->
+      <div class="container">
+        <ul id="myTab" class="nav nav-tabs">
+          <li class="active"><a href="#results" data-toggle="tab">Table</a></li>
+          <li><a href="#resultsmap" data-toggle="tab">Map</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#dropdown1" data-toggle="tab">Download CSV</a></li>
+              <li><a href="#dropdown2" data-toggle="tab">Upload to CartoDB</a></li>
+              <li><a href="#dropdown3" data-toggle="tab">Email results</a></li>
+            </ul>
+          </li>
+        </ul>
 
-      <ul id="myTab" class="nav nav-tabs">
-        <li class="active"><a href="#results" data-toggle="tab">Table</a></li>
-        <li><a href="#resultsmap" data-toggle="tab">Map</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#dropdown1" data-toggle="tab">Download CSV</a></li>
-            <li><a href="#dropdown2" data-toggle="tab">Upload to CartoDB</a></li>
-            <li><a href="#dropdown3" data-toggle="tab">Email results</a></li>
-          </ul>
-        </li>
-      </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade in active" id="results">
 
-      <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade in active" id="results">
-          <form class="form-search">
-            <div class="input-append">
-              <input type="text" class="span2 search-query search" placeholder="Full text search...">
-              <button type="submit" class="btn">Search</button>
-            </div>
-          </form>      
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                Show search options
-              </a>
-            </div>
-            <div id="collapseOne" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <form class="form-inline">
-                  <input type="text" class="input-medium" placeholder="Genus">
-                  <input type="text" class="input-medium" placeholder="Year">
-                  <input type="text" class="input-medium" placeholder="Country">
-                  <input type="text" class="input-medium" placeholder="Collection">
-                  <input type="text" class="input-x large" placeholder="Keywords">
-                  <label class="checkbox">
-                    <input type="checkbox"> Mappable
-                  </label>
-                  <button type="submit" class="btn">Search</button>
-                </form>
+            <ul class="breadcrumb" style="margin-bottom: 5px;">
+              <li><a href="#">Records</a> 
+                <span class="divider">/</span>
+              </li>
+              <li class="active">search</li>
+            </ul>    
+            <p></p>
+            <div class="hero-unit">
+              <h1>Simply search everything.</h1>
+              <p>Search for VertNet records using Darwin Core terms and keywords, find exactly what you want.</p>
+            </div>   
+            <form class="form-search">
+              <div class="input-append">
+                <input type="text" class="span2 search-query search" placeholder="Full text search...">
+                <button type="submit" class="btn">Search</button>
+              </div>
+            </form>      
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                  Show search options
+                </a>
+              </div>
+              <div id="collapseOne" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="form-inline">
+                    <input type="text" class="input-medium" placeholder="Genus">
+                    <input type="text" class="input-medium" placeholder="Year">
+                    <input type="text" class="input-medium" placeholder="Country">
+                    <input type="text" class="input-medium" placeholder="Collection">
+                    <input type="text" class="input-x large" placeholder="Keywords">
+                    <label class="checkbox">
+                      <input type="checkbox"> Mappable
+                    </label>
+                    <button type="submit" class="btn">Search</button>
+                  </form>
+                </div>
               </div>
             </div>
-        </div>
-        <ul class="pager">
-          <li class="previous"><a href="#">← Back</a></li>
-          <li class="next"><a href="#">More →</a></li>
-        </ul>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Genus</th>
-                <th>Year</th>
-                <th>Country</th>
-                <th>Collection</th>
-                <th>Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Geomys</td>
-                <td>1928</td>
-                <td>France</td>
-                <td>Mammals</td>
-                <td><a href="#">Record detail →</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Cryptotis</td>
-                <td>1977</td>
-                <td>USA</td>
-                <td>Mammals</td>
-                <td><a href="#">Record detail →</td>            
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Bufo</td>
-                <td>2000</td>
-                <td>China</td>
-                <td>Amphibians</td>
-                <td><a href="#">Record detail →</td>            
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Geomys</td>
-                <td>1928</td>
-                <td>France</td>
-                <td>Mammals</td>
-                <td><a href="#">Record detail →</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>Geomys</td>
-                <td>1928</td>
-                <td>France</td>
-                <td>Mammals</td>
-                <td><a href="#">Record detail →</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="tab-pane fade" id="resultsmap">
-          <p><div id="mapper"></div></p>
+            <ul class="pager">
+              <li class="previous"><a href="#">← Back</a></li>
+              <li class="next"><a href="#">More →</a></li>
+            </ul>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Genus</th>
+                  <th>Year</th>
+                  <th>Country</th>
+                  <th>Collection</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Geomys</td>
+                  <td>1928</td>
+                  <td>France</td>
+                  <td>Mammals</td>
+                  <td><a href="/prototypes/record.html">Record detail →</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Cryptotis</td>
+                  <td>1977</td>
+                  <td>USA</td>
+                  <td>Mammals</td>
+                  <td><a href="/prototypes/record.html">Record detail →</td>            
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Bufo</td>
+                  <td>2000</td>
+                  <td>China</td>
+                  <td>Amphibians</td>
+                  <td><a href="/prototypes/record.html">Record detail →</td>            
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Geomys</td>
+                  <td>1928</td>
+                  <td>France</td>
+                  <td>Mammals</td>
+                  <td><a href="/prototypes/record.html">Record detail →</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>Geomys</td>
+                  <td>1928</td>
+                  <td>France</td>
+                  <td>Mammals</td>
+                  <td><a href="/prototypes/record.html">Record detail →</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="resultsmap">
+           <ul class="breadcrumb" style="margin-bottom: 5px;">
+            <li><a href="#">Records</a> 
+              <span class="divider">/</span>
+            </li>
+            <li class="active">map</li>
+          </ul>  
+
+          <p></p>
+          <div id="mapper"></div>
         </div>
         <div class="tab-pane fade" id="dropdown1">
           <p>Download 17,345 search results as a CSV file.</p>
@@ -164,8 +181,6 @@
           <p>Email a VertNet link to these exact search results.</p>
         </div>        
       </div>
-
-      
     </div>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="../assets/js/jquery.js"></script>
@@ -191,17 +206,18 @@
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
     <script>
-      var map;
-      var mapOptions = {
-        zoom: 7,
-        center: new google.maps.LatLng(38, -123),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
-      var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
-      cartodb.createLayer(map, layerUrl, function(layer) {
-          map.overlayMapTypes.setAt(0, layer);
-      });
+    var map;
+    var mapOptions = {
+      zoom: 7,
+      center: new google.maps.LatLng(38, -123),
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      streetViewControl: false
+    };
+    map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+    var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+    cartodb.createLayer(map, layerUrl, function(layer) {
+      map.overlayMapTypes.setAt(0, layer);
+    });
     </script>
   </body>
-</html>
+  </html>

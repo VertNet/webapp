@@ -28,6 +28,7 @@
         #mapper {
           height: 175px;
           width: 100%;
+          margin-top: 25px;
         }
         </style>
 
@@ -48,6 +49,7 @@
       <div class="container">
         <ul id="myTab" class="nav nav-tabs">
           <li class="active"><a href="#detail" data-toggle="tab">Detail</a></li>
+          <li><a href="#rights" data-toggle="tab">Rights</a></li>
           <li><a href="#comments" data-toggle="tab">Comments</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <b class="caret"></b></a>
@@ -60,7 +62,7 @@
 
         <div id="myTabContent" class="tab-content">
           <div class="tab-pane fade in active" id="detail">
-           
+
             <ul class="breadcrumb" style="margin-bottom: 5px;">
               <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
                 <span class="divider">/</span>
@@ -110,6 +112,7 @@
               <div class="container-fluid">
                 <div class="row-fluid">
                   <div class="span5">
+                    <h3>About this record</h3>
                     <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
                     <br>
                     <strong>Resource:</strong> TTRS Mammals 
@@ -146,88 +149,108 @@
         </div> -->
         
         <div class="container"  style="overflow: auto">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Genus</th>
-              <th>Year</th>
-              <th>Country</th>
-              <th>Collection</th>
-              <th>Georeferenceprotocol</th>
-              <th>Stateprovince</th>
-              <th>Month</th>
-              <th>Decimallongitude</th>
-              <th>Phylum</th>
-              <th>Institutioncode</th>
-              <th>Kingdom</th>
-              <th>Preparations</th>
-              <th>Recordedby</th>
-              <th>Day</th>
-              <th>County</th>
-              <th>Eml</th>
-              <th>Individualcount</th>
-              <th>Catalognumber</th>
-              <th>Sex</th>
-              <th>Specificepithet</th>
-              <th>Id</th>
-              <th>Locality</th>
-              <th>Geodeticdatum</th>
-              <th>Occurrenceremarks</th>
-              <th>Contact</th>
-              <th>Dwca</th>
-              <th>Email</th>
-              <th>Icode</th>
-              <th>Scientificname</th>
-              <th>Vernacularname</th>
-              <th>Decimallatitude</th>
-              <th>Url</th>
-              <th>Basisofrecord</th>
-              <th>Order</th>
-              <th>Class</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Cryptotis</td>
-              <td>1967</td>
-              <td>United States</td>                
-              <td>Mammals</td>                
-              <td>Manually digitized from known localities</td>
-              <td>FL</td>
-              <td>3</td>
-              <td>-84.2176909195154</td>
-              <td>Chordata</td>
-              <td>TTRS</td>
-              <td>Animalia</td>
-              <td>Skin</td>
-              <td>W.W. Baker</td>
-              <td>28</td>
-              <td>Leon</td>
-              <td>http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</td>
-              <td>1</td>
-              <td>18</td>
-              <td>Female</td>
-              <td>parva</td>
-              <td>128cd6f3-24b4-4425-998a-4e751bf366ce</td>
-              <td>TTRS, MB66-B2X</td>
-              <td>WGS84</td>
-              <td>Preparer's identifier WWB-515</td>
-              <td>Jim Cox</td>
-              <td>http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</td>
-              <td>jim@ttrs.org</td>
-              <td>TTRS</td>
-              <td>Cryptotis parva</td>
-              <td>Least Shrew</td>
-              <td>30.6658703040448</td>
-              <td>http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</td>
-              <td>PreservedSpecimen</td>
-              <td>Insectivora</td>
-              <td>Mammalia</td>              
-            </tr>
-          </tbody>
-        </table> 
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Genus</th>
+                <th>Year</th>
+                <th>Country</th>
+                <th>Collection</th>
+                <th>Georeferenceprotocol</th>
+                <th>Stateprovince</th>
+                <th>Month</th>
+                <th>Decimallongitude</th>
+                <th>Phylum</th>
+                <th>Institutioncode</th>
+                <th>Kingdom</th>
+                <th>Preparations</th>
+                <th>Recordedby</th>
+                <th>Day</th>
+                <th>County</th>
+                <th>Eml</th>
+                <th>Individualcount</th>
+                <th>Catalognumber</th>
+                <th>Sex</th>
+                <th>Specificepithet</th>
+                <th>Id</th>
+                <th>Locality</th>
+                <th>Geodeticdatum</th>
+                <th>Occurrenceremarks</th>
+                <th>Contact</th>
+                <th>Dwca</th>
+                <th>Email</th>
+                <th>Icode</th>
+                <th>Scientificname</th>
+                <th>Vernacularname</th>
+                <th>Decimallatitude</th>
+                <th>Url</th>
+                <th>Basisofrecord</th>
+                <th>Order</th>
+                <th>Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Cryptotis</td>
+                <td>1967</td>
+                <td>United States</td>                
+                <td>Mammals</td>                
+                <td>Manually digitized from known localities</td>
+                <td>FL</td>
+                <td>3</td>
+                <td>-84.2176909195154</td>
+                <td>Chordata</td>
+                <td>TTRS</td>
+                <td>Animalia</td>
+                <td>Skin</td>
+                <td>W.W. Baker</td>
+                <td>28</td>
+                <td>Leon</td>
+                <td>http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</td>
+                <td>1</td>
+                <td>18</td>
+                <td>Female</td>
+                <td>parva</td>
+                <td>128cd6f3-24b4-4425-998a-4e751bf366ce</td>
+                <td>TTRS, MB66-B2X</td>
+                <td>WGS84</td>
+                <td>Preparer's identifier WWB-515</td>
+                <td>Jim Cox</td>
+                <td>http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</td>
+                <td>jim@ttrs.org</td>
+                <td>TTRS</td>
+                <td>Cryptotis parva</td>
+                <td>Least Shrew</td>
+                <td>30.6658703040448</td>
+                <td>http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</td>
+                <td>PreservedSpecimen</td>
+                <td>Insectivora</td>
+                <td>Mammalia</td>              
+              </tr>
+            </tbody>
+          </table> 
+        </div>
       </div>
-    </div>
+
+      <div class="tab-pane fade" id="rights">
+        <ul class="breadcrumb" style="margin-bottom: 5px;">
+          <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
+            <span class="divider">/</span>
+          </li>
+          <li><a href="#">TTRS Mammals</a> 
+            <span class="divider">/</span>
+          </li>
+          <li><a href="#">128cd6f3-24b4-4425-998a-4e751bf366ce</a> 
+            <span class="divider">/</span>
+          </li>
+          <li class="active">rights</li>
+        </ul>    
+        <p></p>
+        <h3>Rights</h3>
+        <div class="alert alert-error">
+          Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.</div>
+        </div>
+
         <div class="tab-pane fade" id="comments">
           <ul class="breadcrumb" style="margin-bottom: 5px;">
             <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
