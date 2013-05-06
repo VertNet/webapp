@@ -1,12 +1,11 @@
 """Datastore models and RPC payload messages."""
 
 from google.appengine.ext import ndb
-
+from google.appengine.ext.ndb import tasklets
 from protorpc import messages
 
-import logging
 import json
-from google.appengine.ext.ndb import model, query, tasklets
+import logging
 
 # Dummpy stats for testing.
 DUMMY_STATS = dict(
@@ -22,7 +21,7 @@ DUMMY_STATS = dict(
         Aves=271059,Actinopterygii=183898,Chondrichthyes=1636,Elasmobranchii=1460))
 
 class Stats(ndb.Model):
-    """Model for data statitstics."""
+    """Model for VertNet data statitstics."""
     stats = ndb.JsonProperty(default=DUMMY_STATS)
 
     @property
@@ -34,6 +33,7 @@ class Stats(ndb.Model):
         return StatsPayload(stats=json.dumps(self.stats))
 
 class StatsPayload(messages.Message):
+    """JSON message for stats RPC."""
     stats = messages.StringField(1)
 
 class Organization(ndb.Model):

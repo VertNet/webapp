@@ -17,7 +17,7 @@ def record_list(limit, cursor, q, message=False):
     return i, n, m
 
 class RecordService(remote.Service):
-    """RPC services for working with Darwin Core Records."""
+    """RPC services for working with Records."""
 
     @remote.method(RecordList, RecordList)
     def search(self, message):
