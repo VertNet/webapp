@@ -29,6 +29,37 @@
           height: 800px;
           width: 100%;
         }
+        #search-keywords-box {
+          height: 50px;
+          width: 1156px;
+          font-size: 30px;
+          line-height: 50px;
+          margin: 20px 0;
+        }
+
+        #search-options {
+          font-size: 0;
+          margin-left: -10px;
+        }
+
+        .search-box {
+          height: 30px !important;
+          width: 271px;
+          font-size: 20px !important;
+          line-height: 30px !important;
+          margin-left: 10px;
+        }
+
+        .search-legend {
+          font-size: 25px;
+          display: block;
+          margin: 10px 0;
+        }
+
+        .load-more {
+          text-align: right !important;
+        }
+
         </style>
 
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -45,46 +76,46 @@
     </head>
     <body data-spy="scroll" data-target=".bs-docs-sidebar">
       <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="./index.html">VertNet</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active">
-                <a href="./index.html">About</a>
-              </li>
-              <li class="">
-                <a href="./api">API</a>
-              </li>
-              <li class="">
-                <a href="./contact">Contact</a>
-              </li>
-              <li class="">
-                <a href="./download">Download</a>
-              </li>
-              <li class="">
-                <a href="./join">Join</a>
-              </li>
-              <li class="">
-                <a href="./resources">Resources</a>
-              </li>
-              <li class="">
-                <a href="/prototypes/search.html">Search</a>
-              </li>
-              <li class="">
-                <a href="./stats">Statistics</a>
-              </li>
-            </ul>
+        <div class="navbar-inner">
+          <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="./index.html">VertNet</a>
+            <div class="nav-collapse collapse">
+              <ul class="nav">
+                <li class="active">
+                  <a href="./index.html">About</a>
+                </li>
+                <li class="">
+                  <a href="./api">API</a>
+                </li>
+                <li class="">
+                  <a href="./contact">Contact</a>
+                </li>
+                <li class="">
+                  <a href="./download">Download</a>
+                </li>
+                <li class="">
+                  <a href="./join">Join</a>
+                </li>
+                <li class="">
+                  <a href="./resources">Resources</a>
+                </li>
+                <li class="">
+                  <a href="/prototypes/search.html">Search</a>
+                </li>
+                <li class="">
+                  <a href="./stats">Statistics</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <p></p>
+      <p></p>
       <!-- Prototype stats carosel. -->
       <div class="container">
         <ul id="myTab" class="nav nav-tabs">
@@ -110,11 +141,28 @@
               <li class="active">search</li>
             </ul>    
             <p></p>
-            <div class="hero-unit">
+
+            <form>
+              <fieldset>
+                <!-- <span class="search-legend">Search for VertNet records using Darwin Core terms and keywords.</span> -->
+                <input id="search-keywords-box" type="text" placeholder="Keywords...">
+                <div id="search-options">
+                  <input type="text" class="input-medium search-box" placeholder="Genus">
+                  <input type="text" class="input-medium search-box" placeholder="Year">
+                  <input type="text" class="input-medium search-box" placeholder="Country">
+                  <input type="text" class="input-medium search-box" placeholder="Collection">
+                </div>
+              </fieldset>
+              </form>
+
+<!--             <input id="search-box" type="text" placeholder="VertNet Search">
+  Search for VertNet records using Darwin Core terms and keywords. -->
+            <!-- <div class="hero-unit">
               <h1>VertNet Search</h1>
               <p>Search for VertNet records using Darwin Core terms and keywords.</p>
-            </div>   
-            <form class="form-search">
+            </div>    -->
+            
+            <!-- <form class="form-search">
               <div class="input-append">
                 <input type="text" class="span2 search-query search" placeholder="Full text search...">
                 <button type="submit" class="btn">Search</button>
@@ -138,127 +186,197 @@
                       <input type="checkbox"> Mappable
                     </label>
                     <button type="submit" class="btn">Search</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <ul class="pager">
-              <li class="previous"><a href="#">← Back</a></li>
-              <li class="next"><a href="#">More →</a></li>
-            </ul>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Genus</th>
-                  <th>Year</th>
-                  <th>Country</th>
-                  <th>Collection</th>
-                  <th>Detail</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Geomys</td>
-                  <td>1928</td>
-                  <td>France</td>
-                  <td>Mammals</td>
-                  <td><a href="/prototypes/record.html">Record detail →</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Cryptotis</td>
-                  <td>1977</td>
-                  <td>USA</td>
-                  <td>Mammals</td>
-                  <td><a href="/prototypes/record.html">Record detail →</td>            
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Bufo</td>
-                  <td>2000</td>
-                  <td>China</td>
-                  <td>Amphibians</td>
-                  <td><a href="/prototypes/record.html">Record detail →</td>            
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Geomys</td>
-                  <td>1928</td>
-                  <td>France</td>
-                  <td>Mammals</td>
-                  <td><a href="/prototypes/record.html">Record detail →</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>Geomys</td>
-                  <td>1928</td>
-                  <td>France</td>
-                  <td>Mammals</td>
-                  <td><a href="/prototypes/record.html">Record detail →</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="tab-pane fade" id="resultsmap">
-           <ul class="breadcrumb" style="margin-bottom: 5px;">
-            <li><a href="#">Records</a> 
-              <span class="divider">/</span>
-            </li>
-            <li class="active">map</li>
-          </ul>  
+                  </form> -->
+                  <!-- </div> -->
+<!--               </div>
+</div> -->
+<!-- <ul class="pager">
+  <li class="previous"><a href="#">← Back</a></li>
+  <li class="next"><a href="#">More →</a></li>
+</ul>
+ -->
+            
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Genus</th>
+      <th>Species</th>
+      <th>Year</th>
+      <th>Country</th>
+      <th>Collection</th>
+      <th>Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
+        <tr>
+      <td>1</td>
+      <td>Geomys</td>
+      <td>parva</td>
+      <td>1928</td>
+      <td>France</td>
+      <td>Mammals</td>
+      <td><a href="/prototypes/record.html">Record detail →</td>
+    </tr>
 
-          <p></p>
-          <div id="mapper"></div>
-        </div>
-        <div class="tab-pane fade" id="dropdown1">
-          <p>Download 17,345 search results as a CSV file.</p>
-        </div>
-        <div class="tab-pane fade" id="dropdown2">
-          <p>Transfer 17,345 search results to your CartoDB account.</p>
-        </div>
-        <div class="tab-pane fade" id="dropdown3">
-          <p>Email a VertNet link to these exact search results.</p>
-        </div>        
-      </div>
-    </div>
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="../assets/js/jquery.js"></script>
-    <script src="../assets/js/bootstrap-transition.js"></script>
-    <script src="../assets/js/bootstrap-alert.js"></script>
-    <script src="../assets/js/bootstrap-modal.js"></script>
-    <script src="../assets/js/bootstrap-dropdown.js"></script>
-    <script src="../assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../assets/js/bootstrap-tab.js"></script>
-    <script src="../assets/js/bootstrap-tooltip.js"></script>
-    <script src="../assets/js/bootstrap-popover.js"></script>
-    <script src="../assets/js/bootstrap-button.js"></script>
-    <script src="../assets/js/bootstrap-collapse.js"></script>
-    <script src="../assets/js/bootstrap-carousel.js"></script>
-    <script src="../assets/js/bootstrap-typeahead.js"></script>
-    <script src="../assets/js/bootstrap-affix.js"></script>
-    <script src="../assets/js/holder/holder.js"></script>
-    <script src="../assets/js/google-code-prettify/prettify.js"></script>
-    <script src="../assets/js/application.js"></script>
-    <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
-    <script data-main="../assets/js/vertnet/main" src="../assets/js/vertnet/libs/require/require.js"></script>  
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
-    <script>
-    var map;
-    var mapOptions = {
-      zoom: 7,
-      center: new google.maps.LatLng(38, -123),
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
-      streetViewControl: false
-    };
-    map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
-    var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
-    cartodb.createLayer(map, layerUrl, function(layer) {
-      map.overlayMapTypes.setAt(0, layer);
-    });
-    </script>
-  </body>
-  </html>
+  </tbody>
+</table>
+
+
+<ul class="pager load-more">
+  <li><a href="#">Load more results &rarr;</a></li>
+</ul>
+
+
+
+<div class="tab-pane fade" id="resultsmap">
+ <ul class="breadcrumb" style="margin-bottom: 5px;">
+  <li><a href="#">Records</a> 
+    <span class="divider">/</span>
+  </li>
+  <li class="active">map</li>
+</ul>  
+
+<p></p>
+<div id="mapper"></div>
+</div>
+<div class="tab-pane fade" id="dropdown1">
+  <p>Download 17,345 search results as a CSV file.</p>
+</div>
+<div class="tab-pane fade" id="dropdown2">
+  <p>Transfer 17,345 search results to your CartoDB account.</p>
+</div>
+<div class="tab-pane fade" id="dropdown3">
+  <p>Email a VertNet link to these exact search results.</p>
+</div>        
+</div>
+</div>
+<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+<script src="../assets/js/jquery.js"></script>
+<script src="../assets/js/bootstrap-transition.js"></script>
+<script src="../assets/js/bootstrap-alert.js"></script>
+<script src="../assets/js/bootstrap-modal.js"></script>
+<script src="../assets/js/bootstrap-dropdown.js"></script>
+<script src="../assets/js/bootstrap-scrollspy.js"></script>
+<script src="../assets/js/bootstrap-tab.js"></script>
+<script src="../assets/js/bootstrap-tooltip.js"></script>
+<script src="../assets/js/bootstrap-popover.js"></script>
+<script src="../assets/js/bootstrap-button.js"></script>
+<script src="../assets/js/bootstrap-collapse.js"></script>
+<script src="../assets/js/bootstrap-carousel.js"></script>
+<script src="../assets/js/bootstrap-typeahead.js"></script>
+<script src="../assets/js/bootstrap-affix.js"></script>
+<script src="../assets/js/holder/holder.js"></script>
+<script src="../assets/js/google-code-prettify/prettify.js"></script>
+<script src="../assets/js/application.js"></script>
+<script src="../assets/js/vertnet/libs/store/store.min.js"></script>
+<script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
+<script data-main="../assets/js/vertnet/main" src="../assets/js/vertnet/libs/require/require.js"></script>  
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
+<script>
+var map;
+var mapOptions = {
+  zoom: 7,
+  center: new google.maps.LatLng(38, -123),
+  mapTypeId: google.maps.MapTypeId.TERRAIN,
+  streetViewControl: false
+};
+map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+cartodb.createLayer(map, layerUrl, function(layer) {
+  map.overlayMapTypes.setAt(0, layer);
+});
+</script>
+</body>
+</html>
