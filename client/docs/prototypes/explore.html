@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Search UI Mock</title>
+  <title>VertNet Explore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -142,23 +142,25 @@
     <p></p>
     <!-- Prototype stats carosel. -->
     <div class="container">
-    <h1> Explore VertNet</h1>
-
+    <div class="page-header">
+        <h1>Explore <small>VertNet</small></h1>
+      </div>
+  
     <ul id="myTabb" class="nav nav-tabs">
-      <li class="active"><a href="#search-records" data-toggle="tab">Search Records</a></li>
-      <li><a id="maptab" href="#search-species" data-toggle="tab">Search Species</a></li>
-      <li><a id="maptab" href="#search-tissues" data-toggle="tab">Search Tissues</a></li>
-      <li><a id="maptab" href="#search-media" data-toggle="tab">Search Media</a></li>
+      <li class="active"><a href="#search-records" data-toggle="tab">Occurrence search</a></li>
+      <li><a id="maptab" href="#search-species" data-toggle="tab">Taxon search</a></li>
+      <li><a id="maptab" href="#search-tissues" data-toggle="tab">Tissue search</a></li>
+      <li><a id="maptab" href="#search-media" data-toggle="tab">Media search</a></li>
     </ul>
 
     <div id="myTabbContent" class="tab-content">
       <div class="tab-pane fade in active" id="search-records">
-
+      <p></p>
 
         <form>
           <fieldset>
             <!-- <span class="search-legend">Search for VertNet records using Darwin Core terms and keywords.</span> -->
-            <input id="search-keywords-box" type="text" placeholder="Type some keywords here...">
+            <input id="search-keywords-box" type="text" placeholder="Type keywords here...">
             <div id="search-options">
               <input type="text" class="input-medium search-box" placeholder="Genus">
               <input type="text" class="input-medium search-box" placeholder="Species">
@@ -332,7 +334,7 @@ window.onload = main;
 $("#maptab").click(function(x) {
   setTimeout(function() {
     google.maps.event.trigger(map, "resize");
-  }, 200);
+  }, 400);
 })
 </script>
 </body>

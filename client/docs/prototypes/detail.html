@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Search UI Mock</title>
+  <title>Occurrence detail</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -26,10 +26,10 @@
 
         <style>
         #mapper {
-          height: 200px;
+          height: 400px;
           width: 100%;
           margin-bottom: 30px;
-          margin-top: 15px;
+          margin-top: 25px;
         }
         #search-keywords-box {
           height: 50px;
@@ -125,10 +125,10 @@
             <a class="brand" href="./index.html">VertNet</a>
             <div class="nav-collapse collapse">
              <ul class="nav">
-              <li class="active">
+              <li class="">
                 <a href="./index.html">About</a>
               </li>
-              <li class="">
+              <li class="active">
                 <a href="./api">Explore</a>
               </li>
               <li class="">
@@ -152,7 +152,15 @@
       <!-- Prototype stats carosel. -->
       <div class="container">
 
-       <ul class="breadcrumb bread" style="margin-bottom: 5px;">
+      <div class="page-header">
+        <h1>Occurrence <small>detail</small></h1>
+      </div>
+<div class="alert alert-success">
+            <h4>&copy;2013 Tall Timbers Research Station and Land Conservancy</h4>
+            Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.
+          </div>
+
+      <!--  <ul class="breadcrumb bread" style="margin-bottom: 5px;">
         <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
           <span class="divider">/</span>
         </li>
@@ -164,10 +172,9 @@
         </li>
         <li class="active">detail</li>
       </ul>     
+ -->
 
-      <p></p>
-
-      <div class="well well-small well-header">
+      <!-- <div class="well well-small well-header">
         <div class="container-fluid">
           <div class="row-fluid">
             <div class="span5">
@@ -192,22 +199,48 @@
           </div>
         </div>
       </div>
-
+ -->
 
       <!-- <div id="mapper"></div> -->
 
       <ul id="myTab" class="nav nav-tabs">
-        <li class="active"><a href="#search-table" data-toggle="tab">Darwin Core</a></li>
+        <li class="active"><a href="#summary-tab" data-toggle="tab">Summary</a></li>
+        <li><a href="#search-table" data-toggle="tab">Darwin Core</a></li>
         <li><a id="maptab" href="#media-tab" data-toggle="tab">Media</a></li>
         <li><a id="maptab" href="#comments-tab" data-toggle="tab">Annotations</a></li>
       </ul>
 
       <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade in active" id="search-table"> 
-          <div class="alert alert-block">
-            <h4>&copy;2013 Tall Timbers Research Station and Land Conservancy</h4>
-            Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.
+      
+      <div class="tab-pane fade in active" id="summary-tab"> 
+        <h4>Primary data source: <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a></h4>
+        <div id="mapper"></div>
+       <!--  <div class="container-fluid">
+          <div class="row-fluid">
+            <div class="span5">
+              <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
+              <br>
+              <strong>Resource:</strong> TTRS Mammals 
+              <br>
+              <strong>Record Id:</strong> 128cd6f3-24b4-4425-998a-4e751bf366ce
+              <br>
+              <strong>Contact:</strong> Jim Cox
+              <br>
+              <strong>IPT:</strong> <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a>
+              <br>
+              <strong>EML:</strong> <a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a>
+              <br>
+              <strong>DwCA:</strong> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a>
+            </div>
+            <div class="span7">
+              <div id="mapper"></div>
+            </div>
           </div>
+        </div> -->
+      </div>
+
+        <div class="tab-pane fade" id="search-table"> 
+
             <div class="tabbable tabs-left">
               <ul class="nav nav-tabs">
                 <li class="active"><a href="#lA" data-toggle="tab">RecordLevel</a></li>
@@ -279,6 +312,7 @@
             </div>
           </div>
           <div class="tab-pane fade" id="media-tab">
+
             <ul class="thumbnails">
               <li class="span4">
                 <a href="#" class="thumbnail">
