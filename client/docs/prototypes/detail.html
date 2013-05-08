@@ -173,179 +173,197 @@
 
       <p></p>
 
-       <div class="alert alert-success">
-          Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.</div>
-
-<div class="well well-small well-header">
-              <div class="container-fluid">
-                <div class="row-fluid">
-                  <div class="span5">
-                    <h1>TTRS Record summary</h1>
-                    <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
-                    <br>
-                    <strong>Resource:</strong> TTRS Mammals 
-                    <br>
-                    <strong>Record Id:</strong> 128cd6f3-24b4-4425-998a-4e751bf366ce
-                    <br>
-                    <strong>Contact:</strong> Jim Cox
-                    <br>
-                    <strong>IPT:</strong> <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a>
-                    <br>
-                    <strong>EML:</strong> <a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a>
-                    <br>
-                    <strong>DwCA:</strong> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a>
-                  </div>
-                  <div class="span7">
-                    <div id="mapper"></div>
-                  </div>
-                </div>
-              </div>
+      <div class="well well-small well-header">
+        <div class="container-fluid">
+          <div class="row-fluid">
+            <div class="span5">
+              <h1>TTRS record summary</h1>
+              <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
+              <br>
+              <strong>Resource:</strong> TTRS Mammals 
+              <br>
+              <strong>Record Id:</strong> 128cd6f3-24b4-4425-998a-4e751bf366ce
+              <br>
+              <strong>Contact:</strong> Jim Cox
+              <br>
+              <strong>IPT:</strong> <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a>
+              <br>
+              <strong>EML:</strong> <a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a>
+              <br>
+              <strong>DwCA:</strong> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a>
             </div>
+            <div class="span7">
+              <div id="mapper"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- <div id="mapper"></div> -->
 
       <ul id="myTab" class="nav nav-tabs">
-        <li class="active"><a href="#search-table" data-toggle="tab">RecordLevel</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">Occurrence</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">Event</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">Location</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">GeologicalContext</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">Identification</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">Taxon</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">ResourceRelationship</a></li>
-        <li><a id="maptab" href="#resultsma" data-toggle="tab">MeasurementFact</a></li>
+        <li class="active"><a href="#search-table" data-toggle="tab">Darwin Core</a></li>
+        <li><a id="maptab" href="#media-tab" data-toggle="tab">Media</a></li>
+        <li><a id="maptab" href="#comments-tab" data-toggle="tab">Comments</a></li>
       </ul>
 
       <div id="myTabContent" class="tab-content">
-          <div class="tab-pane fade in active" id="search-table"> 
+        <div class="tab-pane fade in active" id="search-table"> 
+          <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#lA" data-toggle="tab">RecordLevel</a></li>
+              <li class=""><a href="#lB" data-toggle="tab">Occurrence</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">Event</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">Location</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">GeologicalContext</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">Identification</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">Taxon</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">ResourceRelationship</a></li>
+              <li class=""><a href="#lC" data-toggle="tab">MeasurementOrFact</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="alert alert-success">
+                Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.</div>
+                <div class="tab-pane active" id="lA">
 
-            <table class="table table-striped table-hover search-results-hover">
-              <thead>
-                <tr>
-                  <th>Term</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>InstitutionCode</td>
-                  <td>TTRS</td>
-                </tr>
-                <tr>
-                  <td>InstitutionCode</td>
-                  <td>TTRS</td>
-                </tr>
-                <tr>
-                  <td>InstitutionCode</td>
-                  <td>TTRS</td>
-                </tr>
-                <tr>
-                  <td>InstitutionCode</td>
-                  <td>TTRS</td>
-                </tr>
-                <tr>
-                  <td>InstitutionCode</td>
-                  <td>TTRS</td>
-                </tr>
-              </tbody>
-            </table>
+                  <table class="table table-striped table-hover search-results-hover">
+                    <thead>
+                      <tr>
+                        <th>Term</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>InstitutionId</td>
+                        <td>345654</td>
+                      </tr>
+                      <tr>
+                        <td>CollectionId</td>
+                        <td>T457798</td>
+                      </tr>
+                      <tr>
+                        <td>InstitutionCode</td>
+                        <td>TTRS</td>
+                      </tr>
+                      <tr>
+                        <td>DatasetName</td>
+                        <td>TTRS Mammals</td>
+                      </tr>
+                      <tr>
+                        <td>BasisOfRecord</td>
+                        <td>Preserved specimen</td>
+                      </tr>
+                    </tbody>
+                  </table> 
+                </div>
+                <div class="tab-pane" id="lB">
+                  <p>Howdy, I'm in Section B.</p>
+                </div>
+                <div class="tab-pane" id="lC">
+                  <p>What up girl, this is Section C.</p>
+                </div>
+              </div>
             </div>
-
-
-        <div class="tab-pane fade" id="resultsmap">
-         <ul class="breadcrumb" style="margin-bottom: 5px;">
-          <li><a href="#">Records</a> 
-            <span class="divider">/</span>
-          </li>
-          <li class="active">map</li>
-        </ul>  
-
-        <p></p>
-        <div id="mapper"></div>
-        <ul class="pager load-more">
-          <li><a href="#">Load more results...</a></li>
-        </ul>
-      </div>
-      <div class="tab-pane fade" id="dropdown1">
-        <p>Download 17,345 search results as a CSV file.</p>
-      </div>
-      <div class="tab-pane fade" id="dropdown2">
-        <p>Transfer 17,345 search results to your CartoDB account.</p>
-      </div>
-      <div class="tab-pane fade" id="dropdown3">
-        <p>Email a VertNet link to these exact search results.</p>
-      </div>   
-       <div id="rec-detail">
-          <dl class="dl-horizontal">
-              <dt>Publisher</dt>
-              <dd>Tall Timbers Research Station and Land Conservancy</dd>
-              <dt>IPT Resource</dt>
-              <dd><a href="TTRS">TTRS</a></dd>
-              <dt>Record Id</dt>
-              <dd>128cd6f3-24b4-4425-998a-4e751bf366ce</dd>
-              <dt>EML</dt>
-              <dd><a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a></dd>
-              <dt>DwCA</dt>
-              <dd> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a></dd>
-            </dl>
+          </div>
+          <div class="tab-pane fade" id="comments-tab">
+            Comments!
+          </div>
+          <div class="tab-pane fade" id="media-tab">
+            Media!
+          </div>
         </div>
-    </div>
+            <!-- 
+          <table class="table table-striped table-hover search-results-hover">
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>InstitutionCode</td>
+                <td>TTRS</td>
+              </tr>
+              <tr>
+                <td>InstitutionCode</td>
+                <td>TTRS</td>
+              </tr>
+              <tr>
+                <td>InstitutionCode</td>
+                <td>TTRS</td>
+              </tr>
+              <tr>
+                <td>InstitutionCode</td>
+                <td>TTRS</td>
+              </tr>
+              <tr>
+                <td>InstitutionCode</td>
+                <td>TTRS</td>
+              </tr>
+            </tbody>
+          </table> -->
 
-    <!-- </div> -->
-    <!-- </div> -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="../assets/js/jquery.js"></script>
-    <script src="../assets/js/bootstrap-transition.js"></script>
-    <script src="../assets/js/bootstrap-alert.js"></script>
-    <script src="../assets/js/bootstrap-modal.js"></script>
-    <script src="../assets/js/bootstrap-dropdown.js"></script>
-    <script src="../assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../assets/js/bootstrap-tab.js"></script>
-    <script src="../assets/js/bootstrap-tooltip.js"></script>
-    <script src="../assets/js/bootstrap-popover.js"></script>
-    <script src="../assets/js/bootstrap-button.js"></script>
-    <script src="../assets/js/bootstrap-collapse.js"></script>
-    <script src="../assets/js/bootstrap-carousel.js"></script>
-    <script src="../assets/js/bootstrap-typeahead.js"></script>
-    <script src="../assets/js/bootstrap-affix.js"></script>
-    <script src="../assets/js/holder/holder.js"></script>
-    <script src="../assets/js/google-code-prettify/prettify.js"></script>
-    <script src="../assets/js/application.js"></script>
-    <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>    
-    <script>
-    
-      var map;
-      var recDetail;
 
-      function main() {
-        var mapOptions = {
-         zoom: 15,
-        center: new google.maps.LatLng(37.9956, -123.0231),
-          mapTypeId: google.maps.MapTypeId.TERRAIN,
-          streetViewControl: false,
-          disableDefaultUI: true
-        };
-        map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
-        var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
-        cartodb.createLayer(map, layerUrl).on('done', function(layer) {
-            map.overlayMapTypes.setAt(0, layer);
-            recDetail = $('#rec-detail');
-            recDetail.index = 1;
-            var controlDiv = $('<div>');
-            controlDiv.index = 1;
-            controlDiv.append(recDetail);
+        </div>
+
+        <!-- </div> -->
+        <!-- </div> -->
+        <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+        <script src="../assets/js/jquery.js"></script>
+        <script src="../assets/js/bootstrap-transition.js"></script>
+        <script src="../assets/js/bootstrap-alert.js"></script>
+        <script src="../assets/js/bootstrap-modal.js"></script>
+        <script src="../assets/js/bootstrap-dropdown.js"></script>
+        <script src="../assets/js/bootstrap-scrollspy.js"></script>
+        <script src="../assets/js/bootstrap-tab.js"></script>
+        <script src="../assets/js/bootstrap-tooltip.js"></script>
+        <script src="../assets/js/bootstrap-popover.js"></script>
+        <script src="../assets/js/bootstrap-button.js"></script>
+        <script src="../assets/js/bootstrap-collapse.js"></script>
+        <script src="../assets/js/bootstrap-carousel.js"></script>
+        <script src="../assets/js/bootstrap-typeahead.js"></script>
+        <script src="../assets/js/bootstrap-affix.js"></script>
+        <script src="../assets/js/holder/holder.js"></script>
+        <script src="../assets/js/google-code-prettify/prettify.js"></script>
+        <script src="../assets/js/application.js"></script>
+        <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
+        <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
+        <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>    
+        <script>
+
+        var map;
+        var recDetail;
+
+        function main() {
+          var mapOptions = {
+           zoom: 15,
+           center: new google.maps.LatLng(37.9956, -123.0231),
+           mapTypeId: google.maps.MapTypeId.TERRAIN,
+           streetViewControl: false,
+           disableDefaultUI: true
+         };
+         map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+         var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+         cartodb.createLayer(map, layerUrl).on('done', function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+          recDetail = $('#rec-detail');
+          recDetail.index = 1;
+          var controlDiv = $('<div>');
+          controlDiv.index = 1;
+          controlDiv.append(recDetail);
             //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv[0]);
-        });
-      }
-      window.onload = main;
-      $("#maptab").click(function(x) {
+          });
+       }
+       window.onload = main;
+       $("#maptab").click(function(x) {
         setTimeout(function() {
           google.maps.event.trigger(map, "resize");
         }, 200);
       })
-    </script>
-  </body>
-  </html>
+       </script>
+     </body>
+     </html>
