@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Search UI Mock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="../assets/css/bootstrap.css" rel="stylesheet">
+  <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+  <link href="../assets/css/docs.css" rel="stylesheet">
+  <link href="../assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
+        <![endif]-->
+
+
+        <style>
+        input.span2.search {
+          width: 300px;
+        }
+        </style>
+
+        <style>
+        #mapper {
+          height: 200px;
+          width: 100%;
+          margin-bottom: 30px;
+          margin-top: 15px;
+        }
+        #search-keywords-box {
+          height: 50px;
+          width: 1156px;
+          font-size: 28px;
+          line-height: 50px;
+        }
+
+        #search-keywords-box::-webkit-input-placeholder { /* WebKit browsers */
+          color:    #555;
+        }
+        #search-keywords-box:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+          color:    #555;
+        }
+        #search-keywords-box::-moz-placeholder { /* Mozilla Firefox 19+ */
+          color:    #555;
+        }
+        #search-keywords-box:-ms-input-placeholder { /* Internet Explorer 10+ */
+          color:    #555;
+        }
+
+        #rec-detail {
+          background-color: white;
+        }
+        #search-options {
+          font-size: 0;
+          margin-left: -10px;
+        }
+
+        .search-results-hover {
+          cursor: hand; 
+          cursor: pointer; 
+        }
+
+        .search-box {
+          height: 30px !important;
+          width: 212px;
+          font-size: 20px !important;
+          line-height: 30px !important;
+          margin-left: 10px;
+        }
+
+        .search-legend {
+          font-size: 25px;
+          display: block;
+          margin: 10px 0;
+        }
+
+        .load-more {
+          text-align: right !important;
+        }
+
+        .bread {
+          margin-top: 10px;
+        }
+
+        .col-center {
+          text-align: center;
+        }
+
+        .col-right {
+          text-align: right;
+        }
+
+        .well-header {
+          margin-bottom: 15px;
+          margin-top: 20px;
+        }
+
+        </style>
+
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+      <![endif]-->
+
+      <!-- Le fav and touch icons -->
+      <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+      <link rel="shortcut icon" href="../assets/ico/favicon.png">
+    </head>
+    <body data-spy="scroll" data-target=".bs-docs-sidebar">
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="./index.html">VertNet</a>
+            <div class="nav-collapse collapse">
+              <ul class="nav">
+                <li class="active">
+                  <a href="./index.html">About</a>
+                </li>
+                <li class="">
+                  <a href="./api">API</a>
+                </li>
+                <li class="">
+                  <a href="./contact">Contact</a>
+                </li>
+                <li class="">
+                  <a href="./download">Download</a>
+                </li>
+                <li class="">
+                  <a href="./join">Join</a>
+                </li>
+                <li class="">
+                  <a href="./resources">Resources</a>
+                </li>
+                <li class="">
+                  <a href="/prototypes/search.html">Search</a>
+                </li>
+                <li class="">
+                  <a href="./stats">Statistics</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p></p>
+      <!-- Prototype stats carosel. -->
+      <div class="container">
+
+       <ul class="breadcrumb bread" style="margin-bottom: 5px;">
+        <li><a href="#">Tall Timbers Research Station and Land Conservancy</a> 
+          <span class="divider">/</span>
+        </li>
+        <li><a href="#">TTRS Mammals</a> 
+          <span class="divider">/</span>
+        </li>
+        <li><a href="#">128cd6f3-24b4-4425-998a-4e751bf366ce</a> 
+          <span class="divider">/</span>
+        </li>
+        <li class="active">detail</li>
+      </ul>     
+
+      <p></p>
+
+       <div class="alert alert-success">
+          Tall Timbers data is governed by the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/legalcode). Any use of data or images must be attributed to Tall Timbers Research Station and Land Conservancy.</div>
+
+<div class="well well-small well-header">
+              <div class="container-fluid">
+                <div class="row-fluid">
+                  <div class="span5">
+                    <h1>TTRS Record summary</h1>
+                    <strong>Publisher:</strong> Tall Timbers Research Station and Land Conservancy
+                    <br>
+                    <strong>Resource:</strong> TTRS Mammals 
+                    <br>
+                    <strong>Record Id:</strong> 128cd6f3-24b4-4425-998a-4e751bf366ce
+                    <br>
+                    <strong>Contact:</strong> Jim Cox
+                    <br>
+                    <strong>IPT:</strong> <a href="http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/resource.do?r=ttrs_mammals</a>
+                    <br>
+                    <strong>EML:</strong> <a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a>
+                    <br>
+                    <strong>DwCA:</strong> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a>
+                  </div>
+                  <div class="span7">
+                    <div id="mapper"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+      <!-- <div id="mapper"></div> -->
+
+      <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#search-table" data-toggle="tab">RecordLevel</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">Occurrence</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">Event</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">Location</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">GeologicalContext</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">Identification</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">Taxon</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">ResourceRelationship</a></li>
+        <li><a id="maptab" href="#resultsma" data-toggle="tab">MeasurementFact</a></li>
+      </ul>
+
+      <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade in active" id="search-table"> 
+
+            <table class="table table-striped table-hover search-results-hover">
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>InstitutionCode</td>
+                  <td>TTRS</td>
+                </tr>
+                <tr>
+                  <td>InstitutionCode</td>
+                  <td>TTRS</td>
+                </tr>
+                <tr>
+                  <td>InstitutionCode</td>
+                  <td>TTRS</td>
+                </tr>
+                <tr>
+                  <td>InstitutionCode</td>
+                  <td>TTRS</td>
+                </tr>
+                <tr>
+                  <td>InstitutionCode</td>
+                  <td>TTRS</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+
+
+        <div class="tab-pane fade" id="resultsmap">
+         <ul class="breadcrumb" style="margin-bottom: 5px;">
+          <li><a href="#">Records</a> 
+            <span class="divider">/</span>
+          </li>
+          <li class="active">map</li>
+        </ul>  
+
+        <p></p>
+        <div id="mapper"></div>
+        <ul class="pager load-more">
+          <li><a href="#">Load more results...</a></li>
+        </ul>
+      </div>
+      <div class="tab-pane fade" id="dropdown1">
+        <p>Download 17,345 search results as a CSV file.</p>
+      </div>
+      <div class="tab-pane fade" id="dropdown2">
+        <p>Transfer 17,345 search results to your CartoDB account.</p>
+      </div>
+      <div class="tab-pane fade" id="dropdown3">
+        <p>Email a VertNet link to these exact search results.</p>
+      </div>   
+       <div id="rec-detail">
+          <dl class="dl-horizontal">
+              <dt>Publisher</dt>
+              <dd>Tall Timbers Research Station and Land Conservancy</dd>
+              <dt>IPT Resource</dt>
+              <dd><a href="TTRS">TTRS</a></dd>
+              <dt>Record Id</dt>
+              <dd>128cd6f3-24b4-4425-998a-4e751bf366ce</dd>
+              <dt>EML</dt>
+              <dd><a href="http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/eml.do?r=ttrs_mammals</a></dd>
+              <dt>DwCA</dt>
+              <dd> <a href="http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals">http://ipt.vertnet.org:8080/ipt/archive.do?r=ttrs_mammals</a></dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- </div> -->
+    <!-- </div> -->
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+    <script src="../assets/js/bootstrap-affix.js"></script>
+    <script src="../assets/js/holder/holder.js"></script>
+    <script src="../assets/js/google-code-prettify/prettify.js"></script>
+    <script src="../assets/js/application.js"></script>
+    <script src="../assets/js/vertnet/libs/store/store.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/fat/bean/master/bean.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>    
+    <script>
+    
+      var map;
+      var recDetail;
+
+      function main() {
+        var mapOptions = {
+         zoom: 15,
+        center: new google.maps.LatLng(37.9956, -123.0231),
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          streetViewControl: false,
+          disableDefaultUI: true
+        };
+        map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
+        var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
+        cartodb.createLayer(map, layerUrl).on('done', function(layer) {
+            map.overlayMapTypes.setAt(0, layer);
+            recDetail = $('#rec-detail');
+            recDetail.index = 1;
+            var controlDiv = $('<div>');
+            controlDiv.index = 1;
+            controlDiv.append(recDetail);
+            //map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv[0]);
+        });
+      }
+      window.onload = main;
+      $("#maptab").click(function(x) {
+        setTimeout(function() {
+          google.maps.event.trigger(map, "resize");
+        }, 200);
+      })
+    </script>
+  </body>
+  </html>
