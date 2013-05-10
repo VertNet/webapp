@@ -49,19 +49,19 @@ define([
         this.page.destroy();
 
       // Get the idea profile JSON:
-      rpc.execute('/api/stats.get', {}, {
-        success: _.bind(function (payload) {
-          // Parse payload stats since it comes up as a string.
-          // This allows us to store stats in datastore as a JsonProperty.
-          console.log(JSON.parse(payload.stats));
-        }, this),
+      // rpc.execute('/api/stats.get', {}, {
+      //   success: _.bind(function (payload) {
+      //     // Parse payload stats since it comes up as a string.
+      //     // This allows us to store stats in datastore as a JsonProperty.
+      //     console.log(JSON.parse(payload.stats));
+      //   }, this),
 
-        error: function (x) {
+      //   error: function (x) {
 
-          // TODO: render 404.
-          console.warn(x);
-        }
-      });
+      //     // TODO: render 404.
+      //     console.warn(x);
+      //   }
+      // });
     },
 
     default: function (actions) {
