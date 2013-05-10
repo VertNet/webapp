@@ -1,8 +1,14 @@
+#home-map {
+	height: 400px;
+	display: block;
+	z-index: 0;
+	border: 1px solid grey;
+}
 
 h1.stats {
-  color: white;
-  font-size: 38px;
-  font-weight: normal;
+	color: white;
+	font-size: 38px;
+	font-weight: normal;
 }
 
 .carousel.stats {

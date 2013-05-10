@@ -31,7 +31,7 @@ class AppHandler(webapp2.RequestHandler):
 
     def page(self):
         """Render page html."""
-        self.render_template('base.html')
+        self.render_template('home.html')
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          
