@@ -9,3 +9,5 @@ node_modules
 bulkloader-*
 bulk.log
 deploy.sh
+
+context.txt
