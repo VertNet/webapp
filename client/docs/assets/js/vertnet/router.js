@@ -10,7 +10,11 @@ define([
   'rpc',
   'mps',
   'views/mapView',
-], function ($, _, Backbone, map, rpc, mps, MapView) {
+  'views/home-view',
+  'views/header-view',
+  'views/footer-view'
+], function ($, _, Backbone, map, rpc, mps, MapView, HomeView, HeaderView, 
+  FooterView) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -35,12 +39,28 @@ define([
       // Catch all:
       '*actions': 'default'
     },
+
+    /**
+     * Initialize header and footer.
+     */
+    initHeaderFooter: function() {
+      // Don't re-create the header.
+      if (!this.header) {
+          this.header = new HeaderView(this.app).render();
+      } else {
+        this.header.render();
+      }
+
+      // Don't re-render the footer.
+      if (!this.footer) {
+        this.footer = new FooterView(this.app).render();
+      }
+    },
     
     home: function (name) {
       console.log('router.home()');
 
       map.init(function() {
-        console.log('BOOM');
         var map = new MapView().render();
       });
 
@@ -48,20 +68,10 @@ define([
       if (this.page)
         this.page.destroy();
 
-      // Get the idea profile JSON:
-      // rpc.execute('/api/stats.get', {}, {
-      //   success: _.bind(function (payload) {
-      //     // Parse payload stats since it comes up as a string.
-      //     // This allows us to store stats in datastore as a JsonProperty.
-      //     console.log(JSON.parse(payload.stats));
-      //   }, this),
+      // Setup header/footer.
+      this.initHeaderFooter();
 
-      //   error: function (x) {
-
-      //     // TODO: render 404.
-      //     console.warn(x);
-      //   }
-      // });
+      this.page = new HomeView(this.app).render();
     },
 
     default: function (actions) {
