@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,8 +32,32 @@
     <link rel="shortcut icon" href="assets/ico/favicon.png">
     {% endblock %}
 </head>
-<body>
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
     <div id="header">{% include 'header.html' %}</div>
     <div id="content">{% block content %}{% endblock %}</div>
-    <div id="footer">{% block footer %}{% endblock %}</div>
+    <div id="footer">{% include 'footer.html' %}</div>
+
+     <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    <script src="assets/js/holder/holder.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/application.js"></script>
+    <script src="assets/js/vertnet/libs/store/store.min.js"></script>
+    <script data-main="assets/js/vertnet/main" src="assets/js/vertnet/libs/require/require.js"></script>
 </body>

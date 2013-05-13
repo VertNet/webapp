@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-    <!-- Title -->
-    <div class="jumbotron masthead">
-      <div class="container">
-        <div class="container-fluid">
-          <div class="row-fluid">
-            <div class="span5">
-              <h1>VertNet</h1>
-              <p>Free and open access to millions of records from hundreds of publishers worldwide.</p>
-            </div>
-            <div class="span6">
+<!-- Title -->
+<div class="jumbotron masthead">
+  <div class="container">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span5">
+          <h1>VertNet</h1>
+          <p>Free and open access to millions of records from hundreds of publishers worldwide.</p>
+        </div>
+        <div class="span6">
           <div id="myCarousel" class="carousel stats slide">
             <ol class="carousel-indicators">
               <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -24,7 +24,7 @@
             </ol>
             <div class="carousel-inner">
               <div class="item active">
-              <img src="../assets/img/Records.png" alt="">  
+                <img src="../assets/img/Records.png" alt="">  
                 <div class="carousel-caption">
                   <h1 class="stats">1,606,374 total records</h1>
                   <!-- <p>in the whole network, shared by all the participating institutions.</p> -->
@@ -83,30 +83,30 @@
             <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
             <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
           </div>
-      </div>
-            </div>
-          </div>
+        </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Map -->
-    <div class="bs-docs-social">
-       <div class="mapContainer" id="mapContainer"></div>
-    </div>
+<!-- Map -->
+<div class="bs-docs-social">
+ <div class="mapContainer" id="mapContainer"></div>
+</div>
 
-    <!-- Links -->
-    <div class="container">
-      <div class="marketing">
-        <div class="row-fluid">
-          <div class="span4">
-            <h2>Search everything</h2>
-            <p>Search VertNet data using Darwin Core terms and find exactly what you want. <p>
-              <a class="btn btn-primary btn-large" href="#">Search &raquo;</a></p></p>
-          </div>
-          <div class="span4">
-            <h2>Join the community</h2>
-            <p>Join the VertNet community of data publishers, scientists, and researchers.  <p> 
-              <a class="btn btn-primary btn-large" href="#">Join &raquo;</a></p></p>
+<!-- Links -->
+<div class="container">
+  <div class="marketing">
+    <div class="row-fluid">
+      <div class="span4">
+        <h2>Search everything</h2>
+        <p>Search VertNet data using Darwin Core terms and find exactly what you want. <p>
+          <a class="btn btn-primary btn-large" href="#">Search &raquo;</a></p></p>
+        </div>
+        <div class="span4">
+          <h2>Join the community</h2>
+          <p>Join the VertNet community of data publishers, scientists, and researchers.  <p> 
+            <a class="btn btn-primary btn-large" href="#">Join &raquo;</a></p></p>
           </div>
           <div class="span4">
             <h2>Easy downloads</h2>
@@ -117,46 +117,7 @@
         <hr class="soften">
       </div>
     </div>
-
-    <!-- Footer
-    ================================================== -->
-    <footer class="footer">
-      <div class="container">
-        <p>VertNet 2013</p>
-        <ul class="footer-links">
-          <li><a href="http://blog.vertnet.com">Blog</a></li>
-          <li class="muted">&middot;</li>
-          <li><a href="http://vertnet.org">Project</a></li>
-        </ul>
-      </div>
-    </footer>
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-
-    <script src="assets/js/holder/holder.js"></script>
-    <script src="assets/js/google-code-prettify/prettify.js"></script>
-    <script src="assets/js/application.js"></script>
-    
-    <script src="assets/js/vertnet/libs/store/store.min.js"></script>
-    <script data-main="assets/js/vertnet/main" src="assets/js/vertnet/libs/require/require.js"></script>
-{% endblock %}
+    {% endblock %}
 
 
 
