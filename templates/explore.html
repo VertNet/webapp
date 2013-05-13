@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<div id="explore-page-content" class="container">
 
   <!-- Page title. -->
   <div class="page-header">
@@ -8,7 +8,7 @@
   </div>
 
   <!-- Top level page tabs. -->
-  <ul id="myTabb" class="nav nav-tabs">
+  <ul id="explore-tabs" class="nav nav-tabs">
     <li class="active">
       <a href="#occurrence-search" data-toggle="tab">Occurrence search</a>
     </li>
@@ -18,7 +18,7 @@
   </ul>
 
   <!--  Occurrence search tab. -->
-  <div id="myTabbContent" class="tab-content">
+  <div id="explore-tabs-content" class="tab-content">
     <div class="tab-pane fade in active" id="occurrence-search">
       <form>
         <fieldset>
