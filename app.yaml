@@ -48,6 +48,6 @@ handlers:
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
 
-- url: /
+- url: /.*
   script: app.handler
   #login: admin

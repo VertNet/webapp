@@ -9,7 +9,8 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
 routes = [
-    webapp2.Route(r'/', handler='app.AppHandler:page', name='page'),
+    webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
+    webapp2.Route(r'/explore', handler='app.AppHandler:explore', name='explore'),
 ]
 
 class AppHandler(webapp2.RequestHandler):
@@ -29,7 +30,11 @@ class AppHandler(webapp2.RequestHandler):
         else:
             return '/' + '1.0' 
 
-    def page(self):
+    def explore(self):
+        """Render the explore page."""
+        self.render_template('explore.html')
+
+    def home(self):
         """Render page html."""
         self.render_template('home.html')
 
