@@ -8,13 +8,12 @@ define([
   'Backbone',
   'mps',
   'rpc',
-  'util'
-  ], function ($, _, Backbone, mps, rpc, util) {
+  ], function ($, _, Backbone, mps, rpc) {
 
   return Backbone.View.extend({
 
     // The DOM target element for this page:
-    el: '#explore-page-content',
+    el: '#content',
 
     // Module entry point:
     initialize: function (app) {

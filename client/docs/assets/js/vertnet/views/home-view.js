@@ -41,6 +41,11 @@ define([
 
       // Render posts.
       console.log('Setting up home view...');
+
+      map.init(function() {
+        var map = new MapView().render();
+      });
+      
       return this;
     },
 
