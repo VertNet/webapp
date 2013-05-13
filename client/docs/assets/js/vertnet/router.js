@@ -6,15 +6,14 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'map',
   'rpc',
   'mps',
-  'views/mapView',
   'views/home-view',
   'views/header-view',
-  'views/footer-view'
-], function ($, _, Backbone, map, rpc, mps, MapView, HomeView, HeaderView, 
-  FooterView) {
+  'views/footer-view',
+  'views/explore-view'
+], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
+  FooterView, ExploreView) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -26,6 +25,7 @@ define([
       
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
+      this.route('explore', 'explore', _.bind(this.explore, this, 'explore'));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -57,12 +57,21 @@ define([
       }
     },
     
+    explore: function(name) {
+      console.log('router.explore()');
+
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
+
+      // Setup header/footer.
+      this.initHeaderFooter();
+
+      this.page = new ExploreView(this.app).render();
+    },
+
     home: function (name) {
       console.log('router.home()');
-
-      map.init(function() {
-        var map = new MapView().render();
-      });
 
       // Kill the page view if it exists.
       if (this.page)
