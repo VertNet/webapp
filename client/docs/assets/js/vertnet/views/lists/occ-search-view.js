@@ -1,7 +1,8 @@
 /*
- * The Occurrence search tab on the explore page.
+ * The Occurrence search tab composite view for the explore page.
  *
- * This is a list view since it contains a list of search results.
+ * This is a composite list view intended to be initialized by the explore page view.
+ * It contains a list of search results viewable in a table, on a map, or downloadable.
  */
 
 define([
@@ -9,12 +10,14 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
+  'rpc',
   'text!../../templates/lists/occ-search-rows.html',
   'collections/occ-search-rows',
   'views/rows/occ-search-row'
-], function ($, _, List, mps, template, Collection, Row) {
+], function ($, _, List, mps, rpc, template, Collection, Row) {
   return List.extend({
     
+    // Top level div for tab content.
     el: '#explore-tabs-content',
 
     initialize: function (app, options) {
@@ -55,8 +58,21 @@ define([
         } else {
           this.keywords = new_keywords;
           console.log("SEACH: ", this.keywords);
+          this.searchRpc();
         }
       }
+    },
+
+    searchRpc: function() {
+      var rl = {limit:3, q:JSON.stringify({terms: {}, keywords: this.keywords})};
+      
+      rpc.execute('/service/rpc/record.search', rl, 
+        {success: function(x)
+          {console.log('SUCCESS: ', x);
+        }, 
+        error: function(x) {
+          console.log('ERROR: ', x);
+        }});
     }
 
   });
