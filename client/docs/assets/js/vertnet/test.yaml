@@ -1,0 +1,5 @@
+server: http://localhost:9875
+
+load:
+  - service/*.js
+  - test/*.js
