@@ -1,0 +1,36 @@
+<% var static = 'undefined' !== typeof __hv ? '/' + __hv : ''; %>
+
+<a href="/<%= this.model.get('owner_username') %>" class="comment-avatar">
+  <% if (this.model.get('owner_avatar')) { %>
+    <img src="<%= this.model.get('owner_avatar') %>"
+        width="32" height="32" />
+  <% } else { %>
+    <img src="<%= static %>/img/avatar_32.png" width="32" height="32" />
+  <% } %>
+</a>
+<div class="comment-content">
+  <p>
+    <a href="/<%= this.model.get('owner_username') %>" class="comment-author">
+      <%= this.model.get('owner_name') %>
+    </a>
+    <%= this.model.content() %>
+  </p>
+</div>
+<div class="comment-info">
+  <!-- < if (this.app.profile.get('person')) { >
+    <div class="branch-icon"></div>
+  < } > -->
+  <% if (!this.model.get('is_root')) { %>
+    <time class="comment-created created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+      <%= this.model.get('created') %>
+    </time>
+  <% } else { %>
+    <span class="comment-created">
+      <a href="/<%= this.model.get('parent_location') %>">
+        Branched from "<%= this.model.blurb(this.model.get('parent').about) %>"
+      </a>
+    </span>
+  <% } %>
+</div>
