@@ -17,7 +17,7 @@ define([
     el: '#search-form',
 
     // Module entry point:
-    initialize: function (app) {
+    initialize: function (app, options) {
 
       // Save app reference.
       this.app = app;

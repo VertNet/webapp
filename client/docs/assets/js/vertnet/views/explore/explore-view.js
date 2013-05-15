@@ -41,7 +41,8 @@ define([
       // Render posts.
       console.log('Setting up explore view...');
 
-      this.occSearchView = new OccSearchView().render();
+      this.occSearchView = new OccSearchView(this.app, {parentView: this, 
+        listEl: 'tbody'}).render();
 
       return this;
     },
