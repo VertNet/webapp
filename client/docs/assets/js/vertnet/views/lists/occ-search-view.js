@@ -64,15 +64,20 @@ define([
     },
 
     searchRpc: function() {
-      var rl = {limit:3, q:JSON.stringify({terms: {}, keywords: this.keywords})};
+      var rl = {limit:10, q:JSON.stringify({terms: {}, keywords: this.keywords})};
       
-      rpc.execute('/service/rpc/record.search', rl, 
-        {success: function(x)
-          {console.log('SUCCESS: ', x);
-        }, 
-        error: function(x) {
+      rpc.execute('/service/rpc/record.search', rl, {
+        success: _.bind(function(x) {
+          console.log('SUCCESS: ', x);
+          var items = _.map(x.items, function(item) {
+            return JSON.parse(item.json);
+          });
+          this.collection.add(items);
+        }, this), 
+        error: _.bind(function(x) {
           console.log('ERROR: ', x);
-        }});
+        }, this)
+      });
     }
 
   });
