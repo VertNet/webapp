@@ -72,7 +72,10 @@ define([
           var items = _.map(x.items, function(item) {
             return JSON.parse(item.json);
           });
-          this.collection.add(items);
+          _.each(items, _.bind(function (i) {
+           this.collection.push(i, {silent: true});
+           this.renderLast(false);
+          }, this));
         }, this), 
         error: _.bind(function(x) {
           console.log('ERROR: ', x);

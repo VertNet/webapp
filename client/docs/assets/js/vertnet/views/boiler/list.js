@@ -16,7 +16,7 @@ define([
       this.app = app;
 
       // Grab options:
-      options = options || {};
+      this.options = options || {};
 
       // Save parent reference.
       this.parentView = options.parentView;
@@ -43,8 +43,8 @@ define([
     },
 
     renderLast: function (pagination) {
-      if (this.collection.models.length === 1)
-        this.$el.empty();
+      //if (this.collection.models.length === 1)
+      //  this.$el.empty();
       if (pagination !== true && this.collection.options &&
           this.collection.options.reverse) {
         this.row(this.collection.models[0]);
