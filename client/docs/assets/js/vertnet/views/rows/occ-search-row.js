@@ -10,6 +10,8 @@ define([
 ], function ($, _, Row, template) {
   return Row.extend({
 
+    tagName: 'tbody',
+
     attributes: function () {
       var branchClass = this.model.get('is_root') ? 'is-root' : '';
       return _.defaults({ class: 'comment ' + branchClass },

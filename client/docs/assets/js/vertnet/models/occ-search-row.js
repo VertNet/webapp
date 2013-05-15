@@ -1,5 +1,5 @@
 /*
- * Comment model
+ * Occurrence search row model.
  */
 
 define([
