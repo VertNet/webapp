@@ -38,9 +38,6 @@ define([
         if (prepend)
           this.$el.prependTo(this.parentView.$el);
         else
-          // pass in option: this.$el.appendTo(this.parentView.options.listHolder);
-          // https://gist.github.com/sanderpick/5581648
-          //this.$el.appendTo(this.parentView.$el);
           this.$el.appendTo(this.parentView.options.listEl);
       this.trigger('rendered');
       return this;

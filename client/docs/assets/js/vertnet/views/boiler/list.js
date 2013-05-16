@@ -10,13 +10,16 @@ define([
 ], function ($, _, Backbone, mps) {
   return Backbone.View.extend({
 
-    initialize: function (app, options) {
+    /* Initialize list.
 
-      // Save app reference.
+    Args:
+      options - Object with parentView.
+    */
+    initialize: function (options, app) {
       this.app = app;
 
       // Grab options:
-      this.options = options || {};
+      // this.options = options || {};
 
       // Save parent reference.
       this.parentView = options.parentView;

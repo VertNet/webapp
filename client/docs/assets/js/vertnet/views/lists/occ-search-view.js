@@ -69,12 +69,18 @@ define([
       rpc.execute('/service/rpc/record.search', rl, {
         success: _.bind(function(x) {
           console.log('SUCCESS: ', x);
+          _.each(items, _.bind(function (i) {
+            this.collection.remove(i, {silent: true});
+            // this.renderLast(false);
+          }, this));
+          // this.collection.reset();
           var items = _.map(x.items, function(item) {
             return JSON.parse(item.json);
           });
+          //this.collection.reset(items);
           _.each(items, _.bind(function (i) {
-           this.collection.push(i, {silent: true});
-           this.renderLast(false);
+            this.collection.push(i, {silent: true});
+            this.renderLast(false);
           }, this));
         }, this), 
         error: _.bind(function(x) {
