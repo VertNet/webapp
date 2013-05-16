@@ -22,19 +22,6 @@ define([
     },
 
     events: {
-      // 'click .branch-icon': 'branch'
-    },
-
-    // branch: function (e) {
-    //   e.preventDefault();
-    //   this.build = new Build({
-    //     isModal: true,
-    //     from: {
-    //       about: 'Re: ' + this.parentView.parentView.model.get('about'),
-    //       model: this.model,
-    //     }
-    //   }).render();
-    // },
-
+    }
   });
 });

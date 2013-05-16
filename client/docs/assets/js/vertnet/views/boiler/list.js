@@ -17,16 +17,7 @@ define([
     */
     initialize: function (options, app) {
       this.app = app;
-
-      // Grab options:
-      // this.options = options || {};
-
-      // Save parent reference.
-      this.parentView = options.parentView;
-
-      // Default collection:
-      if (!this.collection)
-        this.collection = new Backbone.Collection({ model: Backbone.Model });
+      this.collection = new Backbone.Collection({model: Backbone.Model});
       this.collection.options = options;
 
       // List views:
@@ -39,7 +30,7 @@ define([
     },
 
     render: function (options) {
-      options = options || {};
+      var options = options || {};
       this.$el.html(this.template(options));
       this.trigger('rendered');
       return this;
@@ -56,10 +47,6 @@ define([
         this.row(this.collection.models[this.collection.models.length - 1], pagination);
         this.views[this.views.length - 1].render(true);
       }
-      return this;
-    },
-
-    setup: function () {
       return this;
     },
 
