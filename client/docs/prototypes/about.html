@@ -174,6 +174,7 @@
 <script src="../assets/js/bootstrap-button.js"></script>
 <script src="../assets/js/bootstrap-collapse.js"></script>
 <script src="../assets/js/bootstrap-carousel.js"></script>
+<script src="../assets/js/vertnet/libs/backbone/backbone.min.js"></script>
 <script src="../assets/js/bootstrap-typeahead.js"></script>
 <script src="../assets/js/bootstrap-affix.js"></script>
 <script src="../assets/js/holder/holder.js"></script>
@@ -186,17 +187,27 @@
 var map;
 
 function main() {
-  var mapOptions = {
-    zoom: 7,
-    center: new google.maps.LatLng(38, -123),
-    mapTypeId: google.maps.MapTypeId.TERRAIN,
-    streetViewControl: false
-  };
-  map = new google.maps.Map(document.getElementById('mapper'),  mapOptions);
-  var layerUrl = 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json';
-  cartodb.createLayer(map, layerUrl).on('done', function(layer) {
-    map.overlayMapTypes.setAt(0, layer);
-  });
+  window.DocumentRow = Backbone.View.extend({
+
+  tagName: "li",
+
+  className: "document-row",
+
+  events: {
+    "click .icon":          "open",
+    "click .button.edit":   "openEditDialog",
+    "click .button.delete": "destroy"
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  },
+
+  render: function() {
+  
+  }
+
+});
 }
 window.onload = main;
 $("#maptab").click(function(x) {

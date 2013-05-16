@@ -1,5 +1,5 @@
 /*
- * Comments collection.
+ * Occurrence search result collection.
  */
 
 define([
