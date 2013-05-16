@@ -8,56 +8,52 @@
 define([
   'jQuery',
   'Underscore',
-  'views/boiler/list',
+  'Backbone',
   'mps',
   'rpc',
-  'text!../../templates/lists/occ-search-rows.html',
-  'collections/occ-search-rows',
-  'views/rows/occ-search-row'
-], function ($, _, List, mps, rpc, template, Collection, Row) {
-  return List.extend({
+  'text!explore/occ/occ-search-template.html',
+  'explore/occ/OccList',
+  'explore/occ/OccView',
+  'explore/occ/occ-model'
+], function ($, _, Backbone, mps, rpc, template, OccList, OccView, OccModel) {
+  return Backbone.View.extend({
     
     // Top level div for tab content.
     el: '#explore-tabs-content',
 
-    initialize: function (app, options) {
-      this.template = _.template(template);
-      this.collection = new Collection;
-      this.Row = Row;
-
-       _.bindAll(this);
-      $(document).on('keyup', this.search);
-
-      // Set focus in keyword text box.
+    initialize: function (options, app) {
+      this.occList = new OccList();
+      this.viewList = [];
+      $(document).on('keyup', _.bind(this.newSearch, this));
       this.$('#search-keywords-box').focus();
-      this.on('rendered', this.setup, this);
+    },
 
-      // Call super init.
-      List.prototype.initialize.call(this, app, options);
-
-      // // Reset the collection with the appropriate list.
-      // var items = this.app.profile.get('page').comments ?
-      //             this.app.profile.get('page').comments.items : [];
-      // this.collection.reset(items);
+    render: function() {
+      this.$el.html(_.template(template));
+      return this;
     },
 
     isNewSearch: function(x, y) {
       return (_.difference(x, y).length === 0);
     },
 
-    search: function(e) {
+    newSearch: function(e) {
       // Split string on whitespace and commas:
       var new_keywords = this.$('#search-keywords-box').val().split(/,?\s+/);
 
       if (e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
         // Don't search if the keywords haven't changed:
-        // if (_.difference(new_keywords, this.keywords).length === 0) {
         if (this.isNewSearch(new_keywords, this.keywords)) {
           console.log('No search needed...');
           return;
         } else {
           this.keywords = new_keywords;
           console.log("SEACH: ", this.keywords);
+          _.each(this.viewList, _.bind(function(x) {
+            x.remove();
+          }));
+          this.viewList.splice(0, this.viewList.length); // clear views.
+          this.occList.reset(); // clear models.
           this.searchRpc();
         }
       }
@@ -68,19 +64,16 @@ define([
       
       rpc.execute('/service/rpc/record.search', rl, {
         success: _.bind(function(x) {
-          console.log('SUCCESS: ', x);
-          // _.each(items, _.bind(function (i) {
-          //   this.collection.remove(i, {silent: true});
-          //   // this.renderLast(false);
-          // }, this));
-          // this.collection.reset();
           var items = _.map(x.items, function(item) {
             return JSON.parse(item.json);
           });
-          this.collection = new Collection;
+
           _.each(items, _.bind(function (i) {
-            this.collection.push(i, {silent: true});
-            //this.renderLast(false);
+            var model = new OccModel(i);
+            var view = new OccView({parentView: this, model:model});
+            this.occList.add(model);
+            this.viewList.push(view);
+            view.render();
           }, this));
         }, this), 
         error: _.bind(function(x) {

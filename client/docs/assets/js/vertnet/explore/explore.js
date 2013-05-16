@@ -8,7 +8,7 @@ define([
   'Backbone',
   'mps',
   'rpc',
-  'views/lists/occ-search-view',
+  'explore/occ/OccSearchView',
   ], function ($, _, Backbone, mps, rpc, OccSearchView) {
 
   return Backbone.View.extend({

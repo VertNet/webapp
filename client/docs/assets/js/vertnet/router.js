@@ -11,7 +11,7 @@ define([
   'views/home-view',
   'views/header-view',
   'views/footer-view',
-  'views/explore/explore-view'
+  'explore/explore'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
   FooterView, ExploreView) {
 
