@@ -63,8 +63,12 @@ transformers:
       external_name: country
       import_transform: transformer.lower_case()
 
-    - property: collectioncode
-      external_name: collectioncode
+    - property: institutioncode
+      external_name: institutioncode
+      import_transform: transformer.lower_case()
+
+    - property: specificepithet
+      external_name: specificepithet
       import_transform: transformer.lower_case()
 
     - property: corpus
