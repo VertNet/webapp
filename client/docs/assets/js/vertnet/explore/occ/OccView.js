@@ -21,7 +21,7 @@ define([
 
       render: function() {
         this.$el.html(this.template(this.model.attributes));
-        this.$el.appendTo(this.options.parentView.options.listEl);
+        this.$el.prependTo(this.options.parentView.options.listEl);
         return this;
       }
     });
