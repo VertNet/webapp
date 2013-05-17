@@ -8,9 +8,9 @@ define([
   'Backbone',
   'rpc',
   'mps',
-  'views/home-view',
-  'views/header-view',
-  'views/footer-view',
+  'home/Home',
+  'common/Header',
+  'common/Footer',
   'explore/explore'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
   FooterView, ExploreView) {

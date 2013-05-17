@@ -8,7 +8,7 @@ define([
   'Underscore',
   'mps',
   'Backbone',
-  'text!/templates/map.html',
+  'text!home/map-template.html',
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({
 

@@ -1,5 +1,5 @@
 /*
- * Explore page view.
+ * Home page view.
  */
 
 define([
@@ -8,8 +8,9 @@ define([
   'Backbone',
   'mps',
   'rpc',
-  'views/lists/occ-search-view',
-  ], function ($, _, Backbone, mps, rpc, OccSearchView) {
+  'map',
+  'home/Map',
+  ], function ($, _, Backbone, mps, rpc, map, MapView) {
 
   return Backbone.View.extend({
 
@@ -39,11 +40,12 @@ define([
     setup: function () {
 
       // Render posts.
-      console.log('Setting up explore view...');
+      console.log('Setting up home view...');
 
-      this.occSearchView = new OccSearchView({parentView: this, 
-        listEl: 'tbody'}, this.app).render();
-
+      map.init(function() {
+        var map = new MapView().render();
+      });
+      
       return this;
     },
 
@@ -64,15 +66,8 @@ define([
       this.empty();
     },
 
-  // Bind mouse events.
-    events: {
-      //'click #explore-tabs a': 'onOccSearchTabClick',
-    },
-
-    onOccSearchTabClick: function(x) {
-      console.log('CLIKY', x);
-
-    }
+    // Bind mouse events.
+    events: {},
 
   });
 });
