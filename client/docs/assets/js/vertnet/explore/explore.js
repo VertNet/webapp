@@ -42,7 +42,7 @@ define([
       console.log('Setting up explore view...');
 
       this.occSearchView = new OccSearchView({parentView: this, 
-        listEl: 'tbody'}, this.app).render();
+        listEl: '#occ-view'}, this.app).render();
 
       return this;
     },
