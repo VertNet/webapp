@@ -8,9 +8,14 @@ define([
 
       tagName: 'tr',
 
+      events: {
+        'click td': '_clickHandler'
+      },
+
       attributes: function () {
         return {
-          id: this.model.id
+          id: this.model.id,
+          path: this.model.keyname
         };
       },
 
@@ -23,6 +28,12 @@ define([
         this.$el.html(this.template(this.model.attributes));
         this.$el.prependTo(this.options.parentView.options.listEl);
         return this;
+      },
+
+      // Open the occurrence detail page.
+      _clickHandler: function() {
+        console.log(this.model);
+        window.location = this.model.get('keyname');
       }
     });
 });
