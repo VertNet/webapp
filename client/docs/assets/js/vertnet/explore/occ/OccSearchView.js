@@ -37,7 +37,7 @@ define([
     render: function() {
       this.$el.html(_.template(template));
       this.$('#search-keywords-box').focus();
-      this.$('#search-table').hide();
+      this.$('#occ-search-results-table').hide();
       this._disableTablePager(true);
       return this;
     },
@@ -131,7 +131,7 @@ define([
 
     // Show results in table.
     _showResultsTable: function(show) {
-      var table = this.$('#search-table');
+      var table = this.$('#occ-search-results-table');
       var tab = this.$('#occ-search-tab');
 
       if (show) {
