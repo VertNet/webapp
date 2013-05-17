@@ -21,11 +21,16 @@ define([
     // Top level div for tab content.
     el: '#explore-tabs-content',
 
+    events: {
+      'click .pager': '_loadMore'
+    },
+
     initialize: function (options, app) {
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
       this.viewList = []; // Array of result table row views.
+      this.paging = false;
       $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
@@ -36,9 +41,19 @@ define([
       return this;
     },
 
+    // Load more results.
+    _loadMore: function() {
+      if (this.response && this.response.more) {
+        this.paging = true;
+        this._executeSearch();
+      }
+    },
+
     // Submit handler for search.
     _submitHandler: function(e) {
       if (e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
+        this.paging = false;
+        this.response = null;
         this._executeSearch();
       }
     },
@@ -49,8 +64,11 @@ define([
       this._prepTerms();
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
-        request = {limit:100, q:JSON.stringify({terms: this.terms, 
+        request = {limit:10, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
+        if (this.response && this.response.more) {
+          request['cursor'] = this.response.cursor;
+        }
         rpc.execute('/service/rpc/record.search', request, {
           success: _.bind(this._resultsHandler, this), 
           error: _.bind(function(x) {
@@ -63,6 +81,7 @@ define([
       }
     },
 
+    // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
       _.each($('input'), _.bind(function (input) {
@@ -79,19 +98,27 @@ define([
         return JSON.parse(item.json);
       });
       var showResults = items.length !== 0;
-      this._clearResults();
+      this.response = response;
+      if (!this.paging) {
+        this._clearResults();
+      }
       this._showResultsTable(showResults);
       if (showResults) {
         _.each(items, _.bind(function (i) {
           var model = new OccModel(i);
           var view = new OccView({parentView: this, model:model});
           this.occList.add(model);
-          this.viewList.push(view);
+          this.viewList.unshift(view);
           view.render();
         }, this));
       } else {
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
+      }
+      if (!this.response.more) {
+        this.$('#table-pager').addClass('disabled');
+      } else {
+        this.$('#table-pager').removeClass('disabled');
       }
     },
 
