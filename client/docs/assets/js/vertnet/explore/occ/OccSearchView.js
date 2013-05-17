@@ -38,6 +38,7 @@ define([
       this.$el.html(_.template(template));
       this.$('#search-keywords-box').focus();
       this.$('#search-table').hide();
+      this._disableTablePager(true);
       return this;
     },
 
@@ -54,6 +55,7 @@ define([
       if (e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
         this.paging = false;
         this.response = null;
+        this._disableTablePager(true);
         this._executeSearch();
       }
     },
@@ -115,7 +117,12 @@ define([
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
       }
-      if (!this.response.more) {
+      this._disableTablePager(!this.response.more);
+    },
+
+    // Disable table pager.
+    _disableTablePager: function(disable) {
+      if (disable) {
         this.$('#table-pager').addClass('disabled');
       } else {
         this.$('#table-pager').removeClass('disabled');
