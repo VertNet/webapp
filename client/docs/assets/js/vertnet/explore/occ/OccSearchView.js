@@ -49,7 +49,7 @@ define([
       this._prepTerms();
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
-        request = {limit:10, q:JSON.stringify({terms: this.terms, 
+        request = {limit:100, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         rpc.execute('/service/rpc/record.search', request, {
           success: _.bind(this._resultsHandler, this), 
