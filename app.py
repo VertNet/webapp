@@ -11,6 +11,7 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
     webapp2.Route(r'/explore', handler='app.AppHandler:explore', name='explore'),
+    webapp2.Route(r'/<publisher>/<resource>/<occurrence>', handler='app.AppHandler:occ', name='occ'),
 ]
 
 class AppHandler(webapp2.RequestHandler):
@@ -37,6 +38,9 @@ class AppHandler(webapp2.RequestHandler):
     def home(self):
         """Render page html."""
         self.render_template('home.html')
+
+    def occ(self, publisher, resource, occurrence):
+        self.render_template('home.html')        
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          
