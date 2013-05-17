@@ -1,5 +1,5 @@
 /*
- * Home page view.
+ * Home view
  */
 
 define([
@@ -7,28 +7,30 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
-  'map',
-  'views/mapView',
-  ], function ($, _, Backbone, mps, rpc, map, MapView) {
-
+  'text!/templates/home.html',
+  'views/build',
+  'views/lists/feed'
+], function ($, _, Backbone, mps, template, Build, Feed) {
   return Backbone.View.extend({
-
+    
     // The DOM target element for this page:
-    el: '#content',
-
+    el: '#wrap > .content',
+    
     // Module entry point:
     initialize: function (app) {
-
+      
       // Save app reference.
       this.app = app;
-
+      
       // Shell events:
       this.on('rendered', this.setup, this);
     },
 
     // Draw our template from the profile JSON.
     render: function () {
+
+      // UnderscoreJS templating:
+      this.$el.html(_.template(template).call(this));
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -39,13 +41,13 @@ define([
     // Misc. setup.
     setup: function () {
 
-      // Render posts.
-      console.log('Setting up home view...');
+      // Render idea feed.
+      this.feed = new Feed(this.app, { parentView: this });
 
-      map.init(function() {
-        var map = new MapView().render();
-      });
-      
+      // Create the build idea/campaign view.
+      if (this.app.profile.get('person'))
+        new Build(this.app).render();
+
       return this;
     },
 
@@ -61,13 +63,11 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.feed.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
     },
-
-    // Bind mouse events.
-    events: {},
 
   });
 });
