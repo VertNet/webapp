@@ -19,7 +19,7 @@ define([
   return Backbone.View.extend({
     
     // Top level div for tab content.
-    el: '#explore-tabs-content',
+    el: '#occurrence-search',
 
     events: {
       'click .pager': '_loadMore'
