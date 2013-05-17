@@ -14,6 +14,7 @@ define([
   // For dev:
   // window._bus = bus;
   window._rpc = rpc;
+  window._ = _;
 
   var App = function () {
     // NOOP
