@@ -22,6 +22,8 @@ define([
     el: '#explore-tabs-content',
 
     initialize: function (options, app) {
+      this.keywords = []; // Search query keywords
+      this.terms = {}; // Search query terms
       this.occList = new OccList();
       this.viewList = []; // Array of result table row views.
       $(document).on('keyup', _.bind(this._submitHandler, this));
@@ -46,14 +48,19 @@ define([
       var request = null;
       this._prepTerms();
       this._explodeKeywords();
-      request = {limit:10, q:JSON.stringify({terms: this.terms, 
-        keywords: this.keywords})};
-      rpc.execute('/service/rpc/record.search', request, {
-        success: _.bind(this._resultsHandler, this), 
-        error: _.bind(function(x) {
-          console.log('ERROR: ', x);
-        }, this)
-      });
+      if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
+        request = {limit:10, q:JSON.stringify({terms: this.terms, 
+          keywords: this.keywords})};
+        rpc.execute('/service/rpc/record.search', request, {
+          success: _.bind(this._resultsHandler, this), 
+          error: _.bind(function(x) {
+            console.log('ERROR: ', x);
+          }, this)
+        });
+      } else {
+        this._clearResults();
+        this._showResultsTable(false);
+      }
     },
 
     _prepTerms: function() {
@@ -82,6 +89,9 @@ define([
           this.viewList.push(view);
           view.render();
         }, this));
+      } else {
+        this.terms = {};
+        this.keywords.splice(0, this.keywords.length);
       }
     },
 
@@ -89,13 +99,13 @@ define([
     _showResultsTable: function(show) {
       var table = this.$('#search-table');
       var tab = this.$('#occ-search-tab');
-      var query = this.$('#search-keywords-box').val();
+
       if (show) {
         table.show();
         this.$('#no-results').hide();
       } else {
         table.hide();
-        this.$('#no-results').text('No results for "' + query + '"');
+        this.$('#no-results').text('No results.');
         this.$('#no-results').show();
       }
     },
