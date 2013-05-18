@@ -26,6 +26,8 @@ define([
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
       this.route('explore', 'explore', _.bind(this.explore, this, 'explore'));
+      this.route(':publisher/:resource/:occurrence', 'occurrence', 
+        _.bind(this.occurrence, this, 'occurrence'));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -57,6 +59,10 @@ define([
       }
     },
     
+    occurrence: function(publisher, resource, occurrence) {
+      console.log(publisher, resource, occurrence);
+    },
+
     explore: function(name) {
       console.log('router.explore()');
 
