@@ -1,7 +1,11 @@
 
 from google.appengine.ext.webapp.util import run_wsgi_app
+
+from vertnet.service.model import Record
+
 from webapp2_extras import jinja2
 
+import json
 import os
 import webapp2
 
@@ -23,7 +27,7 @@ class AppHandler(webapp2.RequestHandler):
         return this
 
     def render_template(self, template_name, template_values={}):
-        self.response.write(self.jinja2.render_template(template_name))
+        self.response.write(self.jinja2.render_template(template_name, **template_values))
 
     def static(self, foo):
         if IS_DEV:
@@ -40,7 +44,9 @@ class AppHandler(webapp2.RequestHandler):
         self.render_template('home.html')
 
     def occ(self, publisher, resource, occurrence):
-        self.render_template('home.html')        
+        record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
+        values = dict(rec=json.loads(record.record))
+        self.render_template('occurrence.html', template_values=values)        
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          
