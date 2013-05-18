@@ -23,6 +23,13 @@ input.span2.search {
 	width: 300px;
 }
 
+#occ-detail-map {
+  height: 400px;
+  width: 100%;
+  margin-bottom: 30px;
+  margin-top: 25px;
+}
+
 #mapper {
 	height: 398px;
 	width: 100%;

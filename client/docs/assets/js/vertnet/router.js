@@ -11,9 +11,10 @@ define([
   'home/Home',
   'common/Header',
   'common/Footer',
-  'explore/explore'
+  'explore/explore',
+  'explore/occ/OccDetail'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView) {
+  FooterView, ExploreView, OccDetail) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -61,6 +62,16 @@ define([
     
     occurrence: function(publisher, resource, occurrence) {
       console.log(publisher, resource, occurrence);
+
+      // Kill page view if exists.
+      if (this.page) {
+        this.page.destroy();
+      }
+
+      // Setup header/footer.
+      this.initHeaderFooter();
+
+      this.page = new OccDetail({}, this.app).setup();
     },
 
     explore: function(name) {

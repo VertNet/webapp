@@ -2,6 +2,7 @@
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 from vertnet.service.model import Record
+from vertnet.service import util
 
 from webapp2_extras import jinja2
 
@@ -14,8 +15,10 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
-    webapp2.Route(r'/explore', handler='app.AppHandler:explore', name='explore'),
-    webapp2.Route(r'/<publisher>/<resource>/<occurrence>', handler='app.AppHandler:occ', name='occ'),
+    webapp2.Route(r'/explore', handler='app.AppHandler:explore', 
+        name='explore'),
+    webapp2.Route(r'/<publisher>/<resource>/<occurrence>', 
+        handler='app.AppHandler:occ', name='occ'),
 ]
 
 class AppHandler(webapp2.RequestHandler):
@@ -27,7 +30,8 @@ class AppHandler(webapp2.RequestHandler):
         return this
 
     def render_template(self, template_name, template_values={}):
-        self.response.write(self.jinja2.render_template(template_name, **template_values))
+        self.response.write(self.jinja2.render_template(template_name, 
+            **template_values))
 
     def static(self, foo):
         if IS_DEV:
@@ -45,7 +49,7 @@ class AppHandler(webapp2.RequestHandler):
 
     def occ(self, publisher, resource, occurrence):
         record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
-        values = dict(rec=json.loads(record.record))
+        values = dict(rec=util.classify(json.loads(record.record)))
         self.render_template('occurrence.html', template_values=values)        
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
