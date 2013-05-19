@@ -25,10 +25,10 @@ define([
       // Shell events:
       this.on('rendered', this.setup, this);
 
-      // $('#explore-tabs a').click(_.bind(function (e) {
-      //   //e.preventDefault();
-      //   this.app.router.navigate('/explore/' + e.target.id, {trigger: true});
-      //   }, this));
+      $('#exploreTabs a').click(_.bind(function (e) {
+        //e.preventDefault();
+        this.app.router.navigate('/explore/' + e.target.id, {trigger: true});
+        }, this));
     },
 
     // Draw our template from the profile JSON.

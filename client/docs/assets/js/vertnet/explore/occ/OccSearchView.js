@@ -110,7 +110,7 @@ define([
       if (showResults) {
         _.each(items, _.bind(function (i) {
           var model = new OccModel(i);
-          var view = new OccView({parentView: this, model:model});
+          var view = new OccView({parentView: this, model:model}, this.app);
           this.occList.add(model);
           this.viewList.unshift(view);
           view.render();

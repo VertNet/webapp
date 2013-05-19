@@ -19,7 +19,8 @@ define([
         };
       },
 
-      initialize: function(options) {
+      initialize: function(options, app) {
+        this.app = app;
         this.template = _.template(template);
         _.bindAll(this, 'render');
       }, 
@@ -32,8 +33,7 @@ define([
 
       // Open the occurrence detail page.
       _clickHandler: function() {
-        console.log(this.model);
-        window.location = this.model.get('keyname');
+        this.app.router.navigate(this.model.get('keyname'), {trigger: true});
       }
     });
 });
