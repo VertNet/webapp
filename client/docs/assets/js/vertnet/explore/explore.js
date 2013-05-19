@@ -43,7 +43,6 @@ define([
     setTab: function(name) {
        var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
        this.$(selector).tab('show');
-
     },
 
     // Misc. setup.

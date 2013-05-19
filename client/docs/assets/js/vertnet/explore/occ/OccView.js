@@ -32,8 +32,11 @@ define([
       },
 
       // Open the occurrence detail page.
-      _clickHandler: function() {
-        this.app.router.navigate(this.model.get('keyname'), {trigger: true});
+      _clickHandler: function(e) {
+        //e.preventDefault();
+        //e.stopPropagation();
+        this.app.router.navigate(this.model.get('keyname'), {trigger: true}); //, {trigger: true});
+        //document.location.replace('../../' + this.model.get('keyname'));
       }
     });
 });
