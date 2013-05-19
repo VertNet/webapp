@@ -41,7 +41,19 @@ define([
       this.$('#search-keywords-box').focus();
       this.$('#occ-search-results-table').hide();
       this._disableTablePager(true);
+      this._checkUrl();
       return this;
+    },
+
+    _checkUrl: function() {
+      var urlParams = this.app.parseUrl();
+      var path = window.location.pathname + window.location.search;
+      if (urlParams.q) {
+        console.log(path);
+        this.app.router.navigate(path);
+        this.$('#search-keywords-box').val(urlParams.q);
+        this._submitHandler(null, true);
+      }
     },
 
     // Load more results.
@@ -53,8 +65,8 @@ define([
     },
 
     // Submit handler for search.
-    _submitHandler: function(e) {
-      if (e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
+    _submitHandler: function(e, bypass) {
+      if (bypass || e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
         this.paging = false;
         this.response = null;
         this._disableTablePager(true);
@@ -158,13 +170,16 @@ define([
     // Explode search keywords value into an array of terms.
     _explodeKeywords: function() {
       // Split string on whitespace and commas:
-      this.keywords = this.$('#search-keywords-box').val().split(/,?\s+/);
-      this.keywords = _.filter(this.keywords, function(x) {
-        var x = x.trim();
-        if (x !== '') {
-          return x;
-        }
-      });
+      var q = this.$('#search-keywords-box').val();
+      if (q) {
+        this.keywords = q.split(/,?\s+/);
+        this.keywords = _.filter(this.keywords, function(x) {
+          var x = x.trim();
+          if (x !== '') {
+            return x;
+          }
+        });
+      }
     },
 
 

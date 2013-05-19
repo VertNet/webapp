@@ -7,7 +7,7 @@ define([
   ], function ($, Backbone, _, map, OccDetailMap) {
     return Backbone.View.extend({
 
-      el: '#occ-detail-content',
+      //el: '#occ-detail-content',
 
       initialize: function(options, app) {
         this.app = app;
