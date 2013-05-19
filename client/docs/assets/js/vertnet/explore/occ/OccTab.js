@@ -15,7 +15,7 @@ define([
   'text!explore/occ/OccTab.html',
   'explore/occ/OccList',
   'explore/occ/OccRow',
-  'explore/occ/occ-model'
+  'explore/occ/OccModel'
 ], function ($, _, Backbone, bootstrap, mps, rpc, template, OccList, OccRow, OccModel) {
   return Backbone.View.extend({
 

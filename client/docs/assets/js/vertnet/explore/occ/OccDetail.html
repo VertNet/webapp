@@ -1,0 +1,200 @@
+<div id="occ-detail-content" class="container">
+
+  <div class="page-header">
+    <h1>Occurrence <small>detail</small></h1>
+  </div>
+
+  <div class="alert alert-success">
+  <h4>Access rights - <%= this.model.get('meta').orgname %></h4>
+    <%= this.model.get('meta').emlrights %>
+  </div>
+
+  <ul id="myTab" class="nav nav-tabs">
+    <li class="active"><a href="#search-table" data-toggle="tab">Darwin Core</a></li>
+    <li><a href="#summary-tab" data-toggle="tab">Data source</a></li>
+  </ul>
+
+  <div id="myTabContent" class="tab-content">
+
+  <div class="tab-pane fade" id="summary-tab"> 
+     <h1><%= this.model.get('meta').orgname %></h1>
+      <p>This occurrence was published by the <%= this.model.get('meta').orgname %> on <%= this.model.get('meta').pubdate %> in the <a href="<%= this.model.get('meta').url %>"><%= this.model.get('meta').title %> resource</a>.</p>
+      </div>
+
+      <div class="tab-pane fade in active" id="search-table"> 
+
+        <div class="tabbable tabs-left">
+          <ul class="nav nav-tabs">
+            <% if (this.model.get('loc')) { %>
+            <li class="active"><a href="#location-tab" data-toggle="tab">Location</a></li>
+            <% } %>
+            <% if (!_.isEmpty(this.model.get('reclevel'))) { %>
+            <li class=""><a href="#reclevel-tab" data-toggle="tab">RecordLevel</a></li>
+            <% } %>
+            <% if (this.model.get('occ')) { %>
+            <li class=""><a href="#occ-tab" data-toggle="tab">Occurrence</a></li>
+            <% } %>            
+            <% if (this.model.get('event')) { %>
+            <li class=""><a href="#event-tab" data-toggle="tab">Event</a></li>
+            <% } %>
+            <% if (this.model.get('geo')) { %>
+            <li class=""><a href="#geo-tab" data-toggle="tab">GeologicalContext</a></li>
+            <% } %>
+            <% if (this.model.get('id')) { %>
+            <li class=""><a href="#id-tab" data-toggle="tab">Identification</a></li>
+            <% } %>
+            <% if (this.model.get('taxon')) { %>
+            <li class=""><a href="#taxon-tab" data-toggle="tab">Taxon</a></li>
+            <% } %>
+          </ul>
+
+          <div class="tab-content">
+
+            <!-- Location tab.  -->
+            <div class="tab-pane active" id="location-tab">
+              <div id="occ-detail-map" class="occ-detail-map">
+                <div id="map"></div>
+              </div>
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('loc'), function(key, val) { %>   
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- Record level tab. -->
+            <div class="tab-pane" id="reclevel-tab">
+              <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('reclevel'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- Occurrence tab.  -->
+            <div class="tab-pane" id="occ-tab">
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('occ'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- Event tab.  -->
+            <div class="tab-pane" id="event-tab">
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('event'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- GeoContext tab.  -->
+            <div class="tab-pane" id="geo-tab">
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('geo'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- Identification tab.  -->
+            <div class="tab-pane" id="id-tab">
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('id'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                </tbody>
+              </table> 
+            </div>
+
+            <!-- Taxon tab.  -->
+            <div class="tab-pane" id="taxon-tab">
+               <table class="table table-striped table-hover search-results-hover">
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% _.each(this.model.get('taxon'), function(key, val) { %>  
+                  <tr>
+                    <td><%= key %></td>
+                    <td id="<%= key %>"><%= val %></td>
+                  </tr>
+                <% }); %>
+                  {%- endfor %}
+                </tbody>
+              </table> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

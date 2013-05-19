@@ -4,17 +4,22 @@ define([
   'Underscore',
   'map',
   'explore/occ/OccDetailMap',
-  ], function ($, Backbone, _, map, OccDetailMap) {
+  'text!explore/occ/OccDetail.html'
+  ], function ($, Backbone, _, map, OccDetailMap, template) {
     return Backbone.View.extend({
-
-      //el: '#occ-detail-content',
 
       initialize: function(options, app) {
         this.app = app;
+        this.template = _.template(template);
       }, 
 
       events: {
         'click #explore-publisher-tab': '_click'
+      },
+
+      render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        return this;
       },
 
       setup: function () {

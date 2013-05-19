@@ -11,10 +11,11 @@ define([
   'home/Home',
   'common/Header',
   'common/Footer',
-  'explore/explore',
-  'explore/occ/OccDetail'
+  'explore/Explore',
+  'explore/occ/OccDetail',
+  'explore/occ/OccModel'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView, OccDetail) {
+  FooterView, ExploreView, OccDetail, OccModel) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -71,7 +72,11 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      this.page = new OccDetail({}, this.app).setup();
+      var data = {meta: {emlrights: 'rights', orgname: 'Foo', pubdate: 'today', 
+      title: 'title', url: 'foo.com'}, loc: {dude: 'yes!'}};
+      var model = new OccModel(data);
+      this.page = new OccDetail({model: model}, this.app);
+      $('#content').html(this.page.render().el);
     },
 
     explore: function(type, name) {
