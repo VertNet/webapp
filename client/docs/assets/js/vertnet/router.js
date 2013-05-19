@@ -84,7 +84,8 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      this.page = new ExploreView({show: name}, this.app).render();
+      this.page = new ExploreView({show: name}, this.app);
+      $('#content').html(this.page.render().el);
     },
 
     home: function (name) {

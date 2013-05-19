@@ -8,21 +8,14 @@ define([
   'Backbone',
   'mps',
   'rpc',
-  'explore/occ/OccSearchView',
-  ], function ($, _, Backbone, mps, rpc, OccSearchView) {
+  'explore/occ/OccTab',
+  'text!explore/explore.html'
+  ], function ($, _, Backbone, mps, rpc, OccTab, template) {
 
   return Backbone.View.extend({
-
-    // The DOM target element for this page:
-    el: '#content',
-
-    // Module entry point:
     initialize: function (options, app) {
-
-      // Save app reference.
       this.app = app;
-
-      // Shell events:
+      this.template = _.template(template);
       this.on('rendered', this.setup, this);
 
       $('#exploreTabs a').click(_.bind(function (e) {
@@ -31,12 +24,11 @@ define([
         }, this));
     },
 
-    // Draw our template from the profile JSON.
     render: function () {
-
-      // Done rendering ... trigger setup.
+      this.$el.html(this.template());
+      this.occTab = new OccTab({parentView: this, listEl: '#occ-view'}, this.app);
+      this.$('#occTab').html(this.occTab.render().el);
       this.trigger('rendered');
-
       return this;
     },
 
@@ -47,13 +39,6 @@ define([
 
     // Misc. setup.
     setup: function () {
-
-      // Render posts.
-      console.log('Setting up explore view...');
-
-      this.occSearchView = new OccSearchView({parentView: this, 
-        listEl: '#occ-view'}, this.app).render();
-
        var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
        this.$(selector).tab('show');
        //$('#exploreTabs a[href="#publishers"]').tab('show')
