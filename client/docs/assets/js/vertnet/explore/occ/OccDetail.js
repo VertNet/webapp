@@ -13,6 +13,10 @@ define([
         this.app = app;
       }, 
 
+      events: {
+        'click #explore-publisher-tab': '_click'
+      },
+
       setup: function () {
         console.log('Setting up OccDetail');
 
@@ -24,5 +28,9 @@ define([
         
         return this;
       },
+
+      _click: function() {
+        console.log('hi');
+      }
     });
 });

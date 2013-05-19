@@ -11,6 +11,8 @@ require.config({ // VertNet app configuration.
     Backbone: 'libs/backbone/backbone',
     mps: 'libs/minpubsub/minpubsub',
     Spin: 'libs/spin/spin',
+    bootstrap: 'libs/bootstrap/bootstrap'
+    
   },
   
   // Dependency mappings:
@@ -29,6 +31,10 @@ require.config({ // VertNet app configuration.
     Spin: {
       exports: 'Spin'
     },
+    bootstrap: {
+      deps: ['jQuery'],
+      exports: 'bootstrap'
+    }
   }
 });
 

@@ -9,13 +9,14 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'bootstrap',
   'mps',
   'rpc',
   'text!explore/occ/occ-search-template.html',
   'explore/occ/OccList',
   'explore/occ/OccView',
   'explore/occ/occ-model'
-], function ($, _, Backbone, mps, rpc, template, OccList, OccView, OccModel) {
+], function ($, _, Backbone, bootstrap, mps, rpc, template, OccList, OccView, OccModel) {
   return Backbone.View.extend({
     
     // Top level div for tab content.
@@ -26,6 +27,7 @@ define([
     },
 
     initialize: function (options, app) {
+      this.app = app;
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();

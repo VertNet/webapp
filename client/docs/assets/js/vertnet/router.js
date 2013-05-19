@@ -26,7 +26,7 @@ define([
       
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
-      this.route('explore', 'explore', _.bind(this.explore, this, 'explore'));
+      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
       this.route(':publisher/:resource/:occurrence', 'occurrence', 
         _.bind(this.occurrence, this, 'occurrence'));
 
@@ -60,12 +60,12 @@ define([
       }
     },
     
-    occurrence: function(publisher, resource, occurrence) {
+    occurrence: function(name, publisher, resource, occurrence) {
       console.log(publisher, resource, occurrence);
 
       // Kill page view if exists.
       if (this.page) {
-        this.page.destroy();
+        //this.page.destroy();
       }
 
       // Setup header/footer.
@@ -74,17 +74,17 @@ define([
       this.page = new OccDetail({}, this.app).setup();
     },
 
-    explore: function(name) {
-      console.log('router.explore()');
+    explore: function(type, name) {
+      console.log('router.explore():', type, name);
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      //if (this.page)
+        //this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
 
-      this.page = new ExploreView(this.app).render();
+      this.page = new ExploreView({show: name}, this.app).render();
     },
 
     home: function (name) {

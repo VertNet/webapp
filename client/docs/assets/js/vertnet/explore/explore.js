@@ -17,13 +17,18 @@ define([
     el: '#content',
 
     // Module entry point:
-    initialize: function (app) {
+    initialize: function (options, app) {
 
       // Save app reference.
       this.app = app;
 
       // Shell events:
       this.on('rendered', this.setup, this);
+
+      // $('#explore-tabs a').click(_.bind(function (e) {
+      //   //e.preventDefault();
+      //   this.app.router.navigate('/explore/' + e.target.id, {trigger: true});
+      //   }, this));
     },
 
     // Draw our template from the profile JSON.
@@ -35,6 +40,12 @@ define([
       return this;
     },
 
+    setTab: function(name) {
+       var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
+       this.$(selector).tab('show');
+
+    },
+
     // Misc. setup.
     setup: function () {
 
@@ -43,6 +54,10 @@ define([
 
       this.occSearchView = new OccSearchView({parentView: this, 
         listEl: '#occ-view'}, this.app).render();
+
+       var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
+       this.$(selector).tab('show');
+       //$('#exploreTabs a[href="#publishers"]').tab('show')
 
       return this;
     },
@@ -60,7 +75,7 @@ define([
         mps.unsubscribe(s);
       });
       this.undelegateEvents();
-      this.stopListening();
+      //this.stopListening();
       this.empty();
     },
 
