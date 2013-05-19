@@ -9,7 +9,7 @@ define([
   'mps',
   'rpc',
   'explore/occ/OccTab',
-  'text!explore/explore.html'
+  'text!explore/Explore.html'
   ], function ($, _, Backbone, mps, rpc, OccTab, template) {
 
   return Backbone.View.extend({
