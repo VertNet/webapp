@@ -6,6 +6,7 @@ from vertnet.service import util
 
 from webapp2_extras import jinja2
 
+import logging
 import json
 import os
 import webapp2
@@ -15,7 +16,7 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
-    webapp2.Route(r'/explore', handler='app.AppHandler:explore', 
+    webapp2.Route(r'/explore/<type>', handler='app.AppHandler:explore', 
         name='explore'),
     webapp2.Route(r'/<publisher>/<resource>/<occurrence>', 
         handler='app.AppHandler:occ', name='occ'),
@@ -39,8 +40,9 @@ class AppHandler(webapp2.RequestHandler):
         else:
             return '/' + '1.0' 
 
-    def explore(self):
+    def explore(self, type):
         """Render the explore page."""
+        logging.info('TYPE ' + type)
         self.render_template('explore.html')
 
     def home(self):

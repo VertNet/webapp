@@ -8,14 +8,16 @@ define([
   'Backbone',
   'router',
   //'bus',
-  'rpc'
-], function ($, _, Backbone, Router, rpc) {
+  'rpc',
+  'bootstrap'
+], function ($, _, Backbone, Router, rpc, bootstrap) {
 
   // For dev:
   // window._bus = bus;
   window._rpc = rpc;
   window._ = _;
-
+  window._bootstrap = bootstrap;
+  
   var App = function () {
     // NOOP
   }

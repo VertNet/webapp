@@ -1,4 +1,5 @@
 define([
+  'http://code.jquery.com/jquery-1.9.1.min.js',
   'libs/jquery/jquery.min'
 ], function () {
 
@@ -15,12 +16,12 @@ define([
     return o;
   };
 
-  require(['libs/jquery/jquery.autogrow',
-           'libs/jquery/jquery.easing.min',
-           'libs/jquery/jquery.simplemodal.min',
-           'libs/jquery/jquery.hotkeys',
-           'libs/jquery/jquery.scrollTo-min'
-          ]);
+  // require(['libs/jquery/jquery.autogrow',
+  //          'libs/jquery/jquery.easing.min',
+  //          'libs/jquery/jquery.simplemodal.min',
+  //          'libs/jquery/jquery.hotkeys',
+  //          'libs/jquery/jquery.scrollTo-min'
+  //         ]);
 
   return jQuery;
 });
