@@ -5,8 +5,8 @@
   </div>
 
   <div class="alert alert-success">
-  <h4>Access rights - <%= this.model.get('meta').orgname %></h4>
-    <%= this.model.get('meta').emlrights %>
+  <h4>Access rights - <%= this.model.orgname %></h4>
+    <%= this.model.emlrights %>
   </div>
 
   <ul id="myTab" class="nav nav-tabs">
@@ -17,33 +17,33 @@
   <div id="myTabContent" class="tab-content">
 
   <div class="tab-pane fade" id="summary-tab"> 
-     <h1><%= this.model.get('meta').orgname %></h1>
-      <p>This occurrence was published by the <%= this.model.get('meta').orgname %> on <%= this.model.get('meta').pubdate %> in the <a href="<%= this.model.get('meta').url %>"><%= this.model.get('meta').title %> resource</a>.</p>
+     <h1><%= this.model.orgname %></h1>
+      <p>This occurrence was published by the <%= this.model.orgname %> on <%= this.model.pubdate %> in the <a href="<%= this.model.url %>"><%= this.model.title %> resource</a>.</p>
       </div>
 
       <div class="tab-pane fade in active" id="search-table"> 
 
         <div class="tabbable tabs-left">
           <ul class="nav nav-tabs">
-            <% if (this.model.get('loc')) { %>
+            <% if (!_.isEmpty(this.model.loc())) { %>
             <li class="active"><a href="#location-tab" data-toggle="tab">Location</a></li>
             <% } %>
-            <% if (!_.isEmpty(this.model.get('reclevel'))) { %>
+            <% if (!_.isEmpty(this.model.reclevel())) { %>
             <li class=""><a href="#reclevel-tab" data-toggle="tab">RecordLevel</a></li>
             <% } %>
-            <% if (this.model.get('occ')) { %>
+            <% if (!_.isEmpty(this.model.occ())) { %>
             <li class=""><a href="#occ-tab" data-toggle="tab">Occurrence</a></li>
             <% } %>            
-            <% if (this.model.get('event')) { %>
+            <% if (!_.isEmpty(this.model.event())) { %>
             <li class=""><a href="#event-tab" data-toggle="tab">Event</a></li>
             <% } %>
-            <% if (this.model.get('geo')) { %>
+            <% if (!_.isEmpty(this.model.geo())) { %>
             <li class=""><a href="#geo-tab" data-toggle="tab">GeologicalContext</a></li>
             <% } %>
-            <% if (this.model.get('id')) { %>
+            <% if (!_.isEmpty(this.model.iden())) { %>
             <li class=""><a href="#id-tab" data-toggle="tab">Identification</a></li>
             <% } %>
-            <% if (this.model.get('taxon')) { %>
+            <% if (!_.isEmpty(this.model.taxon())) { %>
             <li class=""><a href="#taxon-tab" data-toggle="tab">Taxon</a></li>
             <% } %>
           </ul>
@@ -63,7 +63,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('loc'), function(key, val) { %>   
+                <% _.each(this.model.loc(), function(val, key) { %>   
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -83,7 +83,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('reclevel'), function(key, val) { %>  
+                <% _.each(this.model.get('reclevel'), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -103,7 +103,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('occ'), function(key, val) { %>  
+                <% _.each(this.model.occ(), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -123,7 +123,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('event'), function(key, val) { %>  
+                <% _.each(this.model.event(), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -143,7 +143,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('geo'), function(key, val) { %>  
+                <% _.each(this.model.geo(), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -163,7 +163,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('id'), function(key, val) { %>  
+                <% _.each(this.model.iden(), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>
@@ -183,7 +183,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <% _.each(this.model.get('taxon'), function(key, val) { %>  
+                <% _.each(this.model.taxon(), function(val, key) { %>  
                   <tr>
                     <td><%= key %></td>
                     <td id="<%= key %>"><%= val %></td>

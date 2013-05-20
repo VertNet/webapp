@@ -34,8 +34,8 @@ define([
       _clickHandler: function(e) {
         //e.preventDefault();
         //e.stopPropagation();
-        this.app.router.navigate(this.model.get('keyname'), {trigger: true}); //, {trigger: true});
-        //document.location.replace('../../' + this.model.get('keyname'));
+        this.app.occModel = this.model;
+        this.app.router.navigate(this.model.get('keyname'), {trigger: true});
       }
     });
 });
