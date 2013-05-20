@@ -1,32 +1,46 @@
 <div class="tabbable tabs-left">
-  <ul class="nav nav-tabs">
+  <ul id="darwinCoreTabs" class="nav nav-tabs">
     <% if (!_.isEmpty(this.model.loc())) { %>
-    <li class="active"><a href="#location-tab" data-toggle="tab">Location</a></li>
+    <li class="active">
+      <a id="loc" href="#location" data-toggle="tab">Location</a>
+    </li>
     <% } %>
     <% if (!_.isEmpty(this.model.reclevel())) { %>
-    <li class=""><a href="#reclevel-tab" data-toggle="tab">RecordLevel</a></li>
+    <li class="">
+      <a href="#reclevel-tab" data-toggle="tab">RecordLevel</a>
+    </li>
     <% } %>
     <% if (!_.isEmpty(this.model.occ())) { %>
-    <li class=""><a href="#occ-tab" data-toggle="tab">Occurrence</a></li>
+    <li class="">
+      <a href="#occ-tab" data-toggle="tab">Occurrence</a>
+    </li>
     <% } %>            
     <% if (!_.isEmpty(this.model.event())) { %>
-    <li class=""><a href="#event-tab" data-toggle="tab">Event</a></li>
+    <li class="">
+      <a href="#event-tab" data-toggle="tab">Event</a>
+    </li>
     <% } %>
     <% if (!_.isEmpty(this.model.geo())) { %>
-    <li class=""><a href="#geo-tab" data-toggle="tab">GeologicalContext</a></li>
+    <li class="">
+      <a href="#geo-tab" data-toggle="tab">GeologicalContext</a>
+    </li>
     <% } %>
     <% if (!_.isEmpty(this.model.iden())) { %>
-    <li class=""><a href="#id-tab" data-toggle="tab">Identification</a></li>
+    <li class="">
+      <a href="#id-tab" data-toggle="tab">Identification</a>
+    </li>
     <% } %>
     <% if (!_.isEmpty(this.model.taxon())) { %>
-    <li class=""><a href="#taxon-tab" data-toggle="tab">Taxon</a></li>
+    <li class="">
+      <a href="#taxon-tab" data-toggle="tab">Taxon</a>
+    </li>
     <% } %>
   </ul>
 
   <div class="tab-content">
 
     <!-- Location tab.  -->
-    <div class="tab-pane active" id="location-tab">
+    <div class="tab-pane active" id="location">
       <div id="occ-detail-map" class="occ-detail-map">
       </div>
        <table class="table table-striped table-hover search-results-hover">

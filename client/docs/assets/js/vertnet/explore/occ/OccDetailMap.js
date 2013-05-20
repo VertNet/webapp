@@ -27,7 +27,6 @@ define([
     },
 
     render: function () {
-      var map = null;
       var marker = null;
       var latlon = new google.maps.LatLng(59.327383, 18.06747);
 
@@ -47,6 +46,12 @@ define([
       }
       map = this.map;
       return this;
+    },
+
+    resize: function() {
+      google.maps.event.trigger(this.map, 'resize');
+      this.map.setZoom(this.map.getZoom());
+      this.map.setCnter(this.map.getCenter());
     }
   });
 });

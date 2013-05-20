@@ -23,15 +23,16 @@
   </ul>
 
   <!-- Top level tab content -->
-  <div id="myTabContent" class="tab-content">
-    <!-- Data source tab -->
-    <div class="tab-pane fade" id="summary-tab"> 
+  <div id="detailTabContent" class="tab-content">
+    <!-- Darwin core tab. -->
+    <div id="darwincore" class="tab-pane active"> 
+      <!-- DarwinCoreTab.html -->
+    </div>
+      <!-- Data source tab -->
+    <div id="datasource" class="tab-pane"> 
       <h1><%= this.model.get('orgname') %></h1>
       <p>This occurrence was published by the <%= this.model.get('orgname') %> on <%= this.model.get('pubdate') %> in the <a href="<%= this.model.get('url') %>"><%= this.model.get('title') %> resource</a>.</p>
     </div>
-    <!-- Darwin core tab. -->
-    <div id="darwincore" class="tab-pane fade in active"> 
-      <!-- DarwinCoreTab.html -->
-    </div>
+
   </div>
 </div>
