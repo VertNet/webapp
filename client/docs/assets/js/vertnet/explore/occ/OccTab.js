@@ -44,9 +44,14 @@ define([
     _checkUrl: function() {
       var urlParams = this.app.parseUrl();
       var path = window.location.pathname + window.location.search;
-      if (urlParams.q) {
+      if (!_.isEmpty(urlParams.q)) {
         this.app.router.navigate(path);
         this.$('#search-keywords-box').val(urlParams.q);
+        this.$('#genus').val(urlParams.genus);
+        this.$('#specificepithet').val(urlParams.specificepithet);
+        this.$('#year').val(urlParams.year);
+        this.$('#country').val(urlParams.country);
+        this.$('#institutioncode').val(urlParams.institutioncode);
         this._submitHandler(null, true);
       }
     },
@@ -59,11 +64,25 @@ define([
       }
     },
 
+    _getSearch: function() {
+      var terms = null;
+      var q = this.$('#search-keywords-box').val();
+      this._prepTerms();
+      terms = this.terms;
+      if (q !== '') {
+        terms['q'] = q;
+      }
+      return $.param(terms);
+    },
+
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
       if (bypass || e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
-        var q = this.$('#search-keywords-box').val();
-        var path = window.location.pathname + '?q=' + q; 
+        var path = window.location.pathname;
+        var search = this._getSearch();
+        if (search) {
+          path += '?' + search;
+        } 
         this.paging = false;
         this.response = null;
         this._disableTablePager(true);
@@ -100,7 +119,7 @@ define([
     // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
-      _.each($('input'), _.bind(function (input) {
+      _.each(this.$('input'), _.bind(function (input) {
         var value = $(input).val();
         if (input.id !== 'search-keywords-box' && value.trim() !== '') {
           this.terms[input.id] = value;
@@ -179,9 +198,9 @@ define([
             return x;
           }
         });
+      } else {
+        this.keywords = [];
       }
     },
-
-
   });
 });
