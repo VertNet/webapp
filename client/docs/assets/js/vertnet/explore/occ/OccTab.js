@@ -35,7 +35,6 @@ define([
 
     render: function() {
       this.$el.html(_.template(template));
-      this.$('#search-keywords-box').focus();
       this.$('#occTable').hide();
       this._disableTablePager(true);
       this._checkUrl();

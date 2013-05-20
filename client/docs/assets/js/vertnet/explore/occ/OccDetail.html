@@ -5,8 +5,10 @@
   </div>
 
   <div class="alert alert-success">
-  <h4>Access rights - <%= this.model.orgname %></h4>
-    <%= this.model.emlrights %>
+  <h4>Access rights - <%= this.model.get('orgname') %></h4>
+    <% if (this.model.get('emlrights')) { %>
+      <%= this.model.get('emlrightys') %>
+    <% } %>
   </div>
 
   <ul id="myTab" class="nav nav-tabs">
@@ -17,8 +19,8 @@
   <div id="myTabContent" class="tab-content">
 
   <div class="tab-pane fade" id="summary-tab"> 
-     <h1><%= this.model.orgname %></h1>
-      <p>This occurrence was published by the <%= this.model.orgname %> on <%= this.model.pubdate %> in the <a href="<%= this.model.url %>"><%= this.model.title %> resource</a>.</p>
+     <h1><%= this.model.get('orgname') %></h1>
+      <p>This occurrence was published by the <%= this.model.get('orgname') %> on <%= this.model.get('pubdate') %> in the <a href="<%= this.model.get('url') %>"><%= this.model.get('title') %> resource</a>.</p>
       </div>
 
       <div class="tab-pane fade in active" id="search-table"> 
@@ -189,7 +191,6 @@
                     <td id="<%= key %>"><%= val %></td>
                   </tr>
                 <% }); %>
-                  {%- endfor %}
                 </tbody>
               </table> 
             </div>

@@ -62,8 +62,10 @@ define([
     },
     
     occurrence: function(name, publisher, resource, occurrence) {
-      console.log(publisher, resource, occurrence);
+      var model = this.app.occDetailModel;
+      var request = {};
 
+      console.log('OCCURRENCE');
       // Kill page view if exists.
       if (this.page) {
         //this.page.destroy();
@@ -72,10 +74,25 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      if (this.app.occModel) {
-        this.page = new OccDetail({model: this.app.occModel}, this.app);
+      if (!model) {
+        request['id'] = [publisher, resource, occurrence].join('/');
+        rpc.execute('/service/rpc/record.get', request, {
+          success: _.bind(this._occurrenceHandler, this), 
+          error: _.bind(function(x) {
+            console.log('ERROR: ', x);
+          }, this)
+        });
+      } else {
+        this.page = new OccDetail({model: model}, this.app);
         $('#content').html(this.page.render().el);
       }
+    },
+
+    _occurrenceHandler: function(response) {
+      var model = new OccModel(JSON.parse(response.json));
+      this.app.occDetailModel = model;
+      this.page = new OccDetail({model: model}, this.app);
+      $('#content').html(this.page.render().el);
     },
 
     explore: function(type, name) {
@@ -90,6 +107,7 @@ define([
 
       this.page = new ExploreView({show: name}, this.app);
       $('#content').html(this.page.render().el);
+      this.page.setup();
     },
 
     home: function (name) {

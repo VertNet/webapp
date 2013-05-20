@@ -19,18 +19,12 @@ define([
 
       render: function() {
         this.$el.html(this.template(this.model.attributes));
-        return this;
-      },
-
-      setup: function () {
-        console.log('Setting up OccDetail');
-
         map.init(_.bind(function() {
           var lat = this.$('#DecimalLatitude').text();
           var lon = this.$('#DecimalLongitude').text();
-          var map = new OccDetailMap({lat: lat, lon: lon}).render();
+          var map = new OccDetailMap({lat: lat, lon: lon});
+          this.$('#occ-detail-map').html(map.render().el);
         }, this));
-        
         return this;
       },
 
