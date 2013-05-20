@@ -44,7 +44,7 @@ define([
           position: this.latlon
         });
       }
-      map = this.map;
+      //map = this.map;
       return this;
     },
 

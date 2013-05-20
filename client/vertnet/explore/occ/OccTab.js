@@ -11,12 +11,15 @@ define([
   'Backbone',
   'bootstrap',
   'mps',
+  'map',
   'rpc',
   'text!explore/occ/OccTab.html',
   'explore/occ/OccList',
   'explore/occ/OccRow',
-  'explore/occ/OccModel'
-], function ($, _, Backbone, bootstrap, mps, rpc, template, OccList, OccRow, OccModel) {
+  'explore/occ/OccModel',
+  'explore/occ/ResultMap'
+], function ($, _, Backbone, bootstrap, mps, map, rpc, template, OccList, OccRow, OccModel, 
+    ResultMap) {
   return Backbone.View.extend({
 
     events: {
@@ -35,6 +38,10 @@ define([
 
     render: function() {
       this.$el.html(_.template(template));
+      this.resultMap = new ResultMap({collection: this.occList}, this.app);
+      map.init(_.bind(function() { 
+        this.$('#resultmap').html(this.resultMap.render().el);
+      }, this));
       this.$('#occTable').hide();
       this._disableTablePager(true);
       this._checkUrl();
