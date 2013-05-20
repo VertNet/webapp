@@ -16,14 +16,14 @@ libraries:
 
 handlers:
 
-- url: /assets
-  static_dir: client/docs/assets
+- url: /css
+  static_dir: client/vertnet/css
 
-- url: /js
-  static_dir: client/js
+- url: /vertnet
+  static_dir: client/vertnet
 
-- url: /templates
-  static_dir: client/docs/templates
+- url: /img
+  static_dir: client/vertnet/img
 
 - url: /prototypes
   static_dir: client/docs/prototypes
