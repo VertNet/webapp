@@ -68,7 +68,7 @@ define([
       console.log('OCCURRENCE');
       // Kill page view if exists.
       if (this.page) {
-        //this.page.destroy();
+        this.page.destroy();
       }
 
       // Setup header/footer.
@@ -83,8 +83,9 @@ define([
           }, this)
         });
       } else {
-        this.page = new OccDetail({model: model}, this.app);
+        this.page = new OccDetail({model: model, show: tab}, this.app);
         $('#content').html(this.page.render().el);
+        this.page.setup();
       }
     },
 
@@ -100,8 +101,8 @@ define([
       console.log('router.explore():', type, name);
 
       // Kill the page view if it exists.
-      //if (this.page)
-        //this.page.destroy();
+      if (this.page)
+        this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
