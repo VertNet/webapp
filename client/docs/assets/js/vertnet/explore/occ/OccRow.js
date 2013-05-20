@@ -34,7 +34,7 @@ define([
       _clickHandler: function(e) {
         //e.preventDefault();
         //e.stopPropagation();
-        this.app.occModel = this.model;
+        this.app.occDetailModel = this.model;
         this.app.router.navigate(this.model.get('keyname'), {trigger: true});
       }
     });

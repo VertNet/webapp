@@ -1,11 +1,12 @@
 """API handlers for VertNet records."""
 
 import webapp2
-from vertnet.service.model import RecordIndex, RecordList
+from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
 import json
+import logging
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -16,8 +17,16 @@ def record_list(limit, cursor, q, message=False):
         return RecordList(items=i, cursor=n, more=m)
     return i, n, m
 
+
 class RecordService(remote.Service):
     """RPC services for working with Records."""
+
+    @remote.method(RecordPayload, RecordPayload)
+    def get(self, message):
+        """Return a RecordList."""
+        record = Record.get_by_id(message.id)
+        logging.info('RECORD %s' % record)
+        return RecordPayload(id=message.id, json=record.record)
 
     @remote.method(RecordList, RecordList)
     def search(self, message):

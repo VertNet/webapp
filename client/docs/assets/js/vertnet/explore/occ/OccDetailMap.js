@@ -8,10 +8,11 @@ define([
   'Underscore',
   'mps',
   'Backbone',
+  'text!explore/occ/OccDetailMap.html'
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({
 
-    el: '#occ-detail-map',
+    //el: '#occ-detail-map',
 
     options: null,
 
@@ -32,11 +33,14 @@ define([
       var map = null;
       var marker = null;
       var latlon = new google.maps.LatLng(59.327383, 18.06747);
+
+      this.$el.html(_.template(template));
+
       if (!this.map) {
         if (!window.google || !window.google.maps) {
           return this;
         }
-        this.map = new google.maps.Map($('#map', this.el).get(0), this.options);
+        this.map = new google.maps.Map(this.$('#map')[0], this.options);
         marker = new google.maps.Marker({
           map: this.map,
           draggable: false,

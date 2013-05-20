@@ -8,55 +8,103 @@ define([
 ], function (_, Backbone) {
   return Backbone.Model.extend({
     DWC_LOCATION: [
-  'Continent', 'CoordinatePrecision', 'CoordinateUncertaintyInMeters', 
-  'Country', 'CountryCode', 'County', 'DecimalLatitude', 'DecimalLongitude', 
-  'FootprintSRS', 'FootprintSpatialFit', 'FootprintWKT', 'GeodeticDatum', 
-  'GeoreferenceProtocol', 'GeoreferenceRemarks', 'GeoreferenceSources', 
-  'GeoreferenceVerificationStatus', 'GeoreferencedBy', 'GeoreferencedDate', 
-  'HigherGeography', 'HigherGeographyID', 'Island', 'IslandGroup', 
-  'Locality', 'LocationAccordingTo', 'LocationID', 'LocationRemarks', 
-  'MaximumDepthInMeters', 'MaximumDistanceAboveSurfaceInMeters', 
-  'MaximumElevationInMeters', 'MinimumDepthInMeters', 
-  'MinimumDistanceAboveSurfaceInMeters', 'MinimumElevationInMeters', 
-  'Municipality', 'PointRadiusSpatialFit', 'StateProvince', 
-  'VerbatimCoordinateSystem', 'VerbatimCoordinates', 'VerbatimDepth', 
-  'VerbatimElevation', 'VerbatimLatitude', 'VerbatimLocality', 
-  'VerbatimLongitude', 'VerbatimSRS', 'WaterBody'],
+      'Continent', 'CoordinatePrecision', 'CoordinateUncertaintyInMeters', 
+      'Country', 'CountryCode', 'County', 'DecimalLatitude', 'DecimalLongitude', 
+      'FootprintSRS', 'FootprintSpatialFit', 'FootprintWKT', 'GeodeticDatum', 
+      'GeoreferenceProtocol', 'GeoreferenceRemarks', 'GeoreferenceSources', 
+      'GeoreferenceVerificationStatus', 'GeoreferencedBy', 'GeoreferencedDate', 
+      'HigherGeography', 'HigherGeographyID', 'Island', 'IslandGroup', 
+      'Locality', 'LocationAccordingTo', 'LocationID', 'LocationRemarks', 
+      'MaximumDepthInMeters', 'MaximumDistanceAboveSurfaceInMeters', 
+      'MaximumElevationInMeters', 'MinimumDepthInMeters', 
+      'MinimumDistanceAboveSurfaceInMeters', 'MinimumElevationInMeters', 
+      'Municipality', 'PointRadiusSpatialFit', 'StateProvince', 
+      'VerbatimCoordinateSystem', 'VerbatimCoordinates', 'VerbatimDepth', 
+      'VerbatimElevation', 'VerbatimLatitude', 'VerbatimLocality', 
+      'VerbatimLongitude', 'VerbatimSRS', 'WaterBody'],
 
-  loc: function() {
-    var results = {};
-    _.map(this.attributes, _.bind(function(val, key) {
-      _.filter(this.DWC_LOCATION, function(term) {
-        if (term.toLowerCase() === key) {
-          results[term] = val;
-        }
-      });
-    }, this));
-    return results;
-  },
+    DWC_RECLEVEL: [
+      'InstitutionID', 'CollectionID', 'DatasetID', 
+      'InstitutionCode', 'CollectionCode', 'DatasetName', 'OwnerInstitutionCode', 
+      'BasisOfRecord', 'InformationWithheld', 'DataGeneralizations', 
+      'DynamicProperties'],
 
-  reclevel: function() {
-    return {};
-  },
+    DWC_OCC: [
+      'AssociatedMedia', 'AssociatedOccurrences', 'AssociatedReferences', 
+      'AssociatedSequences', 'AssociatedTaxa', 'Behavior', 'CatalogNumber', 
+      'Disposition', 'EstablishmentMeans', 'IndividualCount', 'IndividualID', 
+      'LifeStage', 'OccurrenceID', 'OccurrenceRemarks', 'OccurrenceStatus', 
+      'OtherCatalogNumbers', 'Preparations', 'PreviousIdentifications', 
+      'RecordNumber', 'RecordedBy', 'ReproductiveCondition', 'Sex'],
 
-  occ: function() {
-    return {};
-  }, 
+    DWC_EVENT: [
+      'Day', 'EndDayOfYear', 'EventDate', 'EventID', 'EventRemarks', 'EventTime', 
+      'FieldNotes', 'FieldNumber', 'Habitat', 'Month', 'SamplingEffort', 
+      'SamplingProtocol', 'StartDayOfYear', 'VerbatimEventDate', 'Year'],
 
-  event: function() {
-    return {};
-  },
+    DWC_GEO: [
+      'Bed', 'EarliestAgeOrLowestStage', 'EarliestEonOrLowestEonothem', 
+      'EarliestEpochOrLowestSeries', 'EarliestEraOrLowestErathem', 
+      'EarliestPeriodOrLowestSystem', 'Formation', 'GeologicalContextID', 'Group', 
+      'HighestBiostratigraphicZone', 'LatestAgeOrHighestStage', 
+      'LatestEonOrHighestEonothem', 'LatestEpochOrHighestSeries', 
+      'LatestEraOrHighestErathem', 'LatestPeriodOrHighestSystem', 
+      'LithostratigraphicTerms', 'LowestBiostratigraphicZone', 'Member'],
 
-  geo: function() {
-    return {};
-  },
+    DWC_ID: [
+      'DateIdentified', 'IdentificationID', 'IdentificationQualifier', 
+      'IdentificationReferences', 'IdentificationRemarks', 
+      'IdentificationVerificationStatus', 'IdentifiedBy', 'TypeStatus'],
 
-  iden: function() {
-    return {};
-  },
+    DWC_TAXON: [
+      'AcceptedNameUsage', 'AcceptedNameUsageID', 'Class', 'Family', 'Genus', 
+      'HigherClassification', 'InfraspecificEpithet', 'Kingdom', 'NameAccordingTo', 
+      'NameAccordingToID', 'NamePublishedIn', 'NamePublishedInID', 
+      'NamePublishedInYear', 'NomenclaturalCode', 'NomenclaturalStatus', 'Order', 
+      'OriginalNameUsage', 'OriginalNameUsageID', 'ParentNameUsage', 
+      'ParentNameUsageID', 'Phylum', 'ScientificName', 'ScientificNameAuthorship', 
+      'ScientificNameID', 'SpecificEpithet', 'Subgenus', 'TaxonConceptID', 'TaxonID', 
+      'TaxonRank', 'TaxonRemarks', 'TaxonomicStatus', 'VerbatimTaxonRank', 
+      'VernacularName'],
 
-  taxon: function() {
-    return {};
-  }
+    loc: function() {
+      return this._terms(this.DWC_LOCATION);
+    },
+
+    reclevel: function() {
+      return this._terms(this.DWC_RECLEVEL);
+    },
+
+    occ: function() {
+      return this._terms(this.DWC_OCC);
+    }, 
+
+    event: function() {
+      return this._terms(this.DWC_EVENT);
+    },
+
+    geo: function() {
+      return this._terms(this.DWC_GEO);
+    },
+
+    iden: function() {
+      return this._terms(this.DWC_ID);
+    },
+
+    taxon: function() {
+      return this._terms(this.DWC_TAXON);
+    },
+
+    _terms: function(terms) {
+      var results = {};
+      _.map(this.attributes, _.bind(function(val, key) {
+        _.filter(terms, function(term) {
+          if (term.toLowerCase() === key) {
+            results[term] = val;
+          }
+        });
+      }, this));
+      return results;
+    }    
   });
 });
