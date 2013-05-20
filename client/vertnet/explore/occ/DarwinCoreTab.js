@@ -20,6 +20,7 @@ define([
           var lon = this.$('#DecimalLongitude').text();
           this.mapView = new OccDetailMap({lat: lat, lon: lon});
           this.$('#occ-detail-map').html(this.mapView.render().el);
+          this.mapView.resize();
         }, this));
         return this;
       },
