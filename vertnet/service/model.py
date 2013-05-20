@@ -117,7 +117,8 @@ class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
     genus = ndb.StringProperty()
     country = ndb.StringProperty()
-    collectioncode = ndb.StringProperty()
+    institutioncode = ndb.StringProperty()
+    specificepithet = ndb.StringProperty()
     corpus = ndb.StringProperty(repeated=True)
 
     _use_memcache = False

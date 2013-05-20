@@ -1,0 +1,184 @@
+<div class="tabbable tabs-left">
+  <ul id="darwinCoreTabs" class="nav nav-tabs">
+    <% if (!_.isEmpty(this.model.loc())) { %>
+    <li class="active">
+      <a id="loc" href="#location" data-toggle="tab">Location</a>
+    </li>
+    <% } %>
+    <% if (!_.isEmpty(this.model.reclevel())) { %>
+    <li class="">
+      <a href="#reclevel-tab" data-toggle="tab">RecordLevel</a>
+    </li>
+    <% } %>
+    <% if (!_.isEmpty(this.model.occ())) { %>
+    <li class="">
+      <a href="#occ-tab" data-toggle="tab">Occurrence</a>
+    </li>
+    <% } %>            
+    <% if (!_.isEmpty(this.model.event())) { %>
+    <li class="">
+      <a href="#event-tab" data-toggle="tab">Event</a>
+    </li>
+    <% } %>
+    <% if (!_.isEmpty(this.model.geo())) { %>
+    <li class="">
+      <a href="#geo-tab" data-toggle="tab">GeologicalContext</a>
+    </li>
+    <% } %>
+    <% if (!_.isEmpty(this.model.iden())) { %>
+    <li class="">
+      <a href="#id-tab" data-toggle="tab">Identification</a>
+    </li>
+    <% } %>
+    <% if (!_.isEmpty(this.model.taxon())) { %>
+    <li class="">
+      <a href="#taxon-tab" data-toggle="tab">Taxon</a>
+    </li>
+    <% } %>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- Location tab.  -->
+    <div class="tab-pane active" id="location">
+      <div id="occ-detail-map" class="occ-detail-map">
+      </div>
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.loc(), function(val, key) { %>   
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Record level tab. -->
+    <div class="tab-pane" id="reclevel-tab">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.get('reclevel'), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Occurrence tab.  -->
+    <div class="tab-pane" id="occ-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.occ(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Event tab.  -->
+    <div class="tab-pane" id="event-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.event(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- GeoContext tab.  -->
+    <div class="tab-pane" id="geo-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.geo(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Identification tab.  -->
+    <div class="tab-pane" id="id-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.iden(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Taxon tab.  -->
+    <div class="tab-pane" id="taxon-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.taxon(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>"><%= val %></td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+  </div>
+</div>

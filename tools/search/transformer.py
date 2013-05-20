@@ -24,7 +24,7 @@ STOP_WORDS = [
 
 # Darwin Core names not indexed in full text
 DO_NOT_FULL_TEXT = [
-    'acceptednameusageid', 'accessrights', 'basisofrecord', 'collectionid', 
+    'acceptednameusageid', 'accessrights', 'collectionid', 
     'coordinateprecision', 'coordinateuncertaintyinmeters', 'datasetid', 
     'dateidentified', 'day', 'decimallatitude', 'decimallongitude', 'disposition', 
     'enddayofyear', 'eventdate', 'eventid', 'eventtime', 'fieldnotes', 
@@ -39,7 +39,7 @@ DO_NOT_FULL_TEXT = [
     'originalnameusageid', 'parentnameusageid', 'pointradiusspatialfit', 'rights', 
     'rightsholder', 'scientificnameid', 'startdayofyear', 'taxonconceptid', 'taxonid', 
     'type', 'verbatimcoordinates', 'verbatimeventdate', 'verbatimlatitude', 
-    'verbatimlongitude', 'year']
+    'verbatimlongitude']
 
 # Darwin Core names not indexed
 DO_NOT_INDEX = [
