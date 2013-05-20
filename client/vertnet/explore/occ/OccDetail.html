@@ -1,0 +1,38 @@
+<div id="occ-detail-content" class="container">
+  <!-- Title -->
+  <div class="page-header">
+    <h1>Occurrence <small>detail</small></h1>
+  </div>
+
+  <!-- Rights -->
+  <div class="alert alert-success">
+    <h4>Access rights - <%= this.model.get('orgname') %></h4>
+    <% if (this.model.get('emlrights')) { %>
+      <%= this.model.get('emlrights') %>
+    <% } %>
+  </div>
+  
+  <!-- Top level tabs links -->
+  <ul id="detailTabs" class="nav nav-tabs">
+    <li class="active">
+      <a id="dwc" href="#darwincore" data-toggle="tab">Darwin Core</a>
+    </li>
+    <li>
+      <a id="source" href="#datasource" data-toggle="tab">Data source</a>
+    </li>
+  </ul>
+
+  <!-- Top level tab content -->
+  <div id="detailTabContent" class="tab-content">
+    <!-- Darwin core tab. -->
+    <div id="darwincore" class="tab-pane active"> 
+      <!-- DarwinCoreTab.html -->
+    </div>
+      <!-- Data source tab -->
+    <div id="datasource" class="tab-pane"> 
+      <h1><%= this.model.get('orgname') %></h1>
+      <p>This occurrence was published by the <%= this.model.get('orgname') %> on <%= this.model.get('pubdate') %> in the <a href="<%= this.model.get('url') %>"><%= this.model.get('title') %> resource</a>.</p>
+    </div>
+
+  </div>
+</div>
