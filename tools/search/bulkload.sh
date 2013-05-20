@@ -36,7 +36,7 @@ source ~/.bashrc
 # STEP 0
 # Attach an EBS volume from AWS console
 # sudo mkfs -t ext3 /dev/xvdf
-# sudo mkdir /tmp/beast
+# sudo mkdir /mnt/beast
 # sudo mount /dev/xvdf /mnt/beast
 # sudo chown ubuntu:ubuntu /mnt/beast
 
