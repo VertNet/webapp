@@ -45,7 +45,6 @@ define([
       var urlParams = this.app.parseUrl();
       var path = window.location.pathname + window.location.search;
       if (urlParams.q) {
-        console.log(path);
         this.app.router.navigate(path);
         this.$('#search-keywords-box').val(urlParams.q);
         this._submitHandler(null, true);
@@ -63,10 +62,15 @@ define([
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
       if (bypass || e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
+        var q = this.$('#search-keywords-box').val();
+        var path = window.location.pathname + '?q=' + q; 
         this.paging = false;
         this.response = null;
         this._disableTablePager(true);
         this._executeSearch();
+        if (!bypass) {
+          this.app.router.navigate(path);
+        }          
       }
     },
 

@@ -18,7 +18,7 @@ routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
     webapp2.Route(r'/explore/<type>', handler='app.AppHandler:explore', 
         name='explore'),
-    webapp2.Route(r'/<publisher>/<resource>/<occurrence>', 
+    webapp2.Route(r'/<publisher>/<resource>/<occurrence>/<tab>', 
         handler='app.AppHandler:occ', name='occ'),
 ]
 
@@ -49,7 +49,7 @@ class AppHandler(webapp2.RequestHandler):
         """Render page html."""
         self.render_template('home.html')
 
-    def occ(self, publisher, resource, occurrence):
+    def occ(self, publisher, resource, occurrence, tab):
         record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
         values = dict(rec=util.classify(json.loads(record.record)))
         self.render_template('occurrence.html', template_values=values)        

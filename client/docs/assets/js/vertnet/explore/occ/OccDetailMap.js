@@ -1,9 +1,8 @@
 /*
- * Map view
+ * Occurrence detail map.
  */
 
 define([
-  // dependencies
   'jQuery',
   'Underscore',
   'mps',
@@ -11,8 +10,6 @@ define([
   'text!explore/occ/OccDetailMap.html'
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({
-
-    //el: '#occ-detail-map',
 
     options: null,
 
@@ -23,7 +20,7 @@ define([
       var lon = options.lon ? parseFloat(options.lon) : 0;
       this.latlon = new google.maps.LatLng(lat, lon);
       this.options = {
-        zoom: 8,
+        zoom: 14,
         center: new google.maps.LatLng(lat, lon),
         mapTypeId: google.maps.MapTypeId.TERRAIN
       };
