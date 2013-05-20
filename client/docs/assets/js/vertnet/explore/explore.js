@@ -2,7 +2,7 @@
  * Explore page view.
  */
 
-define([
+ define([
   'jQuery',
   'Underscore',
   'Backbone',
@@ -12,26 +12,24 @@ define([
   'text!explore/Explore.html'
   ], function ($, _, Backbone, mps, rpc, OccTab, template) {
 
-  return Backbone.View.extend({
-    initialize: function (options, app) {
-      this.app = app;
-      this.template = _.template(template);
-      //this.on('render', this.setup, this);
-    },
+    return Backbone.View.extend({
+      initialize: function (options, app) {
+        this.app = app;
+        this.template = _.template(template);
+      },
 
-    render: function () {
-      this.$el.html(this.template());
-      this.occTab = new OccTab({parentView: this, listEl: '#occ-view'}, this.app);
-      this.$('#occurrences').html(this.occTab.render().el);
+      render: function () {
+        this.$el.html(this.template());
+        this.occTab = new OccTab({parentView: this, listEl: '#occ-view'}, this.app);
+        this.$('#occurrences').html(this.occTab.render().el);
       this.occSearch = window.location.search; // TODO: hack
-      //this.trigger('render');
       return this;
     },
 
     setTab: function(name) {
-       var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
-       this.$(selector).tab('show');
-    },
+     var selector = '#exploreTabs a[href="#' + this.options.show + '"]';
+     this.$(selector).tab('show');
+   },
 
     // Misc. setup.
     setup: function () {

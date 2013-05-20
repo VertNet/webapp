@@ -2,10 +2,9 @@ define([
   'jQuery',
   'Backbone',
   'Underscore',
-  'map',
-  'explore/occ/OccDetailMap',
+  'explore/occ/DarwinCoreTab',
   'text!explore/occ/OccDetail.html'
-  ], function ($, Backbone, _, map, OccDetailMap, template) {
+  ], function ($, Backbone, _, DarwinCoreTab, template) {
     return Backbone.View.extend({
 
       initialize: function(options, app) {
@@ -13,23 +12,29 @@ define([
         this.template = _.template(template);
       }, 
 
-      events: {
-        'click #explore-publisher-tab': '_click'
-      },
-
       render: function() {
         this.$el.html(this.template(this.model.attributes));
-        map.init(_.bind(function() {
-          var lat = this.$('#DecimalLatitude').text();
-          var lon = this.$('#DecimalLongitude').text();
-          var map = new OccDetailMap({lat: lat, lon: lon});
-          this.$('#occ-detail-map').html(map.render().el);
-        }, this));
+        this.darwinCoreTab = new DarwinCoreTab({model: this.model}, this.app);
+        this.$('#darwincore').html(this.darwinCoreTab.render().el);
         return this;
       },
 
-      _click: function() {
-        console.log('hi');
+     setTab: function(name) {
+       var selector = '#detailTabs a[href="#' + name + '"]';
+       this.$(selector).tab('show');
+     },
+
+     setup: function () {
+        this.setTab(this.options.show);
+        this.$('#detailTabs a').click(_.bind(function (e) {
+          var tab = e.target.id;
+          if (tab === 'dwc') {
+            this.app.router.navigate(this.model.get('keyname') + '/darwincore');
+          } else if (tab === 'source') {
+            this.app.router.navigate(this.model.get('keyname') + '/datasource');
+          }
+        }, this));
+        return this;
       }
-    });
+  });
 });

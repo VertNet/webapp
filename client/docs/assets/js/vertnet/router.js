@@ -28,7 +28,7 @@ define([
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
       this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
-      this.route(':publisher/:resource/:occurrence', 'occurrence', 
+      this.route(':publisher/:resource/:occurrence/:tab', 'occurrence', 
         _.bind(this.occurrence, this, 'occurrence'));
 
       // Subscriptions
@@ -61,7 +61,7 @@ define([
       }
     },
     
-    occurrence: function(name, publisher, resource, occurrence) {
+    occurrence: function(name, publisher, resource, occurrence, tab) {
       var model = this.app.occDetailModel;
       var request = {};
 
@@ -77,7 +77,7 @@ define([
       if (!model) {
         request['id'] = [publisher, resource, occurrence].join('/');
         rpc.execute('/service/rpc/record.get', request, {
-          success: _.bind(this._occurrenceHandler, this), 
+          success: _.bind(this._occurrenceHandler, this, tab), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
           }, this)
@@ -88,11 +88,12 @@ define([
       }
     },
 
-    _occurrenceHandler: function(response) {
+    _occurrenceHandler: function(tab, response) {
       var model = new OccModel(JSON.parse(response.json));
       this.app.occDetailModel = model;
-      this.page = new OccDetail({model: model}, this.app);
+      this.page = new OccDetail({model: model, show: tab}, this.app);
       $('#content').html(this.page.render().el);
+      this.page.setup();
     },
 
     explore: function(type, name) {

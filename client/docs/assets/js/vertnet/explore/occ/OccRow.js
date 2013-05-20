@@ -35,7 +35,7 @@ define([
         //e.preventDefault();
         //e.stopPropagation();
         this.app.occDetailModel = this.model;
-        this.app.router.navigate(this.model.get('keyname'), {trigger: true});
+        this.app.router.navigate(this.model.get('keyname') + '/darwincore', {trigger: true});
       }
     });
 });
