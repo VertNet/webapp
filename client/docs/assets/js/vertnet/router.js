@@ -72,11 +72,10 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      var data = {meta: {emlrights: 'rights', orgname: 'Foo', pubdate: 'today', 
-      title: 'title', url: 'foo.com'}, loc: {dude: 'yes!'}};
-      var model = new OccModel(data);
-      this.page = new OccDetail({model: model}, this.app);
-      $('#content').html(this.page.render().el);
+      if (this.app.occModel) {
+        this.page = new OccDetail({model: this.app.occModel}, this.app);
+        $('#content').html(this.page.render().el);
+      }
     },
 
     explore: function(type, name) {
