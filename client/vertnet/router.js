@@ -22,14 +22,14 @@ define([
 
     initialize: function (app) {
 
+
       // Save app reference.
       this.app = app;
       
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
+
       this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
-      this.route(':publisher/:resource/:occurrence/:tab', 'occurrence', 
-        _.bind(this.occurrence, this, 'occurrence'));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -41,7 +41,12 @@ define([
 
     routes: {
       // Catch all:
-      '*actions': 'default'
+      ':publisher/:resource':  'occurrence',
+     '*actions': 'default'
+    },
+
+    query: function(entity, args) {
+      console.log('wow', entity, args);
     },
 
     /**
@@ -61,9 +66,13 @@ define([
       }
     },
     
-    occurrence: function(name, publisher, resource, occurrence, tab) {
+    occurrence: function(publisher, resource, params) {
       var model = this.app.occDetailModel;
       var request = {};
+      var resource = resource.split('?')[0];
+      var params = this.app.parseUrl();
+      var occurrence = params['id'];
+      var tab = params['view'];
 
       console.log('OCCURRENCE');
       // Kill page view if exists.
