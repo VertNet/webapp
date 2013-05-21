@@ -33,6 +33,8 @@ define([
       this.occList = new OccList();
       this.viewList = []; // Array of result table row views.
       this.paging = false;
+      this.count = 0;
+      this.countLoaded = 0;
       $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
@@ -161,10 +163,14 @@ define([
         return JSON.parse(item.json);
       });
       var showResults = items.length !== 0;
-      this.response = response;
+      var howMany = response.count > 1000 ? '1000s' : response.count;
       if (!this.paging) {
         this._clearResults();
       }
+      this.count = response.count;
+      this.countLoaded += response.items.length;
+      this.$('.counter').text('Showing 1 - ' + this.countLoaded + ' of ' + howMany);
+      this.response = response;
       this._showResultsTable(showResults);
       if (showResults) {
         _.each(items, _.bind(function (i) {
@@ -180,7 +186,7 @@ define([
       }
       this._disableTablePager(!this.response.more);
       // window.scrollTo(0,document.body.scrollHeight);
-      $('html, body, .content').animate({scrollTop: $(document).height()}, 300);
+      //$('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
 
     // Disable table pager.
@@ -204,6 +210,7 @@ define([
         table.hide();
         this.$('#no-results').text('No results.');
         this.$('#no-results').show();
+        this.$('.counter').hide();
       }
     },
 
@@ -214,6 +221,8 @@ define([
       }));
       this.viewList.splice(0, this.viewList.length); // clear views.
       this.occList.reset(); // clear models.
+      this.count = 0;
+      this.countLoaded = 0;
     },
 
     // Explode search keywords value into an array of terms.

@@ -10,12 +10,12 @@ import logging
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
-    i, n, m = RecordIndex.search(q, limit, cursor=cursor, message=message)
+    i, n, m, c = RecordIndex.search(q, limit, cursor=cursor, message=message)
     if message:
         if n:
             n = n.urlsafe()
-        return RecordList(items=i, cursor=n, more=m)
-    return i, n, m
+        return RecordList(items=i, cursor=n, more=m, count=c)
+    return i, n, m, c
 
 
 class RecordService(remote.Service):
