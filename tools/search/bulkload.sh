@@ -47,12 +47,12 @@ source ~/.bashrc
 # STEP 2
 # sync harvested data to instance - run this from a screen instance:
 # screen -m
-# mkdir /tmp/harvest
-# s3cmd sync s3://vnproject/data/staging/ /tmp/harvest
+# mkdir /mnt/beast/harvest
+# s3cmd sync s3://vnproject/data/staging/ /mnt/beast/harvest
 
 # STEP 3
 # cat all part files into one big one:
-# ls -R /tmp/harvest/*/part* | xargs cat > /mnt/beast/parts
+# ls -R /mnt/beast/harvest/*/part* | xargs cat > /mnt/beast/parts
 
 # STEP 4
 # deploy to app engine - this doesn't usually need to happen
@@ -63,7 +63,16 @@ source ~/.bashrc
 # upload data to app engine - run this within a screen instance, from the
 # 'webapp/tools/search/' directory:
 # screen -m
-# echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/mnt/parts --kind Record --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
+# echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/mnt/beast/parts --kind Record --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
+
+# STEP 6
+# Bulkload index
+# You need a header in the file:
+# cat header.tsv > /mnt/beast/parts
+# echo >> /mnt/beast/parts
+# ls -R /mnt/beast/harvest/*/part* | xargs cat > /mnt/beast/parts
+
+# echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/mnt/beast/parts --kind RecordIndex --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
 
 # MONITORING
 # to check the progress of the upload, open the sql3 file that is created in
