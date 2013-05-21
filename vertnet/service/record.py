@@ -24,9 +24,7 @@ class RecordService(remote.Service):
     @remote.method(RecordPayload, RecordPayload)
     def get(self, message):
         """Return a RecordList."""
-        logging.info('RECORD ID %s' % message.id)
         record = Record.get_by_id(message.id)
-        logging.info('RECORD %s' % record)
         return RecordPayload(id=message.id, json=record.record)
 
     @remote.method(RecordList, RecordList)
@@ -37,7 +35,6 @@ class RecordService(remote.Service):
             curs = Cursor(urlsafe=message.cursor)
         q = json.loads(message.q)
         response = record_list(message.limit, curs, q, message=True)
-        logging.info("RESPONSE %s" % response)
         return response
 
 class RecordApi(webapp2.RequestHandler):

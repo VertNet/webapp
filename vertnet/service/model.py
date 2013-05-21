@@ -168,14 +168,9 @@ class RecordIndex(ndb.Model):
                 keys_only=True)
             record_keys = [x.parent() for x in index_keys]
 
-        logging.info('RECORDS KEYS %s' % record_keys)
-
-
         # Return results
         records = ndb.get_multi(record_keys)
-
-        logging.info('RECORDS %s' % records)
-
+        
         if message:
             records = [x.message for x in records if x]
         count = qry.count(limit=1000)
