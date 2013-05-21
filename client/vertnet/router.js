@@ -22,15 +22,14 @@ define([
 
     initialize: function (app) {
 
+
       // Save app reference.
       this.app = app;
       
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
-      this.route(':publisher/:resource', 'occurrence', 
-        _.bind(this.occurrence, this, 'occurrence'));
-      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
 
+      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -42,7 +41,12 @@ define([
 
     routes: {
       // Catch all:
-      '*actions': 'default'
+      ':publisher/:resource':  'occurrence',
+     '*actions': 'default'
+    },
+
+    query: function(entity, args) {
+      console.log('wow', entity, args);
     },
 
     /**
@@ -62,7 +66,7 @@ define([
       }
     },
     
-    occurrence: function(name, publisher, resource, occurrence, tab) {
+    occurrence: function(publisher, resource, params) {
       var model = this.app.occDetailModel;
       var request = {};
       var resource = resource.split('?')[0];

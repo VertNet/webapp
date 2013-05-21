@@ -36,7 +36,7 @@ define([
         var keyname = this.model.get('keyname');
         var path = util.getOccPath(keyname, 'darwincore');
         this.app.occDetailModel = this.model;
-        this.app.router.navigate(path, {trigger: true});
+        this.app.router.navigate(path);
       }
     });
 });
