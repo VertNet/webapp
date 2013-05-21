@@ -72,16 +72,14 @@ define([
     _checkUrl: function() {
       var urlParams = this.app.parseUrl();
       var path = window.location.pathname + window.location.search;
-      if (!_.isEmpty(urlParams.q)) {
-        this.app.router.navigate(path);
-        this.$('#search-keywords-box').val(urlParams.q);
-        this.$('#genus').val(urlParams.genus);
-        this.$('#specificepithet').val(urlParams.specificepithet);
-        this.$('#year').val(urlParams.year);
-        this.$('#country').val(urlParams.country);
-        this.$('#institutioncode').val(urlParams.institutioncode);
-        this._submitHandler(null, true);
-      }
+      this.app.router.navigate(path);
+      this.$('#search-keywords-box').val(urlParams.q);
+      this.$('#genus').val(urlParams.genus);
+      this.$('#specificepithet').val(urlParams.specificepithet);
+      this.$('#year').val(urlParams.year);
+      this.$('#country').val(urlParams.country);
+      this.$('#institutioncode').val(urlParams.institutioncode);
+      this._submitHandler(null, true);
     },
 
     // Load more results.
