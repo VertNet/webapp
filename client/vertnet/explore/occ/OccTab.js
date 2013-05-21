@@ -150,7 +150,7 @@ define([
       _.each(this.$('input'), _.bind(function (input) {
         var value = $(input).val();
         if (input.id !== 'search-keywords-box' && value.trim() !== '') {
-          this.terms[input.id] = value;
+          this.terms[input.id] = value.trim().toLowerCase();
         }
       }, this));
     },
@@ -166,7 +166,7 @@ define([
         this._clearResults();
       }
       this.count = response.count;
-      this.countLoaded += response.items.length;
+      this.countLoaded += items.length;
       this.$('.counter').text('Showing 1 - ' + this.countLoaded + ' of ' + howMany);
       this.response = response;
       this._showResultsTable(showResults);
@@ -227,10 +227,10 @@ define([
     _explodeKeywords: function() {
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
-      if (q) {
-        this.keywords = q.split(/,?\s+/);
-        this.keywords = _.filter(this.keywords, function(x) {
-          var x = x.trim();
+      var keywords = q.split(/,?\s+/);
+      if (!_.isEmpty(keywords)) {
+        this.keywords = _.map(keywords, function(x) {
+          var x = x.trim().toLowerCase();
           if (x !== '') {
             return x;
           }
