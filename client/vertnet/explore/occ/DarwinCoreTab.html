@@ -71,7 +71,7 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.get('reclevel'), function(val, key) { %>  
+        <% _.each(this.model.reclevel(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>"><%= val %></td>
