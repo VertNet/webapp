@@ -207,6 +207,7 @@ class DatasetPayload(messages.Message):
 class RecordPayload(messages.Message):
     json = messages.StringField(1)
     id = messages.StringField(2)
+    keyname = messages.StringField(3)
 
 class RecordList(messages.Message):
     items = messages.MessageField(RecordPayload, 1, repeated=True)

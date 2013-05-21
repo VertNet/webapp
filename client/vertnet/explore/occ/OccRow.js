@@ -2,8 +2,9 @@ define([
   'jQuery',
   'Backbone',
   'Underscore',
+  'util',
   'text!explore/occ/OccRow.html'
-  ], function ($, Backbone, _, template) {
+  ], function ($, Backbone, _, util, template) {
     return Backbone.View.extend({
 
       tagName: 'tr',
@@ -32,10 +33,10 @@ define([
 
       // Open the occurrence detail page.
       _clickHandler: function(e) {
-        //e.preventDefault();
-        //e.stopPropagation();
+        var keyname = this.model.get('keyname');
+        var path = util.getOccPath(keyname, 'darwincore');
         this.app.occDetailModel = this.model;
-        this.app.router.navigate(this.model.get('keyname') + '/darwincore', {trigger: true});
+        this.app.router.navigate(path, {trigger: true});
       }
     });
 });

@@ -406,5 +406,15 @@ define([
       return obj;
     },
 
+    getOccPath: function(keyname, tab) {
+      var publisher = keyname.split('/')[0];
+      var resource = keyname.split('/')[1];
+      var occurrence = keyname.split('/')[2];
+      var path = [publisher, resource].join('/') + '?id=' + occurrence;
+      if (tab) {
+        path += '&view=' + tab;
+      }
+      return path;
+    }
   }
 });

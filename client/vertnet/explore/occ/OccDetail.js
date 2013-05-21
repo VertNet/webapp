@@ -2,9 +2,10 @@ define([
   'jQuery',
   'Backbone',
   'Underscore',
+  'util',
   'explore/occ/DarwinCoreTab',
   'text!explore/occ/OccDetail.html'
-  ], function ($, Backbone, _, DarwinCoreTab, template) {
+  ], function ($, Backbone, _, util, DarwinCoreTab, template) {
     return Backbone.View.extend({
 
       initialize: function(options, app) {
@@ -28,14 +29,10 @@ define([
      setup: function () {
         this.setTab(this.options.show);
         this.$('#detailTabs a').click(_.bind(function (e) {
-          var tab = e.target.id;
-          if (tab === 'dwc') {
-            this.app.router.navigate(this.model.get('keyname') + '/darwincore');
-            this.setTab('darwincore');
-          } else if (tab === 'source') {
-            this.app.router.navigate(this.model.get('keyname') + '/datasource');
-            this.setTab('datasource');
-          }
+          var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';
+          var path = util.getOccPath(this.model.get('keyname'), tab); 
+          this.app.router.navigate(path);
+          this.setTab(tab);
         }, this));
         return this;
       },

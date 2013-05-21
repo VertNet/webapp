@@ -27,9 +27,10 @@ define([
       
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
-      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
-      this.route(':publisher/:resource/:occurrence/:tab', 'occurrence', 
+      this.route(':publisher/:resource', 'occurrence', 
         _.bind(this.occurrence, this, 'occurrence'));
+      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
+
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -64,6 +65,10 @@ define([
     occurrence: function(name, publisher, resource, occurrence, tab) {
       var model = this.app.occDetailModel;
       var request = {};
+      var resource = resource.split('?')[0];
+      var params = this.app.parseUrl();
+      var occurrence = params['id'];
+      var tab = params['view'];
 
       console.log('OCCURRENCE');
       // Kill page view if exists.
