@@ -172,7 +172,8 @@ class RecordIndex(ndb.Model):
         records = ndb.get_multi(record_keys)
         if message:
             records = [x.message for x in records]
-        return (records, next_cursor, more)
+        count = qry.count(limit=1000)
+        return (records, next_cursor, more, count)
 
 class OrganizationPayload(messages.Message):
     """JSON Organization payload for RPC."""
@@ -214,6 +215,7 @@ class RecordList(messages.Message):
     limit = messages.IntegerField(4)  
     parent = messages.StringField(5)  
     q = messages.StringField(6)   # {terms={}, keywords=[]}
+    count = messages.IntegerField(7)
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 

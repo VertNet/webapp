@@ -1,3 +1,9 @@
+.counter {
+	text-align: right;
+	//margin-left: 734px;
+	font-weight: bold;
+	color: grey;	
+}
 
 #map {
 	height: 400px;
