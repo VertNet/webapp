@@ -22,6 +22,7 @@
         this.$el.html(this.template());
         this.occTab = new OccTab({parentView: this, listEl: '#occ-view'}, this.app);
         this.$('#occurrences').html(this.occTab.render().el);
+        this.occTab.setup();
       this.occSearch = window.location.search; // TODO: hack
       return this;
     },

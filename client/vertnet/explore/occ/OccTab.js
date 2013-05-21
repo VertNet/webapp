@@ -41,10 +41,29 @@ define([
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
+        this.resultMap.resize();
       }, this));
       this.$('#occTable').hide();
       this._disableTablePager(true);
       this._checkUrl();
+      return this;
+    },
+
+   setup: function () {
+      this.$('#resultTabs a').on('shown', _.bind(function (e) {
+        var tab = e.target.id;
+        if (tab === 'maptab') {
+          this.resultMap._updateMarkers();
+          this.resultMap.resize();
+        } 
+      }, this));
+   
+      this.$('#resultTabs a').click(_.bind(function (e) {
+        var tab = e.target.id;
+        if (tab === 'maptab') {
+          this.resultMap.resize();
+        } 
+      }, this));
       return this;
     },
 

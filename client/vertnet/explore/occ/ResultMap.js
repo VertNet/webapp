@@ -44,6 +44,8 @@ define([
         this._updateMarkers();
       }
       //map = this.map;
+      this.resize();
+
       return this;
     },
 
@@ -76,12 +78,13 @@ define([
       }, this));
       this.map.panToBounds(this.bounds);
       this.map.setCenter(this.bounds.getCenter());
+      this.resize();
     },
 
     resize: function() {
       google.maps.event.trigger(this.map, 'resize');
       this.map.setZoom(this.map.getZoom());
-      this.map.setCnter(this.map.getCenter());
+      this.map.setCenter(this.map.getCenter());
     }
   });
 });
