@@ -1,5 +1,8 @@
 #! /bin/bash
 
+# We've found that an m3.xlarge instance with a 50gb attached EBS volume
+# is perfect for this process.
+
 # before doing anything, add AWS_ID and AWS_SECRET to .bashrc
 # then add $GAE_PASSWORD and $EMAIL:
 # export EMAIL="your@email.com"
@@ -35,9 +38,11 @@ source ~/.bashrc
 
 # STEP 0
 # Attach an EBS volume from AWS console
-# sudo mkfs -t ext3 /dev/xvdf
+# Double-check the location of the EBS volume
+# These instructions assume it is at /dev/xvdb
+# sudo mkfs -t ext3 /dev/xvdb
 # sudo mkdir /mnt/beast
-# sudo mount /dev/xvdf /mnt/beast
+# sudo mount /dev/xvdb /mnt/beast
 # sudo chown ubuntu:ubuntu /mnt/beast
 
 # STEP 1
@@ -51,8 +56,11 @@ source ~/.bashrc
 # s3cmd sync s3://vnproject/data/staging/ /mnt/beast/harvest
 
 # STEP 3
-# cat all part files into one big one:
-# ls -R /mnt/beast/harvest/*/part* | xargs cat > /mnt/beast/parts
+# cat all part files into one big one.
+# You need a header in the file:
+# cat header.tsv > /mnt/beast/parts
+# echo >> /mnt/beast/parts
+# ls -R /mnt/beast/harvest/*/part* | xargs cat >> /mnt/beast/parts
 
 # STEP 4
 # deploy to app engine - this doesn't usually need to happen
@@ -62,16 +70,10 @@ source ~/.bashrc
 # STEP 5
 # upload data to app engine - run this within a screen instance, from the
 # 'webapp/tools/search/' directory:
-# screen -m
 # echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/mnt/beast/parts --kind Record --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
 
 # STEP 6
 # Bulkload index
-# You need a header in the file:
-# cat header.tsv > /mnt/beast/parts
-# echo >> /mnt/beast/parts
-# ls -R /mnt/beast/harvest/*/part* | xargs cat > /mnt/beast/parts
-
 # echo "$GAE_PASSWORD" | appcfg.py upload_data --log_file=bulk.log --rps_limit 2000 --bandwidth_limit 2000000 --batch_size=100 --num_threads=40 --config_file=bulkload.yaml --filename=/mnt/beast/parts --kind RecordIndex --url=http://bulkloader.vn-app.appspot.com/_ah/remote_api --email $EMAIL --passin
 
 # MONITORING
