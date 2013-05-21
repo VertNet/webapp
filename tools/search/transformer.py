@@ -68,6 +68,7 @@ class Record(db.Model):
 
 def slugify(s, length=None, separator="-"):
     """Return a slugged version of supplied string."""
+    s = re.sub('[^a-zA-Z\d\s:]', ' ', s)
     if length:
         words = s.split()[:length]
     else:
