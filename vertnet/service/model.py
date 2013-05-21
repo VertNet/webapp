@@ -170,8 +170,9 @@ class RecordIndex(ndb.Model):
 
         # Return results
         records = ndb.get_multi(record_keys)
+        
         if message:
-            records = [x.message for x in records]
+            records = [x.message for x in records if x]
         count = qry.count(limit=1000)
         return (records, next_cursor, more, count)
 
@@ -207,6 +208,7 @@ class DatasetPayload(messages.Message):
 class RecordPayload(messages.Message):
     json = messages.StringField(1)
     id = messages.StringField(2)
+    keyname = messages.StringField(3)
 
 class RecordList(messages.Message):
     items = messages.MessageField(RecordPayload, 1, repeated=True)
