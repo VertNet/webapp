@@ -36,7 +36,9 @@ class RecordService(remote.Service):
         if message.cursor:
             curs = Cursor(urlsafe=message.cursor)
         q = json.loads(message.q)
-        return record_list(message.limit, curs, q, message=True)
+        response = record_list(message.limit, curs, q, message=True)
+        logging.info("RESPONSE %s" % response)
+        return response
 
 class RecordApi(webapp2.RequestHandler):
     """Record API handler."""
