@@ -20,8 +20,8 @@ git clone git://github.com/VertNet/webapp.git
 # install gae sdk
 mkdir ~/bin
 cd bin
-wget http://googleappengine.googlecode.com/files/google_appengine_1.7.5.zip
-unzip google_appengine_1.7.5.zip
+wget http://googleappengine.googlecode.com/files/google_appengine_1.8.0.zip
+unzip google_appengine_1.8.0.zip
 cd ~/
 
 # set paths
