@@ -83,7 +83,9 @@ define([
     },
 
     // Load more results.
-    _loadMore: function() {
+    _loadMore: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (this.response && this.response.more) {
         this.paging = true;
         this._executeSearch(null, true);
@@ -169,14 +171,16 @@ define([
           var model = new OccModel(i);
           var view = new OccRow({parentView: this, model:model}, this.app);
           this.occList.add(model);
-          this.viewList.unshift(view);
-          this.$('#occTable > tbody:last').prepend(view.render().el);
+          this.viewList.push(view);
+          this.$('#occTable > tbody:last').append(view.render().el);
         }, this));
       } else {
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
       }
       this._disableTablePager(!this.response.more);
+      // window.scrollTo(0,document.body.scrollHeight);
+      $('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
 
     // Disable table pager.
