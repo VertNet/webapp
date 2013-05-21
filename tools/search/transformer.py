@@ -39,7 +39,7 @@ DO_NOT_FULL_TEXT = [
     'originalnameusageid', 'parentnameusageid', 'pointradiusspatialfit', 'rights', 
     'rightsholder', 'scientificnameid', 'startdayofyear', 'taxonconceptid', 'taxonid', 
     'type', 'verbatimcoordinates', 'verbatimeventdate', 'verbatimlatitude', 
-    'verbatimlongitude']
+    'verbatimlongitude', 'description']
 
 # Darwin Core names not indexed
 DO_NOT_INDEX = [
