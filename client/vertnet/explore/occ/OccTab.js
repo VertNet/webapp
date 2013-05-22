@@ -204,6 +204,7 @@ define([
       if (show) {
         table.show();
         this.$('#no-results').hide();
+        this.$('.counter').show();
       } else {
         table.hide();
         this.$('#no-results').text('No results.');
@@ -228,10 +229,10 @@ define([
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
       var keywords = q.split(/,?\s+/);
-      if (!_.isEmpty(keywords)) {
+      if (q && !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim().toLowerCase();
-          if (x !== '') {
+          if (x) {
             return x;
           }
         });
