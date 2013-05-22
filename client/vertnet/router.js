@@ -13,9 +13,10 @@ define([
   'common/Footer',
   'explore/Explore',
   'explore/occ/OccDetail',
-  'explore/occ/OccModel'
+  'explore/occ/OccModel',
+  'About'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView, OccDetail, OccModel) {
+  FooterView, ExploreView, OccDetail, OccModel, About) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -30,6 +31,8 @@ define([
       this.route('', 'home', _.bind(this.home, this, 'home'));
 
       this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
+      
+      this.route('about', 'about', _.bind(this.about, this));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -64,6 +67,20 @@ define([
       if (!this.footer) {
         this.footer = new FooterView(this.app).render();
       }
+    },
+
+    about: function() {
+      console.log('router.about():');
+
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
+
+      // Setup header/footer.
+      this.initHeaderFooter();
+
+      this.page = new About({}, this.app);
+      $('#content').html(this.page.render().el);
     },
     
     occurrence: function(publisher, resource, params) {

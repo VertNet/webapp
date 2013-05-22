@@ -18,7 +18,8 @@ routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
     webapp2.Route(r'/explore/<type>', handler='app.AppHandler:explore', 
         name='explore'),
-    # webapp2.Route(r'/<publisher>/<resource>/:.*/<tab>', 
+    webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
+    webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
     webapp2.Route(r'/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
         handler='app.AppHandler:occ', name='occ'),
 ]
@@ -43,8 +44,15 @@ class AppHandler(webapp2.RequestHandler):
 
     def explore(self, type):
         """Render the explore page."""
-        logging.info('TYPE ' + type)
         self.render_template('explore.html')
+    
+    def about(self):
+        """Render the about page."""
+        self.render_template('about.html')        
+
+    def feedback(self):
+        """Render the feedback page."""
+        self.render_template('feedback.html')        
 
     def home(self):
         """Render page html."""
