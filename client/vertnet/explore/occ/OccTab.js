@@ -190,9 +190,9 @@ define([
     // Disable table pager.
     _disableTablePager: function(disable) {
       if (disable) {
-        this.$('#table-pager').addClass('disabled');
+        this.$('.table-pager').addClass('disabled');
       } else {
-        this.$('#table-pager').removeClass('disabled');
+        this.$('.table-pager').removeClass('disabled');
       }
     },
 
@@ -203,12 +203,12 @@ define([
 
       if (show) {
         table.show();
-        this.$('#no-results').hide();
+        // this.$('#no-results').hide();
+        this.$('.counter').show();
       } else {
         table.hide();
-        this.$('#no-results').text('No results.');
-        this.$('#no-results').show();
-        this.$('.counter').hide();
+        this.$('.counter').text('No results.');
+        this.$('.counter').show();
       }
     },
 
@@ -228,10 +228,10 @@ define([
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
       var keywords = q.split(/,?\s+/);
-      if (!_.isEmpty(keywords)) {
+      if (q && !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim().toLowerCase();
-          if (x !== '') {
+          if (x) {
             return x;
           }
         });
