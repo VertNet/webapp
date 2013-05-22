@@ -114,6 +114,7 @@ define([
       this.markers.splice(0, this.markers.length);
 
       _.each(this.collection.models, _.bind(function(model) {
+        console.log(model);
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
         var sciname = model.get('scientificname') ? model.get('scientificname') : null;
@@ -127,22 +128,26 @@ define([
         var marker = null;
         var contentString = null;
         var infowindow = null;
+        var specificURL = model.get('keyname') ? model.get('keyname') : null;
+        var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
+        var url = '../'+specificURLright+'&view=darwincore';
         
         if (lat && lon) { 
           latlon = new google.maps.LatLng(lat, lon);
           this.bounds.extend(latlon);
           
           // Create content for the infoWindow
-          contentString = '<h3>Occurrence Record</h3><table border="0">';
-          contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>'
-          contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>'
-          contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>'
-          contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>'
-          contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>'
-          contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>'
-          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>'
-          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>'
-          contentString += '</table>'
+          contentString = '<h3>Occurrence Record</h3><font size="2"><table border="0">';
+          contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>';
+          contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>';
+          contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>';
+          contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>';
+          contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>';
+          contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>';
+          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
+          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
+          contentString += '</table>';
+          contentString += '<a href="'+url+'">Link to the detail page</a></font>';
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
             title: occid,
