@@ -36,7 +36,21 @@ define([
         this.options = {
           zoom: 2,
           center: new google.maps.LatLng(0, 0),
-          mapTypeId: google.maps.MapTypeId.TERRAIN
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          // Controlling the control
+          disableDefaultUI: true,
+          panControl: true,
+          zoomControl: true,
+          zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+          },
+          mapTypeControl: true,
+          mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+          },
+          scaleControl: true,
+          streetViewControl: false,
+          overviewMapControl: false
         };
         this.map = new google.maps.Map(this.$('#map')[0], this.options);
         this.collection.on('add', this._updateMarkers, this);
@@ -72,32 +86,37 @@ define([
         var occid = model.get('id') ? model.get('id') : null;
         var latlon = null;
         var marker = null;
-        var contentString = null;
-        var infowindow = null;
+        // var contentString = null;
+        // var infowindow = null;
         
         if (lat && lon) { 
           latlon = new google.maps.LatLng(lat, lon);
           this.bounds.extend(latlon);
-          // Create content for the infoWindow
-          contentString = occid;
-          // Create infoWindow
-          infowindow = new google.maps.InfoWindow({
-            title: occid,
-            content : contentString
-          });
+          
+          // // Create content for the infoWindow
+          // contentString = occid;
+          // // Create infoWindow
+          // infowindow = new google.maps.InfoWindow({
+          //   title: occid,
+          //   content : contentString
+          // });
+
           // Create marker
           marker = new google.maps.Marker({
             map: this.map,
             draggable: false,
             position: latlon,
             clickable: true,
-            title: occid
           });
 
-          // Listener to open the infowindow
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(this.map,marker);
-          });
+          // // Listener to open the infowindow
+          // google.maps.event.addListener(marker, 'click', function() {
+          //   infowindow.open(this.map, marker);
+          // });
+          // google.maps.event.addListener(this.map, 'click', function() {
+          //   infowindow.close();
+          // });
+          
           // Add marker to the array
           this.markers.push(marker);
         }
@@ -115,9 +134,7 @@ define([
       if (this.markers.length != 0) {
         this.map.fitBounds(this.bounds);
       }
-      console.log(this.map.getCenter().toString());
-      console.log(this.map.getZoom().toString());
-    }
+    },
 
   });
 });
