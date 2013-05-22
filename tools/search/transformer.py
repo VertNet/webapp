@@ -152,13 +152,13 @@ def get_corpus_list():
         """
         recjson = get_rec_dict(bulkload_state.current_dictionary)
         corpus = set(
-            [x.strip().lower() for key,x in recjson.iteritems() \
+            [x.strip().lower()[:500] for key,x in recjson.iteritems() \
                  if key.strip().lower() not in DO_NOT_FULL_TEXT and \
                  isinstance(x, unicode) and x.strip().lower() not in STOP_WORDS]) 
         corpus.update(
             reduce(lambda x,y: x+y, 
                    map(lambda x: [s.strip().lower() for s in x.split() if s], 
-                       [val for key,val in recjson.iteritems() \
+                       [val[:500] for key,val in recjson.iteritems() \
                             if key.strip().lower() not in DO_NOT_FULL_TEXT and \
                             isinstance(val, unicode) and val.strip().lower() not in STOP_WORDS]), [])) # adds tokenized values      
         if len(corpus) == 0:
