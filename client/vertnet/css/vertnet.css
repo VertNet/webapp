@@ -1,6 +1,5 @@
 .counter {
 	text-align: right;
-	//margin-left: 734px;
 	font-weight: bold;
 	color: grey;	
 }
@@ -10,6 +9,10 @@
 	display: block;
 	z-index: 0;
 	border: 1px solid grey;
+}
+
+#map img {
+	max-width: none;
 }
 
 h1.stats {
