@@ -21,6 +21,7 @@ define([
       var lon = options.lon ? parseFloat(options.lon) : 0;
       this.app = app;
       this.markers = [];
+
     },
 
     render: function () {
@@ -64,6 +65,44 @@ define([
     },
 
     _updateMarkers: function() {
+      // wrapper for infoWindow
+      google.maps.InfoWindowZ=function(opts){
+          var GM = google.maps,
+              GE = GM.event,
+              iw = new GM.InfoWindow(),
+              ce;
+
+             if(!GM.InfoWindowZZ){
+                GM.InfoWindowZZ=Number(GM.Marker.MAX_ZINDEX);
+             }
+
+             GE.addListener(iw,'content_changed',function(){
+               if(typeof this.getContent()=='string'){
+                  var n=document.createElement('div');
+                      n.innerHTML=this.getContent();
+                      this.setContent(n);
+                      return;
+               }
+               GE.addListener(this,'domready',
+                               function(){
+                                var _this=this;
+                                _this.setZIndex(++GM.InfoWindowZZ);
+                                if(ce){
+                                  GM.event.removeListener(ce);
+                                }
+                                ce=GE.addDomListener(this.getContent().parentNode
+                                                  .parentNode.parentNode,'click',
+                                                  function(){
+                                                  _this.setZIndex(++GM.InfoWindowZZ);
+                                });
+                              })
+             });
+
+             if(opts)iw.setOptions(opts);
+             return iw;
+        }
+        // end of wrapper
+
       this.bounds = new google.maps.LatLngBounds();
 
       // Remove markers from map.
@@ -86,20 +125,29 @@ define([
         var occid = model.get('id') ? model.get('id') : null;
         var latlon = null;
         var marker = null;
-        // var contentString = null;
-        // var infowindow = null;
+        var contentString = null;
+        var infowindow = null;
         
         if (lat && lon) { 
           latlon = new google.maps.LatLng(lat, lon);
           this.bounds.extend(latlon);
           
-          // // Create content for the infoWindow
-          // contentString = occid;
-          // // Create infoWindow
-          // infowindow = new google.maps.InfoWindow({
-          //   title: occid,
-          //   content : contentString
-          // });
+          // Create content for the infoWindow
+          contentString = '<h3>Occurrence Record</h3><table border="0">';
+          contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>'
+          contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>'
+          contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>'
+          contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>'
+          contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>'
+          contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>'
+          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>'
+          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>'
+          contentString += '</table>'
+          // Create infoWindow
+          infowindow = new google.maps.InfoWindowZ({
+            title: occid,
+            content : contentString
+          });
 
           // Create marker
           marker = new google.maps.Marker({
@@ -109,14 +157,15 @@ define([
             clickable: true,
           });
 
-          // // Listener to open the infowindow
-          // google.maps.event.addListener(marker, 'click', function() {
-          //   infowindow.open(this.map, marker);
-          // });
-          // google.maps.event.addListener(this.map, 'click', function() {
-          //   infowindow.close();
-          // });
-          
+          // Listener to open the infowindow
+          google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(this.map, marker);
+          });
+          // Optional, when clicking on the map, all infoWindows disappear
+          google.maps.event.addListener(this.map, 'click', function() {
+            infowindow.close();
+          });
+
           // Add marker to the array
           this.markers.push(marker);
         }
