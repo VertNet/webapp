@@ -76,8 +76,6 @@ define([
           this.markers.push(marker);
         }
       }, this));
-      this.map.panToBounds(this.bounds);
-      this.map.setCenter(this.bounds.getCenter());
       this.resize();
     },
 
@@ -85,6 +83,7 @@ define([
       google.maps.event.trigger(this.map, 'resize');
       this.map.setZoom(this.map.getZoom());
       this.map.setCenter(this.map.getCenter());
+      this.map.fitBounds(this.bounds);
     }
   });
 });
