@@ -126,8 +126,8 @@ define([
         var instcode= model.get('institutioncode') ? model.get('institutioncode') : null;
         var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
         var occid = model.get('id') ? model.get('id') : null;
-        //var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
-        //var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;
+        var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
+        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;
         var contentString = null;
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
@@ -142,27 +142,30 @@ define([
           this.bounds.extend(latlon);
           
           // Create content for the infoWindow
-          contentString = '<h3>Occurrence Record</h3><font size="2"><table border="0">';
+          contentString = '';
+          contentString += '<font size="2"><b>Occurrence Record</b></font>'
+          contentString += '<font size="1"><table border="0">';
           contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>';
-          contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>';
-          contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>';
-          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
-          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
-          contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>';
-          contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>';
-          contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>';
-          contentString += '<tr><td><i>County</i></td><td>'+county+'</td></tr>';
-          contentString += '<tr><td><i>Latitude</i></td><td>'+lat+'</td></tr>';
-          contentString += '<tr><td><i>Longitude</i></td><td>'+lon+'</td></tr>';
-          //contentString += '<tr><td><i>Datum</i></td><td>'+datum+'</td></tr>';
-          //contentString += '<tr><td><i>Uncertainty</i></td><td>'+uncert+'</td></tr>';
+          if (occid) contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>';
+          if (sciname) contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>';
+          if (instcode) contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
+          if (catalogno) contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
+          if (year) contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>';
+          if (country) contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>';
+          if (stateprov) contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>';
+          if (county) contentString += '<tr><td><i>County</i></td><td>'+county+'</td></tr>';
+          if (lat) contentString += '<tr><td><i>Latitude</i></td><td>'+lat+'</td></tr>';
+          if (lon) contentString += '<tr><td><i>Longitude</i></td><td>'+lon+'</td></tr>';
+          if (datum) contentString += '<tr><td><i>Datum</i></td><td>'+datum+'</td></tr>';
+          if (uncert) contentString += '<tr><td><i>Uncertainty</i></td><td>'+uncert+'</td></tr>';
           contentString += '</table>';
           contentString += '<a href="'+url+'">Link to the detail page</a></font>';
          
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
             title: occid,
-            content : contentString
+            content : contentString,
+            height: 1000
           });
 
           // Create marker

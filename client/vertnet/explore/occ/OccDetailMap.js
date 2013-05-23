@@ -50,24 +50,6 @@ define([
           });
         } else {
           this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
-          // // Create an invisible marker
-          // marker = new google.maps.Marker({
-          //   map: this.map,
-          //   visible: false,
-          //   position: this.latlon
-          // });
-
-          // // attach an infoWindow with the "No coordinates found" text
-          // infowindow = new google.maps.InfoWindow({
-          //   content: "No coordinates found"
-          // });
-          // google.maps.event.addListener(marker, 'click', function() {
-          //   infowindow.open(this.map, marker);
-          // });
-          // google.maps.event.trigger(marker, 'click');
-
-          // // disable controls
-          // this.map.panControl = false;
         }
       }
       //map = this.map;
