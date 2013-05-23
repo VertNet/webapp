@@ -17,7 +17,6 @@ define([
         this.$el.html(this.template(this.model.attributes));
         this.darwinCoreTab = new DarwinCoreTab({model: this.model}, this.app);
         this.$('#darwincore').html(this.darwinCoreTab.render().el);
-        this.darwinCoreTab.setup();
         return this;
       },
 
@@ -33,6 +32,7 @@ define([
           var path = util.getOccPath(this.model.get('keyname'), tab); 
           this.app.router.navigate(path);
           this.setTab(tab);
+          this.darwinCoreTab.setup();
         }, this));
         return this;
       },

@@ -227,7 +227,7 @@ define([
     _explodeKeywords: function() {
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
-      var keywords = q.split(/,?\s+/);
+      var keywords = q.trim().split(/,?\s+/);
       if (q && !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim().toLowerCase();

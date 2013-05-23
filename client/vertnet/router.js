@@ -14,9 +14,10 @@ define([
   'explore/Explore',
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
-  'About'
+  'About',
+  'Feedback'
 ], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView, OccDetail, OccModel, About) {
+  FooterView, ExploreView, OccDetail, OccModel, About, Feedback) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -33,6 +34,8 @@ define([
       this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
       
       this.route('about', 'about', _.bind(this.about, this));
+
+      this.route('feedback', 'feedback', _.bind(this.feedback, this));
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -80,6 +83,20 @@ define([
       this.initHeaderFooter();
 
       this.page = new About({}, this.app);
+      $('#content').html(this.page.render().el);
+    },
+    
+    feedback: function() {
+      console.log('router.feedback():');
+
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
+
+      // Setup header/footer.
+      this.initHeaderFooter();
+
+      this.page = new Feedback({}, this.app);
       $('#content').html(this.page.render().el);
     },
     
