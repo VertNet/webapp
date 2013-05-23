@@ -48,7 +48,8 @@ define([
             position: this.latlon
           });
         } else {
-          this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
+          // this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
+          $('#occ-detail-map.occ-detail-map').hide();
         }
       }
       //map = this.map;
