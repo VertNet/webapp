@@ -14,7 +14,7 @@
 
 # install a few things
 sudo apt-get update
-sudo apt-get install -y unzip git s3cmd sqlite3
+sudo apt-get install -y unzip git s3cmd sqlite3 zip
 
 # get vertnet webapp project - woah, bash recursion!
 git clone git://github.com/VertNet/webapp.git
@@ -27,8 +27,7 @@ unzip google_appengine_1.8.0.zip
 cd ~/
 
 # set paths
-echo "export PATH=$PATH:~/bin" >> ~/.bashrc
-echo "export PATH=$PATH:~/bin/google_appengine" >> ~/.bashrc
+echo "export PATH=$PATH:~/bin:~/bin/google_appengine" >> ~/.bashrc
 
 # Attach an EBS volume from AWS console
 # Double-check the location of the EBS volume
