@@ -165,7 +165,6 @@ define([
           infowindow = new google.maps.InfoWindowZ({
             title: occid,
             content : contentString,
-            height: 1000
           });
 
           // Create marker

@@ -32,7 +32,6 @@ define([
     render: function () {
       var marker = null;
       var latlon = new google.maps.LatLng(59.327383, 18.06747);
-      var infowindow = null;
 
       this.$el.html(_.template(template));
 
