@@ -17,9 +17,10 @@ define([
   'explore/occ/OccList',
   'explore/occ/OccRow',
   'explore/occ/OccModel',
-  'explore/occ/ResultMap'
+  'explore/occ/ResultMap',
+  'Spin'
 ], function ($, _, Backbone, bootstrap, mps, map, rpc, template, OccList, OccRow, OccModel, 
-    ResultMap) {
+    ResultMap, Spin) {
   return Backbone.View.extend({
 
     events: {
@@ -52,6 +53,7 @@ define([
     },
 
    setup: function () {
+      this.spin = new Spin(this.$('#notifications-spin'));
       this.$('#resultTabs a').on('shown', _.bind(function (e) {
         var tab = e.target.id;
         if (tab === 'maptab') {
@@ -127,6 +129,7 @@ define([
       this._prepTerms();
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
+        this.spin.start();
         request = {limit:10, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.more) {
@@ -183,6 +186,7 @@ define([
         this.keywords.splice(0, this.keywords.length);
       }
       this._disableTablePager(!this.response.more);
+      this.spin.stop();
       // window.scrollTo(0,document.body.scrollHeight);
       //$('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
