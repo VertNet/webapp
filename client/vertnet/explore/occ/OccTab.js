@@ -48,6 +48,9 @@ define([
       }, this));
       this.$('#occTable').hide();
       this._disableTablePager(true);
+      if (!this.spin) {
+        this.spin = new Spin(this.$('#notifications-spin'));
+      }
       this._checkUrl();
       return this;
     },
@@ -121,6 +124,7 @@ define([
           this.app.router.navigate(path);
         }          
       }
+      this.spin.stop();
     },
 
     // Executes search request to server.
@@ -144,6 +148,7 @@ define([
       } else {
         this._clearResults();
         this._showResultsTable(false);
+        this.spin.stop();
       }
     },
 
@@ -165,6 +170,7 @@ define([
       });
       var showResults = items.length !== 0;
       var howMany = response.count > 1000 ? '1000s' : response.count;
+      this.spin.stop();
       if (!this.paging) {
         this._clearResults();
       }
@@ -186,7 +192,6 @@ define([
         this.keywords.splice(0, this.keywords.length);
       }
       this._disableTablePager(!this.response.more);
-      this.spin.stop();
       // window.scrollTo(0,document.body.scrollHeight);
       //$('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
