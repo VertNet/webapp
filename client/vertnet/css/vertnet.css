@@ -1,3 +1,17 @@
+.notifications-spin {
+  width: 100%;
+}
+
+.notifications-spin .empty-feed {
+  display: none;
+}
+
+.notifications-spin > div {
+  width: 50px;
+  height: 40px;
+  margin: 0 auto;
+}
+
 #vertnet-headline {
 	font-size: 40px;
 }
