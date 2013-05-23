@@ -54,7 +54,13 @@
         <% _.each(this.model.loc(), function(val, key) { %>   
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
@@ -94,7 +100,13 @@
         <% _.each(this.model.occ(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
@@ -114,7 +126,13 @@
         <% _.each(this.model.event(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
@@ -134,7 +152,13 @@
         <% _.each(this.model.geo(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
@@ -154,7 +178,13 @@
         <% _.each(this.model.iden(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
@@ -174,7 +204,13 @@
         <% _.each(this.model.taxon(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
