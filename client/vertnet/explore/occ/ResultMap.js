@@ -114,23 +114,28 @@ define([
       this.markers.splice(0, this.markers.length);
 
       _.each(this.collection.models, _.bind(function(model) {
-        console.log(model);
+        
+        // values for the infoWindow
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
         var sciname = model.get('scientificname') ? model.get('scientificname') : null;
         var year = model.get('year') ? parseInt(model.get('year')) : null;
         var country = model.get('country') ? model.get('country') : null;
         var stateprov = model.get('stateprovince') ? model.get('stateprovince') : null;
+        var county = model.get('county') ? model.get('county') : null;
         var instcode= model.get('institutioncode') ? model.get('institutioncode') : null;
         var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
         var occid = model.get('id') ? model.get('id') : null;
-        var latlon = null;
-        var marker = null;
+        //var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
+        //var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;
         var contentString = null;
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
         var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
         var url = '../'+specificURLright+'&view=darwincore';
+
+        var latlon = null;
+        var marker = null;
         
         if (lat && lon) { 
           latlon = new google.maps.LatLng(lat, lon);
@@ -141,13 +146,19 @@ define([
           contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>';
           contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>';
           contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>';
+          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
+          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
           contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>';
           contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>';
           contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>';
-          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
-          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
+          contentString += '<tr><td><i>County</i></td><td>'+county+'</td></tr>';
+          contentString += '<tr><td><i>Latitude</i></td><td>'+lat+'</td></tr>';
+          contentString += '<tr><td><i>Longitude</i></td><td>'+lon+'</td></tr>';
+          //contentString += '<tr><td><i>Datum</i></td><td>'+datum+'</td></tr>';
+          //contentString += '<tr><td><i>Uncertainty</i></td><td>'+uncert+'</td></tr>';
           contentString += '</table>';
           contentString += '<a href="'+url+'">Link to the detail page</a></font>';
+         
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
             title: occid,
@@ -172,6 +183,7 @@ define([
           });
 
           // Add marker to the array
+          console.log("adding marker");
           this.markers.push(marker);
         }
       }, this));

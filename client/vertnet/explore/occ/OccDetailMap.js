@@ -16,19 +16,23 @@ define([
     map: null,
 
     initialize: function (options) {
-      var lat = options.lat ? parseFloat(options.lat) : 0;
-      var lon = options.lon ? parseFloat(options.lon) : 0;
-      this.latlon = new google.maps.LatLng(lat, lon);
-      this.options = {
-        zoom: 14,
-        center: new google.maps.LatLng(lat, lon),
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-      };
+      var lat = options.lat ? parseFloat(options.lat) : null;
+      var lon = options.lon ? parseFloat(options.lon) : null;
+      if (lat && lon) {
+        this.latlon = new google.maps.LatLng(lat, lon);
+        console.log(options.lat);
+        this.options = {
+          zoom: 14,
+          center: new google.maps.LatLng(lat, lon),
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+        };
+      }
     },
 
     render: function () {
       var marker = null;
       var latlon = new google.maps.LatLng(59.327383, 18.06747);
+      var infowindow = null;
 
       this.$el.html(_.template(template));
 
@@ -37,12 +41,34 @@ define([
           return this;
         }
         this.map = new google.maps.Map(this.$('#map')[0], this.options);
-        marker = new google.maps.Marker({
-          map: this.map,
-          draggable: false,
-          animation: google.maps.Animation.DROP,
-          position: this.latlon
-        });
+        if (this.latlon) {
+          marker = new google.maps.Marker({
+            map: this.map,
+            draggable: false,
+            animation: google.maps.Animation.DROP,
+            position: this.latlon
+          });
+        } else {
+          this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
+          // // Create an invisible marker
+          // marker = new google.maps.Marker({
+          //   map: this.map,
+          //   visible: false,
+          //   position: this.latlon
+          // });
+
+          // // attach an infoWindow with the "No coordinates found" text
+          // infowindow = new google.maps.InfoWindow({
+          //   content: "No coordinates found"
+          // });
+          // google.maps.event.addListener(marker, 'click', function() {
+          //   infowindow.open(this.map, marker);
+          // });
+          // google.maps.event.trigger(marker, 'click');
+
+          // // disable controls
+          // this.map.panControl = false;
+        }
       }
       //map = this.map;
       return this;
