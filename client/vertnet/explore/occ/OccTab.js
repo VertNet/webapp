@@ -134,7 +134,7 @@ define([
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
         this.spin.start();
-        request = {limit:10, q:JSON.stringify({terms: this.terms, 
+        request = {limit:100, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.more) {
           request['cursor'] = this.response.cursor;
