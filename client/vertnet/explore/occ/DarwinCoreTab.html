@@ -80,7 +80,13 @@
         <% _.each(this.model.reclevel(), function(val, key) { %>  
           <tr>
             <td><%= key %></td>
-            <td id="<%= key %>"><%= val %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
         </tbody>
