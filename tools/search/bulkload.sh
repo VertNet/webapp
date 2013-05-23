@@ -13,6 +13,7 @@ s3cmd sync s3://vnproject/data/staging/ /mnt/beast/harvest/
 # cat all part files into one big one.
 # You need a header in the file:
 cat ~/webapp/tools/search/header.tsv > /mnt/beast/parts
+echo >> /mnt/beast/parts
 ls -R /mnt/beast/harvest/*/part* | xargs cat >> /mnt/beast/parts
 
 # STEP 3
