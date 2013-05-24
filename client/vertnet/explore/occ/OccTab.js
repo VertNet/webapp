@@ -9,7 +9,6 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'bootstrap',
   'mps',
   'map',
   'rpc',
@@ -19,7 +18,7 @@ define([
   'explore/occ/OccModel',
   'explore/occ/ResultMap',
   'Spin'
-], function ($, _, Backbone, bootstrap, mps, map, rpc, template, OccList, OccRow, OccModel, 
+], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, OccModel, 
     ResultMap, Spin) {
   return Backbone.View.extend({
 
@@ -183,7 +182,7 @@ define([
         return JSON.parse(item.json);
       });
       var showResults = items.length !== 0;
-      var howMany = response.count > 1000 ? 'thousands' : response.count;
+      var howMany = response.count >= 1000 ? 'thousands' : response.count;
       if (!this.paging) {
         this._clearResults();
       }
