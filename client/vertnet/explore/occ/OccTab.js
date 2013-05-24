@@ -57,6 +57,7 @@ define([
 
    setup: function () {
       this.spin = new Spin(this.$('#notifications-spin'));
+      this.$('#bottom-pager').hide();
       this.$('#resultTabs a').on('shown', _.bind(function (e) {
         var tab = e.target.id;
         if (tab === 'maptab') {
@@ -134,7 +135,7 @@ define([
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
         this.spin.start();
-        request = {limit:100, q:JSON.stringify({terms: this.terms, 
+        request = {limit:50, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.more) {
           request['cursor'] = this.response.cursor;
@@ -176,7 +177,7 @@ define([
       }
       this.count = response.count;
       this.countLoaded += items.length;
-      this.$('.counter').text('Showing 1 - ' + this.countLoaded + ' of ' + howMany);
+      this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
       this.response = response;
       this._showResultsTable(showResults);
       if (showResults) {
@@ -212,12 +213,15 @@ define([
 
       if (show) {
         table.show();
+        this.$('#bottom-pager').show();
+
         // this.$('#no-results').hide();
         this.$('.counter').show();
       } else {
         table.hide();
-        this.$('.counter').text('No results.');
+        this.$('.counter').text('0 results');
         this.$('.counter').show();
+        this.$('#bottom-pager').hide();
       }
     },
 
