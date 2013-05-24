@@ -1,3 +1,10 @@
+.showing {
+	width: 70px !important;
+}
+
+.pager {
+	margin: 0px 0;
+}
 .notifications-spin {
   width: 100%;
 }
@@ -19,7 +26,10 @@
 .counter {
 	text-align: right;
 	font-weight: bold;
-	color: grey;	
+	color: grey;
+	display: inline-block;
+	vertical-align: bottom;
+	margin-top: 7px;
 }
 
 #map {
