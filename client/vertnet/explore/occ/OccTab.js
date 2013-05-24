@@ -84,40 +84,23 @@ define([
       this.$('#institutioncode').val(this.options.query.institutioncode);
       if (!_.isEmpty(this.options.query)) {
         this._submitHandler(null, true);
-      }
+      } 
       //this._checkUrl();
 
-      // this.timer = null;
-      // $(document).on('keyup', _.bind(function(e) {
-      //   console.log(e);
-
-      //   this._prepTerms();
-      //   this._explodeKeywords();
-      //   if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
-      //     if (this.timer) {
-      //       clearTimeout(this.timer);
-      //     }
-      //     this.timer = setTimeout(_.bind(function() {
-      //       this._submitHandler({keyCode:13});
-      //     }, this), 250);
-      //   }
-      // }, this));
+      this.timer = null;
+      $(document).on('keyup', _.bind(function(e) {
+        this._prepTerms();
+        this._explodeKeywords();
+        if (this.timer) {
+          clearTimeout(this.timer);
+        }
+        this.timer = setTimeout(_.bind(function() {
+          this._submitHandler(null, true);
+        }, this), 250);
+      }, this));
 
       return this;
     },
-
-    // _checkUrl: function() {
-    //   var urlParams = this.app.parseUrl();
-    //   var path = window.location.pathname + window.location.search;
-    //   // this.app.router.navigate(path);
-    //   this.$('#search-keywords-box').val(urlParams.q);
-    //   this.$('#genus').val(urlParams.genus);
-    //   this.$('#specificepithet').val(urlParams.specificepithet);
-    //   this.$('#year').val(urlParams.year);
-    //   this.$('#country').val(urlParams.country);
-    //   this.$('#institutioncode').val(urlParams.institutioncode);
-    //   this._submitHandler(null, true);
-    // },
 
     // Load more results.
     _loadMore: function(e) {
@@ -152,11 +135,10 @@ define([
         this.response = null;
         this._disableTablePager(true);
         this._executeSearch();
-        // if (!window.location.search) {
-          this.app.router.navigate(path);
-        // }          
+        if (!bypass && (e.keyCode == 13 || e.keyCode == 9)) {
+          this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
+        }
       }
-      // this.spin.stop();
     },
 
     // Executes search request to server.
@@ -224,9 +206,6 @@ define([
       }
       this._disableTablePager(!this.response.more);
       this.spin.stop();
-
-      // window.scrollTo(0,document.body.scrollHeight);
-      //$('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
 
     // Disable table pager.

@@ -12,8 +12,7 @@ require.config({ // VertNet app configuration.
     mps: 'libs/minpubsub/minpubsub',
     Spin: 'libs/spin/spin',
     bootstrap: 'libs/bootstrap/bootstrap',
-    backbonequeryparams: 'libs/backbone/backbone.queryparams'
-    
+    backbonequeryparams: 'libs/backbone/backbonequeryparams'
   },
   
   // Dependency mappings:
@@ -23,7 +22,11 @@ require.config({ // VertNet app configuration.
     },
     Backbone: {
       deps: ['jQuery', 'Underscore'],
-      exports: 'Backbone'
+      exports: 'Backbone',
+    },
+    backbonequeryparams: {
+      deps: ['Backbone', 'Underscore'],
+      exports: 'backbonequeryparams'
     },
     mps: {
       deps: ['jQuery', 'Underscore'],

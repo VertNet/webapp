@@ -6,6 +6,7 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'backbonequeryparams',
   'rpc',
   'mps',
   'home/Home',
@@ -16,7 +17,7 @@ define([
   'explore/occ/OccModel',
   'About',
   'Feedback'
-], function ($, _, Backbone, rpc, mps, HomeView, HeaderView, 
+], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
   FooterView, ExploreView, OccDetail, OccModel, About, Feedback) {
 
   // Our application URL router.
