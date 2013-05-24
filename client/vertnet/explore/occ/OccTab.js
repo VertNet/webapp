@@ -183,7 +183,7 @@ define([
         return JSON.parse(item.json);
       });
       var showResults = items.length !== 0;
-      var howMany = response.count > 1000 ? '1000s' : response.count;
+      var howMany = response.count > 1000 ? 'thousands' : response.count;
       if (!this.paging) {
         this._clearResults();
       }
