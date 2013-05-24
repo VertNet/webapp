@@ -146,28 +146,39 @@ define([
           //contentString += '<font size="2"><b>Occurrence Record</b></font>'
           contentString = '<table class="table table-striped table-hover search-results-hover">';
           contentString += '<tr><th><b>DwC Term</b></th><th><b>Value</b></th></tr>';
-          if (!sciname) sciname = "";
-          contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
-          if (!instcode) instcode = "";
-          contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
-          if (!catalogno) catalogno = "";
-          contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
-          if (!year) year = "";
-          contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
-          if (!country) country = "";
-          contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
-          if (!stateprov) stateprov = "";
-          contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
-          if (!county) county = "";
-          contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
-          if (!lat) lat = "";
-          contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
-          if (!lon) lon = "";
-          contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
-          if (!datum) datum = "";
-          contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
-          if (!uncert) uncert = "";
-          contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
+          if (sciname) {
+            contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
+          }
+          if (instcode) {
+            contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
+          }
+          if (catalogno) {
+            contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
+          }
+          if (year) {
+            contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
+          }
+          if (country) {
+            contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
+          }
+          if (stateprov) {
+            contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
+          }
+          if (county) {
+            contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
+          }
+          if (lat) {
+            contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
+          }
+          if (lon) {
+            contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
+          }
+          if (datum) {
+            contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
+          }
+          if (uncert) {
+            contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
+          }
           contentString += '</table>';
           contentString += '<a href="'+url+'">Link to the detail page</a>';
          
