@@ -75,8 +75,9 @@ define([
 
       this.timer = null;
       $(document).on('keyup', _.bind(function() {
-        var q = this.$('#search-keywords-box').val();
-        if (q.length > 1) {
+        this._prepTerms();
+        this._explodeKeywords();
+        if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
           if (this.timer) {
             clearTimeout(this.timer);
           }
@@ -125,6 +126,7 @@ define([
 
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
+      this.spin.start();
       if (bypass || e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
         var path = window.location.pathname;
         var search = this._getSearch();
@@ -148,7 +150,6 @@ define([
       this._prepTerms();
       this._explodeKeywords();
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
-        this.spin.start();
         request = {limit:50, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.more) {
