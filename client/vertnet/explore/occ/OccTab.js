@@ -51,12 +51,15 @@ define([
       if (!this.spin) {
         this.spin = new Spin(this.$('#notifications-spin'));
       }
-      this._checkUrl();
+      // this._checkUrl();
+      this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
+
       return this;
     },
 
    setup: function () {
       this.spin = new Spin(this.$('#notifications-spin'));
+      this.spin.start();
       this.$('#bottom-pager').hide();
       this.$('#resultTabs a').on('shown', _.bind(function (e) {
         var tab = e.target.id;
@@ -73,35 +76,48 @@ define([
         } 
       }, this));
 
-      this.timer = null;
-      $(document).on('keyup', _.bind(function() {
-        this._prepTerms();
-        this._explodeKeywords();
-        if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
-          if (this.timer) {
-            clearTimeout(this.timer);
-          }
-          this.timer = setTimeout(_.bind(function() {
-            this._submitHandler({keyCode:13});
-          }, this), 250);
-        }
-      }, this));
+      this.$('#search-keywords-box').val(this.options.query.q);
+      this.$('#genus').val(this.options.query.genus);
+      this.$('#specificepithet').val(this.options.query.specificepithet);
+      this.$('#year').val(this.options.query.year);
+      this.$('#country').val(this.options.query.country);
+      this.$('#institutioncode').val(this.options.query.institutioncode);
+      if (!_.isEmpty(this.options.query)) {
+        this._submitHandler(null, true);
+      }
+      //this._checkUrl();
+
+      // this.timer = null;
+      // $(document).on('keyup', _.bind(function(e) {
+      //   console.log(e);
+
+      //   this._prepTerms();
+      //   this._explodeKeywords();
+      //   if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
+      //     if (this.timer) {
+      //       clearTimeout(this.timer);
+      //     }
+      //     this.timer = setTimeout(_.bind(function() {
+      //       this._submitHandler({keyCode:13});
+      //     }, this), 250);
+      //   }
+      // }, this));
 
       return this;
     },
 
-    _checkUrl: function() {
-      var urlParams = this.app.parseUrl();
-      var path = window.location.pathname + window.location.search;
-      this.app.router.navigate(path);
-      this.$('#search-keywords-box').val(urlParams.q);
-      this.$('#genus').val(urlParams.genus);
-      this.$('#specificepithet').val(urlParams.specificepithet);
-      this.$('#year').val(urlParams.year);
-      this.$('#country').val(urlParams.country);
-      this.$('#institutioncode').val(urlParams.institutioncode);
-      this._submitHandler(null, true);
-    },
+    // _checkUrl: function() {
+    //   var urlParams = this.app.parseUrl();
+    //   var path = window.location.pathname + window.location.search;
+    //   // this.app.router.navigate(path);
+    //   this.$('#search-keywords-box').val(urlParams.q);
+    //   this.$('#genus').val(urlParams.genus);
+    //   this.$('#specificepithet').val(urlParams.specificepithet);
+    //   this.$('#year').val(urlParams.year);
+    //   this.$('#country').val(urlParams.country);
+    //   this.$('#institutioncode').val(urlParams.institutioncode);
+    //   this._submitHandler(null, true);
+    // },
 
     // Load more results.
     _loadMore: function(e) {
@@ -126,7 +142,6 @@ define([
 
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
-      this.spin.start();
       if (bypass || e.keyCode == 13 || e.keyCode == 9) { // 13 RETURN, 9 TAB.
         var path = window.location.pathname;
         var search = this._getSearch();
@@ -137,11 +152,11 @@ define([
         this.response = null;
         this._disableTablePager(true);
         this._executeSearch();
-        if (!bypass) {
+        // if (!window.location.search) {
           this.app.router.navigate(path);
-        }          
+        // }          
       }
-      this.spin.stop();
+      // this.spin.stop();
     },
 
     // Executes search request to server.
@@ -149,7 +164,8 @@ define([
       var request = null;
       this._prepTerms();
       this._explodeKeywords();
-      if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) { 
+      if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
+        this.spin.start(); 
         request = {limit:50, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.more) {

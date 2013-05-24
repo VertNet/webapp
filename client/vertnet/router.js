@@ -31,6 +31,7 @@ define([
       // Page routes:
       this.route('', 'home', _.bind(this.home, this, 'home'));
 
+      // this.route('explore/:type?:params', 'explore', _.bind(this.explore, this, 'explore'));
       this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
       
       this.route('about', 'about', _.bind(this.about, this));
@@ -47,7 +48,7 @@ define([
 
     routes: {
       // Catch all:
-      ':publisher/:resource':  'occurrence',
+      //':publisher/:resource':  'occurrence',
      '*actions': 'default'
     },
 
@@ -140,8 +141,9 @@ define([
       this.page.setup();
     },
 
-    explore: function(type, name) {
-      console.log('router.explore():', type, name);
+    explore: function(type, name, params) {
+      var query = params || {};
+      console.log('router.explore():', type, name, params);
 
       // Kill the page view if it exists.
       if (this.page)
@@ -150,7 +152,7 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      this.page = new ExploreView({show: name}, this.app);
+      this.page = new ExploreView({show: name, query:query}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();
     },
