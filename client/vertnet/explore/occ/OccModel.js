@@ -67,6 +67,18 @@ define([
       'TaxonRank', 'TaxonRemarks', 'TaxonomicStatus', 'VerbatimTaxonRank', 
       'VernacularName'],
 
+    isMappable: function() {
+      var lat = this.get('decimallatitude');
+      var lon = this.get('decimallongitude');
+      lat = lat ? parseFloat(lat) : null;
+      lon = lon ? parseFloat(lon) : null;
+      if (lat && lon) {
+        return (lat <= 90 && lat >= -90) && (lon <= 180 && lon >= -180);
+      } else {
+        return false;
+      }
+    },
+
     loc: function() {
       return this._terms(this.DWC_LOCATION);
     },

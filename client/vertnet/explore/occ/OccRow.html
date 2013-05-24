@@ -7,3 +7,6 @@
 <td><%= this.model.get('stateprovince') %></td>
 <td><%= this.model.get('county') %></td>
 <td><%= this.model.get('year') %></td>
+<td><% if (this.model.isMappable()) { %>
+		<span class="icon-map-marker"></span>
+	<% } %></td>	
