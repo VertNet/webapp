@@ -143,36 +143,44 @@ define([
           this.bounds.extend(latlon);
           
           // Create content for the infoWindow
-          contentString = '<div class="infowindow">';
           //contentString += '<font size="2"><b>Occurrence Record</b></font>'
-          contentString += '<font size="1"><table border="0">';
-          contentString += '<tr><td><b>DwC Term</b></td><td><b>Value</b></td></tr>';
-          if (!occid) occid = "";
-          contentString += '<tr><td><i>Occurrence ID</i></td><td>'+occid+'</td></tr>';
-          if (!sciname) sciname = "";
-          contentString += '<tr><td><i>Scientific Name</i></td><td>'+sciname+'</td></tr>';
-          if (!instcode) instcode = "";
-          contentString += '<tr><td><i>Institution code</i></td><td>'+instcode+'</td></tr>';
-          if (!catalogno) catalogno = "";
-          contentString += '<tr><td><i>Catalog number</i></td><td>'+catalogno+'</td></tr>';
-          if (!year) year = "";
-          contentString += '<tr><td><i>Year</i></td><td>'+year+'</td></tr>';
-          if (!country) country = "";
-          contentString += '<tr><td><i>Country</i></td><td>'+country+'</td></tr>';
-          if (!stateprov) stateprov = "";
-          contentString += '<tr><td><i>State or Province</i></td><td>'+stateprov+'</td></tr>';
-          if (!county) county = "";
-          contentString += '<tr><td><i>County</i></td><td>'+county+'</td></tr>';
-          if (!lat) lat = "";
-          contentString += '<tr><td><i>Latitude</i></td><td>'+lat+'</td></tr>';
-          if (!lon) lon = "";
-          contentString += '<tr><td><i>Longitude</i></td><td>'+lon+'</td></tr>';
-          if (!datum) datum = "";
-          contentString += '<tr><td><i>Datum</i></td><td>'+datum+'</td></tr>';
-          if (!uncert) uncert = "";
-          contentString += '<tr><td><i>Uncertainty</i></td><td>'+uncert+'</td></tr>';
+          contentString = '<table class="table table-striped table-hover search-results-hover">';
+          contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
+          if (sciname) {
+            contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
+          }
+          if (instcode) {
+            contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
+          }
+          if (catalogno) {
+            contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
+          }
+          if (year) {
+            contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
+          }
+          if (country) {
+            contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
+          }
+          if (stateprov) {
+            contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
+          }
+          if (county) {
+            contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
+          }
+          if (lat) {
+            contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
+          }
+          if (lon) {
+            contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
+          }
+          if (datum) {
+            contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
+          }
+          if (uncert) {
+            contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
+          }
           contentString += '</table>';
-          contentString += '<a href="'+url+'">Link to the detail page</a></font></div>';
+          contentString += '<a href="'+url+'">Link to the detail page</a>';
          
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({

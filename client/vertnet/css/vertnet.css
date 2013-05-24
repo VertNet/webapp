@@ -36,7 +36,7 @@
 }
 
 #map {
-	height: 500px;
+	height: 675px;
 	display: block;
 	z-index: 0;
 	border: 1px solid grey;
@@ -134,9 +134,4 @@ input.span2.search {
 
 .col-right {
 	text-align: right;
-}
-
-.infowindow {
-	height: 300px;
-	maxHeight: 300px;
 }
