@@ -1,8 +1,7 @@
 define([
-	'libs/backbone/backbone.min',
-	'libs/backbone/backbone.queryparams'], 
+	'libs/backbone/backbone.min'], 
 	function () {
-  		_.noConflict();
-  		$.noConflict();
-  		return Backbone.noConflict();
+  		// _.noConflict();
+  		// $.noConflict();
+  		return Backbone; //.noConflict();
 });

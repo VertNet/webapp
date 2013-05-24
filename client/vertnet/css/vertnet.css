@@ -42,6 +42,14 @@
 	border: 1px solid grey;
 }
 
+
+#homemap {
+	height: 400px;
+	display: block;
+	z-index: 0;
+	border: 1px solid grey;
+}
+
 #map img {
 	max-width: none;
 }
