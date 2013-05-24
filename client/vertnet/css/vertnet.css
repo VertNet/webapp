@@ -1,3 +1,10 @@
+.showing {
+	width: 70px !important;
+}
+
+.pager {
+	margin: 0px 0;
+}
 .notifications-spin {
   width: 100%;
 }
@@ -19,11 +26,14 @@
 .counter {
 	text-align: right;
 	font-weight: bold;
-	color: grey;	
+	color: grey;
+	display: inline-block;
+	vertical-align: bottom;
+	margin-top: 7px;
 }
 
 #map {
-	height: 400px;
+	height: 500px;
 	display: block;
 	z-index: 0;
 	border: 1px solid grey;
@@ -121,4 +131,9 @@ input.span2.search {
 
 .col-right {
 	text-align: right;
+}
+
+.infowindow {
+	height: 300px;
+	maxHeight: 300px;
 }
