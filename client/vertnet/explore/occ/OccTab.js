@@ -36,7 +36,7 @@ define([
       this.paging = false;
       this.count = 0;
       this.countLoaded = 0;
-      $(document).on('keyup', _.bind(this._submitHandler, this));
+      // $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
     render: function() {
@@ -72,6 +72,20 @@ define([
           this.resultMap.resize();
         } 
       }, this));
+
+      this.timer = null;
+      $(document).on('keyup', _.bind(function() {
+        var q = this.$('#search-keywords-box').val();
+        if (q.length > 1) {
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.timer = setTimeout(_.bind(function() {
+            this._submitHandler({keyCode:13});
+          }, this), 250);
+        }
+      }, this));
+
       return this;
     },
 
@@ -171,7 +185,6 @@ define([
       });
       var showResults = items.length !== 0;
       var howMany = response.count > 1000 ? '1000s' : response.count;
-      this.spin.stop();
       if (!this.paging) {
         this._clearResults();
       }
@@ -193,6 +206,8 @@ define([
         this.keywords.splice(0, this.keywords.length);
       }
       this._disableTablePager(!this.response.more);
+      this.spin.stop();
+
       // window.scrollTo(0,document.body.scrollHeight);
       //$('html, body, .content').animate({scrollTop: $(document).height()}, 300);
     },
