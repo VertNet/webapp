@@ -145,7 +145,7 @@ define([
           // Create content for the infoWindow
           //contentString += '<font size="2"><b>Occurrence Record</b></font>'
           contentString = '<table class="table table-striped table-hover search-results-hover">';
-          contentString += '<tr><th><b>DwC Term</b></th><th><b>Value</b></th></tr>';
+          contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
           if (sciname) {
             contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
           }
