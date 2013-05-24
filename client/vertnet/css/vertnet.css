@@ -1,5 +1,5 @@
 .showing {
-	width: 70px !important;
+	width: 170px !important;
 }
 
 .pager {
@@ -30,6 +30,8 @@
 	display: inline-block;
 	vertical-align: bottom;
 	margin-top: 7px;
+	width: 100px;
+	margin-left: 80px;
 }
 
 #map {
