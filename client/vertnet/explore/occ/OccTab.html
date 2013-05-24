@@ -86,11 +86,14 @@
 
     <!-- Occurrence search: Results map tab. -->
     <div class="tab-pane fade" id="tablemap">
-      <div class="container-fluid">
         <div class="row-fluid">
-          <div class="span10">
+          <div class="span2 offset6">
+            <div class='notifications-spin'>
+              <div id='notifications-spin'></div>
+            </div>    
+          </div>
+          <div class="span2 showing">
             <span class="counter"></span>
-            <!-- <span id="no-results">No results.</span> -->
           </div>
           <div class="span2">
             <ul class="pager load-more">
@@ -100,7 +103,6 @@
             </ul>            
           </div>
         </div>
-      </div>
       <div id="resultmap"></div>
     </div>
 
