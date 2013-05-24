@@ -49,7 +49,7 @@ define([
 
     routes: {
       // Catch all:
-      //':publisher/:resource':  'occurrence',
+      ':publisher/:resource':  'occurrence',
      '*actions': 'default'
     },
 
