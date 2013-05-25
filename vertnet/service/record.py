@@ -6,6 +6,7 @@ from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
 import json
+from google.appengine.api import taskqueue
 import logging
 
 def record_list(limit, cursor, q, message=False):
@@ -34,6 +35,7 @@ class RecordService(remote.Service):
         if message.cursor:
             curs = Cursor(urlsafe=message.cursor)
         q = json.loads(message.q)
+        taskqueue.add(url='/apitracker', params=dict(query=message.q), queue_name="apitracker")
         response = record_list(message.limit, curs, q, message=True)
         return response
 
