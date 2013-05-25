@@ -30,6 +30,9 @@ handlers:
 
 # services
 
+- url: /apitracker.*
+  script: vertnet.service.tracker.api
+
 - url: /service/rpc/record.*
   script: vertnet.service.record.rpc
 
