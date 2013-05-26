@@ -37,6 +37,7 @@ define([
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
           zoom: 2,
+          scrollwheel: false,
           center: new google.maps.LatLng(0, 0),
           mapTypeId: google.maps.MapTypeId.TERRAIN,
           // Controlling the control
