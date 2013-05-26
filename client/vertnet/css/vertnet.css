@@ -47,7 +47,7 @@
 }
 
 #homemap {
-	height: 400px;
+	height: 300px;
 	display: block;
 	z-index: 0;
 	border: 1px solid grey;
@@ -66,6 +66,7 @@ h1.stats {
 
 .carousel.stats {
 	padding-top: 30px;
+	width: 450px;
 }
 
 input.span2.search {
