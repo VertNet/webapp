@@ -23,6 +23,7 @@ define([
         console.log(options.lat);
         this.options = {
           zoom: 14,
+          scrollwheel: false,
           center: new google.maps.LatLng(lat, lon),
           mapTypeId: google.maps.MapTypeId.TERRAIN
         };
