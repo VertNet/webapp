@@ -42,6 +42,9 @@
 	border: 1px solid grey;
 }
 
+#map img {
+	max-width: none;
+}
 
 #homemap {
 	height: 400px;
@@ -50,9 +53,10 @@
 	border: 1px solid grey;
 }
 
-#map img {
+#homemap img {
 	max-width: none;
 }
+
 
 h1.stats {
 	color: white;
