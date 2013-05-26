@@ -107,6 +107,11 @@ define([
       return this._terms(this.DWC_TAXON);
     },
 
+    all: function() {
+      return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.event(), this.geo(),
+        this.iden(), this.taxon());
+    },
+
     _terms: function(terms) {
       var results = {};
       _.map(this.attributes, _.bind(function(val, key) {
