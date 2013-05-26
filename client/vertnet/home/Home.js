@@ -42,9 +42,13 @@ define([
       // Render posts.
       console.log('Setting up home view...');
 
+     this.$('#myCarousel').carousel();
+
       map.init(function() {
         var map = new MapView().render();
       });
+
+
       
       return this;
     },
