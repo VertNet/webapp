@@ -35,7 +35,9 @@
       <a href="#taxon-tab" data-toggle="tab">Taxon</a>
     </li>
     <% } %>
-  </ul>
+    <li class="">
+      <a href="#all-tab" data-toggle="tab">All Terms</a>
+    </li>  </ul>
 
   <div class="tab-content">
 
@@ -222,5 +224,32 @@
         </tbody>
       </table> 
     </div>
+
+    <!-- All tab.  -->
+    <div class="tab-pane" id="all-tab">
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.all(), function(val, key) { %>  
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table> 
+    </div>
+
   </div>
 </div>
