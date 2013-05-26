@@ -127,8 +127,8 @@ _.extend(Backbone.Router.prototype, {
     var params = route.exec(fragment).slice(1),
         namedParams = {};
     if (params.length > 0 && _.isUndefined(params[params.length - 1])) {
-    	// remove potential invalid data from query params match
-    	params.splice(params.length - 1, 1);
+      // remove potential invalid data from query params match
+      params.splice(params.length - 1, 1);
     }
 
     // do we have an additional query string?
@@ -195,6 +195,7 @@ _.extend(Backbone.Router.prototype, {
   _decodeParamValue: function(value, currentValue) {
     // '|' will indicate an array.  Array with 1 value is a=|b - multiple values can be a=b|c
     var splitChar = Backbone.Router.arrayValueSplit;
+    value = decodeURIComponent((value+'').replace(/\+/g, '%20'));
     if (value.indexOf(splitChar) >= 0) {
       var values = value.split(splitChar);
       // clean it up

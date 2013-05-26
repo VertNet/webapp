@@ -415,6 +415,10 @@ define([
         path += '&view=' + tab;
       }
       return path;
+    },
+
+    urldecode: function(str) {
+      return decodeURIComponent((str+'').replace(/\+/g, '%20'));
     }
   }
 });
