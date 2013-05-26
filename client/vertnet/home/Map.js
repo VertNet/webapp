@@ -21,6 +21,7 @@ define([
       this.template = _.template(template);
       this.options = {
         zoom: 2,
+        scrollwheel: false,
         center: new google.maps.LatLng(20,0),
         mapTypeId: google.maps.MapTypeId.TERRAIN
       };
