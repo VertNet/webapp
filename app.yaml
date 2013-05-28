@@ -28,6 +28,11 @@ handlers:
 - url: /prototypes
   static_dir: client/docs/prototypes
 
+# backends
+
+- url: /backend/download.*
+  script: vertnet.backend.download.api
+
 # services
 
 - url: /apitracker.*

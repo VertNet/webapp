@@ -2,3 +2,5 @@ total_storage_limit: 120M
 queue:
 - name: apitracker
   rate: 35/s
+- name: download
+  rate: 35/s
