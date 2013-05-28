@@ -47,8 +47,8 @@ class RecordService(remote.Service):
 
     @remote.method(RecordList, VoidMessage)
     def download(self, message):
-        taskqueue.add(url='/backend/download', params=dict(q=message.q, email=message.email), 
-            queue_name="download")
+        taskqueue.add(url='/service/download', params=dict(q=message.q, 
+            email=message.email), queue_name="download")
         return VoidMessage()
 
 class RecordApi(webapp2.RequestHandler):

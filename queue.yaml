@@ -4,3 +4,5 @@ queue:
   rate: 35/s
 - name: download
   rate: 35/s
+- name: downloadwrite
+  rate: 35/s
