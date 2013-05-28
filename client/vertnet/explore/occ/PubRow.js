@@ -34,7 +34,7 @@ define([
       // Open the occurrence detail page.
       _clickHandler: function(e) {
         var code = this.model.get('code');
-        var path = '/explore/occurrences?institutioncode=' + code;
+        var path = '/search/occurrences?institutioncode=' + code;
         this.app.router.navigate(path, {trigger: true});
       }
     });

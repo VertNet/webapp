@@ -51,7 +51,6 @@ define([
 
     // Creates the instance.
     init: function () {
-      console.log('app.init()');
       var app = new App;
       app.router = new Router(app);
       Backbone.history.start({pushState: true});

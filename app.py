@@ -16,7 +16,7 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
-    webapp2.Route(r'/explore/<type>', handler='app.AppHandler:explore', 
+    webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', 
         name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
@@ -42,7 +42,7 @@ class AppHandler(webapp2.RequestHandler):
         else:
             return '/' + '1.0' 
 
-    def explore(self, type):
+    def search(self, type):
         """Render the explore page."""
         self.render_template('explore.html')
     
