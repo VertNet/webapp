@@ -33,7 +33,7 @@ define([
       this.route('', 'home', _.bind(this.home, this, 'home'));
 
       // this.route('explore/:type?:params', 'explore', _.bind(this.explore, this, 'explore'));
-      this.route('explore/:type', 'explore', _.bind(this.explore, this, 'explore'));
+      this.route('search/:type', 'search', _.bind(this.search, this, 'search'));
       
       this.route('about', 'about', _.bind(this.about, this));
 
@@ -142,7 +142,7 @@ define([
       this.page.setup();
     },
 
-    explore: function(type, name, params) {
+    search: function(type, name, params) {
       var query = params || {};
       console.log('router.explore():', type, name, params);
 

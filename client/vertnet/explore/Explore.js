@@ -40,14 +40,14 @@
         var tab = e.target.id;
         if (tab === 'occ') {
           if (this.occSearch && !window.location.search) {
-            this.app.router.navigate('/explore/occurrences'+ this.occSearch);
+            this.app.router.navigate('/search/occurrences'+ this.occSearch);
           } else {
             this.occSearch = window.location.search;
-            this.app.router.navigate('/explore/occurrences' + this.occSearch);
+            this.app.router.navigate('/search/occurrences' + this.occSearch);
           }
           this.setTab('occurrences');
         } else if (tab === 'pub') {
-          this.app.router.navigate('/explore/publishers');
+          this.app.router.navigate('/search/publishers');
           this.setTab('publishers');
         }
       }, this));
