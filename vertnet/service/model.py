@@ -124,7 +124,7 @@ class RecordIndex(ndb.Model):
     _use_memcache = False
 
     @classmethod
-    def search(cls, params, limit, cursor=None, message=False):
+    def search(cls, params, limit, cursor=None, message=False, count=False):
         """Returns (records, cursor).
 
         Arguments
@@ -156,7 +156,11 @@ class RecordIndex(ndb.Model):
 
         # Setup query paging
         #limit = params['limit']
-        #cursor = params['cursor']        
+        #cursor = params['cursor']    
+
+        if count:
+            return qry.count();
+
         if cursor:
             logging.info('Cursor')
             index_keys, next_cursor, more = qry.fetch_page(limit, 
@@ -218,6 +222,7 @@ class RecordList(messages.Message):
     parent = messages.StringField(5)  
     q = messages.StringField(6)   # {terms={}, keywords=[]}
     count = messages.IntegerField(7)
+    email = messages.StringField(8) # email to ping when download is done
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 

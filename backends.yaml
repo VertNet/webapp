@@ -1,0 +1,4 @@
+backends:
+- name: downloads
+  class: B2
+  options: dynamic
