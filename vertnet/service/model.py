@@ -113,6 +113,12 @@ class Record(ndb.Model):
     def message(self):
         return RecordPayload(id=self.key.id(), json=self.record)
 
+    @property
+    def tsv(self):
+        values = [unicode(x) for x in self.json.values()]
+        return '\t'.join(values).encode('utf-8')
+
+
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
     genus = ndb.StringProperty()
