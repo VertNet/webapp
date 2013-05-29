@@ -13,13 +13,16 @@ define([
   'map',
   'rpc',
   'text!explore/occ/OccTab.html',
+  'text!explore/occ/Download.html',
+  'explore/occ/Download',
   'explore/occ/OccList',
   'explore/occ/OccRow',
   'explore/occ/OccModel',
   'explore/occ/ResultMap',
+  'explore/occ/SearchModel',
   'Spin'
-], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, OccModel, 
-    ResultMap, Spin) {
+], function ($, _, Backbone, mps, map, rpc, template, DowloadTemp, Download, 
+  OccList, OccRow, OccModel, ResultMap, SearchModel, Spin) {
   return Backbone.View.extend({
 
     events: {
@@ -35,11 +38,14 @@ define([
       this.paging = false;
       this.count = 0;
       this.countLoaded = 0;
+      this.model = new SearchModel();
       // $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
     render: function() {
       this.$el.html(_.template(template));
+      this.downloadTab = new Download(this.options, this.app);
+      this.$('downloadform').html(this.downloadTab.render().el);
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
@@ -84,7 +90,6 @@ define([
       if (!_.isEmpty(this.options.query)) {
         this._submitHandler(null, true);
       } 
-      //this._checkUrl();
 
       this.timer = null;
       $(document).on('keyup', _.bind(function(e) {
@@ -145,6 +150,7 @@ define([
       var request = null;
       this._prepTerms();
       this._explodeKeywords();
+      this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
         request = {limit:50, q:JSON.stringify({terms: this.terms, 
