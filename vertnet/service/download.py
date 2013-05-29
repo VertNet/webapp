@@ -5,7 +5,7 @@ from google.appengine.api import mail
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import taskqueue
 
-from vertnet.service.model import RecordIndex
+from vertnet.service.model import RecordIndex, Record
 import webapp2
 import json
 import logging
@@ -28,6 +28,7 @@ class WriteHandler(webapp2.RequestHandler):
     def post(self):
         logging.info('Q %s' % self.request.get('q'))
         q = json.loads(self.request.get('q'))
+        name = self.request.get('name')
         email = self.request.get('email')
         writable_file_name = self.request.get('writable_file_name')
         filename = self.request.get('filename')
@@ -47,8 +48,8 @@ class WriteHandler(webapp2.RequestHandler):
         if more:
             taskqueue.add(url='/service/download/write', 
                 params=dict(q=self.request.get('q'), email=email, filename=filename, 
-                    writable_file_name=writable_file_name, cursor=cursor.urlsafe()), 
-                queue_name="downloadwrite")
+                    writable_file_name=writable_file_name, name=name, 
+                    cursor=cursor.urlsafe()), queue_name="downloadwrite")
         
         # Finalize and email.
         else:
@@ -56,18 +57,26 @@ class WriteHandler(webapp2.RequestHandler):
             mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-        You can download it here: https://storage.cloud.google.com/vn-downloads/%s 
-        """ % filename.split('/')[-1])
+        You can download "%s" here: https://storage.cloud.google.com/vn-downloads/%s 
+        """ % (name, filename.split('/')[-1]))
 
 class DownloadHandler(webapp2.RequestHandler):
     def post(self):
         q = self.request.get('q')
         email = self.request.get('email')
+        name = self.request.get('name')
         filename = '/gs/vn-downloads/%s' % uuid.uuid4().hex
         writable_file_name = files.gs.create(filename, 
             mime_type='text/tab-separated-values', acl='public-read')
+        
+        # Write header
+        with files.open(writable_file_name, 'a') as f:
+            f.write('%s\n' % Record.header())
+            f.close(finalize=False)     
+        
+        # Queue up downloads
         taskqueue.add(url='/service/download/write', params=dict(q=q, email=email, 
-            filename=filename, writable_file_name=writable_file_name), 
+            name=name, filename=filename, writable_file_name=writable_file_name), 
                 queue_name="downloadwrite")
 
 

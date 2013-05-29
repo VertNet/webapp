@@ -58,6 +58,9 @@ DWC_TAXON = [
 	'TaxonRank', 'TaxonRemarks', 'TaxonomicStatus', 'VerbatimTaxonRank', 
 	'VernacularName']
 
+DWC_ALL = DWC_LOCATION + DWC_RECLEVEL + DWC_OCC + DWC_EVENT + DWC_GEO + DWC_ID + DWC_TAXON
+DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
+
 def classify(record):
 	result = dict(meta=record, loc={}, reclevel={}, occ={}, event={}, geo={}, 
 		id={}, taxon={})

@@ -3,6 +3,7 @@
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import tasklets
 from protorpc import messages
+from vertnet.service import util
 
 import json
 import logging
@@ -115,9 +116,14 @@ class Record(ndb.Model):
 
     @property
     def tsv(self):
-        values = [unicode(x) for x in self.json.values()]
+        json = self.json
+        header = util.DWC_ALL_LOWER
+        values = [unicode(json[x]) for x in header if json.has_key(x)]
         return '\t'.join(values).encode('utf-8')
 
+    @classmethod
+    def header(cls):
+        return '\t'.join(util.DWC_ALL_LOWER)
 
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
@@ -229,6 +235,7 @@ class RecordList(messages.Message):
     q = messages.StringField(6)   # {terms={}, keywords=[]}
     count = messages.IntegerField(7)
     email = messages.StringField(8) # email to ping when download is done
+    name = messages.StringField(9) # name of downloaded record set
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 
