@@ -59,6 +59,7 @@ DWC_TAXON = [
 	'VernacularName']
 
 DWC_ALL = DWC_LOCATION + DWC_RECLEVEL + DWC_OCC + DWC_EVENT + DWC_GEO + DWC_ID + DWC_TAXON
+DWC_ALL.sort()
 DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
 
 def classify(record):

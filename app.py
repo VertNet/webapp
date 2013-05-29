@@ -60,10 +60,10 @@ class AppHandler(webapp2.RequestHandler):
 
     def occ(self, publisher, resource):
         occurrence = self.request.get('id')
-        logging.info('%s/%s/%s' % (publisher, resource, occurrence))
-        record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
-        values = dict(rec=util.classify(json.loads(record.record)))
-        self.render_template('occurrence.html', template_values=values)        
+        #logging.info('%s/%s/%s' % (publisher, resource, occurrence))
+        #record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
+        #values = dict(rec=util.classify(json.loads(record.record)))
+        self.render_template('occurrence.html') #, template_values=values)        
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          

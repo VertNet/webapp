@@ -117,13 +117,14 @@ class Record(ndb.Model):
     @property
     def tsv(self):
         json = self.json
-        header = util.DWC_ALL_LOWER
-        values = [unicode(json[x]) for x in header if json.has_key(x)]
+        header = ['sourceurl'] + util.DWC_ALL_LOWER
+        values = [json.get('url')]
+        values += [unicode(json[x]) for x in header if json.has_key(x)]
         return '\t'.join(values).encode('utf-8')
 
     @classmethod
     def header(cls):
-        return '\t'.join(util.DWC_ALL_LOWER)
+        return '\t'.join(['url'] + util.DWC_ALL_LOWER)
 
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
