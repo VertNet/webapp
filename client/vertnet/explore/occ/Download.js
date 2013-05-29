@@ -3,37 +3,28 @@ define([
   'Backbone',
   'Underscore',
   'util',
-  'explore/occ/DarwinCoreTab',
-  'text!explore/occ/OccDetail.html'
-  ], function ($, Backbone, _, util, DarwinCoreTab, template) {
+  'rpc',
+  'text!explore/occ/Download.html'
+  ], function ($, Backbone, _, util, rpc, template) {
     return Backbone.View.extend({
 
-      initialize: function(options, app) {
+      events: {
+        'click button': '_submit'
+      },
+
+      initialize: function(options, app, model) {
         this.app = app;
+        this.model = model;
+        this.model.on('change', _.bind(this.calculateCount, this));
         this.template = _.template(template);
       }, 
 
       render: function() {
-        this.$el.html(this.template(this.model.attributes));
-        this.darwinCoreTab = new DarwinCoreTab({model: this.model}, this.app);
-        this.$('#darwincore').html(this.darwinCoreTab.render().el);
+        this.$el.html(this.template());
         return this;
       },
 
-     setTab: function(name) {
-       var selector = '#detailTabs a[href="#' + name + '"]';
-       this.$(selector).tab('show');
-     },
-
      setup: function () {
-        this.setTab(this.options.show);
-        this.$('#detailTabs a').click(_.bind(function (e) {
-          var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';
-          var path = util.getOccPath(this.model.get('keyname'), tab); 
-          this.app.router.navigate(path);
-          this.setTab(tab);
-          this.darwinCoreTab.setup();
-        }, this));
         return this;
       },
 
@@ -50,6 +41,49 @@ define([
         this.undelegateEvents();
         //this.stopListening();
         this.empty();
-    }
+      },
+
+      calculateCount: function() {
+        var request = {q:JSON.stringify({terms: this.model.get('terms'), 
+          keywords: this.model.get('keywords')})};
+        this.$('#suback').text('');
+        this.$('#email').text('');
+        this.$('#email').text('');
+        this.$('button').prop("disabled", false);
+        rpc.execute('/service/rpc/record.count', request, {
+          success: _.bind(this._setCount, this), 
+          error: _.bind(function(x) {
+            console.log('ERROR: ', x);
+          }, this)
+        });
+      },
+
+      _setCount: function(response) {
+        console.log('count=', response.count);
+        this.$('#reccount').text(response.count);
+        if (response.count === 0) {
+          this.$('button').prop("disabled", true);
+        } else {
+          this.$('button').prop("disabled", false);
+        }
+      },
+
+      _submit: function(e) {
+        var email = this.$('#email').val();
+        var name = this.$('#name').val();
+        var request = {email: email, name: name, q: JSON.stringify({
+          terms: this.model.get('terms'), keywords: this.model.get('keywords')})}
+        e.preventDefault();
+        this.$('button').prop("disabled", true);
+        console.log('submit');
+        rpc.execute('/service/rpc/record.download', request, {
+            success: _.bind(this._submitAck, this), 
+            error: _.bind(this._submitAck, this)
+        });
+      },
+
+      _submitAck: function(e) {
+        this.$('#suback').text('Request submitted!');
+      }
   });
 });

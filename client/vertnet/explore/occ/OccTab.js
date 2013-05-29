@@ -44,8 +44,6 @@ define([
 
     render: function() {
       this.$el.html(_.template(template));
-      this.downloadTab = new Download(this.options, this.app);
-      this.$('downloadform').html(this.downloadTab.render().el);
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
@@ -65,13 +63,17 @@ define([
    setup: function () {
       this.spin = new Spin(this.$('#notifications-spin'));
       this.spin.start();
+      this.downloadTab = new Download(this.options, this.app, this.model);
+      this.$('#downloadform').html(this.downloadTab.render().el);
       this.$('#bottom-pager').hide();
       this.$('#resultTabs a').on('shown', _.bind(function (e) {
         var tab = e.target.id;
         if (tab === 'maptab') {
           this.resultMap._updateMarkers();
           this.resultMap.resize();
-        } 
+        } else if (tab === 'download-tab') {
+          this.downloadTab.calculateCount();
+        }
       }, this));
    
       this.$('#resultTabs a').click(_.bind(function (e) {
@@ -174,7 +176,7 @@ define([
     // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
-      _.each(this.$('input'), _.bind(function (input) {
+      _.each(this.$('#search-form input'), _.bind(function (input) {
         var value = $(input).val();
         if (input.id !== 'search-keywords-box' && value.trim() !== '') {
           this.terms[input.id] = value.trim().toLowerCase();

@@ -72,7 +72,14 @@ class DownloadHandler(webapp2.RequestHandler):
         # Write header
         with files.open(writable_file_name, 'a') as f:
             f.write('%s\n' % Record.header())
-            f.close(finalize=False)     
+            f.close(finalize=False) 
+
+        # Email confirmation
+        mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
+                to=email, subject="Your VertNet download request was received!",
+                body="""
+        We'll email you when your result set "%s" is ready.
+        """ % name)    
         
         # Queue up downloads
         taskqueue.add(url='/service/download/write', params=dict(q=q, email=email, 
