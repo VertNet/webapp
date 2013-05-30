@@ -1,40 +1,47 @@
 <div class="tabbable tabs-left">
   <ul id="darwinCoreTabs" class="nav nav-tabs">
-    <% if (!_.isEmpty(this.model.loc())) { %>
-    <li class="active">
-      <a id="loc" href="#location" data-toggle="tab">Location</a>
-    </li>
-    <% } %>
     <% if (!_.isEmpty(this.model.reclevel())) { %>
     <li class="">
       <a href="#reclevel-tab" data-toggle="tab">RecordLevel</a>
     </li>
     <% } %>
+
     <% if (!_.isEmpty(this.model.occ())) { %>
     <li class="">
       <a href="#occ-tab" data-toggle="tab">Occurrence</a>
     </li>
     <% } %>            
+
     <% if (!_.isEmpty(this.model.event())) { %>
     <li class="">
       <a href="#event-tab" data-toggle="tab">Event</a>
     </li>
     <% } %>
+    
+    <% if (!_.isEmpty(this.model.loc())) { %>
+    <li class="active">
+      <a id="loc" href="#location" data-toggle="tab">Location</a>
+    </li>
+    <% } %>
+    
     <% if (!_.isEmpty(this.model.geo())) { %>
     <li class="">
       <a href="#geo-tab" data-toggle="tab">GeologicalContext</a>
     </li>
     <% } %>
+    
     <% if (!_.isEmpty(this.model.iden())) { %>
     <li class="">
       <a href="#id-tab" data-toggle="tab">Identification</a>
     </li>
     <% } %>
+    
     <% if (!_.isEmpty(this.model.taxon())) { %>
     <li class="">
       <a href="#taxon-tab" data-toggle="tab">Taxon</a>
     </li>
     <% } %>
+    
     <li class="">
       <a href="#all-tab" data-toggle="tab">All Terms</a>
     </li>  </ul>
@@ -53,7 +60,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.loc(), function(val, key) { %>   
+        <% _.each(this.model.DWC_LOCATION, _.bind(function(key) { 
+          var val = this.model.loc()[key]; 
+          if (val) { %>
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -64,10 +73,12 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
+
 
     <!-- Record level tab. -->
     <div class="tab-pane" id="reclevel-tab">
@@ -79,7 +90,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.reclevel(), function(val, key) { %>  
+        <% _.each(this.model.DWC_RECLEVEL, _.bind(function(key) { 
+          var val = this.model.reclevel()[key]; 
+          if (val) { %>
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -90,7 +103,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -105,7 +119,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.occ(), function(val, key) { %>  
+        <% _.each(this.model.DWC_OCC, _.bind(function(key) { 
+          var val = this.model.occ()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -116,7 +132,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -131,7 +148,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.event(), function(val, key) { %>  
+        <% _.each(this.model.DWC_EVENT, _.bind(function(key) { 
+          var val = this.model.event()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -142,7 +161,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>          
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -157,7 +177,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.geo(), function(val, key) { %>  
+        <% _.each(this.model.DWC_GEO, _.bind(function(key) { 
+          var val = this.model.geo()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -168,7 +190,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -183,7 +206,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.iden(), function(val, key) { %>  
+        <% _.each(this.model.DWC_ID, _.bind(function(key) { 
+          var val = this.model.iden()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -194,7 +219,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -209,7 +235,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.taxon(), function(val, key) { %>  
+        <% _.each(this.model.DWC_TAXON, _.bind(function(key) { 
+          var val = this.model.taxon()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -220,7 +248,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
@@ -235,7 +264,9 @@
           </tr>
         </thead>
         <tbody>
-        <% _.each(this.model.all(), function(val, key) { %>  
+        <% _.each(this.model.DWC_ALL(), _.bind(function(key) { 
+          var val = this.model.all()[key]; 
+          if (val) { %>          
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
@@ -246,7 +277,8 @@
               <% } %>
             </td>
           </tr>
-        <% }); %>
+          <% } %>
+        <% }, this)); %>
         </tbody>
       </table> 
     </div>
