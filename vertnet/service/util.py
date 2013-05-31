@@ -55,6 +55,8 @@ DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID',
 
 DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_EVENT + DWC_LOCATION + DWC_GEO + DWC_ID + DWC_TAXON
 DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
+DWC_HEADER_LIST = ['datasource_and_rights'] + DWC_ALL_LOWER
+DWC_HEADER = '\t'.join(DWC_HEADER_LIST)
 
 def classify(record):
 	result = dict(meta=record, loc={}, reclevel={}, occ={}, event={}, geo={}, 
