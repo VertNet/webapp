@@ -72,7 +72,7 @@ define([
           this.resultMap._updateMarkers();
           this.resultMap.resize();
         } else if (tab === 'download-tab') {
-          this.downloadTab.calculateCount();
+          //this.downloadTab.calculateCount();
         }
       }, this));
    
