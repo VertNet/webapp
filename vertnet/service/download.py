@@ -15,7 +15,7 @@ def _write_record(f, record):
     f.write('%s\n' % record.csv)
 
 def _get_tsv_chunk(records):
-    tsv_lines = [x.tsv for x in records]
+    tsv_lines = [x.tsv for x in records if x]
     chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
     return chunk
 
@@ -57,8 +57,8 @@ class WriteHandler(webapp2.RequestHandler):
             mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-        You can download "%s" here: https://storage.cloud.google.com/vn-downloads/%s 
-        """ % (name, filename.split('/')[-1]))
+You can download "%s" here: https://storage.cloud.google.com/vn-downloads/%s
+""" % (name, filename.split('/')[-1]))
 
 class DownloadHandler(webapp2.RequestHandler):
     def post(self):
@@ -78,8 +78,7 @@ class DownloadHandler(webapp2.RequestHandler):
         mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download request was received!",
                 body="""
-        We'll email you when your result set "%s" is ready.
-        """ % name)    
+We'll email you when your result set "%s" is ready.""" % name)    
         
         # Queue up downloads
         taskqueue.add(url='/service/download/write', params=dict(q=q, email=email, 
