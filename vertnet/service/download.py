@@ -4,6 +4,7 @@ from google.appengine.api import files
 from google.appengine.api import mail
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import taskqueue
+from vertnet.service import util
 
 from vertnet.service.model import RecordIndex, Record
 import webapp2
@@ -16,7 +17,7 @@ def _write_record(f, record):
 
 def _get_tsv_chunk(records):
     tsv_lines = [x.tsv for x in records if x]
-    chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
+    chunk = reduce(lambda x,y: '%s\n%s\n' % (x,y), tsv_lines)
     return chunk
 
 class StartHandler(webapp2.RequestHandler):
@@ -65,13 +66,13 @@ class DownloadHandler(webapp2.RequestHandler):
         q = self.request.get('q')
         email = self.request.get('email')
         name = self.request.get('name')
-        filename = '/gs/vn-downloads/%s' % uuid.uuid4().hex
+        filename = '/gs/vn-downloads/%s-%s.tsv' % (name, uuid.uuid4().hex)
         writable_file_name = files.gs.create(filename, 
             mime_type='text/tab-separated-values', acl='public-read')
         
         # Write header
         with files.open(writable_file_name, 'a') as f:
-            f.write('%s\n' % Record.header())
+            f.write('%s\n' % util.DWC_HEADER)
             f.close(finalize=False) 
 
         # Email confirmation
