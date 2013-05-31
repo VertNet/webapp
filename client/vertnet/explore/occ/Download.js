@@ -21,6 +21,9 @@ define([
 
       render: function() {
         this.$el.html(this.template());
+        this.$('#tsv').tooltip({
+          title: 'Tab Separated Values',
+        });
         return this;
       },
 
@@ -83,7 +86,7 @@ define([
       },
 
       _submitAck: function(e) {
-        this.$('#suback').text('Request submitted!');
+        this.$('#suback').text("Request submitted! You'll get an email confirmation in a moment.");
       }
   });
 });
