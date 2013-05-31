@@ -119,7 +119,11 @@ class Record(ndb.Model):
         json = self.json
         header = ['datasource_and_rights'] + util.DWC_ALL_LOWER
         values = [json.get('url')]
-        values += [unicode(json[x]) for x in header if json.has_key(x)]
+        for x in header:
+            if json.has_key(x):
+                values.append(unicode(json[x]))
+            else:
+                values.append('')
         return '\t'.join(values).encode('utf-8')
 
     @classmethod
@@ -186,7 +190,7 @@ class RecordIndex(ndb.Model):
             record_keys = [x.parent() for x in index_keys]
 
         # Return results
-        records = ndb.get_multi(record_keys)
+        records = [x for x in ndb.get_multi(record_keys) if x]
         
         if message:
             records = [x.message for x in records if x]
