@@ -126,7 +126,6 @@ class Record(ndb.Model):
                 values.append(unicode(json[x]))
             else:
                 values.append('')
-        logging.info(values)
         return '\t'.join(values) #.encode('utf-8')
 
 class RecordIndex(ndb.Model):

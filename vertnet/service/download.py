@@ -27,10 +27,8 @@ class StartHandler(webapp2.RequestHandler):
 # TODO: Make idempotent.
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
-        logging.info('Q %s' % self.request.get('q'))
-        q = json.loads(self.request.get('q'))
-        name = self.request.get('name')
-        email = self.request.get('email')
+        q, email, name = map(self.request.get, ['q', 'email', 'name'])
+        q = json.loads(q)
         writable_file_name = self.request.get('writable_file_name')
         filename = self.request.get('filename')
         cursor = self.request.get('cursor')
@@ -62,10 +60,8 @@ You can download "%s" here: https://storage.cloud.google.com/vn-downloads/%s
 """ % (name, filename.split('/')[-1]))
 
 class DownloadHandler(webapp2.RequestHandler):
-    def post(self):
-        q = self.request.get('q')
-        email = self.request.get('email')
-        name = self.request.get('name')
+
+    def _queue(self, q, email, name):
         filename = '/gs/vn-downloads/%s-%s.tsv' % (name, uuid.uuid4().hex)
         writable_file_name = files.gs.create(filename, 
             mime_type='text/tab-separated-values', acl='public-read')
@@ -82,10 +78,28 @@ class DownloadHandler(webapp2.RequestHandler):
 We'll email you when your result set "%s" is ready.""" % name)    
         
         # Queue up downloads
-        taskqueue.add(url='/service/download/write', params=dict(q=q, email=email, 
-            name=name, filename=filename, writable_file_name=writable_file_name), 
-                queue_name="downloadwrite")
+        taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q), 
+            email=email, name=name, filename=filename, writable_file_name=writable_file_name), 
+            queue_name="downloadwrite")
 
+    def post(self):
+        self.get()
+    
+    def get(self):
+        count, terms, keywords, email, name = map(self.request.get, 
+            ['count', 'terms', 'keywords', 'email', 'name'])
+        logging.info(' . '.join([count, terms, keywords, email, name]))
+        q = dict(terms=json.loads(terms), keywords=json.loads(keywords))
+        count = int(count)
+        if count <= 1000:
+            fname = str('%s.tsv' % name)
+            self.response.headers['Content-Type'] = "text/tab-separated-values"
+            self.response.headers['Content-Disposition'] = "attachment; filename=%s" % fname
+            records, cursor, more, count = RecordIndex.search(q, count)
+            data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
+            self.response.out.write(data)
+        else:
+            self._queue(q, email, name)
 
 api = webapp2.WSGIApplication([
     webapp2.Route(r'/_ah/start', StartHandler),
