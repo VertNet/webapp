@@ -74,19 +74,32 @@ define([
       _submit: function(e) {
         var email = this.$('#email').val();
         var name = this.$('#name').val();
-        var request = {email: email, name: name, q: JSON.stringify({
-          terms: this.model.get('terms'), keywords: this.model.get('keywords')})}
+        var count = Number(this.$('#reccount').text());
+        var request = {
+          count: count,
+          email: email, 
+          name: name, 
+          terms: JSON.stringify(this.model.get('terms')),
+          keywords: JSON.stringify(this.model.get('keywords'))}
         e.preventDefault();
         this.$('button').prop("disabled", true);
         console.log('submit');
-        rpc.execute('/service/rpc/record.download', request, {
-            success: _.bind(this._submitAck, this), 
-            error: _.bind(this._submitAck, this)
-        });
+        console.log(request);
+        if (count >= 250) {
+          $.get('/service/download', request, 
+            _.bind(this._submitAck, this));
+        } else {
+          window.location.href = '/service/download?' + $.param(request);
+          this.$('button').prop("disabled", false);
+          this._submitAck();
+        }
       },
 
       _submitAck: function(e) {
-        this.$('#suback').text("Request submitted! You'll get an email confirmation in a moment.");
+        console.log(e);
+        if (e) {
+          this.$('#suback').text("Request submitted! You'll get an email confirmation in a moment.");
+        }
       }
   });
 });

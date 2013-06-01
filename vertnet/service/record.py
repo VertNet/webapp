@@ -19,6 +19,10 @@ def record_list(limit, cursor, q, message=False):
         return RecordList(items=i, cursor=n, more=m, count=c)
     return i, n, m, c
 
+def _get_tsv_chunk(records):
+    tsv_lines = [x.tsv for x in records if x]
+    chunk = reduce(lambda x,y: '%s\n%s\n' % (x,y), tsv_lines)
+    return chunk
 
 class RecordService(remote.Service):
     """RPC services for working with Records."""
@@ -44,34 +48,5 @@ class RecordService(remote.Service):
     def count(self, message):
         q = json.loads(message.q)
         return RecordList(count=RecordIndex.search(q, None, count=True))
-
-    @remote.method(RecordList, VoidMessage)
-    def download(self, message):
-        taskqueue.add(url='/service/download', params=dict(q=message.q, 
-            email=message.email, name=message.name), queue_name="download")
-        return VoidMessage()
-
-class RecordApi(webapp2.RequestHandler):
-    """Record API handler."""
-
-    def post(self):
-        self.get()
-    
-    def get(self):
-    	q = json.loads(self.request.get('q'))
-        curs = None
-        if q.has_key('cursor'):
-            curs = Cursor(urlsafe=q['cursor'])
-        records, cursor, more = record_list(q['limit'], curs, q)
-        if cursor:
-            cursor = cursor.urlsafe()
-        records = [x.json for x in records]
-        result = dict(records=records, cursor=cursor, more=more)
-        self.response.headers["Content-Type"] = "application/json"
-        self.response.out.write(json.dumps(result))
-
-api = webapp2.WSGIApplication([
-    webapp2.Route(r'/service/api/record', handler=RecordApi),],   
-    debug=True)
          
 rpc = service.service_mappings([('/service/rpc/record', RecordService),],)
