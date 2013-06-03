@@ -25,6 +25,8 @@ define([
   OccList, OccRow, OccModel, ResultMap, SearchModel, Spin) {
   return Backbone.View.extend({
 
+    tagName: 'explore-page-content',
+
     events: {
       'click .pager': '_loadMore'
     },
@@ -43,7 +45,7 @@ define([
     },
 
     render: function() {
-      this.$el.html(_.template(template));
+      //this.$el.html(_.template(template));
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
@@ -62,8 +64,8 @@ define([
    setup: function () {
       this.$("#search-keywords-box").focus();
       this.spin = new Spin(this.$('.search-spinner'));
-      this.downloadTab = new Download(this.options, this.app, this.model);
-      this.$('#downloadform').html(this.downloadTab.render().el);
+      //this.downloadTab = new Download(this.options, this.app, this.model);
+      //this.$('#downloadform').html(this.downloadTab.render().el);
       this.$('#bottom-pager').hide();
       this.$('#resultTabs a').on('shown', _.bind(function (e) {
         var tab = e.target.id;
@@ -79,6 +81,7 @@ define([
         this._submitDownload(e);
       }, this));
 
+      this.$('#download-btn').addClass('disabled');
       this.$('#download-btn').click(_.bind(function(e) {
         var countRequest = {q:JSON.stringify({terms: this.model.get('terms'), 
           keywords: this.model.get('keywords')})};
@@ -88,6 +91,9 @@ define([
           name: name, 
           terms: JSON.stringify(this.model.get('terms')),
           keywords: JSON.stringify(this.model.get('keywords'))
+        }
+        if (!this.show) {
+          return;
         }
         this.spin.start();
         rpc.execute('/service/rpc/record.count', countRequest, {
@@ -262,13 +268,15 @@ define([
       var table = this.$('#occTable');
       var tab = this.$('#occ-search-tab');
 
+      this.show = show;
       if (show) {
         table.show();
         this.$('#bottom-pager').show();
-
         // this.$('#no-results').hide();
         this.$('.counter').show();
+        this.$('#download-btn').removeClass('disabled');
       } else {
+        this.$('#download-btn').addClass('disabled');
         table.hide();
         this.$('.counter').text('0 results');
         this.$('.counter').show();

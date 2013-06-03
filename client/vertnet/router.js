@@ -155,10 +155,9 @@ define([
 
       // Setup header/footer.
       this.initHeaderFooter();
-
-      this.page = new Search({show: name, query:query}, this.app);
-      $('#content').html(this.page.render().el);
-      this.page.setup();
+      this.page = new Search({el: '#explore-page-content', show: name, query:query}, this.app);
+      //$('#content').html(this.page.el);
+      this.page.render().setup();
 
       this.spin.stop();
       console.log('spinstop');
