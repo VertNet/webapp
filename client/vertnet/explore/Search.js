@@ -56,11 +56,11 @@ define([
       }
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
-
       return this;
     },
 
    setup: function () {
+      this.$("#search-keywords-box").focus();
       this.spin = new Spin(this.$('.search-spinner'));
       this.downloadTab = new Download(this.options, this.app, this.model);
       this.$('#downloadform').html(this.downloadTab.render().el);
@@ -136,6 +136,7 @@ define([
           this._submitHandler(null, true);
         }, this), 250);
       }, this));
+
 
       return this;
     },
