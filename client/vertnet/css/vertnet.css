@@ -30,6 +30,12 @@
   	left: 50%;
 }
 
+#main-spinner {
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+}
+
 #vertnet-headline {
 	font-size: 40px;
 }

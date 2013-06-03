@@ -41,7 +41,7 @@
       <!-- <div class="container-fluid"> -->
         <div class="row-fluid">
           <div class="span1 offset10">
-            <span class="counter"></span>
+            <span class="counter">0 results</span>
           </div>
           <div class="span1">
             <button id="download-btn" type="button" class="btn btn-mini btn-primary dl-btn" data-toggle="button">Download all</button>   
@@ -68,41 +68,23 @@
       </table>
       
       <div id="bottom-pager" class="row-fluid">
-         <div class="span2 offset6">
-            <div class='notifications-spin'>
-              <div id='notifications-spin'></div>
-            </div>    
-          </div>
-          <div class="span2 showing">
-            <span class="counter"></span>
-          </div>
-          <div class="span2">
-            <ul class="pager load-more">
-              <li class="table-pager">
-                <a href="#">Load more results...</a>
-              </li>
-            </ul>            
-          </div>
+        <div class="span6">
+          <ul class="pager load-more">
+            <li class="table-pager">
+              <a href="#">Load more results...</a>
+            </li>
+          </ul>            
         </div>
-    </div>
-
+      </div>
+    </div>  
     <!-- Occurrence search: Results map tab. -->
     <div class="tab-pane fade" id="tablemap">
         <div class="row-fluid">
-          <div class="span2 offset6">
-            <div class='notifications-spin'>
-              <div id='notifications-spin'></div>
-            </div>    
-          </div>
-          <div class="span2 showing">
+          <div class="span1 offset10">
             <span class="counter"></span>
           </div>
-          <div class="span2">
-            <ul class="pager load-more">
-              <li class="table-pager">
-                <a href="#">Load more results...</a>
-              </li>
-            </ul>            
+          <div class="span1">
+            <button id="download-btn" type="button" class="btn btn-mini btn-primary dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
       <div id="resultmap"></div>

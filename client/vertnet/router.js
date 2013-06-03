@@ -16,16 +16,16 @@ define([
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
   'About',
-  'Feedback'
+  'Feedback',
+  'Spin'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
-  FooterView, Search, OccDetail, OccModel, About, Feedback) {
+  FooterView, Search, OccDetail, OccModel, About, Feedback, Spin) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
 
     initialize: function (app) {
-
-
+      this.spin = new Spin($('#main-spinner'));
       // Save app reference.
       this.app = app;
       
@@ -145,10 +145,13 @@ define([
     search: function(type, name, params) {
       var query = params || {};
       console.log('router.explore():', type, name, params);
+      console.log('spinstart');
+      this.spin.start();
+
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      //if (this.page)
+       // this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
@@ -156,6 +159,10 @@ define([
       this.page = new Search({show: name, query:query}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();
+
+      this.spin.stop();
+      console.log('spinstop');
+
     },
 
     home: function (name) {
