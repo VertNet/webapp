@@ -12,13 +12,13 @@ define([
   'home/Home',
   'common/Header',
   'common/Footer',
-  'explore/Explore',
+  'explore/Search',
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
   'About',
   'Feedback'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView, OccDetail, OccModel, About, Feedback) {
+  FooterView, Search, OccDetail, OccModel, About, Feedback) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -153,7 +153,7 @@ define([
       // Setup header/footer.
       this.initHeaderFooter();
 
-      this.page = new ExploreView({show: name, query:query}, this.app);
+      this.page = new Search({show: name, query:query}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();
     },
