@@ -25,7 +25,7 @@ define([
   OccList, OccRow, OccModel, ResultMap, SearchModel, Spin) {
   return Backbone.View.extend({
 
-    tagName: 'explore-page-content',
+    //tagName: 'explore-page-content',
 
     events: {
       'click .pager': '_loadMore'
@@ -45,7 +45,7 @@ define([
     },
 
     render: function() {
-      //this.$el.html(_.template(template));
+      this.$el.html(_.template(template));
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
@@ -58,6 +58,22 @@ define([
       }
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
+      this.$("#search-keywords-box").focus();
+      // this.$('#idcol').popover({
+      //     trigger: 'hover',
+      //     title: 'Identification',
+      //     content: 'InstitutionCode CollectionCode CatalogNumber',
+      //     container: '#occTable',
+      //     placement: 'top'
+      // });
+      // this.$('#taxcol').popover({
+      //     trigger: 'hover',
+      //     title: 'Taxonomy',
+      //     content: 'Class: ScientificName',
+      //     container: '#occTable',
+      //     placement: 'top',
+      //     html: 'true'
+      // });
       return this;
     },
 

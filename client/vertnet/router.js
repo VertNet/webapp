@@ -112,9 +112,9 @@ define([
 
       console.log('OCCURRENCE');
       // Kill page view if exists.
-      if (this.page) {
-        this.page.destroy();
-      }
+      // if (this.page) {
+      //   this.page.destroy();
+      // }
 
       // Setup header/footer.
       this.initHeaderFooter();
@@ -146,7 +146,7 @@ define([
       var query = params || {};
       console.log('router.explore():', type, name, params);
       console.log('spinstart');
-      this.spin.start();
+      //this.spin.start();
 
 
       // Kill the page view if it exists.
@@ -155,11 +155,15 @@ define([
 
       // Setup header/footer.
       this.initHeaderFooter();
-      this.page = new Search({el: '#explore-page-content', show: name, query:query}, this.app);
-      //$('#content').html(this.page.el);
-      this.page.render().setup();
-
-      this.spin.stop();
+      // this.page = new Search({el: '#explore-page-content', show: name, query:query}, this.app);
+      // $('#content').html(this.page.el);
+      // this.page.setup();
+      this.page = new Search({show: name, query:query}, this.app);
+      $('#content').html(this.page.render().el);
+      this.page.setup();
+      // setTimeout(_.bind(function() {
+      //   this.spin.stop();
+      // }, this), 1000);
       console.log('spinstop');
 
     },
