@@ -85,7 +85,7 @@ define([
         this.$('button').prop("disabled", true);
         console.log('submit');
         console.log(request);
-        if (count >= 250) {
+        if (count >= 1000) {
           $.get('/service/download', request, 
             _.bind(this._submitAck, this));
         } else {

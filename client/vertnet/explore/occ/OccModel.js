@@ -67,6 +67,44 @@ define([
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
     },
 
+    getYear: function() {
+      if (this.get('year')) {
+        return this.get('year');
+      } else {
+        return '';
+      }
+    },
+
+    getLocation: function() {
+      var loc = '';
+      var locality = this.get('locality');
+      if (this.get('country')) {
+        loc += this.get('country');
+      }
+      if (this.get('stateprovince')) {
+        if (this.get('country')) {
+          loc += ', ';
+        }
+        loc += this.get('stateprovince');
+      }
+      if (this.get('county')) {
+        if (this.get('stateprovince')) {
+          loc += ', ';
+        }
+        loc += this.get('county');
+      }
+      if (locality) {
+        if (loc.length > 0) {
+          loc += ' - ';
+        }
+        loc += locality.slice(0, 20);
+        if (locality.length > 20) {
+          loc += '...'
+        }
+      }
+      return loc;
+    },
+
     isMappable: function() {
       var lat = this.get('decimallatitude');
       var lon = this.get('decimallongitude');
