@@ -97,8 +97,8 @@ define([
         this._submitDownload(e);
       }, this));
 
-      this.$('#download-btn').addClass('disabled');
-      this.$('#download-btn').click(_.bind(function(e) {
+      this.$('.dl-btn').addClass('disabled');
+      this.$('.dl-btn').click(_.bind(function(e) {
         var countRequest = {q:JSON.stringify({terms: this.model.get('terms'), 
           keywords: this.model.get('keywords')})};
         var name = 'vertnet-download';
@@ -290,9 +290,9 @@ define([
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();
-        this.$('#download-btn').removeClass('disabled');
+        this.$('.dl-btn').removeClass('disabled');
       } else {
-        this.$('#download-btn').addClass('disabled');
+        this.$('.dl-btn').addClass('disabled');
         table.hide();
         this.$('.counter').text('0 results');
         this.$('.counter').show();
