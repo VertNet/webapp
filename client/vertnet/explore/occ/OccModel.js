@@ -95,11 +95,15 @@ define([
       }
       if (locality) {
         if (loc.length > 0) {
-          loc += ' - ';
+          loc += ': ';
         }
-        loc += locality.slice(0, 20);
-        if (locality.length > 20) {
-          loc += '...'
+        loc += locality;
+        if (loc.length > 70) {
+          if (loc.slice(0, 70)[69] === ' ') {
+            loc = loc.slice(0, 71) + '...';          
+          } else {
+            loc = loc.slice(0, 70) + '...';
+          }
         }
       }
       return loc;

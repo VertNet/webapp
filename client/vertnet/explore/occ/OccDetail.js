@@ -34,6 +34,7 @@ define([
           this.setTab(tab);
           this.darwinCoreTab.setup();
         }, this));
+        window.scrollTo(0, 0);
         return this;
       },
 
