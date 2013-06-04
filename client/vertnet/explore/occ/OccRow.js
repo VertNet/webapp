@@ -35,8 +35,11 @@ define([
       _clickHandler: function(e) {
         var keyname = this.model.get('keyname');
         var path = util.getOccPath(keyname, 'darwincore');
-        this.app.occDetailModel = this.model;
-        this.app.router.navigate(path, {trigger: true});
+        var sel = getSelection().toString();
+        if (!sel){
+          this.app.occDetailModel = this.model;
+          this.app.router.navigate(path, {trigger: true});
+        }
       }
     });
 });
