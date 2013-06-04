@@ -17,7 +17,7 @@ def _write_record(f, record):
 
 def _get_tsv_chunk(records):
     tsv_lines = [x.tsv for x in records if x]
-    chunk = reduce(lambda x,y: '%s\n%s\n' % (x,y), tsv_lines)
+    chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
     return chunk
 
 class StartHandler(webapp2.RequestHandler):
@@ -44,7 +44,7 @@ class WriteHandler(webapp2.RequestHandler):
             f.close(finalize=False)     
 
         # Queue up next chunk.
-        if more:
+        if more:    
             taskqueue.add(url='/service/download/write', 
                 params=dict(q=self.request.get('q'), email=email, filename=filename, 
                     writable_file_name=writable_file_name, name=name, 
