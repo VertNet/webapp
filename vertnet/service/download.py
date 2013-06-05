@@ -70,12 +70,6 @@ class DownloadHandler(webapp2.RequestHandler):
         with files.open(writable_file_name, 'a') as f:
             f.write('%s\n' % util.DWC_HEADER)
             f.close(finalize=False) 
-
-        # Email confirmation
-        mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
-                to=email, subject="Your VertNet download request was received!",
-                body="""
-We'll email you when your result set "%s" is ready.""" % name)    
         
         # Queue up downloads
         taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q), 
