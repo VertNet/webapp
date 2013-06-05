@@ -1,5 +1,8 @@
 <div class="tabbable tabs-left">
   <ul id="darwinCoreTabs" class="nav nav-tabs">
+    <li class="active">
+      <a href="#all-tab" data-toggle="tab">All Terms</a>
+    </li>  
     <% if (!_.isEmpty(this.model.reclevel())) { %>
     <li class="">
       <a href="#reclevel-tab" data-toggle="tab">RecordLevel</a>
@@ -19,7 +22,7 @@
     <% } %>
     
     <% if (!_.isEmpty(this.model.loc())) { %>
-    <li class="active">
+    <li class="">
       <a id="loc" href="#location" data-toggle="tab">Location</a>
     </li>
     <% } %>
@@ -41,15 +44,12 @@
       <a href="#taxon-tab" data-toggle="tab">Taxon</a>
     </li>
     <% } %>
-    
-    <li class="">
-      <a href="#all-tab" data-toggle="tab">All Terms</a>
-    </li>  </ul>
+  </ul>
 
   <div class="tab-content">
 
     <!-- Location tab.  -->
-    <div class="tab-pane active" id="location">
+    <div class="tab-pane" id="location">
       <div id="occ-detail-map" class="occ-detail-map">
       </div>
        <table class="table table-striped">
@@ -255,7 +255,7 @@
     </div>
 
     <!-- All tab.  -->
-    <div class="tab-pane" id="all-tab">
+    <div class="tab-pane active" id="all-tab">
        <table class="table table-striped">
         <thead>
           <tr>
