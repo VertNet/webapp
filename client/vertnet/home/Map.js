@@ -36,7 +36,7 @@ define([
         //this.addEvents();
       }
       map = this.map;
-      cartodb.createLayer(map, 'http://vertnet.cartodb.com/api/v1/viz/554/viz.json', {
+      cartodb.createLayer(map, 'http://vertnet.cartodb.com/api/v1/viz/26/viz.json', {
         query: 'select * from {{table_name}}',
         interactivity: null, 
         infowindows: false 

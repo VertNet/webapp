@@ -67,6 +67,15 @@ define([
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
     },
 
+    replaceURLWithHTMLLinks: function(text) {
+      var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+      return text.replace(exp,"<a href='$1'>$1</a>"); 
+    },
+
+    getRights: function() {
+      return this.replaceURLWithHTMLLinks(this.get('emlrights'));
+    },
+    
     getYear: function() {
       if (this.get('year')) {
         return this.get('year');
