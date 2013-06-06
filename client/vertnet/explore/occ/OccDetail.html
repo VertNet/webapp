@@ -9,7 +9,7 @@
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>Access rights - <%= this.model.get('orgname') %></h4>
     <% if (this.model.get('emlrights')) { %>
-      <%= this.model.get('emlrights') %>
+      <%= this.model.getRights() %>
     <% } else { %>
       Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
     <% } %>

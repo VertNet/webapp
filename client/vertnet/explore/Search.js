@@ -28,7 +28,7 @@ define([
     //tagName: 'explore-page-content',
 
     events: {
-      'click .pager': '_loadMore'
+      'click .pager': '_loadMore',
     },
 
     initialize: function (options, app) {
@@ -261,6 +261,9 @@ define([
           this.occList.add(model);
           this.viewList.push(view);
           this.$('#occTable > tbody:last').append(view.render().el);
+          view.on('onClick', function() {
+            this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
+          }, this);
         }, this));
       } else {
         this.terms = {};

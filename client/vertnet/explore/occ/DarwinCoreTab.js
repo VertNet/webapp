@@ -28,7 +28,7 @@ define([
       setup: function () {
         this.$('#darwinCoreTabs a').click(_.bind(function (e) {
           var tab = e.target.id;
-          if (tab === 'loc') {
+          if (tab === 'loc' || tab === 'all') {
             this.mapView.resize();
           } 
         }, this));

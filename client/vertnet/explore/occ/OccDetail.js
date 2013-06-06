@@ -26,6 +26,7 @@ define([
      },
 
      setup: function () {
+        this.darwinCoreTab.setup();
         this.setTab(this.options.show);
         this.$('#detailTabs a').click(_.bind(function (e) {
           var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';

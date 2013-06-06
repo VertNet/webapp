@@ -1,7 +1,7 @@
 <div class="tabbable tabs-left">
   <ul id="darwinCoreTabs" class="nav nav-tabs">
     <li class="active">
-      <a href="#all-tab" data-toggle="tab">All Terms</a>
+      <a id="all" href="#all-tab" data-toggle="tab">All Terms</a>
     </li>  
     <% if (!_.isEmpty(this.model.reclevel())) { %>
     <li class="">
@@ -50,8 +50,7 @@
 
     <!-- Location tab.  -->
     <div class="tab-pane" id="location">
-      <div id="occ-detail-map" class="occ-detail-map">
-      </div>
+      <!-- <div id="occ-detail-map" class="occ-detail-map"></div> -->
        <table class="table table-striped">
         <thead>
           <tr>
@@ -256,6 +255,7 @@
 
     <!-- All tab.  -->
     <div class="tab-pane active" id="all-tab">
+       <div id="occ-detail-map" class="occ-detail-map"></div>
        <table class="table table-striped">
         <thead>
           <tr>
