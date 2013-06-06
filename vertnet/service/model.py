@@ -167,6 +167,13 @@ class RecordIndex(ndb.Model):
         for keyword in keywords:
             qry = qry.filter(RecordIndex.corpus == keyword)        
 
+        # Add sort orders:
+        qry = qry.order(RecordIndex.institutioncode)
+        qry = qry.order(RecordIndex.genus)
+        #qry = qry.order(RecordIndex.specificepithet)
+        #qry = qry.order(RecordIndex.country)
+        #qry = qry.order(RecordIndex.year)
+
         logging.info('QUERY='+str(qry))
 
         # Setup query paging
