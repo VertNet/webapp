@@ -149,6 +149,9 @@ define([
       this.timer = null;
       // $(document).on('keyup', _.bind(function(e) {
       this.$('#search-form').on('keyup', _.bind(function(e) {
+        if (e.keyCode != 8 && !/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
+          return;
+        }
         this._prepTerms();
         this._explodeKeywords();
         if (this.timer) {
@@ -156,7 +159,7 @@ define([
         }
         this.timer = setTimeout(_.bind(function() {
           this._submitHandler(null, true);
-        }, this), 250);
+        }, this), 300);
       }, this));
 
 
@@ -239,18 +242,20 @@ define([
       }, this));
     },
 
-    // Handler for new results from server.
+   // Handler for new results from server.
     _resultsHandler: function(response) {
       var items = _.map(response.items, function(item) {
         return JSON.parse(item.json);
       });
-      var showResults = items.length !== 0;
-      var howMany = response.count >= 1000 ? 'many' : response.count;
+      var showResults = items.length > 0;
+      var count = 0;
+      var howMany = 0;
       if (!this.paging) {
         this._clearResults();
+        this.count = response.count;
       }
-      this.count = response.count;
-      this.countLoaded += items.length;
+      howMany = this.count >= 1000 ? 'many' : this.count;
+      this.countLoaded = items.length + this.occList.length;
       this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
       this.response = response;
       this._showResultsTable(showResults);

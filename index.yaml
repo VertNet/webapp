@@ -21,3 +21,31 @@ indexes:
   - name: corpus
   - name: institutioncode
   - name: genus
+
+- kind: RecordIndex
+  properties:
+  - name: country
+  - name: institutioncode
+  - name: genus
+
+- kind: RecordIndex
+  properties:
+  - name: genus
+  - name: institutioncode
+
+- kind: RecordIndex
+  properties:
+  - name: institutioncode
+  - name: genus
+
+- kind: RecordIndex
+  properties:
+  - name: specificepithet
+  - name: institutioncode
+  - name: genus
+
+- kind: RecordIndex
+  properties:
+  - name: year
+  - name: institutioncode
+  - name: genus
