@@ -7,8 +7,8 @@ define([
 
   var defaults = {
     lines: 5, // The number of lines to draw
-    length: 60, // The length of each line
-    width: 8, // The line thickness
+    length: 40, // The length of each line
+    width: 6, // The line thickness
     radius: 5, // The radius of the inner circle
     corners: 1, // Corner roundness (0..1)
     rotate: 0, // The rotation offset
