@@ -14,7 +14,8 @@ require.config({ // VertNet app configuration.
     mps: 'libs/minpubsub/minpubsub',
     Spin: 'libs/spin/spin',
     bootstrap: 'libs/bootstrap/bootstrap',
-    backbonequeryparams: 'libs/backbone/backbonequeryparams'
+    backbonequeryparams: 'libs/backbone/backbonequeryparams',
+    store: 'libs/store/store.min'
   },
   
   // Dependency mappings:
