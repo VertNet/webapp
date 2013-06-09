@@ -1,4 +1,4 @@
-"""Download backend."""
+"""Download service."""
 
 from google.appengine.api import files
 from google.appengine.api import mail
@@ -6,11 +6,12 @@ from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import taskqueue
 from vertnet.service import util
 
-from vertnet.service.model import RecordIndex, Record
+from vertnet.service.model import RecordIndex
 import webapp2
 import json
 import logging
 import uuid
+import time
 
 def _write_record(f, record):
     f.write('%s\n' % record.csv)
@@ -19,10 +20,6 @@ def _get_tsv_chunk(records):
     tsv_lines = [x.tsv for x in records if x]
     chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
     return chunk
-
-class StartHandler(webapp2.RequestHandler):
-    def get(self):
-        logging.info('DOWNLOAD BACKEND STARTUP')
 
 # TODO: Make idempotent.
 class WriteHandler(webapp2.RequestHandler):
@@ -37,18 +34,30 @@ class WriteHandler(webapp2.RequestHandler):
         more = False
 
         # Write chunk.
-        with files.open(writable_file_name, 'a') as f:
-            records, cursor, more, count = RecordIndex.search(q, 100, cursor=cursor)
-            chunk = _get_tsv_chunk(records)
-            f.write(chunk) 
-            f.close(finalize=False)     
+        max_retries = 10
+        retry_count = 0
+        success = False
+        while not success and retry_count < max_retries:
+            try:
+                with files.open(writable_file_name, 'a') as f:
+                    records, next_cursor, more, count = RecordIndex.search(q, 100, cursor=cursor)
+                    chunk = _get_tsv_chunk(records)
+                    f.write(chunk) 
+                    f.close(finalize=False)     
+                    success = True
+            except files.exception.Error as e:
+                logging.error("I/O error({0}): {1}".format(e.errno, e.strerror))
+                retry_count += 1
 
-        # Queue up next chunk.
-        if more:    
+
+        # Queue up next chunk or current chunk if failed to write
+        if not success:
+            next_cursor = cursor
+        if more or not success:    
             taskqueue.add(url='/service/download/write', 
                 params=dict(q=self.request.get('q'), email=email, filename=filename, 
                     writable_file_name=writable_file_name, name=name, 
-                    cursor=cursor.urlsafe()), queue_name="downloadwrite")
+                    cursor=next_cursor.urlsafe()), queue_name="downloadwrite")
         
         # Finalize and email.
         else:
@@ -96,7 +105,6 @@ class DownloadHandler(webapp2.RequestHandler):
             self._queue(q, email, name)
 
 api = webapp2.WSGIApplication([
-    webapp2.Route(r'/_ah/start', StartHandler),
     webapp2.Route(r'/service/download', handler=DownloadHandler),
     webapp2.Route(r'/service/download/write', handler=WriteHandler)],
     debug=True)

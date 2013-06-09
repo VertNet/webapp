@@ -89,11 +89,13 @@
   <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">Download all <span id="reccount"></span> results</h3>
+      <h3 id="myModalLabel">Download all <span id="reccount"></span> results!</h3>
     </div>
+    <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> when it's ready.</div>
     <div id="queue" class="modal-body">
-      <p>It's going to take us a few minutes to prepare your download. Give us a result set name and your email, and we'll ping you when it's ready. Simple as that!</p>
-      <form>
+      <p id="queue-msg">It's going to take us a few minutes to prepare your results for download. Name your result set, give us your email, and we'll send you a download link as soon as it's ready. Simple as that!</p>
+      <p id="instant-msg">Your results are ready for download right now. Just name your result set, click the download button below, and you're set.</p>
+      <form id="dl-form">
         <fieldset>
           <input id='name' type="text" placeholder="Result set name" required>
           <input id='email' placeholder="Your email address" type="email" required>
@@ -101,8 +103,8 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal">Cancel</button>
-      <button id="submit-download-btn" class="btn btn-primary">Submit download request</button>
+      <button class="btn" data-dismiss="modal">Close</button>
+      <button id="submit-download-btn" class="btn btn-primary">Download</button>
     </div>
   </div>
 

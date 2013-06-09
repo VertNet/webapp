@@ -115,13 +115,29 @@ define([
         rpc.execute('/service/rpc/record.count', countRequest, {
           success: _.bind(function(x) {
             this.spin.stop();
+            this.$('#queue').show();
+            this.$('#submit-download-btn').show();
+            this.$('#myModalLabel').show();
             if (x.count <= 1000) {
-              request.count = x.count;
-              window.location.href = '/service/download?' + $.param(request);
-            } else {
-              this.$('#reccount').text(x.count);
-              this.$('#myModal').modal();
+              this.$('#instant-msg').show();
+              this.$('#queue-msg').hide();
+              this.$('#email').hide();
+            } else {              
+              this.$('#instant-msg').hide();
+              this.$('#queue-msg').show();
+              this.$('#email').show();
             }
+            this.$('#confirmation').hide();
+            this.$('#reccount').text(x.count);
+            this.$('#myModal').modal();
+            this.$('#name').focus();
+            // if (x.count <= 1000) {
+            //   request.count = x.count;
+            //   window.location.href = '/service/download?' + $.param(request);
+            // } else {
+            //   this.$('#reccount').text(x.count);
+            //   this.$('#myModal').modal();
+            // }
           }, this), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
@@ -330,8 +346,17 @@ define([
           terms: JSON.stringify(this.model.get('terms')),
           keywords: JSON.stringify(this.model.get('keywords'))}
         e.preventDefault();
-        $.get('/service/download', request);
-        this.$('#myModal').modal('hide')
+        if (count <= 1000) {
+          window.location.href = '/service/download?' + $.param(request);
+          this.$('#myModal').modal('hide');
+        } else {
+          $.get('/service/download', request);
+          this.$('#myModalLabel').hide();
+          this.$('#confirmation').show();
+          this.$('#queue').hide();
+          this.$('#submit-download-btn').hide();
+          this.$('#dl-email').text(email);
+        } 
       },
 
     // Explode search keywords value into an array of terms.
