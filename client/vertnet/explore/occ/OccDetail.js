@@ -28,10 +28,20 @@ define([
      setup: function () {
         this.darwinCoreTab.setup();
         this.setTab(this.options.show);
+        if (this.options.show === 'datasource') {
+          this.$('#rights').hide();
+        } else {
+          this.$('#rights').show();          
+        }
         this.$('#detailTabs a').click(_.bind(function (e) {
           var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';
           var path = util.getOccPath(this.model.get('keyname'), tab); 
-          this.app.router.navigate(path);
+          if (tab === 'datasource') {
+            this.$('#rights').hide();
+          } else {
+            this.$('#rights').show();          
+          }
+           this.app.router.navigate(path);
           this.setTab(tab);
           this.darwinCoreTab.setup();
         }, this));
