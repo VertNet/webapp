@@ -20,9 +20,10 @@ define([
   'explore/occ/OccModel',
   'explore/occ/ResultMap',
   'explore/occ/SearchModel',
-  'Spin'
+  'Spin',
+  'store'
 ], function ($, _, Backbone, mps, map, rpc, template, DowloadTemp, Download, 
-  OccList, OccRow, OccModel, ResultMap, SearchModel, Spin) {
+  OccList, OccRow, OccModel, ResultMap, SearchModel, Spin, store) {
   return Backbone.View.extend({
 
     //tagName: 'explore-page-content',
@@ -59,10 +60,10 @@ define([
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
       this.$("#search-keywords-box").focus();
-      // this.$('#idcol').popover({
-      //     trigger: 'hover',
-      //     title: 'Identification',
-      //     content: 'InstitutionCode CollectionCode CatalogNumber',
+      // $('').popover({
+      //     trigger: 'manual',
+      //     title: 'Pro tip',
+      //     content: 'Click on a row to see the occurrence detail page.',
       //     container: '#occTable',
       //     placement: 'top'
       // });
@@ -78,6 +79,13 @@ define([
     },
 
    setup: function () {
+      if (store.get('protip-closed') === true) {
+        this.$('#click-row-tip').hide();       
+      } else {
+        this.$('#click-row-tip').bind('closed', _.bind(function () {
+          store.set('protip-closed', true);
+        }, this));
+      }
       this.$("#search-keywords-box").focus();
       this.spin = new Spin(this.$('.search-spinner'));
       //this.downloadTab = new Download(this.options, this.app, this.model);
@@ -177,6 +185,8 @@ define([
           this._submitHandler(null, true);
         }, this), 300);
       }, this));
+
+      this.$('#occTable').popover('show');      
 
 
       return this;
