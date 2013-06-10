@@ -11,7 +11,6 @@ import webapp2
 import json
 import logging
 import uuid
-import time
 
 def _write_record(f, record):
     f.write('%s\n' % record.csv)

@@ -139,7 +139,7 @@ class RecordIndex(ndb.Model):
     _use_memcache = False
 
     @classmethod
-    def search(cls, params, limit, cursor=None, message=False, count=False):
+    def search(cls, params, limit, offset=None, cursor=None, message=False, count=False):
         """Returns (records, cursor).
 
         Arguments
@@ -184,13 +184,11 @@ class RecordIndex(ndb.Model):
             return qry.count();
 
         if cursor:
-            logging.info('Cursor')
             index_keys, next_cursor, more = qry.fetch_page(limit, 
                 start_cursor=cursor, keys_only=True)
             record_keys = [x.parent() for x in index_keys]
         else:
-            logging.info('No cursor')
-            index_keys, next_cursor, more = qry.fetch_page(limit, 
+            index_keys, next_cursor, more = qry.fetch_page(limit, offset=offset,
                 keys_only=True)
             record_keys = [x.parent() for x in index_keys]
 
@@ -246,6 +244,7 @@ class RecordList(messages.Message):
     count = messages.IntegerField(7)
     email = messages.StringField(8) # email to ping when download is done
     name = messages.StringField(9) # name of downloaded record set
+    offset = messages.IntegerField(10) # integer offset
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 

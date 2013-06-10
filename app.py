@@ -1,7 +1,7 @@
 
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from vertnet.service.model import Record
+from vertnet.service.model import Record, RecordIndex
 from vertnet.service import util
 
 from webapp2_extras import jinja2
@@ -19,6 +19,7 @@ routes = [
     webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', 
         name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
+    webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
     webapp2.Route(r'/publishers', handler='app.AppHandler:publishers', name='publishers'),
     webapp2.Route(r'/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
