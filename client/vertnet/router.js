@@ -17,9 +17,10 @@ define([
   'explore/occ/OccModel',
   'About',
   'Feedback',
+  'Publishers',
   'Spin'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
-  FooterView, Search, OccDetail, OccModel, About, Feedback, Spin) {
+  FooterView, Search, OccDetail, OccModel, About, Feedback, Publishers, Spin) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -36,6 +37,8 @@ define([
       this.route('search/:type', 'search', _.bind(this.search, this, 'search'));
       
       this.route('about', 'about', _.bind(this.about, this));
+
+      this.route('publishers', 'publishers', _.bind(this.publishers, this));
 
       this.route('feedback', 'feedback', _.bind(this.feedback, this));
 
@@ -72,6 +75,17 @@ define([
       if (!this.footer) {
         this.footer = new FooterView(this.app).render();
       }
+    },
+
+    publishers: function() {
+      // if (this.page)
+      //   this.page.destroy();
+
+      this.initHeaderFooter();
+
+      this.page = new Publishers({}, this.app);
+      $('#content').html(this.page.render().el);
+      this.page.setup();      
     },
 
     about: function() {
