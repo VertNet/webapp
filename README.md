@@ -24,3 +24,9 @@ $ dev_appserver.py --clear_search_index --high_replication --use_sqlite -c .
 ```
 
 Boom! The webapp is now running locally at [http://localhost:8080](http://localhost:8080) and you get an admin console at [http://localhost:8080/_ah/admin](http://localhost:8080/_ah/admin).
+
+# License
+
+![](http://i.creativecommons.org/l/by-sa/3.0/us/88x31.png)
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 United States License](http://creativecommons.org/licenses/by-sa/3.0/us/).
