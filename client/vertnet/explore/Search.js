@@ -79,6 +79,7 @@ define([
     },
 
    setup: function () {
+      this.$('#click-row-tip').hide(); 
       if (store.get('protip-closed') === true) {
         this.$('#click-row-tip').hide();       
       } else {
@@ -320,12 +321,16 @@ define([
 
       this.show = show;
       if (show) {
+        if (!store.get('protip-closed')) {
+          this.$('#click-row-tip').show();       
+        } 
         table.show();
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();
         this.$('.dl-btn').removeClass('disabled');
       } else {
+        this.$('#click-row-tip').hide(); 
         this.$('.dl-btn').addClass('disabled');
         table.hide();
         this.$('.counter').text('0 results');

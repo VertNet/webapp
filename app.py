@@ -64,6 +64,11 @@ class AppHandler(webapp2.RequestHandler):
         """Render page html."""
         self.render_template('home.html')
 
+    def test(self):
+        bad = []
+        keys = RecordIndex.query(RecordIndex.genus == self.request.get('q')).iter(keys_only=True)
+        self.response.out.write(json.dumps([x.id() for x in keys if not x.parent().get()]))        
+
     def occ(self, publisher, resource):
         # occurrence = self.request.get('id')
         #logging.info('%s/%s/%s' % (publisher, resource, occurrence))
