@@ -5,7 +5,7 @@
   </div>
 
   <!-- Rights -->
-  <div id="rights" class="alert alert-success">
+  <!-- <div id="rights" class="alert alert-success">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>Access rights - <%= this.model.get('orgname') %></h4>
     <% if (this.model.get('emlrights')) { %>
@@ -13,7 +13,7 @@
     <% } else { %>
       Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
     <% } %>
-  </div>
+  </div> -->
   
   <!-- Top level tabs links -->
   <ul id="detailTabs" class="nav nav-tabs">
@@ -49,7 +49,7 @@
         <dd><%= this.model.get('title') %></dd>
         <dt>Contact</dt>
         <dd>
-            <%= this.model.get('contact') %> <<a href="mailto:#"><%= this.model.get('email') %></a>>
+            <%= this.model.get('contact') %> <<a href="mailto:#"><%= this.model.get('email') %></a>>=
         </dd>
         <dt>Published</dt>
         <dd><%= this.model.get('pubdate') %></dd>
