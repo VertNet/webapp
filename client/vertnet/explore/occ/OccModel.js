@@ -139,7 +139,9 @@ define([
     },
 
     occ: function() {
-      return this._terms(this.DWC_OCC);
+      var results = this._terms(this.DWC_OCC);
+      results['OccurrenceID'] = this.get('id');
+      return results;
     }, 
 
     event: function() {
