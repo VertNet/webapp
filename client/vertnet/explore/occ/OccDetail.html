@@ -5,13 +5,15 @@
   </div>
 
   <!-- Rights -->
-  <div class="alert alert-success">
+  <!-- <div id="rights" class="alert alert-success">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <h4>Access rights - <%= this.model.get('orgname') %></h4>
     <% if (this.model.get('emlrights')) { %>
-      <%= this.model.get('emlrights') %>
+      <%= this.model.getRights() %>
+    <% } else { %>
+      Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
     <% } %>
-  </div>
+  </div> -->
   
   <!-- Top level tabs links -->
   <ul id="detailTabs" class="nav nav-tabs">
@@ -19,7 +21,7 @@
       <a id="dwc" href="#darwincore" data-toggle="tab">Darwin Core</a>
     </li>
     <li>
-      <a id="source" href="#datasource" data-toggle="tab">Data source</a>
+      <a id="source" href="#datasource" data-toggle="tab">Source & Rights</a>
     </li>
   </ul>
 
@@ -31,8 +33,29 @@
     </div>
       <!-- Data source tab -->
     <div id="datasource" class="tab-pane"> 
-      <h1><%= this.model.get('orgname') %></h1>
-      <p>This occurrence was published by the <%= this.model.get('orgname') %> on <%= this.model.get('pubdate') %> in the <a href="<%= this.model.get('url') %>"><%= this.model.get('title') %> resource</a>.</p>
+      <div class="lead">Primary data source, access rights, and citations. </div>
+      <dl class="">
+        <dt>Rights</dt>
+        <dd><% if (this.model.get('emlrights')) { %>
+              <%= this.model.getRights() %>
+            <% } else { %>
+              Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
+            <% } %></dd>
+        <dt>Citation</dt>
+        <dd>(Coming soon.)</dd>
+        <dt>Institution</dt>
+        <dd><%= this.model.get('orgname') %></dd>
+        <dt>Resource</dt>
+        <dd><%= this.model.get('title') %></dd>
+        <dt>Contact</dt>
+        <dd>
+            <%= this.model.get('contact') %> <<a href="mailto:#"><%= this.model.get('email') %></a>>=
+        </dd>
+        <dt>Published</dt>
+        <dd><%= this.model.get('pubdate') %></dd>
+        <dt>URL</dt>
+        <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
+      </dl>
     </div>
 
   </div>

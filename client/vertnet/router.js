@@ -12,20 +12,21 @@ define([
   'home/Home',
   'common/Header',
   'common/Footer',
-  'explore/Explore',
+  'explore/Search',
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
   'About',
-  'Feedback'
+  'Feedback',
+  'Publishers',
+  'Spin'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
-  FooterView, ExploreView, OccDetail, OccModel, About, Feedback) {
+  FooterView, Search, OccDetail, OccModel, About, Feedback, Publishers, Spin) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
 
     initialize: function (app) {
-
-
+      this.spin = new Spin($('#main-spinner'));
       // Save app reference.
       this.app = app;
       
@@ -36,6 +37,8 @@ define([
       this.route('search/:type', 'search', _.bind(this.search, this, 'search'));
       
       this.route('about', 'about', _.bind(this.about, this));
+
+      this.route('publishers', 'publishers', _.bind(this.publishers, this));
 
       this.route('feedback', 'feedback', _.bind(this.feedback, this));
 
@@ -72,6 +75,17 @@ define([
       if (!this.footer) {
         this.footer = new FooterView(this.app).render();
       }
+    },
+
+    publishers: function() {
+      // if (this.page)
+      //   this.page.destroy();
+
+      this.initHeaderFooter();
+
+      this.page = new Publishers({}, this.app);
+      $('#content').html(this.page.render().el);
+      this.page.setup();      
     },
 
     about: function() {
@@ -112,9 +126,9 @@ define([
 
       console.log('OCCURRENCE');
       // Kill page view if exists.
-      if (this.page) {
-        this.page.destroy();
-      }
+      // if (this.page) {
+      //   this.page.destroy();
+      // }
 
       // Setup header/footer.
       this.initHeaderFooter();
@@ -145,17 +159,27 @@ define([
     search: function(type, name, params) {
       var query = params || {};
       console.log('router.explore():', type, name, params);
+      console.log('spinstart');
+      //this.spin.start();
+
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      //if (this.page)
+       // this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
-
-      this.page = new ExploreView({show: name, query:query}, this.app);
+      // this.page = new Search({el: '#explore-page-content', show: name, query:query}, this.app);
+      // $('#content').html(this.page.el);
+      // this.page.setup();
+      this.page = new Search({show: name, query:query}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();
+      // setTimeout(_.bind(function() {
+      //   this.spin.stop();
+      // }, this), 1000);
+      console.log('spinstop');
+
     },
 
     home: function (name) {

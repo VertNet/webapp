@@ -1,3 +1,27 @@
+html,body{
+    height: 100%
+}
+
+#holder{
+    min-height: 100%;
+    position:relative;
+}
+
+#content{
+    padding-bottom: 151px !important;    /* height of footer */
+}
+
+#footer{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.dl-btn {
+	display: inline-block !important;
+	margin-left: -25px;
+}
+
 .showing {
 	width: 170px !important;
 }
@@ -19,12 +43,24 @@
   margin: 0 auto;
 }
 
-#vertnet-headline {
-	font-size: 40px;
+.search-spinner {
+	position: fixed;
+	top: 50%;
+  	left: 50%;
 }
 
+#main-spinner {
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+}
+
+/*#vertnet-headline {
+	font-size: 40px;
+}*/
+
 .counter {
-	text-align: right;
+/*	text-align: right;
 	font-weight: bold;
 	color: grey;
 	display: inline-block;
@@ -32,7 +68,11 @@
 	margin-top: 7px;
 	width: 125px;
 	margin-left: 80px;
-	margin-top: 6px;
+	margin-top: 6px;*/
+	color: grey;
+	width: 125px;
+	display: inline-block;
+	margin-left: -55px;
 }
 
 #map {

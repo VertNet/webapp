@@ -3,6 +3,7 @@
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import tasklets
 from protorpc import messages
+from vertnet.service import util
 
 import json
 import logging
@@ -113,6 +114,20 @@ class Record(ndb.Model):
     def message(self):
         return RecordPayload(id=self.key.id(), json=self.record)
 
+    @property
+    def tsv(self):
+        json = self.json
+        json['datasource_and_rights'] = json.get('url')
+        header = util.DWC_HEADER_LIST #['datasource_and_rights'] + util.DWC_ALL_LOWER
+        values = [] #[json.get('url')]
+        for x in header:
+            if json.has_key(x):
+                # logging.info('%s=%s' % (x, json[x]))
+                values.append(unicode(json[x]))
+            else:
+                values.append('')
+        return '\t'.join(values) #.encode('utf-8')
+
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()
     genus = ndb.StringProperty()
@@ -124,7 +139,7 @@ class RecordIndex(ndb.Model):
     _use_memcache = False
 
     @classmethod
-    def search(cls, params, limit, cursor=None, message=False):
+    def search(cls, params, limit, offset=None, cursor=None, message=False, count=False):
         """Returns (records, cursor).
 
         Arguments
@@ -152,24 +167,33 @@ class RecordIndex(ndb.Model):
         for keyword in keywords:
             qry = qry.filter(RecordIndex.corpus == keyword)        
 
+        # Add sort orders:
+        #qry = qry.order(RecordIndex.institutioncode)
+        #qry = qry.order(RecordIndex.genus)
+        #qry = qry.order(RecordIndex.specificepithet)
+        #qry = qry.order(RecordIndex.country)
+        #qry = qry.order(RecordIndex.year)
+
         logging.info('QUERY='+str(qry))
 
         # Setup query paging
         #limit = params['limit']
-        #cursor = params['cursor']        
+        #cursor = params['cursor']    
+
+        if count:
+            return qry.count();
+
         if cursor:
-            logging.info('Cursor')
             index_keys, next_cursor, more = qry.fetch_page(limit, 
                 start_cursor=cursor, keys_only=True)
             record_keys = [x.parent() for x in index_keys]
         else:
-            logging.info('No cursor')
-            index_keys, next_cursor, more = qry.fetch_page(limit, 
+            index_keys, next_cursor, more = qry.fetch_page(limit, offset=offset,
                 keys_only=True)
             record_keys = [x.parent() for x in index_keys]
 
         # Return results
-        records = ndb.get_multi(record_keys)
+        records = [x for x in ndb.get_multi(record_keys) if x]
         
         if message:
             records = [x.message for x in records if x]
@@ -218,6 +242,9 @@ class RecordList(messages.Message):
     parent = messages.StringField(5)  
     q = messages.StringField(6)   # {terms={}, keywords=[]}
     count = messages.IntegerField(7)
+    email = messages.StringField(8) # email to ping when download is done
+    name = messages.StringField(9) # name of downloaded record set
+    offset = messages.IntegerField(10) # integer offset
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 
