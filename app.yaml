@@ -1,5 +1,5 @@
-application: vertnet-dev
-version: 1-0
+application: vertnet-portal
+version: 0-0-2-wip
 runtime: python27
 threadsafe: true
 api_version: 1
@@ -28,16 +28,18 @@ handlers:
 - url: /prototypes
   static_dir: client/docs/prototypes
 
+# backends
+
 # services
+
+- url: /service/download.*
+  script: vertnet.service.download.api
 
 - url: /apitracker.*
   script: vertnet.service.tracker.api
 
 - url: /service/rpc/record.*
   script: vertnet.service.record.rpc
-
-- url: /service/api/record
-  script: vertnet.service.record.api
 
 - url: /service/organization.*
   script: vertnet.service.organization.rpc

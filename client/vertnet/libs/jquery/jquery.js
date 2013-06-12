@@ -1,6 +1,5 @@
 define([
   'http://code.jquery.com/jquery-1.9.1.min.js',
-  'libs/jquery/jquery.min'
 ], function () {
 
   jQuery.fn.serializeObject = function () {
