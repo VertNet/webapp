@@ -1,5 +1,5 @@
-application: vertnet-dev
-version: 1-0
+application: vertnet-portal
+version: 0-0-2-wip
 runtime: python27
 threadsafe: true
 api_version: 1

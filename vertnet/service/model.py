@@ -168,8 +168,8 @@ class RecordIndex(ndb.Model):
             qry = qry.filter(RecordIndex.corpus == keyword)        
 
         # Add sort orders:
-        qry = qry.order(RecordIndex.institutioncode)
-        qry = qry.order(RecordIndex.genus)
+        #qry = qry.order(RecordIndex.institutioncode)
+        #qry = qry.order(RecordIndex.genus)
         #qry = qry.order(RecordIndex.specificepithet)
         #qry = qry.order(RecordIndex.country)
         #qry = qry.order(RecordIndex.year)
