@@ -20,26 +20,35 @@ STOP_WORDS = [
     'says', 'she', 'should', 'since', 'so', 'some', 'than', 'that', 'the', 'their', 
     'them', 'then', 'there', 'these', 'they', 'this', 'tis', 'to', 'too', 'twas', 
     'us', 'wants', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 
-    'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your']
+    'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your', 'of']
 
 # Darwin Core names not indexed in full text
-DO_NOT_FULL_TEXT = [
-    'acceptednameusageid', 'accessrights', 'collectionid', 
-    'coordinateprecision', 'coordinateuncertaintyinmeters', 'datasetid', 
-    'dateidentified', 'day', 'decimallatitude', 'decimallongitude', 'disposition', 
-    'enddayofyear', 'eventdate', 'eventid', 'eventtime', 'fieldnotes', 
-    'footprintspatialfit', 'footprintsrs', 'footprintwkt', 'geologicalcontextid', 
-    'georeferenceremarks', 'georeferenceverificationstatus', 'highergeographyid', 
-    'identificationid', 'individualcount', 'individualid', 'institutionid', 
-    'language', 'locationid', 'maximumdepthinmeters', 
-    'maximumdistanceabovesurfaceinmeters', 'maximumelevationinmeters', 
-    'minimumdepthinmeters', 'minimumdistanceabovesurfaceinmeters', 
-    'minimumelevationinmeters', 'modified', 'month', 'nameaccordingtoid', 
-    'namepublishedinid', 'nomenclaturalcode', 'occurrencedetails', 'occurrenceid', 
-    'originalnameusageid', 'parentnameusageid', 'pointradiusspatialfit', 'rights', 
-    'rightsholder', 'scientificnameid', 'startdayofyear', 'taxonconceptid', 'taxonid', 
-    'type', 'verbatimcoordinates', 'verbatimeventdate', 'verbatimlatitude', 
-    'verbatimlongitude', 'description']
+DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid', 
+'nameaccordingtoid', 'month', 'decimallongitude', 'fieldnotes', 
+'georeferenceddate', 'references', 'startdayofyear', 'minimumelevationinmeters', 
+'taxonrank', 'identificationreferences', 'footprintspatialfit', 
+'highergeographyid', 'accessrights', 'locationid', 'maximumelevationinmeters', 
+'maximumdistanceabovesurfaceinmeters', 'type', 'taxonconceptid', 'eventid', 
+'eventtime', 'identificationid', 'verbatimeventdate', 'verbatimdepth', 
+'footprintwkt', 'verbatimcoordinatesystem', 'verbatimsrs', 'parentnameusageid', 
+'scientificnameauthorship', 'minimumdepthinmeters', 'georeferenceremarks', 
+'nameaccordingto', 'day', 'identificationverificationstatus', 'occurrenceid', 
+'rights', 'footprintsrs', 'georeferenceverificationstatus', 'modified', 
+'verbatimlatitude', 'associatedmedia', 'originalnameusageid', 
+'datageneralizations', 'taxonomicstatus', 'taxonremarks', 
+'coordinateuncertaintyinmeters', 'eventdate', 'namepublishedinyear', 
+'individualcount', 'verbatimelevation', 'bibliographiccitation', 
+'namepublishedinid', 'namepublishedin', 'dateidentified', 'verbatimtaxonrank', 
+'locationaccordingto', 'acceptednameusage', 'minimumdistanceabovesurfaceinmeters', 
+'informationwithheld', 'parentnameusage', 'occurrencedetails', 'description', 
+'collectionid', 'acceptednameusageid', 'verbatimlongitude', 'individualid', 
+'coordinateprecision', 'taxonid', 'maximumdepthinmeters', 'disposition', 
+'vernacularname', 'decimallatitude', 'pointradiusspatialfit', 'language', 
+'institutionid', 'rightsholder', 'verbatimcoordinates', 'originalnameusage', 
+'nomenclaturalcode', 'associatedtaxa', 'nomenclaturalstatus', 'datasetid', 
+'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights']
+
+
 
 # Darwin Core names not indexed
 DO_NOT_INDEX = [
@@ -151,13 +160,13 @@ def get_corpus_list():
             value - the JSON encoded record
         """
         recjson = get_rec_dict(bulkload_state.current_dictionary)
-        corpus = set(
-            [x.strip().lower()[:500] for key,x in recjson.iteritems() \
-                 if key.strip().lower() not in DO_NOT_FULL_TEXT and \
-                 isinstance(x, unicode) and x.strip().lower() not in STOP_WORDS]) 
+        corpus = set()
+            # [x.strip().lower()[:500] for key,x in recjson.iteritems() \
+            #      if key.strip().lower() not in DO_NOT_FULL_TEXT and \
+            #      isinstance(x, unicode) and x.strip().lower() not in STOP_WORDS]) 
         corpus.update(
             reduce(lambda x,y: x+y, 
-                   map(lambda x: [s.strip().lower() for s in x.split() if s], 
+                   map(lambda x: [re.sub(r'\W+', '', s.strip().lower()) for s in x.split() if s and not s.startswith('http')], 
                        [val[:500] for key,val in recjson.iteritems() \
                             if key.strip().lower() not in DO_NOT_FULL_TEXT and \
                             isinstance(val, unicode) and val.strip().lower() not in STOP_WORDS]), [])) # adds tokenized values      

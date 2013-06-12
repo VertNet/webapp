@@ -1,62 +1,62 @@
-DWC_LOCATION = [
-	'Continent', 'CoordinatePrecision', 'CoordinateUncertaintyInMeters', 
-	'Country', 'CountryCode', 'County', 'DecimalLatitude', 'DecimalLongitude', 
-	'FootprintSRS', 'FootprintSpatialFit', 'FootprintWKT', 'GeodeticDatum', 
-	'GeoreferenceProtocol', 'GeoreferenceRemarks', 'GeoreferenceSources', 
-	'GeoreferenceVerificationStatus', 'GeoreferencedBy', 'GeoreferencedDate', 
-	'HigherGeography', 'HigherGeographyID', 'Island', 'IslandGroup', 
-	'Locality', 'LocationAccordingTo', 'LocationID', 'LocationRemarks', 
-	'MaximumDepthInMeters', 'MaximumDistanceAboveSurfaceInMeters', 
-	'MaximumElevationInMeters', 'MinimumDepthInMeters', 
-	'MinimumDistanceAboveSurfaceInMeters', 'MinimumElevationInMeters', 
-	'Municipality', 'PointRadiusSpatialFit', 'StateProvince', 
-	'VerbatimCoordinateSystem', 'VerbatimCoordinates', 'VerbatimDepth', 
-	'VerbatimElevation', 'VerbatimLatitude', 'VerbatimLocality', 
-	'VerbatimLongitude', 'VerbatimSRS', 'WaterBody']
+DWC_RECLEVEL = ['Type', 'Modified', 'Language', 'Rights', 'RightsHolder', 
+'AccessRights', 'BibliographicCitation', 'References', 'InstitutionID', 
+'CollectionID', 'DatasetID', 'InstitutionCode', 'CollectionCode', 
+'DatasetName', 'OwnerInstitutionCode', 'BasisOfRecord', 'InformationWithheld', 
+'DataGeneralizations', 'DynamicProperties']
 
-DWC_RECLEVEL = [
-	'InstitutionID', 'CollectionID', 'DatasetID', 
-	'InstitutionCode', 'CollectionCode', 'DatasetName', 'OwnerInstitutionCode', 
-	'BasisOfRecord', 'InformationWithheld', 'DataGeneralizations', 
-	'DynamicProperties']
+DWC_OCC = ['OccurrenceID', 'CatalogNumber', 'OccurrenceRemarks', 'RecordNumber', 
+'RecordedBy', 'IndividualID', 'IndividualCount', 'Sex', 'LifeStage', 
+'ReproductiveCondition', 'Behavior', 'EstablishmentMeans', 'OccurrenceStatus', 
+'Preparations', 'Disposition', 'OtherCatalogNumbers', 'PreviousIdentifications', 
+'AssociatedMedia', 'AssociatedReferences', 'AssociatedOccurrences', 
+'AssociatedSequences', 'AssociatedTaxa']
 
-DWC_OCC = [
-	'AssociatedMedia', 'AssociatedOccurrences', 'AssociatedReferences', 
-	'AssociatedSequences', 'AssociatedTaxa', 'Behavior', 'CatalogNumber', 
-	'Disposition', 'EstablishmentMeans', 'IndividualCount', 'IndividualID', 
-	'LifeStage', 'OccurrenceID', 'OccurrenceRemarks', 'OccurrenceStatus', 
-	'OtherCatalogNumbers', 'Preparations', 'PreviousIdentifications', 
-	'RecordNumber', 'RecordedBy', 'ReproductiveCondition', 'Sex']
+DWC_EVENT = ['EventID', 'SamplingProtocol', 'SamplingEffort', 'EventDate', 
+'EventTime', 'StartDayOfYear', 'EndDayOfYear', 'Year', 'Month', 'Day', 
+'VerbatimEventDate', 'Habitat', 'FieldNumber', 'FieldNotes', 'EventRemarks']
 
-DWC_EVENT = [
-	'Day', 'EndDayOfYear', 'EventDate', 'EventID', 'EventRemarks', 'EventTime', 
-	'FieldNotes', 'FieldNumber', 'Habitat', 'Month', 'SamplingEffort', 
-	'SamplingProtocol', 'StartDayOfYear', 'VerbatimEventDate', 'Year']
+DWC_LOCATION = ['LocationID', 'HigherGeographyID', 'HigherGeography', 
+'Continent', 'WaterBody', 'IslandGroup', 'Island', 'Country', 'CountryCode', 
+'StateProvince', 'County', 'Municipality', 'Locality', 'VerbatimLocality', 
+'VerbatimElevation', 'MinimumElevationInMeters', 'MaximumElevationInMeters', 
+'VerbatimDepth', 'MinimumDepthInMeters', 'MaximumDepthInMeters', 
+'MinimumDistanceAboveSurfaceInMeters', 'MaximumDistanceAboveSurfaceInMeters', 
+'LocationAccordingTo', 'LocationRemarks', 'VerbatimCoordinates', 
+'VerbatimLatitude', 'VerbatimLongitude', 'VerbatimCoordinateSystem', 
+'VerbatimSRS', 'DecimalLatitude', 'DecimalLongitude', 'GeodeticDatum', 
+'CoordinateUncertaintyInMeters', 'CoordinatePrecision', 
+'PointRadiusSpatialFit', 'FootprintWKT', 'FootprintSRS', 
+'FootprintSpatialFit', 'GeoreferencedBy', 'GeoreferencedDate', 
+'GeoreferenceProtocol', 'GeoreferenceSources', 
+'GeoreferenceVerificationStatus', 'GeoreferenceRemarks']
 
-DWC_GEO = [
-	'Bed', 'EarliestAgeOrLowestStage', 'EarliestEonOrLowestEonothem', 
-	'EarliestEpochOrLowestSeries', 'EarliestEraOrLowestErathem', 
-	'EarliestPeriodOrLowestSystem', 'Formation', 'GeologicalContextID', 'Group', 
-	'HighestBiostratigraphicZone', 'LatestAgeOrHighestStage', 
-	'LatestEonOrHighestEonothem', 'LatestEpochOrHighestSeries', 
-	'LatestEraOrHighestErathem', 'LatestPeriodOrHighestSystem', 
-	'LithostratigraphicTerms', 'LowestBiostratigraphicZone', 'Member']
+DWC_GEO = ['GeologicalContextID', 'EarliestEonOrLowestEonothem', 
+'LatestEonOrHighestEonothem', 'EarliestEraOrLowestErathem', 
+'LatestEraOrHighestErathem', 'EarliestPeriodOrLowestSystem', 
+'LatestPeriodOrHighestSystem', 'EarliestEpochOrLowestSeries', 
+'LatestEpochOrHighestSeries', 'EarliestAgeOrLowestStage', 
+'LatestAgeOrHighestStage', 'LowestBiostratigraphicZone', 
+'HighestBiostratigraphicZone', 'LithostratigraphicTerms', 'Group', 'Formation', 
+'Member', 'Bed']
 
-DWC_ID = [
-	'DateIdentified', 'IdentificationID', 'IdentificationQualifier', 
-	'IdentificationReferences', 'IdentificationRemarks', 
-	'IdentificationVerificationStatus', 'IdentifiedBy', 'TypeStatus']
+DWC_ID = ['IdentificationID', 'IdentifiedBy', 'DateIdentified', 
+'IdentificationReferences', 'IdentificationVerificationStatus', 
+'IdentificationRemarks', 'IdentificationQualifier', 'TypeStatus']
 
-DWC_TAXON = [
-	'AcceptedNameUsage', 'AcceptedNameUsageID', 'Class', 'Family', 'Genus', 
-	'HigherClassification', 'InfraspecificEpithet', 'Kingdom', 'NameAccordingTo', 
-	'NameAccordingToID', 'NamePublishedIn', 'NamePublishedInID', 
-	'NamePublishedInYear', 'NomenclaturalCode', 'NomenclaturalStatus', 'Order', 
-	'OriginalNameUsage', 'OriginalNameUsageID', 'ParentNameUsage', 
-	'ParentNameUsageID', 'Phylum', 'ScientificName', 'ScientificNameAuthorship', 
-	'ScientificNameID', 'SpecificEpithet', 'Subgenus', 'TaxonConceptID', 'TaxonID', 
-	'TaxonRank', 'TaxonRemarks', 'TaxonomicStatus', 'VerbatimTaxonRank', 
-	'VernacularName']
+DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 
+'ParentNameUsageID', 'OriginalNameUsageID', 'NameAccordingToID', 
+'NamePublishedInID', 'TaxonConceptID', 'ScientificName', 'AcceptedNameUsage', 
+'ParentNameUsage', 'OriginalNameUsage', 'NameAccordingTo', 'NamePublishedIn', 
+'NamePublishedInYear', 'HigherClassification', 'Kingdom', 'Phylum', 'Class', 
+'Order', 'Family', 'Genus', 'Subgenus', 'SpecificEpithet', 
+'InfraspecificEpithet', 'TaxonRank', 'VerbatimTaxonRank', 
+'ScientificNameAuthorship', 'VernacularName', 'NomenclaturalCode', 
+'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks']
+
+DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_EVENT + DWC_LOCATION + DWC_GEO + DWC_ID + DWC_TAXON
+DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
+DWC_HEADER_LIST = ['datasource_and_rights'] + DWC_ALL_LOWER
+DWC_HEADER = '\t'.join(DWC_HEADER_LIST)
 
 def classify(record):
 	result = dict(meta=record, loc={}, reclevel={}, occ={}, event={}, geo={}, 

@@ -18,6 +18,7 @@ def apikey():
 
 class TrackerHandler(webapp2.RequestHandler):
     def post(self):  
+        logging.info("HIiiiiii")
         log_sql = """INSERT INTO api_log(version,keywords,genus,specificepithet,year,country,institutioncode) 
            VALUES ('%s','%s','%s','%s','%s','%s','%s')"""
         rpc = urlfetch.create_rpc()

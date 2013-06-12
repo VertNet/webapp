@@ -1,7 +1,7 @@
 
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from vertnet.service.model import Record
+from vertnet.service.model import Record, RecordIndex
 from vertnet.service import util
 
 from webapp2_extras import jinja2
@@ -19,7 +19,9 @@ routes = [
     webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', 
         name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
+    webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
+    webapp2.Route(r'/publishers', handler='app.AppHandler:publishers', name='publishers'),
     webapp2.Route(r'/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
         handler='app.AppHandler:occ', name='occ'),
 ]
@@ -50,6 +52,10 @@ class AppHandler(webapp2.RequestHandler):
         """Render the about page."""
         self.render_template('about.html')        
 
+    def publishers(self):
+        """Render the publishers page."""
+        self.render_template('publishers.html')        
+
     def feedback(self):
         """Render the feedback page."""
         self.render_template('feedback.html')        
@@ -58,12 +64,17 @@ class AppHandler(webapp2.RequestHandler):
         """Render page html."""
         self.render_template('home.html')
 
+    def test(self):
+        bad = []
+        keys = RecordIndex.query(RecordIndex.genus == self.request.get('q')).iter(keys_only=True)
+        self.response.out.write(json.dumps([x.id() for x in keys if not x.parent().get()]))        
+
     def occ(self, publisher, resource):
-        occurrence = self.request.get('id')
-        logging.info('%s/%s/%s' % (publisher, resource, occurrence))
-        record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
-        values = dict(rec=util.classify(json.loads(record.record)))
-        self.render_template('occurrence.html', template_values=values)        
+        # occurrence = self.request.get('id')
+        #logging.info('%s/%s/%s' % (publisher, resource, occurrence))
+        #record = Record.get_by_id('%s/%s/%s' % (publisher, resource, occurrence))
+        #values = dict(rec=util.classify(json.loads(record.record)))
+        self.render_template('occurrence.html') #, template_values=values)        
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          
