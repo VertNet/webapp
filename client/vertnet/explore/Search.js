@@ -123,6 +123,7 @@ define([
         this.spin.start();
         rpc.execute('/service/rpc/record.count', countRequest, {
           success: _.bind(function(x) {
+            this.count = x.count;
             this.spin.stop();
             this.$('#queue').show();
             this.$('#submit-download-btn').show();
@@ -353,7 +354,7 @@ define([
     _submitDownload: function(e) {
         var email = this.$('#email').val();
         var name = this.$('#name').val();
-        var count = Number(this.$('#reccount').text());
+        var count = this.count; //Number(this.$('#reccount').text());
         var request = {
           count: count,
           email: email, 

@@ -55,4 +55,3 @@ handlers:
 
 - url: /.*
   script: app.handler
-  login: admin
