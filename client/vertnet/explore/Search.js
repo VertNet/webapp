@@ -139,6 +139,7 @@ define([
             }
             this.$('#confirmation').hide();
             this.$('#reccount').text(x.count);
+            this.recCount = x.count;
             this.$('#myModal').modal();
             this.$('#name').focus();
             // if (x.count <= 1000) {
