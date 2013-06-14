@@ -36,6 +36,17 @@ define([
 
     // Misc. setup.
     setup: function () {
+      this.$('#feedback-nav').mouseover(_.bind(function(e) {
+        this.$('#feedback-nav-icon').addClass('icon-white');
+      }, this)).mouseout(_.bind(function(e) {
+        this.$('#feedback-nav-icon').removeClass('icon-white');        
+      }, this));
+
+      this.$('#project-nav').mouseover(_.bind(function(e) {
+        this.$('#project-nav-icon').addClass('icon-white');
+      }, this)).mouseout(_.bind(function(e) {
+        this.$('#project-nav-icon').removeClass('icon-white');        
+      }, this));
 
       // Render posts.
       console.log('Setting up header view...');
