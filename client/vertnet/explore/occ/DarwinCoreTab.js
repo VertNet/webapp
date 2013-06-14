@@ -31,9 +31,11 @@ define([
         }
         this.$('#darwinCoreTabs a').click(_.bind(function (e) {
           var tab = e.target.id;
-          if (tab === 'loc' || tab === 'all') {
-            this.mapView.resize();
-          } 
+          if (tab === 'all') {
+            setTimeout(_.bind(function() {
+              this.mapView.resize();
+            }, this), 500);
+          }
         }, this));
         return this;
       }
