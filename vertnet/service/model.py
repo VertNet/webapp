@@ -103,6 +103,7 @@ class Record(ndb.Model):
     resource_title = ndb.StringProperty()
     resource_title_slug = ndb.StringProperty()
     record = ndb.TextProperty() # record as JSON string
+    indexed = ndb.BooleanProperty(default=False)
 
     @property
     def json(self):
