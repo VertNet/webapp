@@ -1,0 +1,8 @@
+mapreduce:
+- name: Build search index.
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: vertnet.service.search.build_search_index
+    params:
+    - name: entity_kind
+      default: vertnet.service.model.Record
