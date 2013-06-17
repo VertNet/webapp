@@ -1,12 +1,15 @@
 application: vertnet-portal
 version: 0-0-2-wip
 runtime: python27
-threadsafe: true
+threadsafe: false
 api_version: 1
 
 builtins:
 - remote_api: on
 #- appstats: on
+
+includes:
+- mapreduce/include.yaml
 
 libraries:
 - name: jinja2
@@ -52,6 +55,10 @@ handlers:
 
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
+
+- url: /mapreduce(/.*)?
+  script: mapreduce/main.py
+  login: admin
 
 - url: /.*
   script: app.handler
