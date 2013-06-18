@@ -9,6 +9,9 @@ import json
 from google.appengine.api import taskqueue
 import logging
 from protorpc.message_types import VoidMessage
+from google.appengine.api import search
+from google.appengine.api.search import SortOptions, SortExpression
+
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -34,7 +37,7 @@ class RecordService(remote.Service):
         return RecordPayload(id=message.id, json=record.record)
 
     @remote.method(RecordList, RecordList)
-    def search(self, message):
+    def _search(self, message):
         """Return a RecordList."""
         curs = None
         if message.cursor:
@@ -42,6 +45,57 @@ class RecordService(remote.Service):
         q = json.loads(message.q)
         taskqueue.add(url='/apitracker', params=dict(query=message.q), queue_name="apitracker")
         response = record_list(message.limit, curs, q, message=True)
+        return response
+
+    @remote.method(RecordList, RecordList)
+    def search(self, message):
+        curs = None
+        if message.cursor:
+            curs = Cursor(urlsafe=message.cursor)
+        q = json.loads(message.q)
+        #terms = q['terms'] # dict
+        keywords = ' '.join(q['keywords'])
+        limit = message.limit
+        sort = SortOptions(expressions=[
+            SortExpression(expression='genus',
+                direction=SortExpression.ASCENDING),
+            SortExpression(expression='specificepithet',
+                direction=SortExpression.ASCENDING),
+            SortExpression(expression='country',
+                direction=SortExpression.ASCENDING),
+            SortExpression(expression='year',
+                direction=SortExpression.ASCENDING)],
+            limit=limit)
+
+        options = search.QueryOptions(
+            limit=limit,
+            cursor=curs,
+            sort_options=sort,
+            returned_fields=['record'])        
+
+        query = search.Query(query_string=keywords, options=options)
+        result = {}
+        try:
+            results = search.Index(name='dwc_search').search(query)
+            recs = []
+            for doc in results:
+                for field in doc.fields:
+                    if field.name == 'record':
+                        recs.append(json.loads(field.value))  
+            result['recs'] = recs
+            if results.cursor:
+                result['cursor'] = results.cursor.web_safe_string
+            else:
+                result['cursor'] = None
+            result['count'] = results.number_found
+        except search.Error:
+            logging.exception('Search failed')            
+
+        items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
+            for x in result['recs'] if x]
+        more = result['count'] > 0
+        response = RecordList(items=items, cursor=result['cursor'], 
+            more=more, count=result['count'])
         return response
 
     @remote.method(RecordList, RecordList)

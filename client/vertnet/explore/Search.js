@@ -266,7 +266,7 @@ define([
       _.each(this.$('#search-form input'), _.bind(function (input) {
         var value = $(input).val();
         if (input.id !== 'search-keywords-box' && value.trim() !== '') {
-          this.terms[input.id] = value.trim().toLowerCase();
+          this.terms[input.id] = value.trim();
         }
       }, this));
     },
@@ -383,7 +383,7 @@ define([
       var keywords = q.trim().split(/,?\s+/);
       if (q && !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
-          var x = x.trim().toLowerCase();
+          var x = x.trim();
           if (x) {
             return x;
           }

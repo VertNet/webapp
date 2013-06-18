@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import random
 from datetime import datetime
 from google.appengine.api import search
 
@@ -32,20 +33,6 @@ DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid',
 'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights', 'citation',
 'url']
 
-# def _corpus(recjson):
-#     corpus = set()
-#     corpus.update(
-#         reduce(lambda x,y: x+y, 
-#                map(lambda x: [re.sub(r'\W+', '', s.strip().lower()) \
-#                 for s in x.split() \
-#                 if s and not s.startswith('http')], 
-#                 [val for key, val in recjson.iteritems() \
-#                         if key.strip().lower() not in DO_NOT_FULL_TEXT and \
-#                         isinstance(val, unicode)]), []))
-#     if len(corpus) == 0:
-#         return ''
-#     return reduce(lambda x,y: '%s %s' % (x, y), corpus)
-
 def _corpus(recjson):
     vals = [val for key, val in recjson.iteritems() if key not in DO_NOT_FULL_TEXT]
     return reduce(lambda x,y: '%s %s' % (x, y), vals)
@@ -64,19 +51,25 @@ def _eventdate(year):
         eventdate = None
     return eventdate
 
+def _rank(data):
+    # TODO @tucotuco
+    return random.randint(1, 10)
+
 def build_search_index(entity):
     data = json.loads(entity.record)
     year, genus, icode, country, specep, lat, lon = map(data.get, 
-        ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 'decimallatitude', 'decimallongitude'])
+        ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
+        'decimallatitude', 'decimallongitude'])
 
     doc = search.Document(
         doc_id=data['keyname'],
+        rank=_rank(data),
 		fields=[search.TextField(name='year', value=year),
 				search.TextField(name='genus', value=genus),
         		search.TextField(name='institutioncode', value=icode),
                 search.TextField(name='country', value=country),            
                 search.TextField(name='specificepithet', value=specep),            
-        		search.TextField(name='record', value=_corpus(data))])
+        		search.TextField(name='record', value=entity.record)])
 
     location = _location(lat, lon)
     eventdate = _eventdate(year)
