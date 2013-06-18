@@ -29,10 +29,9 @@ class SearchHandler(webapp2.RequestHandler):
             recs = []
             for doc in results:
                 for field in doc.fields:
-                    if field.name == 'json':
+                    if field.name == 'record':
                         recs.append(json.loads(field.value))  
             result['recs'] = recs
-            logging.info('CURSOR %s' % results.cursor)
             if results.cursor:
                 result['cursor'] = results.cursor.web_safe_string
             result['count'] = results.number_found
