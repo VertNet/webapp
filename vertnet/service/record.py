@@ -57,13 +57,13 @@ class RecordService(remote.Service):
         keywords = ' '.join(q['keywords'])
         limit = message.limit
         sort = SortOptions(expressions=[
-            SortExpression(expression='genus',
+            SortExpression(expression='genus', default_value='z',
+                direction=SortExpression.ASCENDING), 
+            SortExpression(expression='specificepithet', default_value='z',
                 direction=SortExpression.ASCENDING),
-            SortExpression(expression='specificepithet',
-                direction=SortExpression.ASCENDING),
-            SortExpression(expression='country',
-                direction=SortExpression.ASCENDING),
-            SortExpression(expression='year',
+            # SortExpression(expression='country', default_value='z',
+            #     direction=SortExpression.ASCENDING),
+            SortExpression(expression='eventdate',
                 direction=SortExpression.ASCENDING)],
             limit=limit)
 
