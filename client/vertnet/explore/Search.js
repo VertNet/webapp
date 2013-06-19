@@ -79,6 +79,31 @@ define([
     },
 
    setup: function () {
+      this.$('#advanced-search-form').hide();
+      
+      this.$('#show-search-options').click(_.bind(function() {
+        this.$('#advanced-search-form').show();
+        this.$('#search-keywords-div').hide();
+      }, this));
+
+      this.$('#close-advanced-search').click(_.bind(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.$('#advanced-search-form').hide();        
+        this.$('#search-keywords-div').show();
+      }, this));
+
+      this.$('#show-search-options').tooltip({
+          placement: 'bottom',
+          title: 'Show advanced search',
+          container: '#search-carat'
+        });
+      this.$('#search-carat').mouseover(_.bind(function(e) {
+        this.$('#show-search-options').tooltip('show');
+      }, this)).mouseout(_.bind(function(e) {
+        this.$('#show-search-options').tooltip('hide');
+      }, this));
+
       this.$('#click-row-tip').hide(); 
       if (store.get('protip-closed') === true) {
         this.$('#click-row-tip').hide();       

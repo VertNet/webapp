@@ -1,9 +1,4 @@
-#search-button {
-	width: 97px;
-	height: 58px;
-	margin-left: 15px;
-	margin-bottom: 10px;
-}
+
 
 html,body{
     height: 100%
@@ -138,10 +133,15 @@ input.span2.search {
 	margin-top: 21px;
 }
 
+.form-horizontal .control-label{
+  /* text-align:right; */
+  text-align:left;
+}
+
 #search-keywords-div {
 	border: 1px solid #cccccc; 
 	border-radius: 3px; 
-	width: 1040px;
+	width: 98%; 
 	height: 60px;
 	display: inline-block;
 
@@ -154,7 +154,9 @@ input.span2.search {
 }
 
 #show-search-options {
-	height:20px
+	height:20px;
+	padding: 5px;
+
 }
 
 #search-carat {
@@ -162,10 +164,37 @@ input.span2.search {
 	/*height:100%*/
 }
 
+
+#advanced-search-form {
+	width: 96%; 
+	margin-bottom: 20px;
+	border: 1px solid #cccccc; 
+	border-radius: 3px; 
+	display: inline-block;
+	padding: 10px;
+
+}
+
+#search-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -27px;
+	margin-bottom: 10px;
+}
+
+#advanced-search-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -179px;
+	margin-bottom: -19px;
+	margin-top: 10px;
+}
+
 #search-keywords-box {
+	box-shadow:none !important;
 	border: none; 
 	width: 95%; 
-	line-height: inherit; 
+	line-height: 50px; 
 	/*padding: 0px 0px 0px 0px;	*/
 	font-size: 28px;
 	height: 50px;
