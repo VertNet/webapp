@@ -14,14 +14,21 @@
  <!-- Search form. -->
   <form>
     <fieldset id="search-form">
-      <input id="search-keywords-box" type="text" placeholder="Keywords (e.g., Bubo Colorado 1903)">
-      <div id="search-options">
+      <div id="search-keywords-div">
+        <input id="search-keywords-box" type="text" placeholder="Keywords (e.g., Bubo Colorado 1903)">
+          <a id="show-search-options" href="#">
+            <span id="search-carat" class="caret"></span>
+          </a>
+        </input>
+      </div>
+      <button id="search-button" type="button" class="btn btn-large btn-primary"><span class="icon-search icon-white"></span></button>
+<!--       <div id="search-options">
         <input id="genus" type="text" class="input-medium search-box" placeholder="Genus">
         <input id="specificepithet" type="text" class="input-medium search-box" placeholder="SpecificEpithet">
         <input id="year" type="text" class="input-medium search-box" placeholder="Year">
         <input id="country" type="text" class="input-medium search-box" placeholder="Country">
         <input id="institutioncode" type="text" class="input-medium search-box" placeholder="InstitutionCode">
-      </div>
+      </div> -->
     </fieldset>
   </form>
 
