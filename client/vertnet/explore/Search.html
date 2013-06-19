@@ -6,22 +6,62 @@
     <h1>Search <small>VertNet</small></h1>
   </div>
 
-  <div class="alert alert-error">
+ <!--  <div class="alert alert-error">
     <button type="button" class="close" data-dismiss="alert">×</button>
       <strong>VertNet beta 0.0.2</strong> - We release early and often, and this is a very limited release! We are testing this release with a small subset from our list of hundreds of collections. Enjoy this early look at what we're building by experimenting with our search feature. Please expect bugs and submit feedback to help us make the portal a great tool for the community!
-  </div>
+  </div> -->
   
  <!-- Search form. -->
-  <form>
-    <fieldset id="search-form">
-      <div id="search-keywords-div">
-        <input id="search-keywords-box" type="text" placeholder="Keywords (e.g., Bubo Colorado 1903)">
-          <a id="show-search-options" href="#">
-            <span id="search-carat" class="caret"></span>
-          </a>
-        </input>
-      </div>
-      <button id="search-button" type="button" class="btn btn-large btn-primary"><span class="icon-search icon-white"></span></button>
+    <div id="search-form">
+      <div class="row-fluid">
+         <div class="span11">
+            <div id="search-keywords-div">
+              <input id="search-keywords-box" type="text" placeholder="Keywords (e.g., Bubo Colorado 1903)">
+                <a id="show-search-options" href="#">
+                  <span id="search-carat" class="caret"></span>
+                </a>
+              </input>
+            </div>
+
+            <div id="advanced-search-form">
+                <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
+                <legend>Advanced search</legend>
+                Find occurrences with...<p>
+                <form class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label" for="inputEmail">All these words</label>
+                  <div class="controls">
+                    <input style="width:98%;" type="text" id="inputEmail" placeholder="mvz cicero heron">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="inputPassword">Exact phrase</label>
+                  <div class="controls">
+                    <input style="width:98%;" type="text" id="inputPassword" placeholder='"butorides virescens"'>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="inputPassword">Any of these words</label>
+                  <div class="controls">
+                    <input style="width:98%;" type="text" id="inputPassword" placeholder='tissue OR preserved'>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <div class="controls">
+                    <button id="advanced-search-button" type="button" class="btn btn-large btn-primary">
+                      <span class="icon-search icon-white"></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="span1">
+            <button id="search-button" type="button" class="btn btn-large btn-primary">
+              <span class="icon-search icon-white"></span>
+            </button>
+          </div>
+        </div>
 <!--       <div id="search-options">
         <input id="genus" type="text" class="input-medium search-box" placeholder="Genus">
         <input id="specificepithet" type="text" class="input-medium search-box" placeholder="SpecificEpithet">
@@ -29,8 +69,8 @@
         <input id="country" type="text" class="input-medium search-box" placeholder="Country">
         <input id="institutioncode" type="text" class="input-medium search-box" placeholder="InstitutionCode">
       </div> -->
-    </fieldset>
-  </form>
+    </div>
+
 
   <!-- Occurrence search sub-tabs for table, map, download. -->
   <ul id="resultTabs" class="nav nav-tabs">
@@ -51,7 +91,7 @@
             <span class="counter">0 results</span>
           </div>
           <div class="span1">
-            <button type="button" class="btn btn-mini btn-primary dl-btn" data-toggle="button">Download all</button>   
+            <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
       <div id="click-row-tip" class="alert alert-success">
@@ -90,7 +130,7 @@
             <span class="counter"></span>
           </div>
           <div id="download-span" class="span1">
-            <button type="button" class="btn btn-mini btn-primary dl-btn" data-toggle="button">Download all</button>   
+            <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
       <div id="resultmap"></div>
@@ -115,7 +155,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal">Close</button>
-      <button id="submit-download-btn" class="btn btn-primary">Download</button>
+      <button id="submit-download-btn" class="btn btn-success">Download</button>
     </div>
   </div>
 
