@@ -31,7 +31,7 @@
                 <div class="control-group">
                   <label class="control-label" for="inputEmail">All these words</label>
                   <div class="controls">
-                    <input style="width:98%;" type="text" id="inputEmail" placeholder="mvz cicero heron">
+                    <input style="width:98%;" type="text" id="inputEmail" placeholder="mvz cicero">
                   </div>
                 </div>
                 <div class="control-group">
@@ -61,6 +61,16 @@
                   </div>
                 </div>
                 <div class="control-group">
+                  <label class="control-label" for="inputPassword">Record type</label>
+                  <div class="controls">
+                    <select>
+                      <option>Specimen or Observation</option>
+                      <option>Specimen</option>
+                      <option>Observation</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
                     <label class="control-label">Darwin Core terms</label>
                     <div class="controls">
                       <input id="genus" style="width:18%;" type="text" placeholder="Genus">
@@ -68,10 +78,17 @@
                       <input id="year" type="text" style="width:17%;" placeholder="Year">
                       <input id="country" type="text" style="width:17%;" placeholder="Country">
                       <input id="institutioncode" style="width:17%;" type="text" placeholder="InstitutionCode">
+                      <p>
+                      <input id="catalognumber" style="width:18%; margin-top:10px;" type="text" placeholder="CatalogNumber">
+                      <input id="recordedby" style="width:17%; margin-top:10px;" type="text" placeholder="RecordedBy">
+                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="County">
+                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="StateProvince">
+                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="Class">
+                      </p>
                     </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">With these filters</label>
+                  <label class="control-label" for="inputPassword">These filters</label>
                   <div class="controls">
                     <label class="checkbox inline">
                       <input type="checkbox"> Is mappable
@@ -81,6 +98,18 @@
                     </label>
                     <label class="checkbox inline">
                       <input type="checkbox"> Has media
+                    </label>
+                    <label class="checkbox inline">
+                      <input type="checkbox"> MaNIS
+                    </label>
+                    <label class="checkbox inline">
+                      <input type="checkbox"> ORNIS
+                    </label>
+                    <label class="checkbox inline">
+                      <input type="checkbox"> HerpNet
+                    </label>
+                    <label class="checkbox inline">
+                      <input type="checkbox"> FishNet
                     </label>
                   </div>
                 </div>
