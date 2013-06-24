@@ -132,7 +132,15 @@ def _location(lat, lon):
     return location
 
 def _type(rec):
-    return "specimen" # TODO John
+    if rec.has_key('type'):
+        if rec['type'].lower() == 'physicalobject':
+            return 'specimen'
+        return 'observation'
+    if rec.has_key('basisofrecord'):
+        if 'spec' in rec['basisofrecord'].lower():
+            return 'specimen'
+        return 'observation'
+    return 'both'
 
 def _eventdate(year):
     try:
@@ -145,7 +153,7 @@ def build_search_index(entity):
     data = json.loads(entity.record)
     year, genus, icode, country, specep, lat, lon, catnum, collname = map(data.get, 
         ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
-        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname']
+        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname'])
 
     doc = search.Document(
         doc_id=data['keyname'],
