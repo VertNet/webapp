@@ -143,9 +143,9 @@ def _eventdate(year):
 
 def build_search_index(entity):
     data = json.loads(entity.record)
-    year, genus, icode, country, specep, lat, lon, catnum = map(data.get, 
+    year, genus, icode, country, specep, lat, lon, catnum, collname = map(data.get, 
         ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
-        'decimallatitude', 'decimallongitude', 'catalognumber'])
+        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname']
 
     doc = search.Document(
         doc_id=data['keyname'],
@@ -156,6 +156,7 @@ def build_search_index(entity):
                 search.TextField(name='country', value=country),            
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
+                search.TextField(name='collectorname', value=collname),
                 search.TextField(name='type', value=_type(data)),
                 search.NumberField(name='media', value=has_media(data)),            
                 search.NumberField(name='tissue', value=has_tissue(data)),            
