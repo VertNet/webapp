@@ -246,13 +246,42 @@ define([
       var exact = this.$('#exactphrase').val();
       var any = this.$('#anywords').val();
       var none = this.$('#nonewords').val();
+      var start = this.$('#datestart').val();
+      var end = this.$('#dateend').val();
+      var type = this.$('#recordtype :selected').val();
+
+      if (type === 'Specimen or Observation') {
+        type = 'both';
+      } 
       query = [all, exact].join(' ');
+      query += [' type:', type].join('');
+      this._prepTerms();
+      query += [' ', this.termsStr].join('');
       if (any) {
         query += [' (', any, ')'].join('');
       }
       if (none) {
         query += [' AND (', none, ')'].join('');
       }
+      if (start && !end) {
+        query += [ ' AND (eventdate > ', start, ')'].join('');      
+      }
+      if (!start && end) {
+        query += [' AND (eventdate < ', end, ')'].join('');
+      }
+      if (start && end) {
+        query += [ ' AND (eventdate > ', start, ' ', 'eventdate < ', end, ')'].join('');      
+      }
+
+      query += _.reduce(this.$('#filters input'), function(memo, input) {
+        var input = $(input);
+        if (input.is(':checked')) {
+          return [input.attr('id'), ':', '1 '].join('') + memo
+        } else {
+          return [input.attr('id'), ':', '0 '].join('') + memo
+        }
+      }, ' ');
+
       return query;
     },
 
@@ -321,12 +350,17 @@ define([
     // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
-      _.each(this.$('#search-form input'), _.bind(function (input) {
+      _.each(this.$('#dwcterms input'), _.bind(function (input) {
         var value = $(input).val();
-        if (input.id !== 'search-keywords-box' && value.trim() !== '') {
-          this.terms[input.id] = value.trim();
-        }
+        this.terms[input.id] = value.trim();
       }, this));
+      this.termsStr = _.reduce(this.terms, function(memo, val, key) {
+        if (val) {
+          return key + ':' + val + ' ' + memo;
+        } else {
+          return memo;
+        }
+      }, ' ');
     },
 
    // Handler for new results from server.
