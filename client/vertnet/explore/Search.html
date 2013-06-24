@@ -29,41 +29,41 @@
                 Find occurrences with...<p>
                 <form class="form-horizontal">
                 <div class="control-group">
-                  <label class="control-label" for="inputEmail">All these words</label>
+                  <label class="control-label" >All these words</label>
                   <div class="controls">
-                    <input style="width:98%;" type="text" id="inputEmail" placeholder="mvz cicero">
+                    <input style="width:98%;" type="text" id="allwords" placeholder="mvz cicero">
                   </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">Exact phrase</label>
+                  <label class="control-label">Exact phrase</label>
                   <div class="controls">
-                    <input style="width:98%;" type="text" id="inputPassword" placeholder='"butorides virescens"'>
+                    <input style="width:98%;" type="text" id="exactphrase" placeholder='"butorides virescens"'>
                   </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">Any of these words</label>
+                  <label class="control-label">Any of these words</label>
                   <div class="controls">
-                    <input style="width:98%;" type="text" id="inputPassword" placeholder='tissue OR preserved'>
+                    <input style="width:98%;" type="text" id="anywords" placeholder='tissue OR preserved'>
                   </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">None of these words</label>
+                  <label class="control-label">None of these words</label>
                   <div class="controls">
-                    <input style="width:98%;" type="text" id="inputPassword" placeholder='NOT california NOT colorado'>
+                    <input style="width:98%;" type="text" id="nonewords" placeholder='NOT california NOT colorado'>
                   </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">Dates ranging from</label>
+                  <label class="control-label">Dates ranging from</label>
                   <div class="controls">
-                    <input style="width:10%;" type="text" id="inputPassword" placeholder='1888-1-1'>
+                    <input style="width:10%;" type="text" id="datestart" placeholder='1888-1-1'>
                     to
-                    <input style="width:10%;" type="text" id="inputPassword" placeholder='1922-1-1'>
+                    <input style="width:10%;" type="text" id="dateend" placeholder='1922-1-1'>
                   </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">Record type</label>
+                  <label class="control-label">Record type</label>
                   <div class="controls">
-                    <select>
+                    <select id="recordtype">
                       <option>Specimen or Observation</option>
                       <option>Specimen</option>
                       <option>Observation</option>
@@ -81,35 +81,35 @@
                       <p>
                       <input id="catalognumber" style="width:18%; margin-top:10px;" type="text" placeholder="CatalogNumber">
                       <input id="recordedby" style="width:17%; margin-top:10px;" type="text" placeholder="RecordedBy">
-                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="County">
-                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="StateProvince">
-                      <input id="" style="width:17%; margin-top:10px;" type="text" placeholder="Class">
+                      <input id="county" style="width:17%; margin-top:10px;" type="text" placeholder="County">
+                      <input id="stateprovince" style="width:17%; margin-top:10px;" type="text" placeholder="StateProvince">
+                      <input id="class" style="width:17%; margin-top:10px;" type="text" placeholder="Class">
                       </p>
                     </div>
                 </div>
                 <div class="control-group">
-                  <label class="control-label" for="inputPassword">These filters</label>
+                  <label class="control-label">These filters</label>
                   <div class="controls">
                     <label class="checkbox inline">
-                      <input type="checkbox"> Is mappable
+                      <input id="mappable" type="checkbox"> Is mappable
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> Has tissues
+                      <input id="tissues" type="checkbox"> Has tissues
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> Has media
+                      <input id="media" type="checkbox"> Has media
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> MaNIS
+                      <input id="manis" type="checkbox"> MaNIS
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> ORNIS
+                      <input id="ornis" type="checkbox"> ORNIS
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> HerpNet
+                      <input id="herpnet" type="checkbox"> HerpNet
                     </label>
                     <label class="checkbox inline">
-                      <input type="checkbox"> FishNet
+                      <input id="fishnet"type="checkbox"> FishNet
                     </label>
                   </div>
                 </div>
