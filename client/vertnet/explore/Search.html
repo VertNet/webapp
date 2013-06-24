@@ -64,15 +64,15 @@
                   <label class="control-label">Record type</label>
                   <div class="controls">
                     <select id="recordtype">
-                      <option>Specimen or Observation</option>
                       <option>Specimen</option>
                       <option>Observation</option>
+                      <option>Specimen or Observation</option>
                     </select>
                   </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Darwin Core terms</label>
-                    <div class="controls">
+                    <div id="dwcterms" class="controls">
                       <input id="genus" style="width:18%;" type="text" placeholder="Genus">
                       <input id="specificepithet" style="width:17%;" type="text" placeholder="SpecificEpithet">
                       <input id="year" type="text" style="width:17%;" placeholder="Year">
@@ -89,12 +89,12 @@
                 </div>
                 <div class="control-group">
                   <label class="control-label">These filters</label>
-                  <div class="controls">
+                  <div id="filters" class="controls">
                     <label class="checkbox inline">
                       <input id="mappable" type="checkbox"> Is mappable
                     </label>
                     <label class="checkbox inline">
-                      <input id="tissues" type="checkbox"> Has tissues
+                      <input id="tissue" type="checkbox"> Has tissues
                     </label>
                     <label class="checkbox inline">
                       <input id="media" type="checkbox"> Has media
