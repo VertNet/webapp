@@ -131,6 +131,9 @@ def _location(lat, lon):
         location = None
     return location
 
+def _type(rec):
+    return "specimen" # TODO John
+
 def _eventdate(year):
     try:
         eventdate = datetime.strptime(year, '%Y')
@@ -153,6 +156,7 @@ def build_search_index(entity):
                 search.TextField(name='country', value=country),            
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
+                search.TextField(name='type', value=_type(data)),
                 search.NumberField(name='media', value=has_media(data)),            
                 search.NumberField(name='tissue', value=has_tissue(data)),            
                 search.NumberField(name='manis', value=network(data, 'manis')),            
