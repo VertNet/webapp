@@ -79,6 +79,14 @@ define([
     },
 
    setup: function () {
+      this.$('#search-button').click(_.bind(function() {
+        this._submitHandler(null, true);
+      }, this));
+      
+      this.$('#advanced-search-button').click(_.bind(function() {
+        this._submitHandler(null, true);
+      }, this));
+
       this.$('#advanced-search-form').hide();
       
       this.$('#show-search-options').click(_.bind(function() {
@@ -210,7 +218,9 @@ define([
           clearTimeout(this.timer);
         }
         this.timer = setTimeout(_.bind(function() {
-          this._submitHandler(null, true);
+          if (this.$('#search-keywords-div').is(":visible")) {
+            this._submitHandler(null, true);
+          }
         }, this), 300);
       }, this));
 
@@ -230,14 +240,37 @@ define([
       }
     },
 
-    _getSearch: function() {
-      var terms = null;
-      var q = this.$('#search-keywords-box').val();
-      this._prepTerms();
-      terms = this.terms;
-      if (q !== '') {
-        terms['q'] = q;
+    _getQuery: function() {
+      var query = '';
+      var all = this.$('#allwords').val();
+      var exact = this.$('#exactphrase').val();
+      var any = this.$('#anywords').val();
+      var none = this.$('#nonewords').val();
+      query = [all, exact].join(' ');
+      if (any) {
+        query += [' (', any, ')'].join('');
       }
+      if (none) {
+        query += [' AND (', none, ')'].join('');
+      }
+      return query;
+    },
+
+    _getSearch: function() {
+      var terms = {};
+      var q = this.$('#search-keywords-box').val();
+      var query = null;
+      //this._prepTerms();
+      //terms = this.terms;
+      if (this.$('#search-keywords-div').is(":visible")) {
+        if (q !== '') {
+          terms['q'] = q;
+        } 
+      } else {
+        terms['q'] = this._getQuery();
+        this.$('#search-keywords-box').val(terms['q']);
+      }
+      console.log(terms);
       return $.param(terms);
     },
 
