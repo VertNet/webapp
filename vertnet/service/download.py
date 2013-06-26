@@ -2,11 +2,10 @@
 
 from google.appengine.api import files
 from google.appengine.api import mail
-from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import taskqueue
 from vertnet.service import util
-
-from vertnet.service.model import RecordIndex
+from google.appengine.api import search
+from vertnet.service import search as vnsearch
 import webapp2
 import json
 import logging
@@ -15,8 +14,19 @@ import uuid
 def _write_record(f, record):
     f.write('%s\n' % record.csv)
 
+def _tsv(json):
+    json['datasource_and_rights'] = json.get('url')
+    header = util.DWC_HEADER_LIST
+    values = []
+    for x in header:
+        if json.has_key(x):
+            values.append(unicode(json[x]))
+        else:
+            values.append(u'')
+    return u'\t'.join(values).encode('utf-8')
+
 def _get_tsv_chunk(records):
-    tsv_lines = [x.tsv for x in records if x]
+    tsv_lines = map(_tsv, records)
     chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
     return chunk
 
@@ -29,8 +39,10 @@ class WriteHandler(webapp2.RequestHandler):
         filename = self.request.get('filename')
         cursor = self.request.get('cursor')
         if cursor:
-            cursor = Cursor(urlsafe=cursor)
-        more = False
+            curs = search.Cursor(web_safe_string=cursor)
+        else:
+            curs = None
+        logging.info('CURSOR %s' % curs)
 
         # Write chunk.
         max_retries = 10
@@ -39,24 +51,27 @@ class WriteHandler(webapp2.RequestHandler):
         while not success and retry_count < max_retries:
             try:
                 with files.open(writable_file_name, 'a') as f:
-                    records, next_cursor, more, count = RecordIndex.search(q, 100, cursor=cursor)
+                    records, next_cursor, count = vnsearch.query(q, 100, curs=curs)
                     chunk = _get_tsv_chunk(records)
                     f.write(chunk) 
                     f.close(finalize=False)     
                     success = True
-            except files.exception.Error as e:
-                logging.error("I/O error({0}): {1}".format(e.errno, e.strerror))
+            except Exception as e:
+                logging.error("I/O error %s" % e)
                 retry_count += 1
-
+                raise e
 
         # Queue up next chunk or current chunk if failed to write
-        if not success:
-            next_cursor = cursor
-        if more or not success:    
+        if not success:    
+            next_cursor = curs
+            if next_cursor:
+                curs = next_cursor.web_safe_string
+            else:
+                curs = ''
             taskqueue.add(url='/service/download/write', 
                 params=dict(q=self.request.get('q'), email=email, filename=filename, 
                     writable_file_name=writable_file_name, name=name, 
-                    cursor=next_cursor.urlsafe()), queue_name="downloadwrite")
+                    cursor=curs), queue_name="downloadwrite")
         
         # Finalize and email.
         else:
@@ -88,16 +103,16 @@ class DownloadHandler(webapp2.RequestHandler):
         self.get()
     
     def get(self):
-        count, terms, keywords, email, name = map(self.request.get, 
-            ['count', 'terms', 'keywords', 'email', 'name'])
-        logging.info(' . '.join([count, terms, keywords, email, name]))
-        q = dict(terms=json.loads(terms), keywords=json.loads(keywords))
+        count, keywords, email, name = map(self.request.get, 
+            ['count', 'keywords', 'email', 'name'])
+        logging.info(' . '.join([count, keywords, email, name]))
+        q = ' '.join(json.loads(keywords))
         count = int(count)
         if count <= 1000:
             fname = str('%s.tsv' % name)
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" % fname
-            records, cursor, more, count = RecordIndex.search(q, count)
+            records, cursor, count = vnsearch.query(q, count)
             data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
             self.response.out.write(data)
         else:
