@@ -34,6 +34,7 @@ define([
 
     initialize: function (options, app) {
       this.app = app;
+      this.DOWNLOAD_THRES = 1000;
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
@@ -60,21 +61,6 @@ define([
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
       this.$("#search-keywords-box").focus();
-      // $('').popover({
-      //     trigger: 'manual',
-      //     title: 'Pro tip',
-      //     content: 'Click on a row to see the occurrence detail page.',
-      //     container: '#occTable',
-      //     placement: 'top'
-      // });
-      // this.$('#taxcol').popover({
-      //     trigger: 'hover',
-      //     title: 'Taxonomy',
-      //     content: 'Class: ScientificName',
-      //     container: '#occTable',
-      //     placement: 'top',
-      //     html: 'true'
-      // });
       return this;
     },
 
@@ -141,52 +127,33 @@ define([
 
       this.$('.dl-btn').addClass('disabled');
       this.$('.dl-btn').click(_.bind(function(e) {
-        var countRequest = {q:JSON.stringify({terms: this.model.get('terms'), 
-          keywords: this.model.get('keywords')})};
         var name = 'vertnet-download';
         var request = {
           count: -1,
           name: name, 
           terms: JSON.stringify(this.model.get('terms')),
-          keywords: JSON.stringify(this.model.get('keywords'))
-        }
+          keywords: this.keywords
+        };
         if (!this.show) {
           return;
+        } 
+        this.$('#queue').show();
+        this.$('#submit-download-btn').show();
+        this.$('#myModalLabel').show();
+        if (this.count <= this.DOWNLOAD_THRES) {
+          this.$('#instant-msg').show();
+          this.$('#queue-msg').hide();
+          this.$('#email').hide();
+        } else {              
+          this.$('#instant-msg').hide();
+          this.$('#queue-msg').show();
+          this.$('#email').show();
         }
-        this.spin.start();
-        rpc.execute('/service/rpc/record.count', countRequest, {
-          success: _.bind(function(x) {
-            this.count = x.count;
-            this.spin.stop();
-            this.$('#queue').show();
-            this.$('#submit-download-btn').show();
-            this.$('#myModalLabel').show();
-            if (x.count <= 1000) {
-              this.$('#instant-msg').show();
-              this.$('#queue-msg').hide();
-              this.$('#email').hide();
-            } else {              
-              this.$('#instant-msg').hide();
-              this.$('#queue-msg').show();
-              this.$('#email').show();
-            }
-            this.$('#confirmation').hide();
-            this.$('#reccount').text(x.count);
-            this.recCount = x.count;
-            this.$('#myModal').modal();
-            this.$('#name').focus();
-            // if (x.count <= 1000) {
-            //   request.count = x.count;
-            //   window.location.href = '/service/download?' + $.param(request);
-            // } else {
-            //   this.$('#reccount').text(x.count);
-            //   this.$('#myModal').modal();
-            // }
-          }, this), 
-          error: _.bind(function(x) {
-            console.log('ERROR: ', x);
-          }, this)
-        });
+        this.$('#confirmation').hide();
+        this.$('#reccount').text(this.count);
+        this.recCount = this.count;
+        this.$('#myModal').modal();
+        this.$('#name').focus();
       }, this));
 
       this.$('#resultTabs a').click(_.bind(function (e) {
@@ -376,7 +343,7 @@ define([
         this._clearResults();
         this.count = response.count;
       }
-      howMany = this.count >= 1000 ? 'many' : this.count;
+      howMany = this.count >= this.DOWNLOAD_THRES ? 'many' : this.count;
       this.countLoaded = items.length + this.occList.length;
       this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
       this.response = response;
@@ -446,6 +413,7 @@ define([
     },
 
     _submitDownload: function(e) {
+        this._explodeKeywords();
         var email = this.$('#email').val();
         var name = this.$('#name').val();
         var count = this.count; //Number(this.$('#reccount').text());
@@ -453,10 +421,9 @@ define([
           count: count,
           email: email, 
           name: name, 
-          terms: JSON.stringify(this.model.get('terms')),
-          keywords: JSON.stringify(this.model.get('keywords'))}
+          keywords: JSON.stringify(this.keywords)}
         e.preventDefault();
-        if (count <= 1000) {
+        if (count <= this.DOWNLOAD_THRES) {
           window.location.href = '/service/download?' + $.param(request);
           this.$('#myModal').modal('hide');
         } else {
