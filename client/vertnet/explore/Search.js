@@ -231,13 +231,13 @@ define([
         query += [' AND (', none, ')'].join('');
       }
       if (start && !end) {
-        query += [ ' AND (eventdate > ', start, ')'].join('');      
+        query += [ ' AND (eventdate > ', start, ') '].join('');      
       }
       if (!start && end) {
-        query += [' AND (eventdate < ', end, ')'].join('');
+        query += [' AND (eventdate < ', end, ') '].join('');
       }
       if (start && end) {
-        query += [ ' AND (eventdate > ', start, ' ', 'eventdate < ', end, ')'].join('');      
+        query += [ ' AND (eventdate > ', start, ' ', 'eventdate < ', end, ') '].join('');      
       }
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
