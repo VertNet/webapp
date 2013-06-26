@@ -234,7 +234,7 @@ define([
     _loadMore: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      if (this.response && this.response.more) {
+      if (this.countLoaded < this.count) {
         this.paging = true;
         this._executeSearch(null, true);
       }
@@ -278,11 +278,12 @@ define([
         if (input.is(':checked')) {
           return [input.attr('id'), ':', '1 '].join('') + memo
         } else {
-          return [input.attr('id'), ':', '0 '].join('') + memo
+          // return [input.attr('id'), ':', '0 '].join('') + memo
+          return memo;
         }
-      }, ' ');
+      }, '');
 
-      return query;
+      return query.trim().split(/,?\s+/).join(' ');
     },
 
     _getSearch: function() {
@@ -331,7 +332,7 @@ define([
         this.spin.start(); 
         request = {limit:50, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
-        if (this.response && this.response.more) {
+        if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;
         }
         rpc.execute('/service/rpc/record.search', request, {
@@ -395,7 +396,7 @@ define([
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
       }
-      this._disableTablePager(!this.response.more);
+      this._disableTablePager(this.count === this.countLoaded);
       this.spin.stop();
     },
 

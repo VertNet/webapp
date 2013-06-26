@@ -51,7 +51,9 @@ class RecordService(remote.Service):
     def search(self, message):
         curs = None
         if message.cursor:
-            curs = Cursor(urlsafe=message.cursor)
+            curs = search.Cursor(web_safe_string=message.cursor)
+        else:
+            curs = search.Cursor()
         q = json.loads(message.q)
         #terms = q['terms'] # dict
         keywords = ' '.join(q['keywords'])
@@ -61,8 +63,6 @@ class RecordService(remote.Service):
                 direction=SortExpression.ASCENDING), 
             SortExpression(expression='specificepithet', default_value='z',
                 direction=SortExpression.ASCENDING),
-            # SortExpression(expression='country', default_value='z',
-            #     direction=SortExpression.ASCENDING),
             SortExpression(expression='eventdate',
                 direction=SortExpression.ASCENDING)],
             limit=limit)
@@ -93,9 +93,8 @@ class RecordService(remote.Service):
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
             for x in result['recs'] if x]
-        more = result['count'] > 0
         response = RecordList(items=items, cursor=result['cursor'], 
-            more=more, count=result['count'])
+             count=result['count'])
         return response
 
     @remote.method(RecordList, RecordList)

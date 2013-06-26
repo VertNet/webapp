@@ -43,9 +43,4 @@ class SearchHandler(webapp2.RequestHandler):
 handler = webapp2.WSGIApplication([
     webapp2.Route('/api/search', handler=SearchHandler)],
     debug=True)
-         
-def main():
-    run_wsgi_app(handler)
-
-if __name__ == "__main__":
-    main()
+        
