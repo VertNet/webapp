@@ -4,6 +4,7 @@ import re
 import random
 from datetime import datetime
 from google.appengine.api import search
+from google.appengine.api.search import SortOptions, SortExpression
 
 # TODO: Pool search api puts?
 
@@ -193,3 +194,47 @@ def build_search_index(entity):
 	    entity.put()
 	except search.Error:
 	    logging.exception('Put failed for doc %s' % doc.doc_id)
+
+def _get_rec(doc):
+    for field in doc.fields:
+        if field.name == 'record':
+            return json.loads(field.value)
+
+def query(q, limit, curs=search.Cursor()):
+    if not curs:
+        curs = search.Cursor()
+    sort = SortOptions(expressions=[
+        SortExpression(expression='genus', default_value='z',
+            direction=SortExpression.ASCENDING), 
+        SortExpression(expression='specificepithet', default_value='z',
+            direction=SortExpression.ASCENDING),
+        SortExpression(expression='eventdate',
+            direction=SortExpression.ASCENDING)],
+        limit=limit)
+
+    options = search.QueryOptions(
+        limit=limit,
+        cursor=curs,
+        sort_options=sort,
+        returned_fields=['record'])        
+
+    query = search.Query(query_string=q, options=options)
+
+    try:
+        results = search.Index(name='dwc_search').search(query)
+        recs = map(_get_rec, results)
+        return recs, results.cursor, results.number_found
+    except search.Error:
+        logging.exception('Search failed')   
+
+
+
+
+
+
+
+
+
+
+
+
