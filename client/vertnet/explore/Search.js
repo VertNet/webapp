@@ -273,6 +273,12 @@ define([
 
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
+      if (this.$('#search-keywords-box').val().trim() === '') {
+        this._clearResults();
+        this._showResultsTable(false);
+        this.spin.stop();
+        return;
+      }
       if (bypass || e.keyCode == 13) { // 13 RETURN, 9 TAB.
         var path = window.location.pathname;
         var search = this._getSearch();
