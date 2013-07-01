@@ -2,6 +2,7 @@
 
 import webapp2
 from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
+from vertnet.service import search as vnsearch
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
@@ -55,46 +56,14 @@ class RecordService(remote.Service):
         else:
             curs = search.Cursor()
         q = json.loads(message.q)
-        #terms = q['terms'] # dict
         keywords = ' '.join(q['keywords'])
         limit = message.limit
-        sort = SortOptions(expressions=[
-            SortExpression(expression='genus', default_value='z',
-                direction=SortExpression.ASCENDING), 
-            SortExpression(expression='specificepithet', default_value='z',
-                direction=SortExpression.ASCENDING),
-            SortExpression(expression='eventdate',
-                direction=SortExpression.ASCENDING)],
-            limit=limit)
 
-        options = search.QueryOptions(
-            limit=limit,
-            cursor=curs,
-            sort_options=sort,
-            returned_fields=['record'])        
-
-        query = search.Query(query_string=keywords, options=options)
-        result = {}
-        try:
-            results = search.Index(name='dwc_search').search(query)
-            recs = []
-            for doc in results:
-                for field in doc.fields:
-                    if field.name == 'record':
-                        recs.append(json.loads(field.value))  
-            result['recs'] = recs
-            if results.cursor:
-                result['cursor'] = results.cursor.web_safe_string
-            else:
-                result['cursor'] = None
-            result['count'] = results.number_found
-        except search.Error:
-            logging.exception('Search failed')            
+        recs, cursor, count = vnsearch.query(keywords, limit, curs=curs)
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
-            for x in result['recs'] if x]
-        response = RecordList(items=items, cursor=result['cursor'], 
-             count=result['count'])
+            for x in recs if x]
+        response = RecordList(items=items, cursor=cursor.web_safe_string, count=count)
         return response
 
     @remote.method(RecordList, RecordList)

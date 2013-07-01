@@ -116,8 +116,9 @@ def has_tissue(rec):
     return 0
 
 def network(rec, network):
-    if rec.has_key('network'):
-        if network in rec['networks'].split(','):
+    if rec.has_key('networks'):
+        networks = [x.lower() for x in rec['networks'].split(',')]
+        if network in networks:
             return 1
     return 0
 
@@ -152,9 +153,9 @@ def _eventdate(year):
 
 def build_search_index(entity):
     data = json.loads(entity.record)
-    year, genus, icode, country, specep, lat, lon, catnum, collname = map(data.get, 
+    year, genus, icode, country, specep, lat, lon, catnum, collname, season = map(data.get, 
         ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
-        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname'])
+        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season'])
 
     doc = search.Document(
         doc_id=data['keyname'],
@@ -174,6 +175,7 @@ def build_search_index(entity):
                 search.NumberField(name='herpnet', value=network(data, 'herpnet')),            
                 search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
                 search.NumberField(name='rank', value=rank(data)),            
+                search.TextField(name='season', value=season),            
         		search.TextField(name='record', value=entity.record)])
 
     location = _location(lat, lon)
@@ -198,18 +200,18 @@ def build_search_index(entity):
 def _get_rec(doc):
     for field in doc.fields:
         if field.name == 'record':
-            return json.loads(field.value)
+            rec = json.loads(field.value)
+            rec['rank'] = doc._rank
+            return rec
 
 def query(q, limit, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
     sort = SortOptions(expressions=[
-        SortExpression(expression='genus', default_value='z',
-            direction=SortExpression.ASCENDING), 
-        SortExpression(expression='specificepithet', default_value='z',
-            direction=SortExpression.ASCENDING),
-        SortExpression(expression='eventdate',
-            direction=SortExpression.ASCENDING)],
+        SortExpression(expression='rank',
+            direction=SortExpression.DESCENDING), 
+        SortExpression(expression='institutioncode',
+            direction=SortExpression.ASCENDING),],
         limit=limit)
 
     options = search.QueryOptions(
@@ -226,7 +228,6 @@ def query(q, limit, curs=search.Cursor()):
         return recs, results.cursor, results.number_found
     except search.Error:
         logging.exception('Search failed')   
-
 
 
 
