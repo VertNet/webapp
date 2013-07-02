@@ -204,20 +204,23 @@ def _get_rec(doc):
             rec['rank'] = doc._rank
             return rec
 
-def query(q, limit, curs=search.Cursor()):
+def query(q, limit, sort=None, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
-    sort = SortOptions(expressions=[
-        SortExpression(expression='rank',
-            direction=SortExpression.DESCENDING), 
-        SortExpression(expression='institutioncode',
-            direction=SortExpression.ASCENDING),],
-        limit=limit)
+    
+    expressions = [SortExpression(expression='rank', 
+        direction=SortExpression.DESCENDING)]    
+    if sort:
+        expressions.append(SortExpression(expression=sort, 
+            direction=SortExpression.ASCENDING))
+    sort_options = SortOptions(expressions=expressions, limit=limit)
 
+    logging.info(sort_options)
+    
     options = search.QueryOptions(
         limit=limit,
         cursor=curs,
-        sort_options=sort,
+        sort_options=sort_options,
         returned_fields=['record'])        
 
     query = search.Query(query_string=q, options=options)

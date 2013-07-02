@@ -119,11 +119,10 @@ class Record(ndb.Model):
     def tsv(self):
         json = self.json
         json['datasource_and_rights'] = json.get('url')
-        header = util.DWC_HEADER_LIST #['datasource_and_rights'] + util.DWC_ALL_LOWER
-        values = [] #[json.get('url')]
+        header = util.DWC_HEADER_LIST
+        values = []
         for x in header:
             if json.has_key(x):
-                # logging.info('%s=%s' % (x, json[x]))
                 values.append(unicode(json[x]))
             else:
                 values.append('')
@@ -246,6 +245,7 @@ class RecordList(messages.Message):
     email = messages.StringField(8) # email to ping when download is done
     name = messages.StringField(9) # name of downloaded record set
     offset = messages.IntegerField(10) # integer offset
+    sort = messages.StringField(11) # integer offset
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 
