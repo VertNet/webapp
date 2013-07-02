@@ -57,13 +57,19 @@ class RecordService(remote.Service):
             curs = search.Cursor()
         q = json.loads(message.q)
         keywords = ' '.join(q['keywords'])
+        sort = message.sort
+        logging.info('SORT %s' % sort)
+        logging.info(keywords)
         limit = message.limit
 
-        recs, cursor, count = vnsearch.query(keywords, limit, curs=curs)
+
+        recs, cursor, count = vnsearch.query(keywords, limit, sort=sort, curs=curs)
+        if cursor:
+            cursor = cursor.web_safe_string
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
             for x in recs if x]
-        response = RecordList(items=items, cursor=cursor.web_safe_string, count=count)
+        response = RecordList(items=items, cursor=cursor, count=count)
         return response
 
     @remote.method(RecordList, RecordList)
