@@ -2,7 +2,7 @@
  * Occurrence search result map.
  */
 
-define([
+ define([
   'jQuery',
   'Underscore',
   'util',
@@ -10,30 +10,30 @@ define([
   'map',
   'Backbone',
   'text!explore/occ/ResultMap.html'
-], function ($, _, util, mps, map, Backbone, template) {
-  return Backbone.View.extend({
+  ], function ($, _, util, mps, map, Backbone, template) {
+    return Backbone.View.extend({
 
-    options: null,
+      options: null,
 
-    map: null,
+      map: null,
 
-    initialize: function (options, app) {
-      var lat = options.lat ? parseFloat(options.lat) : 0;
-      var lon = options.lon ? parseFloat(options.lon) : 0;
-      this.app = app;
-      this.markers = [];
+      initialize: function (options, app) {
+        var lat = options.lat ? parseFloat(options.lat) : 0;
+        var lon = options.lon ? parseFloat(options.lon) : 0;
+        this.app = app;
+        this.markers = [];
 
-    },
+      },
 
-    render: function () {
-      var marker = null;
+      render: function () {
+        var marker = null;
 
-      this.$el.html(_.template(template));
+        this.$el.html(_.template(template));
 
-      if (!this.map) {
-        if (!window.google || !window.google.maps) {
-          return this;
-        }
+        if (!this.map) {
+          if (!window.google || !window.google.maps) {
+            return this;
+          }
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
           zoom: 2,
@@ -63,49 +63,53 @@ define([
       //map = this.map;
       this.resize();
 
+      google.maps.event.addListener(this.map, 'click', function(e) {
+        console.log(e);
+      });
+
       return this;
     },
 
     _updateMarkers: function() {
       // wrapper for infoWindow
       google.maps.InfoWindowZ=function(opts){
-          var GM = google.maps,
-              GE = GM.event,
-              iw = new GM.InfoWindow(),
-              ce;
+        var GM = google.maps,
+        GE = GM.event,
+        iw = new GM.InfoWindow(),
+        ce;
 
-             if(!GM.InfoWindowZZ){
-                GM.InfoWindowZZ=Number(GM.Marker.MAX_ZINDEX);
-             }
-
-             GE.addListener(iw,'content_changed',function(){
-               if(typeof this.getContent()=='string'){
-                  var n=document.createElement('div');
-                      n.innerHTML=this.getContent();
-                      this.setContent(n);
-                      return;
-               }
-               GE.addListener(this,'domready',
-                               function(){
-                                var _this=this;
-                                _this.setZIndex(++GM.InfoWindowZZ);
-                                if(ce){
-                                  GM.event.removeListener(ce);
-                                }
-                                ce=GE.addDomListener(this.getContent().parentNode
-                                                  .parentNode.parentNode,'click',
-                                                  function(){
-                                                  _this.setZIndex(++GM.InfoWindowZZ);
-                                });
-                              })
-             });
-
-             if(opts)iw.setOptions(opts);
-             return iw;
+        if(!GM.InfoWindowZZ){
+          GM.InfoWindowZZ=Number(GM.Marker.MAX_ZINDEX);
         }
+
+        GE.addListener(iw,'content_changed',function(){
+         if(typeof this.getContent()=='string'){
+          var n=document.createElement('div');
+          n.innerHTML=this.getContent();
+          this.setContent(n);
+          return;
+        }
+        GE.addListener(this,'domready',
+         function(){
+          var _this=this;
+          _this.setZIndex(++GM.InfoWindowZZ);
+          if(ce){
+            GM.event.removeListener(ce);
+          }
+          ce=GE.addDomListener(this.getContent().parentNode
+            .parentNode.parentNode,'click',
+            function(){
+              _this.setZIndex(++GM.InfoWindowZZ);
+            });
+        })
+      });
+
+        if(opts)iw.setOptions(opts);
+        return iw;
+      }
         // end of wrapper
 
-      this.bounds = new google.maps.LatLngBounds();
+        this.bounds = new google.maps.LatLngBounds();
 
       // Remove markers from map.
       _.each(this.markers, _.bind(function(marker) {
@@ -116,7 +120,7 @@ define([
       this.markers.splice(0, this.markers.length);
 
       _.each(this.collection.models, _.bind(function(model) {
-        
+
         // values for the infoWindow
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
@@ -182,7 +186,7 @@ define([
           }
           contentString += '</table>';
           contentString += '<a href="'+url+'">Link to the detail page</a>';
-         
+
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
             title: occid,
@@ -211,20 +215,20 @@ define([
           this.markers.push(marker);
         }
       }, this));
-      this.resize();
-    },
+this.resize();
+},
 
-    resize: function() {
-      google.maps.event.trigger(this.map, 'resize');
-      this.map.setZoom(this.map.getZoom());
-      this.map.setCenter(this.map.getCenter());
-      this.map.setZoom(2);
-      centerZero = new google.maps.LatLng(0, 0);
-      this.map.setCenter(centerZero);
-      if (this.markers.length != 0) {
-        this.map.fitBounds(this.bounds);
-      }
-    },
+resize: function() {
+  google.maps.event.trigger(this.map, 'resize');
+  this.map.setZoom(this.map.getZoom());
+  this.map.setCenter(this.map.getCenter());
+  this.map.setZoom(2);
+  centerZero = new google.maps.LatLng(0, 0);
+  this.map.setCenter(centerZero);
+  if (this.markers.length != 0) {
+    this.map.fitBounds(this.bounds);
+  }
+},
 
-  });
+});
 });
