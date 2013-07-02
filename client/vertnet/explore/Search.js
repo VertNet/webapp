@@ -52,6 +52,17 @@ define([
       map.init(_.bind(function() { 
         this.$('#resultmap').html(this.resultMap.render().el);
         this.resultMap.resize();
+        google.maps.event.addListener(this.resultMap.map, 'click', _.bind(function(e) {
+          var lat = e.latLng.lat();
+          var lng = e.latLng.lng();
+          var keywords = this.$('#search-keywords-box').val();
+          var query = '"distance(store_location, geopoint({0}, {1})) < 100000"';
+          query = query.format(lat, lng);
+          console.log(query);
+          this.$('#search-keywords-box').val('{0} AND {1}'.format(keywords, query));
+          this._submitHandler(null, true);
+        }, this));
+
       }, this));
       this.$('#occTable').hide();
       this._disableTablePager(true);
@@ -70,6 +81,8 @@ define([
     },
 
    setup: function () {
+
+    
       this.$('#search-button').click(_.bind(function() {
         this._submitHandler(null, true);
       }, this));

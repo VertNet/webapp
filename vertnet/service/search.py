@@ -221,7 +221,7 @@ def query(q, limit, sort=None, curs=search.Cursor()):
         limit=limit,
         cursor=curs,
         sort_options=sort_options,
-        returned_fields=['record'])        
+        returned_fields=['record', 'location'])        
 
     query = search.Query(query_string=q, options=options)
 
