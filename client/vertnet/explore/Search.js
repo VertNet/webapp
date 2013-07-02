@@ -59,7 +59,12 @@ define([
         this.spin = new Spin(this.$('.search-spinner'));
       }
       // this._checkUrl();
-      this.$('#search-form').on('keyup', _.bind(this._submitHandler, this));
+      this.$('#search-form').on('keyup', _.bind(function(e) {
+        if (e.keyCode == 13) {
+          this._submitHandler(null, true);
+        }
+      }, this));
+         
       this.$("#search-keywords-box").focus();
       return this;
     },
@@ -169,6 +174,7 @@ define([
       this.$('#year').val(this.options.query.year);
       this.$('#country').val(this.options.query.country);
       this.$('#institutioncode').val(this.options.query.institutioncode);
+      this.$('#sort').val(this.options.query.sort || "institutioncode");
       if (!_.isEmpty(this.options.query)) {
         this._submitHandler(null, true);
       } 
@@ -220,6 +226,13 @@ define([
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
+      if (type == 'Specimen') {
+        type = 'specimen';
+      }
+      if (type == 'Observation') {
+        type = 'observation';
+      }
+
       query = [all, exact].join(' ');
       query += [' type:', type].join('');
       this._prepTerms();
@@ -257,6 +270,9 @@ define([
       var terms = {};
       var q = this.$('#search-keywords-box').val();
       var query = null;
+      var sort = this.$('#sort :selected').val().toLowerCase();
+
+
       //this._prepTerms();
       //terms = this.terms;
       if (this.$('#search-keywords-div').is(":visible")) {
@@ -267,19 +283,21 @@ define([
         terms['q'] = this._getQuery();
         this.$('#search-keywords-box').val(terms['q']);
       }
+      terms['sort'] = sort;
       console.log(terms);
       return $.param(terms);
     },
 
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
-      if (this.$('#search-keywords-box').val().trim() === '') {
+      if (this.$('#search-keywords-div').is(":visible") && 
+            this.$('#search-keywords-box').val().trim() === '') {
         this._clearResults();
         this._showResultsTable(false);
         this.spin.stop();
         return;
       }
-      if (bypass || e.keyCode == 13) { // 13 RETURN, 9 TAB.
+      // if (bypass || e.keyCode == 13) { // 13 RETURN
         var path = window.location.pathname;
         var search = this._getSearch();
         if (search) {
@@ -289,21 +307,22 @@ define([
         this.response = null;
         this._disableTablePager(true);
         this._executeSearch();
-        if (!bypass && (e.keyCode == 13 || e.keyCode == 9)) {
+        // if (!bypass && (e.keyCode == 13 || e.keyCode == 9)) {
           this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
-        }
-      }
+        // }
+      //}
     },
 
     // Executes search request to server.
     _executeSearch: function() {
       var request = null;
+      var sort = this.$('#sort :selected').val().toLowerCase();
       this._prepTerms();
       this._explodeKeywords();
       this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
-        request = {limit:50, q:JSON.stringify({terms: this.terms, 
+        request = {limit:50, sort:sort, q:JSON.stringify({terms: this.terms, 
           keywords: this.keywords})};
         if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;

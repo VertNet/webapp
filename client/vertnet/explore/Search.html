@@ -88,10 +88,27 @@
                     </div>
                 </div>
                 <div class="control-group">
+                  <label class="control-label">Sorted by</label>
+                  <div class="controls">
+                    <select id="sort">
+                      <option value="institutioncode">InstitutionCode</option>
+                      <option value="catalognumber">CatalogNumber</option>
+                      <option value="class">Class</option>
+                      <option value="genus">Genus</option>
+                      <option value="specificepithet">SpecificEpithet</option>
+                      <option value="country">Country</option>
+                      <option value="stateprovince">StateProvince</option>
+                      <option value="county">County</option>
+                      <option value="year">Year</option>
+                      <option value="recordedby">RecordedBy</option>
+                    </select>
+                  </div>
+                </div>                
+                <div class="control-group">
                   <label class="control-label">These filters</label>
                   <div id="filters" class="controls">
                     <label class="checkbox inline">
-                      <input id="mappable" type="checkbox"> Is mappable
+                      <input id="mappable" type="checkbox" checked> Is mappable
                     </label>
                     <label class="checkbox inline">
                       <input id="tissue" type="checkbox"> Has tissues
