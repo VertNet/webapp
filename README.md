@@ -16,7 +16,7 @@ $ git clone git@github.com:VertNet/webapp.git
 
 That will download the full code repository into a directory named `webapp`.
 
-Since the webapp rides on [Google App Engine](https://developers.google.com/appengine), we can use the local development server. Firt we'll need some test data. Go into the`webapp` directory, download [this file](https://dl.dropboxusercontent.com/u/13724811/data.zip), and upzip it. Then at the command line:
+Since the webapp rides on [Google App Engine](https://developers.google.com/appengine), we can use the local development server. First we'll need some test data. Go into the`webapp` directory, download [this file](https://dl.dropboxusercontent.com/u/13724811/data.zip), and upzip it. Then at the command line:
 
 ```bash
 $ dev_appserver.py --storage_path=data app.yaml
