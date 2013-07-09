@@ -56,7 +56,7 @@ define([
           var lat = e.latLng.lat();
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
-          var query = 'distance(location,geopoint({0},{1}))<100000';
+          var query = 'distance(location,geopoint({0},{1}))<50000';
 
 
           this.spin.start();
@@ -259,13 +259,14 @@ define([
       this.timer = null;
       // $(document).on('keyup', _.bind(function(e) {
       this.$('#search-form').on('keyup', _.bind(function(e) {
+        var q = this.$('#search-keywords-box').val();
         if (e.keyCode != 8 && !/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
         }
-        if (this.marker) {
+        if ((q.indexOf("distance(") === -1) && this.marker) {
           this.marker.setMap(null);
         } 
-        if (this.circle) {
+        if ((q.indexOf("distance(") === -1) && this.circle) {
           this.circle.setMap(null);
         }
         this._prepTerms();
