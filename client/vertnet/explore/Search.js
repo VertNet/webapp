@@ -57,6 +57,8 @@ define([
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
           var query = 'distance(location,geopoint({0},{1}))<100000';
+
+
           this.spin.start();
           query = query.format(lat, lng);
           console.log(query);
@@ -67,6 +69,59 @@ define([
           // } else {
           //   this.$('#search-keywords-box').val(query);
           // }
+
+          if (!this.marker) {
+            this.marker = new google.maps.Marker({
+              map: this.resultMap.map,
+              position: e.latLng,
+              title: 'Search',
+              draggable: true,
+              visible: false
+            });
+          } else {
+            this.marker.setPosition(e.latLng);
+          }
+
+          // Add circle overlay and bind to marker
+          if (!this.circle) {
+            this.circle = new google.maps.Circle({
+              map: this.resultMap.map,
+              radius: 100000,    // 10 miles in metres
+              fillColor: '#111111',
+              fillOpacity: .2,
+              editable:true
+            });
+            this.circle.bindTo('center', this.marker, 'position');
+          } else {
+            this.circle.setRadius(100000);
+          }
+
+          // Radius changed
+          google.maps.event.addListener(this.circle, "radius_changed", _.bind(function(e) {
+            var lat = this.circle.getCenter().lat();
+            var lng = this.circle.getCenter().lng();
+            var keywords = this.$('#search-keywords-box').val();
+            var query = 'distance(location,geopoint({0},{1}))<{2}';
+            this.spin.start();
+            query = query.format(lat, lng, Math.round(this.circle.getRadius() / 2));
+            console.log(query);
+            this.$('#search-keywords-box').val(query);
+            this._submitHandler(null, true);
+          }, this));
+
+          // Center changed
+          google.maps.event.addListener(this.circle, "center_changed", _.bind(function(e) {
+            var lat = this.circle.getCenter().lat();
+            var lng = this.circle.getCenter().lng();
+            var keywords = this.$('#search-keywords-box').val();
+            var query = 'distance(location,geopoint({0},{1}))<{2}';
+            this.spin.start();
+            query = query.format(lat, lng, Math.round(this.circle.getRadius() / 2));
+            console.log(query);
+            this.$('#search-keywords-box').val(query);
+            this._submitHandler(null, true);
+          }, this));          
+
           this._submitHandler(null, true);
         }, this));
 
