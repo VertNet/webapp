@@ -6,3 +6,10 @@ mapreduce:
     params:
     - name: entity_kind
       default: transformer.Record
+- name: Delete Record entities.
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: mapper.delete-record
+    params:
+    - name: entity_kind
+      default: transformer.Record

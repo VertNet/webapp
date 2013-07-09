@@ -1,10 +1,9 @@
 import json
 import logging
-import re
-import random
 from datetime import datetime
 from google.appengine.api import search
 from google.appengine.api.search import SortOptions, SortExpression
+from mapreduce import operation as op
 
 # TODO: Pool search api puts?
 
@@ -204,31 +203,42 @@ def _get_rec(doc):
             rec['rank'] = doc._rank
             return rec
 
+def delete_entity(entity):
+    yield op.db.Delete(entity)
+
 def query(q, limit, sort=None, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
     
-    expressions = [SortExpression(expression='rank', 
+    expressions = [SortExpression(expression='rank', default_value=0,
         direction=SortExpression.DESCENDING)]    
     if sort:
-        expressions.append(SortExpression(expression=sort, 
+        expressions.append(SortExpression(expression=sort, default_value='z', 
             direction=SortExpression.ASCENDING))
-    sort_options = SortOptions(expressions=expressions, limit=limit)
-
-    logging.info(sort_options)
+        sort_options = SortOptions(expressions=expressions, limit=limit)
+        logging.info(sort_options)
     
-    options = search.QueryOptions(
+        options = search.QueryOptions(
+            limit=limit,
+            cursor=curs,
+            sort_options=sort_options,
+            returned_fields=['record', 'location'])        
+    else:
+        options = search.QueryOptions(
         limit=limit,
         cursor=curs,
-        sort_options=sort_options,
         returned_fields=['record', 'location'])        
 
     query = search.Query(query_string=q, options=options)
 
     try:
         results = search.Index(name='dwc_search').search(query)
-        recs = map(_get_rec, results)
-        return recs, results.cursor, results.number_found
+        if results:
+            recs = map(_get_rec, results)
+            return recs, results.cursor, results.number_found
+        else:
+            logging.info('No search results for: %s' % q)
+            return [], None, 0
     except search.Error:
         logging.exception('Search failed')   
 

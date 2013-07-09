@@ -56,10 +56,17 @@ define([
           var lat = e.latLng.lat();
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
-          var query = '"distance(store_location, geopoint({0}, {1})) < 100000"';
+          var query = 'distance(location,geopoint({0},{1}))<100000';
+          this.spin.start();
           query = query.format(lat, lng);
           console.log(query);
-          this.$('#search-keywords-box').val('{0} AND {1}'.format(keywords, query));
+          this.$('#search-keywords-box').val(query);
+
+          // if (keywords) {
+          //   this.$('#search-keywords-box').val('{0} AND {1}'.format(keywords, query));
+          // } else {
+          //   this.$('#search-keywords-box').val(query);
+          // }
           this._submitHandler(null, true);
         }, this));
 
@@ -269,14 +276,14 @@ define([
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
         if (input.is(':checked')) {
-          return [input.attr('id'), ':', '1 '].join('') + memo
+          return [' ', input.attr('id'), ':', '1 '].join('') + memo
         } else {
           // return [input.attr('id'), ':', '0 '].join('') + memo
           return memo;
         }
       }, '');
 
-      return query.trim().split(/,?\s+/).join(' ');
+      return query.trim().split(/\s+/).join(' ');
     },
 
     _getSearch: function() {
@@ -330,13 +337,12 @@ define([
     _executeSearch: function() {
       var request = null;
       var sort = this.$('#sort :selected').val().toLowerCase();
-      this._prepTerms();
+      //this._prepTerms();
       this._explodeKeywords();
       this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
-        request = {limit:50, sort:sort, q:JSON.stringify({terms: this.terms, 
-          keywords: this.keywords})};
+        request = {limit:50, sort:sort, q:JSON.stringify({keywords: this.keywords})};
         if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;
         }
@@ -377,11 +383,12 @@ define([
       var showResults = items.length > 0;
       var count = 0;
       var howMany = 0;
+      var displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       if (!this.paging) {
         this._clearResults();
         this.count = response.count;
       }
-      howMany = this.count >= this.DOWNLOAD_THRES ? 'many' : this.count;
+      howMany = this.count >= this.DOWNLOAD_THRES ? displayCount : displayCount;
       this.countLoaded = items.length + this.occList.length;
       this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
       this.response = response;
@@ -478,7 +485,7 @@ define([
     _explodeKeywords: function() {
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
-      var keywords = q.trim().split(/,?\s+/);
+      var keywords = q.trim().split(/\s+/);
       if (q && !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim();
