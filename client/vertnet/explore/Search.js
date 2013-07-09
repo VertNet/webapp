@@ -79,6 +79,7 @@ define([
               visible: false
             });
           } else {
+            this.marker.setMap(this.resultMap.map);
             this.marker.setPosition(e.latLng);
           }
 
@@ -93,6 +94,7 @@ define([
             });
             this.circle.bindTo('center', this.marker, 'position');
           } else {
+            this.circle.setMap(this.resultMap.map);
             this.circle.setRadius(100000);
           }
 
@@ -259,6 +261,12 @@ define([
       this.$('#search-form').on('keyup', _.bind(function(e) {
         if (e.keyCode != 8 && !/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
+        }
+        if (this.marker) {
+          this.marker.setMap(null);
+        } 
+        if (this.circle) {
+          this.circle.setMap(null);
         }
         this._prepTerms();
         this._explodeKeywords();
