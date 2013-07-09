@@ -6,3 +6,17 @@ mapreduce:
     params:
     - name: entity_kind
       default: vertnet.service.model.Record
+- name: Delete Record entities.
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: vertnet.service.search.delete_entity
+    params:
+    - name: entity_kind
+      default: vertnet.service.model.Record      
+- name: Delete RecordIndex entities.
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: vertnet.service.search.delete_entity
+    params:
+    - name: entity_kind
+      default: vertnet.service.model.RecordIndex

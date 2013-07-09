@@ -50,12 +50,14 @@ html,body{
 	position: fixed;
 	top: 50%;
   	left: 50%;
+  	z-index: 101;
 }
 
 #main-spinner {
 	position: fixed;
 	top: 50%;
   	left: 50%;
+  	z-index: 101;
 }
 
 /*#vertnet-headline {

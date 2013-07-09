@@ -1,6 +1,5 @@
 """API handlers for VertNet records."""
 
-import webapp2
 from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
 from vertnet.service import search as vnsearch
 from protorpc import remote
@@ -9,9 +8,7 @@ from google.appengine.datastore.datastore_query import Cursor
 import json
 from google.appengine.api import taskqueue
 import logging
-from protorpc.message_types import VoidMessage
 from google.appengine.api import search
-from google.appengine.api.search import SortOptions, SortExpression
 
 
 def record_list(limit, cursor, q, message=False):
@@ -58,10 +55,11 @@ class RecordService(remote.Service):
         q = json.loads(message.q)
         keywords = ' '.join(q['keywords'])
         sort = message.sort
-        logging.info('SORT %s' % sort)
-        logging.info(keywords)
+        if 'distance' in keywords:
+            sort = None
         limit = message.limit
 
+        logging.info('keywords=%s, limit=%s, sort=%s, curs=%s' % (keywords, limit, sort, curs))
 
         recs, cursor, count = vnsearch.query(keywords, limit, sort=sort, curs=curs)
         if cursor:

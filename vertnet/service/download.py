@@ -64,10 +64,12 @@ class WriteHandler(webapp2.RequestHandler):
         # Queue up next chunk or current chunk if failed to write
         if not success:    
             next_cursor = curs
-            if next_cursor:
-                curs = next_cursor.web_safe_string
-            else:
-                curs = ''
+        if next_cursor:
+            curs = next_cursor.web_safe_string
+        else:
+            curs = ''
+        
+        if curs:
             taskqueue.add(url='/service/download/write', 
                 params=dict(q=self.request.get('q'), email=email, filename=filename, 
                     writable_file_name=writable_file_name, name=name, 
