@@ -53,7 +53,8 @@ class RecordService(remote.Service):
         else:
             curs = search.Cursor()
         q = json.loads(message.q)
-        keywords = ' '.join(q['keywords'])
+        logging.info('Q %s' % q)
+        keywords = ' '.join([x for x in q['keywords'] if x])
         sort = message.sort
         if 'distance' in keywords:
             sort = None

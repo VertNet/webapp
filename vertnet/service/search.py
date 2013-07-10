@@ -231,16 +231,20 @@ def query(q, limit, sort=None, curs=search.Cursor()):
 
     query = search.Query(query_string=q, options=options)
 
-    try:
-        results = search.Index(name='dwc_search').search(query)
-        if results:
-            recs = map(_get_rec, results)
-            return recs, results.cursor, results.number_found
-        else:
-            logging.info('No search results for: %s' % q)
-            return [], None, 0
-    except search.Error:
-        logging.exception('Search failed')   
+    max_retries = 5
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            results = search.Index(name='dwc_search').search(query)
+            if results:
+                recs = map(_get_rec, results)
+                return recs, results.cursor, results.number_found
+            else:
+                logging.info('No search results for: %s' % q)
+                return [], None, 0
+        except Exception, e:
+            logging.exception('Search failed: %s' % e)   
+            retry_count += 1
 
 
 
