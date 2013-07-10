@@ -43,6 +43,7 @@ define([
       this.count = 0;
       this.countLoaded = 0;
       this.model = new SearchModel();
+      this.spatialSearch = false;
       // $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
@@ -50,19 +51,30 @@ define([
       this.$el.html(_.template(template));
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
+        var spatialSearchControl = this.$('#spatial-search-control');
+
         this.$('#resultmap').html(this.resultMap.render().el);
         this.resultMap.resize();
+
+        spatialSearchControl[0].index = 1;
+        this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(spatialSearchControl[0]);
+        this.$('#spatial-search-control').show();
+
         google.maps.event.addListener(this.resultMap.map, 'click', _.bind(function(e) {
           var lat = e.latLng.lat();
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
           var query = 'distance(location,geopoint({0},{1}))<50000';
 
+          if (!this.spatialSearch) {
+            return;
+          }
 
           this.spin.start();
           query = query.format(lat, lng);
           console.log(query);
-          this.$('#search-keywords-box').val(query);
+          //this.$('#search-keywords-box').val(query);
+          this.spatialQuery = query;
 
           // if (keywords) {
           //   this.$('#search-keywords-box').val('{0} AND {1}'.format(keywords, query));
@@ -70,58 +82,46 @@ define([
           //   this.$('#search-keywords-box').val(query);
           // }
 
-          if (!this.marker) {
-            this.marker = new google.maps.Marker({
-              map: this.resultMap.map,
-              position: e.latLng,
-              title: 'Search',
-              draggable: true,
-              visible: false
-            });
-          } else {
-            this.marker.setMap(this.resultMap.map);
-            this.marker.setPosition(e.latLng);
+          if (this.circle) {
+            google.maps.event.clearInstanceListeners(this.circle);
+            this.circle.setMap(null);
+          }
+          if (this.marker) {
+            this.marker.setMap(null);
           }
 
+          this.marker = new google.maps.Marker({
+            map: this.resultMap.map,
+            position: e.latLng,
+            title: 'Search',
+            draggable: true,
+            visible: false
+          });
+
           // Add circle overlay and bind to marker
-          if (!this.circle) {
-            this.circle = new google.maps.Circle({
-              map: this.resultMap.map,
-              radius: 100000,    // 10 miles in metres
-              fillColor: '#111111',
-              fillOpacity: .2,
-              editable:true
-            });
-            this.circle.bindTo('center', this.marker, 'position');
-          } else {
-            this.circle.setMap(this.resultMap.map);
-            this.circle.setRadius(100000);
-          }
+          this.circle = new google.maps.Circle({
+            map: this.resultMap.map,
+            radius: 100000,    // 10 miles in metres
+            fillColor: '#111111',
+            fillOpacity: .2,
+            editable:true
+          });
+          this.circle.bindTo('center', this.marker, 'position');
 
           // Radius changed
           google.maps.event.addListener(this.circle, "radius_changed", _.bind(function(e) {
             var lat = this.circle.getCenter().lat();
             var lng = this.circle.getCenter().lng();
-            var keywords = this.$('#search-keywords-box').val();
-            var query = 'distance(location,geopoint({0},{1}))<{2}';
-            this.spin.start();
-            query = query.format(lat, lng, Math.round(this.circle.getRadius() / 2));
-            console.log(query);
-            this.$('#search-keywords-box').val(query);
-            this._submitHandler(null, true);
+            var radius = Math.round(this.circle.getRadius() / 2);
+            this.circleHandler(lat, lng, radius, true);
           }, this));
 
           // Center changed
           google.maps.event.addListener(this.circle, "center_changed", _.bind(function(e) {
             var lat = this.circle.getCenter().lat();
             var lng = this.circle.getCenter().lng();
-            var keywords = this.$('#search-keywords-box').val();
-            var query = 'distance(location,geopoint({0},{1}))<{2}';
-            this.spin.start();
-            query = query.format(lat, lng, Math.round(this.circle.getRadius() / 2));
-            console.log(query);
-            this.$('#search-keywords-box').val(query);
-            this._submitHandler(null, true);
+            var radius = Math.round(this.circle.getRadius() / 2);
+            this.circleHandler(lat, lng, radius, true);
           }, this));          
 
           this._submitHandler(null, true);
@@ -144,8 +144,34 @@ define([
       return this;
     },
 
-   setup: function () {
+    circleHandler: function(lat, lng, radius, submit) {
+      var keywords = this.$('#search-keywords-box').val();
+      var query = 'distance(location,geopoint({0},{1}))<{2}';
+      this.spin.start();
+      query = query.format(lat, lng, radius);
+      this.spatialQuery = query;
+      // this.$('#search-keywords-box').val(query);
+      // this.spatialQuery = query
+      if (submit) {
+        this._submitHandler(null, true);
+      }
+     },
 
+    setup: function () {
+
+      this.$('#spatial-search-control').hide();
+      this.$('#spatial-search-control').click(_.bind(function(e) {
+        var check = this.$('#spatial-label');
+        this.spatialSearch = check.is(':checked');
+        if (!this.spatialSearch) {
+          if (this.marker) {
+            this.marker.setMap(null);
+          }
+          if (this.circle) {
+            this.circle.setMap(null);
+          }
+        }
+      }, this));
     
       this.$('#search-button').click(_.bind(function() {
         this._submitHandler(null, true);
@@ -260,6 +286,7 @@ define([
       // $(document).on('keyup', _.bind(function(e) {
       this.$('#search-form').on('keyup', _.bind(function(e) {
         var q = this.$('#search-keywords-box').val();
+        var radius = null;
         if (e.keyCode != 8 && !/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
         }
@@ -368,33 +395,30 @@ define([
         this.$('#search-keywords-box').val(terms['q']);
       }
       terms['sort'] = sort;
-      console.log(terms);
-      return $.param(terms);
+        return $.param(terms);
     },
 
     // Submit handler for search.
     _submitHandler: function(e, bypass) {
-      if (this.$('#search-keywords-div').is(":visible") && 
+      if (!this.spatialSearch && this.$('#search-keywords-div').is(":visible") && 
             this.$('#search-keywords-box').val().trim() === '') {
         this._clearResults();
         this._showResultsTable(false);
         this.spin.stop();
         return;
       }
-      // if (bypass || e.keyCode == 13) { // 13 RETURN
-        var path = window.location.pathname;
-        var search = this._getSearch();
-        if (search) {
-          path += '?' + search;
-        } 
-        this.paging = false;
-        this.response = null;
-        this._disableTablePager(true);
-        this._executeSearch();
-        // if (!bypass && (e.keyCode == 13 || e.keyCode == 9)) {
-          this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
-        // }
-      //}
+      var path = window.location.pathname;
+      var search = this._getSearch();
+      var q = this.$('#search-keywords-box').val();
+      var radius = null;
+      if (search) {
+        path += '?' + search;
+      } 
+      this.paging = false;
+      this.response = null;
+      this._disableTablePager(true);
+      this._executeSearch();
+      this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
     },
 
     // Executes search request to server.
@@ -447,11 +471,12 @@ define([
       var showResults = items.length > 0;
       var count = 0;
       var howMany = 0;
-      var displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      var displayCount = 0;
       if (!this.paging) {
         this._clearResults();
         this.count = response.count;
       }
+      displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       howMany = this.count >= this.DOWNLOAD_THRES ? displayCount : displayCount;
       this.countLoaded = items.length + this.occList.length;
       this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
@@ -550,7 +575,10 @@ define([
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
       var keywords = q.trim().split(/\s+/);
-      if (q && !_.isEmpty(keywords)) {
+      if (this.spatialSearch) {
+        keywords.push(this.spatialQuery);
+      }
+      if (q || !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim();
           if (x) {

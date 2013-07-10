@@ -36,10 +36,9 @@
           }
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
-          zoom: 2,
-          maxZoom: 8,
+          zoom: 3,
           scrollwheel: false,
-          center: new google.maps.LatLng(0, 0),
+          center: new google.maps.LatLng(58, -150),
           mapTypeId: google.maps.MapTypeId.TERRAIN,
           // Controlling the control
           disableDefaultUI: true,
@@ -223,11 +222,12 @@ resize: function() {
   google.maps.event.trigger(this.map, 'resize');
   this.map.setZoom(this.map.getZoom());
   this.map.setCenter(this.map.getCenter());
-  this.map.setZoom(2);
-  centerZero = new google.maps.LatLng(0, 0);
-  this.map.setCenter(centerZero);
+  //this.map.setZoom(2);
+  //centerZero = new google.maps.LatLng(0, 0);
+  //this.map.setCenter(centerZero);
   if (this.markers.length != 0) {
     this.map.fitBounds(this.bounds);
+    this.map.setZoom(this.map.getZoom() - 1);
   }
 },
 
