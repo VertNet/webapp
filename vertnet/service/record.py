@@ -68,7 +68,11 @@ class RecordService(remote.Service):
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
             for x in recs if x]
+
+        logging.info('ITEMS CHECK')
         response = RecordList(items=items, cursor=cursor, count=count)
+        logging.info('RESPONSE CHECK %s ' % response)
+
         return response
 
     @remote.method(RecordList, RecordList)
