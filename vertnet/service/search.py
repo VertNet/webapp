@@ -240,6 +240,7 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             results = search.Index(name='dwc_search').search(query)
             if results:
                 recs = map(_get_rec, results)
+                logging.info('SUCCESS recs=%s, curs=%s count=%s' % (recs, results.cursor, results.number_found))
                 return recs, results.cursor, results.number_found
             else:
                 logging.info('No search results for: %s' % q)
