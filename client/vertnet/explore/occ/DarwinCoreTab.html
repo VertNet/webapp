@@ -66,7 +66,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -96,7 +96,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -125,7 +125,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -154,7 +154,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -183,7 +183,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -212,7 +212,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -241,7 +241,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -256,6 +256,10 @@
     <!-- All tab.  -->
     <div class="tab-pane active" id="all-tab">
        <div id="occ-detail-map" class="occ-detail-map"></div>
+       <%if (this.model.get('associatedmedia')) { 
+          var link = this.model.get('associatedmedia'); %>
+          <p class="lead"><span id="has-media-icon" class="icon-picture"></span> Media associated with this occurrence: <a target='_blank' href="<%= link %>">Click here</a></p>
+       <% } %>
        <table class="table table-striped">
         <thead>
           <tr>
@@ -271,7 +275,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a href="<%= val %>"><%= val %></a>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>
               <% } %>

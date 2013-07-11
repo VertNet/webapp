@@ -185,7 +185,7 @@
             contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
           }
           contentString += '</table>';
-          contentString += '<a href="'+url+'">Link to the detail page</a>';
+          contentString += '<a target="_blank" href="'+url+'">Link to the detail page</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
