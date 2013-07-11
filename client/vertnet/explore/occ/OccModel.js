@@ -84,6 +84,14 @@ define([
       }
     },
 
+    getSciName: function() {
+      var name = this.get('scientificname');
+      if (name) {
+        return name.toLowerCase().charAt(0).toUpperCase() + name.slice(1);
+      }
+      return 'detail';
+    },
+    
     getLocation: function() {
       var loc = '';
       var locality = this.get('locality');

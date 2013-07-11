@@ -337,15 +337,20 @@ define([
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
-      if (type == 'Specimen') {
+      if (type === 'Specimen') {
         type = 'specimen';
       }
-      if (type == 'Observation') {
+      if (type === 'Observation') {
         type = 'observation';
+      }
+      if (type === 'Select...') {
+        type = '';
       }
 
       query = [all, exact].join(' ');
-      query += [' type:', type].join('');
+      if (type !== '') {
+        query += [' type:', type].join('');
+      }
       this._prepTerms();
       query += [' ', this.termsStr].join('');
       if (any) {
@@ -437,7 +442,8 @@ define([
         rpc.execute('/service/rpc/record.search', request, {
           success: _.bind(this._resultsHandler, this), 
           error: _.bind(function(x) {
-            console.log('ERROR: ', x);
+            console.log('ERROR: ', request);
+            this.spin.stop();
           }, this)
         });
       } else {
