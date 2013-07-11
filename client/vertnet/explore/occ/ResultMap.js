@@ -25,6 +25,21 @@
 
       },
 
+      toggleSpatialSearchStyle: function(show) {
+        var styles = [
+          {
+            "stylers": [
+              { "visibility": "simplified" },
+            ]
+          }
+        ];
+        if (show) {
+          this.map.setOptions({styles: styles});
+        } else {
+          this.map.setOptions({styles:[]});
+        }
+      },
+
       render: function () {
         var marker = null;
 
@@ -227,7 +242,7 @@ resize: function() {
   //this.map.setCenter(centerZero);
   if (this.markers.length != 0) {
     this.map.fitBounds(this.bounds);
-    this.map.setZoom(this.map.getZoom() - 1);
+    this.map.setZoom(this.map.getZoom() - 3);
   }
 },
 

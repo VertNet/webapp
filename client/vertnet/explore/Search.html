@@ -12,14 +12,6 @@
   </div> -->
   
 
-  <div id="spatial-search-control">
-    <div class="control-group">
-        <label class="checkbox inline">
-          <input id="spatial-label" type="checkbox"> <strong>Spatial search</strong>
-        </label>
-    </div>
-  </div>
-
  <!-- Search form. -->
     <div id="search-form">
       <div class="row-fluid">
@@ -163,8 +155,16 @@
         <input id="country" type="text" class="input-medium search-box" placeholder="Country">
         <input id="institutioncode" type="text" class="input-medium search-box" placeholder="InstitutionCode">
       </div> -->
+   
     </div>
 
+  <div style="visibility:hidden" id="spatial-search-control">
+    <div class="control-group">
+        <label class="checkbox inline">
+          <input id="spatial-label" type="checkbox"> <strong>Spatial search</strong>
+        </label>
+    </div>
+  </div>
 
   <!-- Occurrence search sub-tabs for table, map, download. -->
   <ul id="resultTabs" class="nav nav-tabs">
@@ -227,6 +227,10 @@
             <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
+     <div id="spatial-search-tip" class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Pro tip! </strong>Try a spatial search by selecting "Spatial search" on the map and then clicking a location on the map. Note you can resize and move the circle!
+      </div>        
       <div id="resultmap"></div>
     </div>
   </div>

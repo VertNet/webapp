@@ -64,7 +64,7 @@ define([
           var lat = e.latLng.lat();
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
-          var query = 'distance(location,geopoint({0},{1}))<50000';
+          var query = 'distance(location,geopoint({0},{1}))<100000';
 
           if (!this.spatialSearch) {
             return;
@@ -101,7 +101,7 @@ define([
           // Add circle overlay and bind to marker
           this.circle = new google.maps.Circle({
             map: this.resultMap.map,
-            radius: 100000,    // 10 miles in metres
+            radius: 200000,    // 10 miles in metres
             fillColor: '#111111',
             fillOpacity: .2,
             editable:true
@@ -170,6 +170,9 @@ define([
           if (this.circle) {
             this.circle.setMap(null);
           }
+          this.resultMap.toggleSpatialSearchStyle(false);
+        } else {
+          this.resultMap.toggleSpatialSearchStyle(true);
         }
       }, this));
     
@@ -214,6 +217,16 @@ define([
           store.set('protip-closed', true);
         }, this));
       }
+
+      // this.$('#spatial-search-tip').show(); 
+      if (store.get('spatial-search-protip-closed') === true) {
+        this.$('#spatial-search-tip').hide();       
+      } else {
+        this.$('#spatial-search-tip').bind('closed', _.bind(function () {
+          store.set('spatial-search-protip-closed', true);
+        }, this));
+      }
+
       this.$("#search-keywords-box").focus();
       this.spin = new Spin(this.$('.search-spinner'));
       //this.downloadTab = new Download(this.options, this.app, this.model);
@@ -278,9 +291,7 @@ define([
       this.$('#country').val(this.options.query.country);
       this.$('#institutioncode').val(this.options.query.institutioncode);
       this.$('#sort').val(this.options.query.sort || "institutioncode");
-      if (!_.isEmpty(this.options.query)) {
-        this._submitHandler(null, true);
-      } 
+    
 
       this.timer = null;
       // $(document).on('keyup', _.bind(function(e) {
@@ -310,6 +321,11 @@ define([
 
       this.$('#occTable').popover('show');      
 
+      setTimeout(_.bind(function() {
+        if (!_.isEmpty(this.options.query)) {
+          this._submitHandler(null, true);
+        }
+      }, this), 300);
 
       return this;
     },
@@ -550,6 +566,15 @@ define([
       this.occList.reset(); // clear models.
       this.count = 0;
       this.countLoaded = 0;
+      // this.$('#spatial-label').prop("checked", false);
+      // this.resultMap.toggleSpatialSearchStyle(false);
+      // if (this.cirlce) {
+      //   this.circle.setMap(null);
+      // }
+      // if (this.marker) {
+      //   this.marker.setMap(null);
+      // }
+      // this.spatialSearch = false;
     },
 
     _submitDownload: function(e) {
@@ -580,14 +605,14 @@ define([
     _explodeKeywords: function() {
       // Split string on whitespace and commas:
       var q = this.$('#search-keywords-box').val();
-      var keywords = q.trim().split(/\s+/);
+      var keywords = q ? q.trim().split(/\s+/) : [];
       if (this.spatialSearch) {
         keywords.push(this.spatialQuery);
       }
       if (q || !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
           var x = x.trim();
-          if (x) {
+          if (x || x !== '') {
             return x;
           }
         });
