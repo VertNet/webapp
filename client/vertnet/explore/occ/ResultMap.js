@@ -52,6 +52,7 @@
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
           zoom: 3,
+          minZoom: 2,
           scrollwheel: false,
           center: new google.maps.LatLng(58, -150),
           mapTypeId: google.maps.MapTypeId.TERRAIN,
