@@ -81,7 +81,9 @@ define([
           }
 
           this.spin.start();
-          query = query.format(lat, lng);
+          //query = query.format(lat, lng); // doesn't work in FF
+          query = query.replace("{0}",lat);
+          query = query.replace("{1}",lng);
           console.log(query);
           //this.$('#search-keywords-box').val(query);
           this.spatialQuery = query;
@@ -162,7 +164,10 @@ define([
       var query = 'distance(location,geopoint({0},{1}))<{2}';
       var listener = null;
       this.spin.start();
-      query = query.format(lat, lng, radius);
+      // query = query.format(lat, lng, radius); // doesn't work in FF
+      query = query.replace("{0}", lat);
+      query = query.replace("{1}", lng);
+      query = query.replace("{2}", radius);
       this.spatialQuery = query;
       this.resultMap.map.fitBounds(this.circle.getBounds());
       this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
