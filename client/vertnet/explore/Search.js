@@ -134,6 +134,9 @@ define([
             this.circleHandler(lat, lng, radius, true);
           }, this));          
 
+          this.resultMap.map.fitBounds(this.circle.getBounds());
+          this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+          
           this._submitHandler(null, true);
         }, this));
 
@@ -157,9 +160,16 @@ define([
     circleHandler: function(lat, lng, radius, submit) {
       var keywords = this.$('#search-keywords-box').val();
       var query = 'distance(location,geopoint({0},{1}))<{2}';
+      var listener = null;
       this.spin.start();
       query = query.format(lat, lng, radius);
       this.spatialQuery = query;
+      this.resultMap.map.fitBounds(this.circle.getBounds());
+      this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+      listener = google.maps.event.addListener(map, "idle", _.bind(function() { 
+        this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+        google.maps.event.removeListener(listener); 
+      }, this));
       // this.$('#search-keywords-box').val(query);
       // this.spatialQuery = query
       if (submit) {
