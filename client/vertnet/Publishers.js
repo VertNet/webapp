@@ -39,7 +39,7 @@
       _clickHandler: function(e) {
         var sel = getSelection().toString();
         var icode = e.target.parentNode.id;
-        var path = '/search/occurrence?q=' + icode;
+        var path = '/search/occurrence?q=institutioncode:' + icode;
         if (!sel) {
           this.app.router.navigate(path, {trigger: true});
         }
