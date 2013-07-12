@@ -52,6 +52,7 @@ define([
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         var spatialSearchControl = this.$('#spatial-search-control');
+        var loadMoreControl = this.$('#load-more-control');
 
         this.$('#resultmap').html(this.resultMap.render().el);
         this.resultMap.resize();
@@ -59,6 +60,15 @@ define([
         spatialSearchControl[0].index = 1;
         this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(spatialSearchControl[0]);
         this.$('#spatial-search-control').show();
+
+        loadMoreControl[0].index = 1;
+        this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(loadMoreControl[0]);
+        this.$('#load-more-control').show();
+
+        this.$('#loadmore').click(_.bind(function(e) {
+          this._loadMore(e);
+        }, this));
+
 
         google.maps.event.addListener(this.resultMap.map, 'click', _.bind(function(e) {
           var lat = e.latLng.lat();
@@ -533,8 +543,10 @@ define([
     _disableTablePager: function(disable) {
       if (disable) {
         this.$('.table-pager').addClass('disabled');
+        this.$('#loadmore').addClass('disabled');
       } else {
         this.$('.table-pager').removeClass('disabled');
+        this.$('#loadmore').removeClass('disabled');
       }
     },
 
