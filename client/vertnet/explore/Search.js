@@ -298,7 +298,7 @@ define([
       this.$('#search-form').on('keyup', _.bind(function(e) {
         var q = this.$('#search-keywords-box').val();
         var radius = null;
-        if (e.keyCode != 8 && !/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
+        if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
         }
         if ((q.indexOf("distance(") === -1) && this.marker) {
@@ -325,7 +325,7 @@ define([
         if (!_.isEmpty(this.options.query)) {
           this._submitHandler(null, true);
         }
-      }, this), 300);
+      }, this), 500);
 
       return this;
     },

@@ -242,7 +242,7 @@ resize: function() {
   //this.map.setCenter(centerZero);
   if (this.markers.length != 0) {
     this.map.fitBounds(this.bounds);
-    this.map.setZoom(this.map.getZoom() - 3);
+    this.map.setZoom(this.map.getZoom() - 2);
   }
 },
 
