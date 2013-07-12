@@ -241,10 +241,10 @@ resize: function() {
   //this.map.setZoom(2);
   //centerZero = new google.maps.LatLng(0, 0);
   //this.map.setCenter(centerZero);
-  if (this.markers.length != 0) {
-    this.map.fitBounds(this.bounds);
-    this.map.setZoom(this.map.getZoom() - 2);
-  }
+  // if (this.markers.length != 0) {
+  //   this.map.fitBounds(this.bounds);
+  //   this.map.setZoom(this.map.getZoom() - 4);
+  // }
 },
 
 });

@@ -138,7 +138,7 @@ define([
 
           this.resultMap.map.fitBounds(this.circle.getBounds());
           this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
-          
+
           this._submitHandler(null, true);
         }, this));
 
@@ -482,7 +482,7 @@ define([
         this.spin.start(); 
         request = {limit:50, q:JSON.stringify({keywords: this.keywords})};
         if (sort !== 'no sort') {
-          request['sort'] = sort;
+          request.sort = sort;
         }
          if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;
