@@ -290,7 +290,7 @@ define([
       this.$('#year').val(this.options.query.year);
       this.$('#country').val(this.options.query.country);
       this.$('#institutioncode').val(this.options.query.institutioncode);
-      this.$('#sort').val(this.options.query.sort || "institutioncode");
+      this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
     
 
       this.timer = null;
@@ -298,6 +298,9 @@ define([
       this.$('#search-form').on('keyup', _.bind(function(e) {
         var q = this.$('#search-keywords-box').val();
         var radius = null;
+        if (!this.$('#search-keywords-div').is(":visible")) {
+          return;
+        }
         if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
         }
@@ -359,7 +362,7 @@ define([
       if (type === 'Observation') {
         type = 'observation';
       }
-      if (type === 'Select...') {
+      if (type === 'Any type') {
         type = '';
       }
 
@@ -404,7 +407,6 @@ define([
       var query = null;
       var sort = this.$('#sort :selected').val().toLowerCase();
 
-
       //this._prepTerms();
       //terms = this.terms;
       if (this.$('#search-keywords-div').is(":visible")) {
@@ -415,8 +417,10 @@ define([
         terms['q'] = this._getQuery();
         this.$('#search-keywords-box').val(terms['q']);
       }
-      terms['sort'] = sort;
-        return $.param(terms);
+      if (sort !== 'no sort') {
+        terms['sort'] = sort;      
+      }
+      return $.param(terms);
     },
 
     // Submit handler for search.
@@ -451,8 +455,11 @@ define([
       this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
-        request = {limit:50, sort:sort, q:JSON.stringify({keywords: this.keywords})};
-        if (this.response && this.response.cursor) {
+        request = {limit:50, q:JSON.stringify({keywords: this.keywords})};
+        if (sort !== 'no sort') {
+          request['sort'] = sort;
+        }
+         if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;
         }
         rpc.execute('/service/rpc/record.search', request, {
@@ -499,9 +506,8 @@ define([
         this.count = response.count;
       }
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      howMany = this.count >= this.DOWNLOAD_THRES ? displayCount : displayCount;
       this.countLoaded = items.length + this.occList.length;
-      this.$('.counter').text('1-' + this.countLoaded + ' of ' + howMany);
+      this.$('.counter').text('1-' + this.countLoaded + ' of ' + displayCount);
       this.response = response;
       this._showResultsTable(showResults);
       if (showResults) {

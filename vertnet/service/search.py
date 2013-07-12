@@ -220,14 +220,16 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     
         options = search.QueryOptions(
             limit=limit,
+            number_found_accuracy=10000,
             cursor=curs,
             sort_options=sort_options,
             returned_fields=['record', 'location'])        
     else:
         options = search.QueryOptions(
-        limit=limit,
-        cursor=curs,
-        returned_fields=['record', 'location'])        
+            limit=limit,
+            number_found_accuracy=10000,
+            cursor=curs,
+            returned_fields=['record', 'location'])        
 
     q = q.replace('class:', 'classs:')
     logging.info('QUERY %s' % q)
