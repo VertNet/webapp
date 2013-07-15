@@ -20,7 +20,7 @@ define([
     initialize: function (options) {
       this.template = _.template(template);
       this.options = {
-        zoom: 2,
+        zoom: 3,
         scrollwheel: false,
         center: new google.maps.LatLng(20,0),
         mapTypeId: google.maps.MapTypeId.TERRAIN
