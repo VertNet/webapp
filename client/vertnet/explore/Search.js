@@ -196,6 +196,8 @@ define([
             this.circle.setMap(null);
           }
           this.resultMap.toggleSpatialSearchStyle(false);
+          this._explodeKeywords();
+          this._submitHandler(null, true);
         } else {
           this.resultMap.toggleSpatialSearchStyle(true);
         }
