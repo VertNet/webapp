@@ -124,7 +124,7 @@ define([
           google.maps.event.addListener(this.circle, "radius_changed", _.bind(function(e) {
             var lat = this.circle.getCenter().lat();
             var lng = this.circle.getCenter().lng();
-            var radius = Math.round(this.circle.getRadius() / 2);
+            var radius = Math.round(this.circle.getRadius() / 2.0);
             this.circleHandler(lat, lng, radius, true);
           }, this));
 
@@ -132,7 +132,7 @@ define([
           google.maps.event.addListener(this.circle, "center_changed", _.bind(function(e) {
             var lat = this.circle.getCenter().lat();
             var lng = this.circle.getCenter().lng();
-            var radius = Math.round(this.circle.getRadius() / 2);
+            var radius = this.circle.getRadius() / 2.0;
             this.circleHandler(lat, lng, radius, true);
           }, this));          
 
@@ -169,12 +169,13 @@ define([
       query = query.replace("{1}", lng);
       query = query.replace("{2}", radius);
       this.spatialQuery = query;
-      this.resultMap.map.fitBounds(this.circle.getBounds());
-      this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
-      listener = google.maps.event.addListener(map, "idle", _.bind(function() { 
-        this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
-        google.maps.event.removeListener(listener); 
-      }, this));
+      console.log(query);
+      //this.resultMap.map.fitBounds(this.circle.getBounds());
+      //this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+      // listener = google.maps.event.addListener(map, "idle", _.bind(function() { 
+      //   this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+      //   google.maps.event.removeListener(listener); 
+      // }, this));
       // this.$('#search-keywords-box').val(query);
       // this.spatialQuery = query
       if (submit) {
@@ -183,7 +184,6 @@ define([
      },
 
     setup: function () {
-
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
         var check = this.$('#spatial-label');
@@ -214,6 +214,7 @@ define([
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
         this.$('#search-keywords-div').hide();
+        this.$('#search-carat').popover('destroy');
       }, this));
 
       this.$('#close-advanced-search').click(_.bind(function(e) {
@@ -354,6 +355,9 @@ define([
           this._submitHandler(null, true);
         }
       }, this), 500);
+
+      this.$('#search-carat').popover({placement: 'left', content: 'Advanced search →'});
+      this.$('#search-carat').popover('show');
 
       return this;
     },
