@@ -37,6 +37,7 @@
           this.map.setOptions({styles: styles});
         } else {
           this.map.setOptions({styles:[]});
+          this.map.setZoom(3);
         }
       },
 
