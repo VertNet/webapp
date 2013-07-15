@@ -138,10 +138,15 @@
 
       _.each(this.collection.models, _.bind(function(model) {
 
-        // values for the infoWindow
+        // Values for the infoWindow
+        var identification = model.get('icode') + ' ' + model.get('collectioncode') + ' ' + model.get('catalognumber');
+        var taxonomy = model.get('classs') + ': ' + model.get('scientificname');
+        var location =  model.getLocation();
+        var year = model.getYear();
+        // Old values
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
-        var sciname = model.get('scientificname') ? model.get('scientificname') : null;
+        /*var sciname = model.get('scientificname') ? model.get('scientificname') : null;
         var year = model.get('year') ? parseInt(model.get('year')) : null;
         var country = model.get('country') ? model.get('country') : null;
         var stateprov = model.get('stateprovince') ? model.get('stateprovince') : null;
@@ -150,7 +155,7 @@
         var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
         var occid = model.get('id') ? model.get('id') : null;
         var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
-        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;
+        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;*/
         var contentString = null;
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
@@ -167,7 +172,11 @@
           // Create content for the infoWindow
           //contentString += '<font size="2"><b>Occurrence Record</b></font>'
           contentString = '<table class="table table-striped table-hover search-results-hover">';
-          contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
+          contentString += '<tr><td><b>Identification</b></td><td>'+identification+'</td></tr>';
+          contentString += '<tr><td><b>Taxonomy</b></td><td>'+taxonomy+'</td></tr>';
+          contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
+          contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
+          /*contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
           if (sciname) {
             contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
           }
@@ -200,13 +209,13 @@
           }
           if (uncert) {
             contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
-          }
+          }*/
           contentString += '</table>';
           contentString += '<a target="_blank" href="'+url+'">Link to the detail page</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
-            title: occid,
+            //title: occid,
             content : contentString,
             maxWidth: 400
           });
