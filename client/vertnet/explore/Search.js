@@ -184,11 +184,13 @@ define([
      },
 
     setup: function () {
+      this.$('#search-button').popover({content:'Spatial search on.', placement: 'top'});
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
         var check = this.$('#spatial-label');
         this.spatialSearch = check.is(':checked');
         if (!this.spatialSearch) {
+          this.$('#search-button').popover('hide');      
           if (this.marker) {
             this.marker.setMap(null);
           }
@@ -199,6 +201,7 @@ define([
           this._explodeKeywords();
           this._submitHandler(null, true);
         } else {
+          this.$('#search-button').popover('show');      
           this.resultMap.toggleSpatialSearchStyle(true);
         }
       }, this));
@@ -217,6 +220,7 @@ define([
         this.$('#advanced-search-form').show();
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
+        store.set('search-carat-closed', true);
       }, this));
 
       this.$('#close-advanced-search').click(_.bind(function(e) {
@@ -358,8 +362,10 @@ define([
         }
       }, this), 500);
 
-      this.$('#search-carat').popover({placement: 'left', content: 'Advanced search →'});
-      this.$('#search-carat').popover('show');
+      if (!store.get('search-carat-closed')) {
+        this.$('#search-carat').popover({placement: 'left', content: 'Advanced search →'});
+        this.$('#search-carat').popover('show');
+      }
 
       return this;
     },
@@ -650,7 +656,7 @@ define([
       }
       if (q || !_.isEmpty(keywords)) {
         this.keywords = _.map(keywords, function(x) {
-          var x = x.trim();
+          var x = x ? x.trim() : '';
           if (x || x !== '') {
             return x;
           }
