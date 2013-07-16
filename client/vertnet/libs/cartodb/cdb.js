@@ -1,3 +1,3 @@
 define([
-  'http://libs.cartocdn.com/cartodb.js/v2/cartodb.js'
+  'http://libs.cartocdn.com/cartodb.js/v3/cartodb.js'
 ], function () {});
