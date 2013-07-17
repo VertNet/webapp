@@ -1,7 +1,13 @@
+#myCarousel {
 
+}
 
+.carosel-inner-home {
+	width: 118% !important;
+	margin-left: -43px;
+}
 #homesearch {
-	margin-top: 10%;
+	/*margin-top: 10%;*/
 }
 #homehead {
 	margin-top: 3%;
@@ -41,7 +47,6 @@ html,body{
 #holder{
     min-height: 100%;
     position:relative;
-    height: 100%;
 }
 
 #content{
@@ -202,6 +207,22 @@ input.span2.search {
 	border: 1px solid grey;*/
 }
 
+#homesearch-keywords-div {
+	border: 1px solid #cccccc; 
+	border-radius: 3px; 
+	width: 98%; 
+	height: 60px;
+	display: inline-block;
+	background-color: white;
+
+	/*max-width:300px;*/
+/*
+	height: 50px;
+	width: 1040px;
+	line-height: 50px;
+	border: 1px solid grey;*/
+}
+
 #show-search-options {
 	height:20px;
 	padding: 5px;
@@ -231,6 +252,14 @@ input.span2.search {
 	margin-bottom: 10px;
 }
 
+
+#homesearch-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -8px;
+	margin-bottom: 10px;
+}
+
 #advanced-search-button {
 	width: 97px;
 	height: 63px;
@@ -247,6 +276,23 @@ input.span2.search {
 	/*padding: 0px 0px 0px 0px;	*/
 	font-size: 25px;
 	height: 50px;
+
+	/*height: 50px;
+	width: 1040px;
+	font-size: 28px;
+	line-height: 50px;
+	border: none;*/
+}
+
+#homesearch-keywords-box {
+	box-shadow:none !important;
+	border: none; 
+	width: 95%; 
+	line-height: 50px; 
+	/*padding: 0px 0px 0px 0px;	*/
+	font-size: 25px;
+	height: 50px;
+
 
 	/*height: 50px;
 	width: 1040px;

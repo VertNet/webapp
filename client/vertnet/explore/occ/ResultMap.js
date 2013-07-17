@@ -171,7 +171,7 @@
           
           // Create content for the infoWindow
           //contentString += '<font size="2"><b>Occurrence Record</b></font>'
-          contentString = '<table class="table table-striped table-hover search-results-hover">';
+          contentString = '<table class="table table-striped table-condensed table-bordered">';
           contentString += '<tr><td><b>Identification</b></td><td>'+identification+'</td></tr>';
           contentString += '<tr><td><b>Taxonomy</b></td><td>'+taxonomy+'</td></tr>';
           contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
@@ -211,7 +211,7 @@
             contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
           }*/
           contentString += '</table>';
-          contentString += '<a target="_blank" href="'+url+'">Link to the detail page</a>';
+          contentString += '<a target="_blank" href="'+url+'">Occurrence details »</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
