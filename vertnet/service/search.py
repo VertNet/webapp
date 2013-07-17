@@ -143,6 +143,12 @@ def _type(rec):
         return 'observation'
     return 'both'
 
+def _rec(rec):
+    for x in ['pubdate','url','eml','dwca','title','icode','description',
+        'contact','orgname','email','emlrights','count','citation','networks','harvestid']:
+        rec.pop(x)
+    return json.dumps(rec)
+
 def _eventdate(year):
     try:
         eventdate = datetime.strptime(year, '%Y')
@@ -152,9 +158,9 @@ def _eventdate(year):
 
 def build_search_index(entity):
     data = json.loads(entity.record)
-    year, genus, icode, country, specep, lat, lon, catnum, collname, season = map(data.get, 
+    year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
         ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
-        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season'])
+        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'url'])
 
     doc = search.Document(
         doc_id=data['keyname'],
@@ -166,7 +172,9 @@ def build_search_index(entity):
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
                 search.TextField(name='collectorname', value=collname),
+                search.TextField(name='class', value=classs),                
                 search.TextField(name='type', value=_type(data)),
+                search.TextField(name='url', value=url),
                 search.NumberField(name='media', value=has_media(data)),            
                 search.NumberField(name='tissue', value=has_tissue(data)),            
                 search.NumberField(name='manis', value=network(data, 'manis')),            
@@ -175,7 +183,7 @@ def build_search_index(entity):
                 search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
                 search.NumberField(name='rank', value=rank(data)),            
                 search.TextField(name='season', value=season),            
-        		search.TextField(name='record', value=entity.record)])
+        		search.TextField(name='record', value=_rec(data))])
 
     location = _location(lat, lon)
     eventdate = _eventdate(year)
@@ -191,8 +199,8 @@ def build_search_index(entity):
 	
 	try:
 	    search.Index(name='dwc_search').put(doc)
-	    entity.indexed = True
-	    entity.put()
+	    #entity.indexed = True
+	    #entity.put()
 	except search.Error:
 	    logging.exception('Put failed for doc %s' % doc.doc_id)
 

@@ -3,15 +3,30 @@
 <!-- Title -->
 <div class="jumbotron masthead">
   <div class="container">
-    <div class="alert alert-error">
+    <!-- <div class="alert alert-error">
       <button type="button" class="close" data-dismiss="alert">×</button>
       <strong>VertNet beta 0.0.3</strong> - We release early and often, and this is a very limited release! We are testing this release with a small subset from our list of hundreds of collections. Enjoy this early look at what we're building by experimenting with our search feature. Please expect bugs and submit feedback to help us make the portal a great tool for the community!
-    </div>
+    </div> -->
     <!-- <div class="container-fluid"> -->
       <div class="row-fluid">
         <div class="span7">
           <h1>VertNet</h1>
-          <p>Free and open access to millions of records from hundreds of publishers around the world.</p>
+          <p>Search and download millions of vertebrate records.</p>
+    
+          <div id="homesearch" class="row-fluid">
+         <div class="span8">
+          <div id="homesearch-keywords-div">
+            <input id="homesearch-keywords-box" type="text" placeholder="">
+
+          </input>
+        </div>
+      </div>
+      <div class="span1">
+        <button id="homesearch-button" type="button" class="btn btn-large btn-primary">
+          <span class="icon-search icon-white"></span>
+        </button>
+      </div>
+    </div>
         </div>
         <div class="span5">
           <div id="myCarousel" class="carousel stats slide">
@@ -26,7 +41,7 @@
               <li data-target="#myCarousel" data-slide-to="7" class=""></li>
               <li data-target="#myCarousel" data-slide-to="8" class=""></li> -->
             </ol>
-            <div class="carousel-inner">
+            <div class="carousel-inner carosel-inner-home">
               <div class="item active">
                 <img src="/img/Institutions.jpg" alt="">
                 <div class="carousel-caption">
@@ -88,11 +103,29 @@
             <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
           </div>
         </div>
+
+        <!-- <div class="offset0 span5">
+          <div id="homesearch" class="row-fluid">
+         <div class="span11">
+          <div id="homesearch-keywords-div">
+            <input id="homesearch-keywords-box" type="text" placeholder="">
+
+          </input>
+        </div>
+      </div>
+      <div class="span1">
+        <button id="homesearch-button" type="button" class="btn btn-large btn-primary">
+          <span class="icon-search icon-white"></span>
+        </button>
+      </div>
+    </div>
+  </div> -->
+
       </div>
     <!-- </div> -->
   </div>
 </div>
-
+ 
 <!-- Map -->
 <div class="bs-docs-social">
  <div class="mapContainer" id="mapContainer"></div>
