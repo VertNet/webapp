@@ -6,6 +6,17 @@ mapreduce:
     params:
     - name: entity_kind
       default: vertnet.service.model.Record
+
+- name: Build search index from GGS.
+  mapper:
+    input_reader: mapreduce.input_readers.FileInputReader
+    handler: vertnet.service.search.build_search_index
+    params:
+    - files: ["/gs/vn-staging/*"]
+      default: ["/gs/vn-staging/*"]
+    - format: lines
+      default: lines
+
 - name: Delete Record entities.
   mapper:
     input_reader: mapreduce.input_readers.DatastoreInputReader
