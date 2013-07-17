@@ -92,8 +92,8 @@ define([
       console.log('router.about():');
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      // if (this.page)
+      //   this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
@@ -106,8 +106,8 @@ define([
       console.log('router.feedback():');
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      // if (this.page)
+      //   this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();
@@ -186,8 +186,8 @@ define([
       console.log('router.home()');
 
       // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      // if (this.page)
+      //   this.page.destroy();
 
       // Setup header/footer.
       this.initHeaderFooter();

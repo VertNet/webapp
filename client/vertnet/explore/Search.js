@@ -184,7 +184,7 @@ define([
      },
 
     setup: function () {
-      this.$('#search-button').popover({content:'Spatial search on.', placement: 'top'});
+      this.$('#search-button').popover({content:'<strong>Spatial search is on.</strong>', html: true, placement: 'top'});
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
         var check = this.$('#spatial-label');
@@ -336,10 +336,10 @@ define([
         if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
           return;
         }
-        if ((q.indexOf("distance(") === -1) && this.marker) {
+        if (!this.spatialSearch && this.marker) {
           this.marker.setMap(null);
         } 
-        if ((q.indexOf("distance(") === -1) && this.circle) {
+        if (!this.spatialSearch && this.circle) {
           this.circle.setMap(null);
         }
         this._prepTerms();
@@ -363,7 +363,7 @@ define([
       }, this), 500);
 
       if (!store.get('search-carat-closed')) {
-        this.$('#search-carat').popover({placement: 'left', content: 'Advanced search →'});
+        this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
         this.$('#search-carat').popover('show');
       }
 
@@ -555,7 +555,7 @@ define([
           this.viewList.push(view);
           this.$('#occTable > tbody:last').append(view.render().el);
           view.on('onClick', function() {
-            this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
+            //this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
           }, this);
         }, this));
       } else {

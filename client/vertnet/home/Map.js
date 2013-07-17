@@ -32,7 +32,7 @@ define([
       if (!this.map) {
         this.$el.html(this.template());
         if (!window.google || !window.google.maps) return this;
-        this.map = new google.maps.Map($('#homemap', this.el).get(0), this.options);
+        this.map = new google.maps.Map($('#homemap').get(0), this.options);
         //this.addEvents();
       }
       map = this.map;
