@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 44
-/svn/!svn/ver/477/trunk/python/src/mapreduce
+/svn/!svn/ver/486/trunk/python/src/mapreduce
 END
 file_format_root.py
 K 25
@@ -37,7 +37,7 @@ handlers.py
 K 25
 svn:wc:ra_dav:version-url
 V 56
-/svn/!svn/ver/470/trunk/python/src/mapreduce/handlers.py
+/svn/!svn/ver/486/trunk/python/src/mapreduce/handlers.py
 END
 property_range.py
 K 25
@@ -49,7 +49,7 @@ model.py
 K 25
 svn:wc:ra_dav:version-url
 V 53
-/svn/!svn/ver/477/trunk/python/src/mapreduce/model.py
+/svn/!svn/ver/486/trunk/python/src/mapreduce/model.py
 END
 parameters.py
 K 25
@@ -109,7 +109,7 @@ util.py
 K 25
 svn:wc:ra_dav:version-url
 V 52
-/svn/!svn/ver/456/trunk/python/src/mapreduce/util.py
+/svn/!svn/ver/486/trunk/python/src/mapreduce/util.py
 END
 shuffler.py
 K 25

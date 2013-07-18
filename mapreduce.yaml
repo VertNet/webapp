@@ -1,20 +1,20 @@
 mapreduce:
-- name: Build search index.
-  mapper:
-    input_reader: mapreduce.input_readers.DatastoreInputReader
-    handler: vertnet.service.search.build_search_index
-    params:
-    - name: entity_kind
-      default: vertnet.service.model.Record
+# - name: Build search index.
+#   mapper:
+#     input_reader: mapreduce.input_readers.DatastoreInputReader
+#     handler: vertnet.service.search.build_search_index
+#     params:
+#     - name: entity_kind
+#       default: vertnet.service.model.Record
 
 - name: Build search index from GGS.
   mapper:
     input_reader: mapreduce.input_readers.FileInputReader
     handler: vertnet.service.search.build_search_index
     params:
-    - files: ["/gs/vn-staging/*"]
-      default: ["/gs/vn-staging/*"]
-    - format: lines
+    - name: files 
+      default: list(a,b,c)
+    - name: format
       default: lines
 
 - name: Delete Record entities.

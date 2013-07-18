@@ -55,6 +55,9 @@ define([
         var loadMoreControl = this.$('#load-more-control');
 
         this.$('#resultmap').html(this.resultMap.render().el);
+
+   
+        
         this.resultMap.resize();
 
         spatialSearchControl[0].index = 1;
@@ -87,12 +90,6 @@ define([
           console.log(query);
           //this.$('#search-keywords-box').val(query);
           this.spatialQuery = query;
-
-          // if (keywords) {
-          //   this.$('#search-keywords-box').val('{0} AND {1}'.format(keywords, query));
-          // } else {
-          //   this.$('#search-keywords-box').val(query);
-          // }
 
           if (this.circle) {
             google.maps.event.clearInstanceListeners(this.circle);
@@ -140,6 +137,8 @@ define([
           this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
 
           this._submitHandler(null, true);
+
+
         }, this));
 
       }, this));
@@ -156,6 +155,7 @@ define([
       }, this));
          
       this.$("#search-keywords-box").focus();
+
       return this;
     },
 
@@ -184,6 +184,18 @@ define([
      },
 
     setup: function () {
+      // this.$('#resultmap').hide();
+      setTimeout(_.bind(function() {
+        if (store.get('try-spatial-closed') !== true) {
+          this.$('#maptab').popover({container: '#maptab', content:'Try spatial search!', html: true, placement: 'bottom'});
+          this.$('#maptab').popover('show');
+          this.$('#maptab').click(_.bind(function() {
+            store.set('try-spatial-closed', true);
+            this.$('#maptab').popover('destroy');
+          }, this));
+        }
+      }, this), 3000);
+
       this.$('#search-button').popover({content:'<strong>Spatial search is on.</strong>', html: true, placement: 'top'});
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
@@ -218,6 +230,7 @@ define([
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
+        this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
         store.set('search-carat-closed', true);
@@ -228,6 +241,7 @@ define([
         e.stopPropagation();
         this.$('#advanced-search-form').hide();        
         this.$('#search-keywords-div').show();
+        this.$('#maptab').popover('show'); 
       }, this));
 
       this.$('#show-search-options').tooltip({
@@ -362,10 +376,13 @@ define([
         }
       }, this), 500);
 
-      if (!store.get('search-carat-closed')) {
-        this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
-        this.$('#search-carat').popover('show');
-      }
+      setTimeout(_.bind(function() {
+        if (!store.get('search-carat-closed')) {
+          this.$('#search-carat').popover({placement: 'top', content: 'Try advanced search!'});
+          this.$('#search-carat').popover('show');
+        } 
+
+      }, this), 2000);
 
       return this;
     },
