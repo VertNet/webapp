@@ -31,8 +31,8 @@ class RecordService(remote.Service):
     @remote.method(RecordPayload, RecordPayload)
     def get(self, message):
         """Return a RecordList."""
-        record = Record.get_by_id(message.id)
-        return RecordPayload(id=message.id, json=record.record)
+        recs, cursor, count = vnsearch.query('id:%s' % message.id, 1)
+        return RecordPayload(id=message.id, json=json.dumps(recs[0]))
 
     @remote.method(RecordList, RecordList)
     def _search(self, message):

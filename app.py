@@ -1,18 +1,26 @@
 
 from google.appengine.ext.webapp.util import run_wsgi_app
-
+import logging
 from webapp2_extras import jinja2
+
+import mapreduce
+
+from mapreduce import control as mrc
+from mapreduce import base_handler
+from mapreduce import input_readers
 
 import os
 import webapp2
+
+from mapreduce import mapreduce_pipeline
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
-    webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', 
-        name='explore'),
+    webapp2.Route(r'/mr/<name>', handler='app.AppHandler:mapreduce', name='mapreduce'),
+    webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
@@ -39,6 +47,21 @@ class AppHandler(webapp2.RequestHandler):
         else:
             return '/' + '1.0' 
 
+    def mapreduce(self, name):
+        input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
+        mrc.start_map(
+            name,
+            "vertnet.service.search.build_search_index",
+            input_class,
+            {
+                "input_reader": dict(
+                    files=['/gs/vn-staging/*'], 
+                    format='lines', 
+                    bucket_name="vn-staging", 
+                    objects=["mvz-part-00000.tsv"])
+            },
+            shard_count=8)
+        
     def search(self, type):
         """Render the explore page."""
         self.render_template('explore.html')

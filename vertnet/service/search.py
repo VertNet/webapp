@@ -1,9 +1,12 @@
+from google.appengine.api import namespace_manager
 import json
 import logging
 from datetime import datetime
 from google.appengine.api import search
 from google.appengine.api.search import SortOptions, SortExpression
 from mapreduce import operation as op
+import re
+import htmlentitydefs
 
 # TODO: Pool search api puts?
 
@@ -32,6 +35,8 @@ DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid',
 'nomenclaturalcode', 'associatedtaxa', 'nomenclaturalstatus', 'datasetid', 
 'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights', 'citation',
 'url']
+
+HEADER = ['pubdate', 'url', 'eml', 'dwca', 'title', 'icode', 'description', 'contact', 'orgname', 'email', 'emlrights', 'count', 'citation', 'networks', 'harvestid', 'id', 'associatedmedia', 'associatedoccurrences', 'associatedreferences', 'associatedsequences', 'associatedtaxa', 'basisofrecord', 'bed', 'behavior', 'catalognumber', 'collectioncode', 'collectionid', 'continent', 'coordinateprecision', 'coordinateuncertaintyinmeters', 'country', 'countrycode', 'county', 'datageneralizations', 'dateidentified', 'day', 'decimallatitude', 'decimallongitude', 'disposition', 'earliestageorloweststage', 'earliesteonorlowesteonothem', 'earliestepochorlowestseries', 'earliesteraorlowesterathem', 'earliestperiodorlowestsystem', 'enddayofyear', 'establishmentmeans', 'eventattributes', 'eventdate', 'eventid', 'eventremarks', 'eventtime', 'fieldnotes', 'fieldnumber', 'footprintspatialfit', 'footprintwkt', 'formation', 'geodeticdatum', 'geologicalcontextid', 'georeferenceprotocol', 'georeferenceremarks', 'georeferencesources', 'georeferenceverificationstatus', 'georeferencedby', 'group', 'habitat', 'highergeography', 'highergeographyid', 'highestbiostratigraphiczone', 'identificationattributes', 'identificationid', 'identificationqualifier', 'identificationreferences', 'identificationremarks', 'identifiedby', 'individualcount', 'individualid', 'informationwithheld', 'institutioncode', 'island', 'islandgroup', 'latestageorhigheststage', 'latesteonorhighesteonothem', 'latestepochorhighestseries', 'latesteraorhighesterathem', 'latestperiodorhighestsystem', 'lifestage', 'lithostratigraphicterms', 'locality', 'locationattributes', 'locationid', 'locationremarks', 'lowestbiostratigraphiczone', 'maximumdepthinmeters', 'maximumdistanceabovesurfaceinmeters', 'maximumelevationinmeters', 'measurementaccuracy', 'measurementdeterminedby', 'measurementdetermineddate', 'measurementid', 'measurementmethod', 'measurementremarks', 'measurementtype', 'measurementunit', 'measurementvalue', 'member', 'minimumdepthinmeters', 'minimumdistanceabovesurfaceinmeters', 'minimumelevationinmeters', 'month', 'occurrenceattributes', 'occurrencedetails', 'occurrenceid', 'occurrenceremarks', 'othercatalognumbers', 'pointradiusspatialfit', 'preparations', 'previousidentifications', 'recordnumber', 'recordedby', 'relatedresourceid', 'relationshipaccordingto', 'relationshipestablisheddate', 'relationshipofresource', 'relationshipremarks', 'reproductivecondition', 'resourceid', 'resourcerelationshipid', 'samplingprotocol', 'sex', 'startdayofyear', 'stateprovince', 'taxonattributes', 'typestatus', 'verbatimcoordinatesystem', 'verbatimcoordinates', 'verbatimdepth', 'verbatimelevation', 'verbatimeventdate', 'verbatimlatitude', 'verbatimlocality', 'verbatimlongitude', 'waterbody', 'year', 'footprintsrs', 'georeferenceddate', 'identificationverificationstatus', 'institutionid', 'locationaccordingto', 'municipality', 'occurrencestatus', 'ownerinstitutioncode', 'samplingeffort', 'verbatimsrs', 'locationaccordingto7', 'taxonid', 'taxonconceptid', 'datasetid', 'datasetname', 'source', 'modified', 'accessrights', 'rights', 'rightsholder', 'language', 'higherclassification', 'kingdom', 'phylum', 'classs', 'order', 'family', 'genus', 'subgenus', 'specificepithet', 'infraspecificepithet', 'scientificname', 'scientificnameid', 'vernacularname', 'taxonrank', 'verbatimtaxonrank', 'infraspecificmarker', 'scientificnameauthorship', 'nomenclaturalcode', 'namepublishedin', 'namepublishedinid', 'taxonomicstatus', 'nomenclaturalstatus', 'nameaccordingto', 'nameaccordingtoid', 'parentnameusageid', 'parentnameusage', 'originalnameusageid', 'originalnameusage', 'acceptednameusageid', 'acceptednameusage', 'taxonremarks', 'dynamicproperties', 'namepublishedinyear', 'season', 'dummy']
 
 def is_number(s):
     try:
@@ -156,12 +161,48 @@ def _eventdate(year):
         eventdate = None
     return eventdate
 
+def slugify(s, length=None, separator="-"):
+    """Return a slugged version of supplied string."""
+    s = re.sub('[^a-zA-Z\d\s:]', ' ', s)
+    if length:
+        words = s.split()[:length]
+    else:
+        words = s.split()
+    s = ' '.join(words)
+    ret = ''
+    for c in s.lower():
+        try:
+            ret += htmlentitydefs.codepoint2name[ord(c)]
+        except:
+            ret += c
+    ret = re.sub('([a-zA-Z])(uml|acute|grave|circ|tilde|cedil)', r'\1', ret)
+    ret = ret.strip()
+    ret = re.sub(' ', '_', ret)
+    ret = re.sub('\W', '', ret)
+    ret = re.sub('[ _]+', separator, ret)
+    return ret.strip()
+
+def get_rec_dict(rec):
+    val = {}
+    for name, value in rec.iteritems():
+        if value:
+            val[name] = value
+    return val
+
 def build_search_index(entity):
-    data = json.loads(entity.record)
+    #data = json.loads(entity.record)
+    data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
+    #logging.info(data)
     year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
-        ['year', 'genus', 'institutioncode', 'country', 'specificepithet', 
+        ['year', 'genus', 'icode', 'country', 'specificepithet', 
         'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'url'])
 
+    data.pop('classs')
+    data['class'] = classs
+    organization_slug = slugify(data['orgname'])
+    resource_slug = slugify(data['title'])
+    data['keyname'] = '%s/%s/%s' % (organization_slug, resource_slug, data['harvestid'])
+    
     doc = search.Document(
         doc_id=data['keyname'],
         rank=rank(data),
@@ -177,13 +218,13 @@ def build_search_index(entity):
                 search.TextField(name='url', value=url),
                 search.NumberField(name='media', value=has_media(data)),            
                 search.NumberField(name='tissue', value=has_tissue(data)),            
-                search.NumberField(name='manis', value=network(data, 'manis')),            
-                search.NumberField(name='ornis', value=network(data, 'ornis')),            
-                search.NumberField(name='herpnet', value=network(data, 'herpnet')),            
-                search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
+                # search.NumberField(name='manis', value=network(data, 'manis')),            
+                # search.NumberField(name='ornis', value=network(data, 'ornis')),            
+                # search.NumberField(name='herpnet', value=network(data, 'herpnet')),            
+                # search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
                 search.NumberField(name='rank', value=rank(data)),            
                 search.TextField(name='season', value=season),            
-        		search.TextField(name='record', value=_rec(data))])
+        		search.TextField(name='record', value=json.dumps(data))])
 
     location = _location(lat, lon)
     eventdate = _eventdate(year)
@@ -196,13 +237,17 @@ def build_search_index(entity):
 
     if eventdate:
         doc.fields.append(search.DateField(name='eventdate', value=eventdate))
-	
-	try:
-	    search.Index(name='dwc_search').put(doc)
-	    #entity.indexed = True
-	    #entity.put()
-	except search.Error:
-	    logging.exception('Put failed for doc %s' % doc.doc_id)
+
+    try:
+        namespace = namespace_manager.get_namespace()
+        search.Index('dwc', namespace=namespace).put(doc)
+        #logging.info('Put document into dwc index: %s' % data['keyname'])
+    except Exception:
+        logging.error('Put failed for doc %s' % doc.doc_id)
+        return
+
+    # logging.info('Put document into dwc index: %s' % data['keyname'])
+
 
 def _get_rec(doc):
     for field in doc.fields:
@@ -247,7 +292,8 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     retry_count = 0
     while retry_count < max_retries:
         try:
-            results = search.Index(name='dwc_search').search(query)
+            namespace = namespace_manager.get_namespace()
+            results = search.Index(name='dwc', namespace=namespace).search(query)
             if results:
                 recs = map(_get_rec, results)
                 logging.info('SUCCESS recs=%s, curs=%s count=%s' % (recs, results.cursor, results.number_found))
