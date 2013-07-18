@@ -406,7 +406,11 @@ define([
       var start = this.$('#datestart').val();
       var end = this.$('#dateend').val();
       var type = this.$('#recordtype :selected').val();
+      var season = this.$('#season :selected').val();
 
+      if (season === 'Any season') {
+        season = '';
+      } 
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
@@ -423,6 +427,9 @@ define([
       query = [all, exact].join(' ');
       if (type !== '') {
         query += [' type:', type].join('');
+      }
+      if (season !== '') {
+        query += [' season:', season].join('');
       }
       this._prepTerms();
       query += [' ', this.termsStr].join('');
