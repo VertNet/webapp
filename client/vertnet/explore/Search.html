@@ -29,8 +29,54 @@
                 <legend>Advanced search</legend>
                 Find occurrences with...<p>
                 <form class="form-horizontal">
+                
                 <div class="control-group">
-                  <label class="control-label" >All these words</label>
+                  <label class="control-label">These filters</label>
+                  <div id="filters" class="controls">
+                    <label class="checkbox inline">
+                      <input id="mappable" type="checkbox" checked> Is mappable
+                    </label>
+                    <label class="checkbox inline">
+                      <input id="spatialfilter" type="checkbox"> Within point radius
+                    </label>                    
+                    <label class="checkbox inline">
+                      <input id="tissue" type="checkbox"> Has tissues
+                    </label>
+                    <label class="checkbox inline">
+                      <input id="media" type="checkbox"> Has media
+                    </label>
+
+                   <!--  <label class="checkbox inline">
+                      <input id="manis" type="checkbox"> MaNIS
+                    </label>
+                    <label class="checkbox inline">
+                      <input id="ornis" type="checkbox"> ORNIS
+                    </label>
+                    <label class="checkbox inline">
+                      <input id="herpnet" type="checkbox"> HerpNet
+                    </label>
+                    <label class="checkbox inline">
+                      <input id="fishnet"type="checkbox"> FishNet
+                    </label> -->
+                  </div>
+                </div>
+
+                 <div class="3accordion" id="spatialsearch">
+                  <div class="3accordion-group">
+                    <div class="3accordion-heading">
+                      <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                         <!--  <span class="icon-arrow-down"></span>  -->
+                      </a>
+                    </div>
+                    <div id="collapseOne" class="accordion-body collapse" style="height: 0px;">
+                      <div class="accordion-inner">
+                        <div id="searchmap"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>                  
+                <div class="control-group">
+                  <label class="control-label">All these words</label>
                   <div class="controls">
                     <input style="width:98%;" type="text" id="allwords" placeholder="mvz grinnell">
                   </div>
@@ -107,7 +153,7 @@
                     </select>
                   </div>
                 </div>    
-                <div class="control-group">
+<!--                 <div class="control-group">
                   <label class="control-label">Season</label>
                   <div class="controls">
                     <select id="season">
@@ -122,33 +168,9 @@
                       <option value="Southern winter">Southern winter</option>
                     </select>
                   </div>
-                </div>    
-                <div class="control-group">
-                  <label class="control-label">These filters</label>
-                  <div id="filters" class="controls">
-                    <label class="checkbox inline">
-                      <input id="mappable" type="checkbox" checked> Is mappable
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="tissue" type="checkbox"> Has tissues
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="media" type="checkbox"> Has media
-                    </label>
-                   <!--  <label class="checkbox inline">
-                      <input id="manis" type="checkbox"> MaNIS
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="ornis" type="checkbox"> ORNIS
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="herpnet" type="checkbox"> HerpNet
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="fishnet"type="checkbox"> FishNet
-                    </label> -->
-                  </div>
-                </div>
+                </div>  -->   
+                
+               
                <!--  <div class="control-group">
                   <div class="controls">
                     <button id="advanced-search-button" type="button" class="btn btn-large btn-primary">
@@ -157,6 +179,7 @@
                   </div>
                 </div> -->
               </form>
+              <div class="spacer"></div>
             </div>
           </div>
           <div class="span1">
