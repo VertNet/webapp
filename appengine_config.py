@@ -1,6 +1,5 @@
 import os
 import sys
-from google.appengine.api import namespace_manager
 
 def fix_path():
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
@@ -22,4 +21,4 @@ COOKIE_KEY = "\xb4\xa4\x94x\xee6\x16\x84r'\xf2~a\xad^\xaf,<2\x84!\xc35m\xd9.f\xa
 # Called only if the current namespace is not set.
 def namespace_manager_default_namespace_for_request():
     # The returned string will be used as the Google Apps domain.
-    return 'test'
+    return 'index000001'

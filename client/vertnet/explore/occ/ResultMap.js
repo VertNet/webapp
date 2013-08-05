@@ -140,7 +140,7 @@
 
         // Values for the infoWindow
         var identification = model.get('icode') + ' ' + model.get('collectioncode') + ' ' + model.get('catalognumber');
-        var taxonomy = model.get('classs') + ': ' + model.get('scientificname');
+        var taxonomy = model.get('class') + ': ' + model.get('scientificname');
         var location =  model.getLocation();
         var year = model.getYear();
         // Old values

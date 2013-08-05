@@ -19,7 +19,7 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
-    webapp2.Route(r'/mr/<name>', handler='app.AppHandler:mapreduce', name='mapreduce'),
+    webapp2.Route(r'/mr/<name>/<resource>', handler='app.AppHandler:mapreduce', name='mapreduce'),
     webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
@@ -47,21 +47,21 @@ class AppHandler(webapp2.RequestHandler):
         else:
             return '/' + '1.0' 
 
-    def mapreduce(self, name):
+    def mapreduce(self, name, resource):
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
+        files = '/gs/vn-staging/staging/%s/part*' % resource
+        logging.info('FILES=%s' % files)
         mrc.start_map(
             name,
             "vertnet.service.search.build_search_index",
             input_class,
             {
                 "input_reader": dict(
-                    files=['/gs/vn-staging/*'], 
-                    format='lines', 
-                    bucket_name="vn-staging", 
-                    objects=["mvz-part-00000.tsv"])
+                    files=[files], 
+                    format='lines')
             },
             shard_count=8)
-        
+
     def search(self, type):
         """Render the explore page."""
         self.render_template('explore.html')

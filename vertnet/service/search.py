@@ -193,11 +193,12 @@ def build_search_index(entity):
     #data = json.loads(entity.record)
     data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
     #logging.info(data)
-    year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
-        ['year', 'genus', 'icode', 'country', 'specificepithet', 
+    county, stateprov, year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
+        ['county', 'stateprovince', 'year', 'genus', 'icode', 'country', 'specificepithet', 
         'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'url'])
 
-    data.pop('classs')
+    if data.has_key('classs'):        
+        data.pop('classs')
     data['class'] = classs
     organization_slug = slugify(data['orgname'])
     resource_slug = slugify(data['title'])
@@ -210,6 +211,8 @@ def build_search_index(entity):
 				search.TextField(name='genus', value=genus),
         		search.TextField(name='institutioncode', value=icode),
                 search.TextField(name='country', value=country),            
+                search.TextField(name='stateprovince', value=stateprov),  
+                search.TextField(name='county', value=county),            
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
                 search.TextField(name='collectorname', value=collname),
@@ -223,7 +226,7 @@ def build_search_index(entity):
                 # search.NumberField(name='herpnet', value=network(data, 'herpnet')),            
                 # search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
                 search.NumberField(name='rank', value=rank(data)),            
-                search.TextField(name='season', value=season),            
+                # search.TextField(name='season', value=season),            
         		search.TextField(name='record', value=json.dumps(data))])
 
     location = _location(lat, lon)
@@ -242,8 +245,8 @@ def build_search_index(entity):
         namespace = namespace_manager.get_namespace()
         search.Index('dwc', namespace=namespace).put(doc)
         #logging.info('Put document into dwc index: %s' % data['keyname'])
-    except Exception:
-        logging.error('Put failed for doc %s' % doc.doc_id)
+    except Exception, e:
+        logging.error('Put failed for doc %s (%s)' % (doc.doc_id, e))
         return
 
     # logging.info('Put document into dwc index: %s' % data['keyname'])
