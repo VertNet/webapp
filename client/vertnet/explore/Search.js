@@ -403,8 +403,8 @@ define([
       var exact = this.$('#exactphrase').val();
       var any = this.$('#anywords').val();
       var none = this.$('#nonewords').val();
-      var start = this.$('#datestart').val();
-      var end = this.$('#dateend').val();
+      var start = this.$('#datestart').val() + '-1-1';
+      var end = this.$('#dateend').val() + '-1-1';
       var type = this.$('#recordtype :selected').val();
       var season = this.$('#season :selected').val();
 
