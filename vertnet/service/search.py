@@ -266,6 +266,18 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
     
+    if q.startswith('id:'):
+        did = q.split(':')[1].strip()
+        namespace = namespace_manager.get_namespace()
+        results = search.Index(name='dwc', namespace=namespace).get_range(start_id=did, limit=1)
+        if results:
+            recs = map(_get_rec, results)
+            logging.info('SUCCESS recs=%s' % recs)
+            return recs, None, 1
+        else:
+            logging.info('No search results for: %s' % q)
+            return [], None, 0
+
     expressions = [SortExpression(expression='rank', default_value=0,
         direction=SortExpression.DESCENDING)]    
     if sort:
