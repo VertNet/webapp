@@ -209,12 +209,12 @@ define([
           if (this.circle) {
             this.circle.setMap(null);
           }
-          this.resultMap.toggleSpatialSearchStyle(false);
+          //this.resultMap.toggleSpatialSearchStyle(false);
           this._explodeKeywords();
           this._submitHandler(null, true);
         } else {
           this.$('#search-button').popover('show');      
-          this.resultMap.toggleSpatialSearchStyle(true);
+          //this.resultMap.toggleSpatialSearchStyle(true);
         }
       }, this));
     
