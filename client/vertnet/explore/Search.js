@@ -19,11 +19,12 @@ define([
   'explore/occ/OccRow',
   'explore/occ/OccModel',
   'explore/occ/ResultMap',
+  'explore/occ/SearchMap',
   'explore/occ/SearchModel',
   'Spin',
   'store'
 ], function ($, _, Backbone, mps, map, rpc, template, DowloadTemp, Download, 
-  OccList, OccRow, OccModel, ResultMap, SearchModel, Spin, store) {
+  OccList, OccRow, OccModel, ResultMap, SearchMap, SearchModel, Spin, store) {
   return Backbone.View.extend({
 
     //tagName: 'explore-page-content',
@@ -50,19 +51,22 @@ define([
     render: function() {
       this.$el.html(_.template(template));
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
+      this.searchMap = new SearchMap({collection: this.occList}, this.app);
       map.init(_.bind(function() { 
         var spatialSearchControl = this.$('#spatial-search-control');
         var loadMoreControl = this.$('#load-more-control');
 
         this.$('#resultmap').html(this.resultMap.render().el);
+        this.$('#searchmap').html(this.searchMap.render().el);
 
    
         
         this.resultMap.resize();
+        this.searchMap.resize();
 
-        spatialSearchControl[0].index = 1;
-        this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(spatialSearchControl[0]);
-        this.$('#spatial-search-control').show();
+        //spatialSearchControl[0].index = 1;
+        //this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(spatialSearchControl[0]);
+        //this.$('#spatial-search-control').show();
 
         loadMoreControl[0].index = 1;
         this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(loadMoreControl[0]);
@@ -73,11 +77,12 @@ define([
         }, this));
 
 
-        google.maps.event.addListener(this.resultMap.map, 'click', _.bind(function(e) {
+        google.maps.event.addListener(this.searchMap.map, 'click', _.bind(function(e) {
           var lat = e.latLng.lat();
           var lng = e.latLng.lng();
           var keywords = this.$('#search-keywords-box').val();
           var query = 'distance(location,geopoint({0},{1}))<100000';
+          var map = this.searchMap.map;
 
           if (!this.spatialSearch) {
             return;
@@ -100,7 +105,7 @@ define([
           }
 
           this.marker = new google.maps.Marker({
-            map: this.resultMap.map,
+            map: map,
             position: e.latLng,
             title: 'Search',
             draggable: true,
@@ -109,7 +114,7 @@ define([
 
           // Add circle overlay and bind to marker
           this.circle = new google.maps.Circle({
-            map: this.resultMap.map,
+            map: map,
             radius: 200000,    // 10 miles in metres
             fillColor: '#111111',
             fillOpacity: .2,
@@ -133,8 +138,8 @@ define([
             this.circleHandler(lat, lng, radius, true);
           }, this));          
 
-          this.resultMap.map.fitBounds(this.circle.getBounds());
-          this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
+          map.fitBounds(this.circle.getBounds());
+          map.setZoom(map.getZoom() - 1);
 
           this._submitHandler(null, true);
 
@@ -185,24 +190,51 @@ define([
 
     setup: function () {
       // this.$('#resultmap').hide();
+      $("#spatialfilter").click(_.bind(function() {
+        if (this.$('#spatialfilter').is(':checked')) {
+          $("#collapseOne").collapse('show');
+          this.spatialSearch = true;
+        } else {
+          $("#collapseOne").collapse('hide');
+          this.spatialSearch = false;
+          if (this.marker) {
+            this.marker.setMap(null);
+          }
+          if (this.circle) {
+            this.circle.setMap(null);
+          }
+          //this.resultMap.toggleSpatialSearchStyle(false);
+          this._explodeKeywords();
+          this._submitHandler(null, true);
+        }
+      }, this));
+      $("#collapseOne").collapse({toggle: false});
+      $("#collapseOne").on('shown', _.bind(function() {
+        this.searchMap.resize();
+        this.spatialSearch = true;
+      }, this));
+      $("#collapseOne").on('hidden', _.bind(function() {
+        this.spatialSearch = false;
+      }, this));
+
       setTimeout(_.bind(function() {
         if (store.get('try-spatial-closed') !== true) {
-          this.$('#maptab').popover({container: '#maptab', content:'Try spatial search!', html: true, placement: 'bottom'});
-          this.$('#maptab').popover('show');
+          // this.$('#maptab').popover({container: '#maptab', content:'Try spatial search!', html: true, placement: 'bottom'});
+          //this.$('#maptab').popover('show');
           this.$('#maptab').click(_.bind(function() {
             store.set('try-spatial-closed', true);
-            this.$('#maptab').popover('destroy');
+            //this.$('#maptab').popover('destroy');
           }, this));
         }
       }, this), 3000);
 
-      this.$('#search-button').popover({content:'<strong>Spatial search is on.</strong>', html: true, placement: 'top'});
+      // this.$('#search-button').popover({content:'<strong>Spatial search is on.</strong>', html: true, placement: 'top'});
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
         var check = this.$('#spatial-label');
         this.spatialSearch = check.is(':checked');
         if (!this.spatialSearch) {
-          this.$('#search-button').popover('hide');      
+          //this.$('#search-button').popover('hide');      
           if (this.marker) {
             this.marker.setMap(null);
           }
@@ -213,7 +245,7 @@ define([
           this._explodeKeywords();
           this._submitHandler(null, true);
         } else {
-          this.$('#search-button').popover('show');      
+          //this.$('#search-button').popover('show');      
           //this.resultMap.toggleSpatialSearchStyle(true);
         }
       }, this));
@@ -230,7 +262,7 @@ define([
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
-        this.$('#maptab').popover('hide');
+        //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
         store.set('search-carat-closed', true);
@@ -241,7 +273,7 @@ define([
         e.stopPropagation();
         this.$('#advanced-search-form').hide();        
         this.$('#search-keywords-div').show();
-        this.$('#maptab').popover('show'); 
+        //this.$('#maptab').popover('show'); 
       }, this));
 
       this.$('#show-search-options').tooltip({
@@ -406,11 +438,8 @@ define([
       var start = this.$('#datestart').val();
       var end = this.$('#dateend').val();
       var type = this.$('#recordtype :selected').val();
-      var season = this.$('#season :selected').val();
 
-      if (season === 'Any season') {
-        season = '';
-      } 
+
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
@@ -428,9 +457,7 @@ define([
       if (type !== '') {
         query += [' type:', type].join('');
       }
-      if (season !== '') {
-        query += [' season:', season].join('');
-      }
+      
       this._prepTerms();
       query += [' ', this.termsStr].join('');
       if (any) {
@@ -456,6 +483,9 @@ define([
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
+        if (input.attr('id') === 'spatialfilter') {
+          return memo;
+        }
         if (input.is(':checked')) {
           return [' ', input.attr('id'), ':', '1 '].join('') + memo
         } else {
