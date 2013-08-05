@@ -156,7 +156,7 @@ def _rec(rec):
 
 def _eventdate(year):
     try:
-        eventdate = datetime.strptime(year, '%Y')
+        eventdate = datetime.strptime(year, '%Y').date()
     except:
         eventdate = None
     return eventdate
