@@ -124,6 +124,20 @@ html,body{
 #map {
 	height: 675px;
 	display: block;
+	/*z-index: 1;*/
+	border: 1px solid grey;
+}
+
+#resultmap {
+	
+}
+#search-form {
+	z-index: 0;	
+}
+
+#searchmap {
+	height: 400px;
+	display: block;
 	z-index: 0;
 	border: 1px solid grey;
 }
@@ -223,6 +237,10 @@ input.span2.search {
 	border: 1px solid grey;*/
 }
 
+#spatialsearch {
+	padding: 0px !important;
+}
+
 #show-search-options {
 	height:20px;
 	padding: 5px;
@@ -234,15 +252,25 @@ input.span2.search {
 	/*height:100%*/
 }
 
+.spacer {
+    height: 125px;
+    margin: 0 0 -125px 0;
+    /* margin: 20px 0 -50px 0; use this if you want #container to have a 'bottom padding', in this case of 20px */
+    background: transparent; /* you'll need this if #container's parent element has a different background from #container itself */
+}
+
 
 #advanced-search-form {
-	width: 96%; 
+	width: 1029px; 
 	margin-bottom: 20px;
 	border: 1px solid #cccccc; 
 	border-radius: 3px; 
 	display: inline-block;
 	padding: 10px;
-
+	position: absolute;
+	background-color: white;
+	box-shadow: 3px 3px 4px #BBB;
+	z-index: 0;
 }
 
 #search-button {
