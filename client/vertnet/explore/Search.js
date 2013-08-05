@@ -403,8 +403,8 @@ define([
       var exact = this.$('#exactphrase').val();
       var any = this.$('#anywords').val();
       var none = this.$('#nonewords').val();
-      var start = this.$('#datestart').val() + '-1-1';
-      var end = this.$('#dateend').val() + '-1-1';
+      var start = this.$('#datestart').val();
+      var end = this.$('#dateend').val();
       var type = this.$('#recordtype :selected').val();
       var season = this.$('#season :selected').val();
 
@@ -439,14 +439,19 @@ define([
       if (none) {
         query += [' AND (', none, ')'].join('');
       }
+
       if (start && !end) {
-        query += [ ' AND (eventdate > ', start, ') '].join('');      
+        start = Number(start) - 1;
+        query += [ ' eventdate > ', start + '-1-1 '].join('');      
       }
       if (!start && end) {
-        query += [' AND (eventdate < ', end, ') '].join('');
+        end = Number(end) + 1;
+        query += [' eventdate < ', end + '-1-1 '].join('');
       }
       if (start && end) {
-        query += [ ' AND (eventdate > ', start, ' ', 'eventdate < ', end, ') '].join('');      
+        start = Number(start) - 1;
+        end = Number(end) + 1;
+        query += [ ' eventdate > ', start + '-1-1 ', 'eventdate < ', end + '-1-1 '].join('');      
       }
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
