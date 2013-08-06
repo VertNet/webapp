@@ -263,6 +263,7 @@ def delete_entity(entity):
     yield op.db.Delete(entity)
 
 def query(q, limit, sort=None, curs=search.Cursor()):
+    limit = limit + 1
     if not curs:
         curs = search.Cursor()
     
@@ -278,8 +279,10 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             logging.info('No search results for: %s' % q)
             return [], None, 0
 
-    expressions = [SortExpression(expression='rank', default_value=0,
-        direction=SortExpression.DESCENDING)]    
+    expressions = []
+    # [SortExpression(expression='rank', default_value=0,
+    #     direction=SortExpression.DESCENDING)]    
+
     if sort:
         expressions.append(SortExpression(expression=sort, default_value='z', 
             direction=SortExpression.ASCENDING))
@@ -288,16 +291,16 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     
         options = search.QueryOptions(
             limit=limit,
-            number_found_accuracy=1000,
+            #number_found_accuracy=51,
             cursor=curs,
-            sort_options=sort_options,
-            returned_fields=['record', 'location'])        
+            sort_options=sort_options)
+            #returned_fields=['record', 'location'])        
     else:
         options = search.QueryOptions(
             limit=limit,
-            number_found_accuracy=1000,
-            cursor=curs,
-            returned_fields=['record', 'location'])        
+            #number_found_accuracy=51,
+            cursor=curs) #,
+            #returned_fields=['record', 'location'])        
 
     q = q.replace('class:', 'classs:')
     logging.info('QUERY %s' % q)
@@ -311,7 +314,6 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             results = search.Index(name='dwc', namespace=namespace).search(query)
             if results:
                 recs = map(_get_rec, results)
-                logging.info('SUCCESS recs=%s, curs=%s count=%s' % (recs, results.cursor, results.number_found))
                 return recs, results.cursor, results.number_found
             else:
                 logging.info('No search results for: %s' % q)
