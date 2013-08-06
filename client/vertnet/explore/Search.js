@@ -36,6 +36,7 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.DOWNLOAD_THRES = 1000;
+      this.PAGE_SIZE = 20;
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
@@ -558,7 +559,7 @@ define([
       this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
-        request = {limit:50, q:JSON.stringify({keywords: this.keywords})};
+        request = {limit:this.PAGE_SIZE - 1, q:JSON.stringify({keywords: this.keywords})};
         if (sort !== 'no sort') {
           request.sort = sort;
         }
@@ -610,7 +611,13 @@ define([
       }
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       this.countLoaded = items.length + this.occList.length;
-      this.$('.counter').text('1-' + this.countLoaded + ' of ' + displayCount);
+
+      if (items.length < this.PAGE_SIZE) {
+        this.$('.counter').text('1-' + this.countLoaded + ' of ' + this.countLoaded);
+      } else {
+        this.$('.counter').text('1-' + this.countLoaded + ' of many');
+      }
+
       this.response = response;
       this._showResultsTable(showResults);
       if (showResults) {
@@ -628,7 +635,8 @@ define([
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
       }
-      this._disableTablePager(this.count === this.countLoaded);
+      // this._disableTablePager(this.count === this.countLoaded);
+      this._disableTablePager(items.length < this.PAGE_SIZE);      
       this.spin.stop();
     },
 
