@@ -258,7 +258,13 @@ define([
         this._submitHandler(null, true);
       }, this));
 
-      this.$('#advanced-search-form').hide();
+      if (this.options.query.advanced) {
+        this.$('#advanced-search-form').show();
+        this.$('#search-keywords-div').hide();
+        delete this.options.query['advanced'];
+      } else {
+        this.$('#advanced-search-form').hide();
+      }
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
@@ -403,13 +409,14 @@ define([
       this.$('#occTable').popover('show');      
 
       setTimeout(_.bind(function() {
-        if (!_.isEmpty(this.options.query)) {
+        if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
+          delete this.options.query['advanced'];
           this._submitHandler(null, true);
         }
       }, this), 500);
 
       setTimeout(_.bind(function() {
-        if (!store.get('search-carat-closed')) {
+        if (!store.get('search-carat-closed') && !this.options.query.advanced) {
           this.$('#search-carat').popover({placement: 'top', content: 'Try advanced search!'});
           this.$('#search-carat').popover('show');
         } 
