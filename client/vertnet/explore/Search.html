@@ -252,25 +252,29 @@
     </div>
   </div>
 
-  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">Download all <span id="reccount"></span> search results</h3>
-    </div>
-    <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> when it's ready.</div>
-    <div id="queue" class="modal-body">
-      <p id="queue-msg">You're search results are pretty big so it's going to take us a few minutes to prepare them for download. Name your result set, give us your email, and we'll send you a download link as soon as it's ready. Simple as that!</p>
-      <p id="instant-msg">Your results are ready for download right now. Just name your result set, click the download button below, and you're set.</p>
-      <form id="dl-form">
-        <fieldset>
-          <input id='name' type="text" placeholder="Result set name" required>
-          <input id='email' placeholder="Your email address" type="email" required>
-        </fieldset>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" data-dismiss="modal">Close</button>
-      <button id="submit-download-btn" class="btn btn-success">Download</button>
+  <div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="myModalLabel">Download all <span id="reccount"></span> search results</h3>
+        </div>
+        <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> when it's ready.</div>
+        <div id="queue" class="modal-body">
+          <p id="queue-msg">You're search results are pretty big so it's going to take us a few minutes to prepare them for download. Name your result set, give us your email, and we'll send you a download link as soon as it's ready. Simple as that!</p>
+          <p id="instant-msg">Your results are ready for download right now. Just name your result set, click the download button below, and you're set.</p>
+          <form id="dl-form">
+            <fieldset>
+              <input id='name' type="text" placeholder="Result set name" required>
+              <input id='email' placeholder="Your email address" type="email" required>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">Close</button>
+          <button id="submit-download-btn" class="btn btn-success">Download</button>
+        </div>
+      </div>
     </div>
   </div>
 
