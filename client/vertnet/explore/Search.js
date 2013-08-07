@@ -195,6 +195,7 @@ define([
         if (this.$('#spatialfilter').is(':checked')) {
           $("#collapseOne").collapse('show');
           this.spatialSearch = true;
+          this.searchMap.resize();
         } else {
           $("#collapseOne").collapse('hide');
           this.spatialSearch = false;
@@ -298,7 +299,7 @@ define([
       if (store.get('protip-closed') === true) {
         this.$('#click-row-tip').hide();       
       } else {
-        this.$('#click-row-tip').bind('closed', _.bind(function () {
+        this.$('#click-row-tip').bind('closed.bs.alert', _.bind(function () {
           store.set('protip-closed', true);
         }, this));
       }
@@ -307,7 +308,7 @@ define([
       if (store.get('spatial-search-protip-closed') === true) {
         this.$('#spatial-search-tip').hide();       
       } else {
-        this.$('#spatial-search-tip').bind('closed', _.bind(function () {
+        this.$('#spatial-search-tip').bind('closed.bs.alert', _.bind(function () {
           store.set('spatial-search-protip-closed', true);
         }, this));
       }
@@ -317,7 +318,7 @@ define([
       //this.downloadTab = new Download(this.options, this.app, this.model);
       //this.$('#downloadform').html(this.downloadTab.render().el);
       this.$('#bottom-pager').hide();
-      this.$('#resultTabs a').on('shown', _.bind(function (e) {
+      this.$('#resultTabs a').on('shown.bs.tab', _.bind(function (e) {
         var tab = e.target.id;
         if (tab === 'maptab') {
           this.resultMap._updateMarkers();
@@ -431,7 +432,8 @@ define([
     _loadMore: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      if (this.countLoaded < this.count) {
+      // if (this.countLoaded < this.count) {
+      if (this.response.items.length >= this.PAGE_SIZE) {
         this.paging = true;
         this._executeSearch(null, true);
       }
@@ -559,7 +561,7 @@ define([
       this.model.set({terms: this.terms, keywords:this.keywords});
       if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
         this.spin.start(); 
-        request = {limit:this.PAGE_SIZE - 1, q:JSON.stringify({keywords: this.keywords})};
+        request = {limit:this.PAGE_SIZE, q:JSON.stringify({keywords: this.keywords})};
         if (sort !== 'no sort') {
           request.sort = sort;
         }
@@ -605,6 +607,7 @@ define([
       var count = 0;
       var howMany = 0;
       var displayCount = 0;
+      console.log(response);
       if (!this.paging) {
         this._clearResults();
         this.count = response.count;
@@ -612,14 +615,14 @@ define([
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       this.countLoaded = items.length + this.occList.length;
 
-      if (items.length < this.PAGE_SIZE) {
+      if (items.length < this.PAGE_SIZE || items.legth === 0) {
         this.$('.counter').text('1-' + this.countLoaded + ' of ' + this.countLoaded);
       } else {
         this.$('.counter').text('1-' + this.countLoaded + ' of many');
       }
 
       this.response = response;
-      this._showResultsTable(showResults);
+      this._showResultsTable(showResults || this.paging);
       if (showResults) {
         _.each(items, _.bind(function (i) {
           var model = new OccModel(i);
@@ -636,7 +639,7 @@ define([
         this.keywords.splice(0, this.keywords.length);
       }
       // this._disableTablePager(this.count === this.countLoaded);
-      this._disableTablePager(items.length < this.PAGE_SIZE);      
+      this._disableTablePager((items.length < this.PAGE_SIZE) || !response.cursor);      
       this.spin.stop();
     },
 
