@@ -146,6 +146,7 @@
         // Old values
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
+        var latlon = lat + ',' + lon;
         /*var sciname = model.get('scientificname') ? model.get('scientificname') : null;
         var year = model.get('year') ? parseInt(model.get('year')) : null;
         var country = model.get('country') ? model.get('country') : null;
@@ -176,6 +177,7 @@
           contentString += '<tr><td><b>Taxonomy</b></td><td>'+taxonomy+'</td></tr>';
           contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
           contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
+          contentString += '<tr><td><b>LatLon</b></td><td>'+latlon+'</td></tr>';
           /*contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
           if (sciname) {
             contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
