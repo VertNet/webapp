@@ -551,7 +551,7 @@ define([
       //this._prepTerms();
       this._explodeKeywords();
       this.model.set({terms: this.terms, keywords:this.keywords});
-      if ((_.size(this.terms) > 0) || (_.size(this.keywords) > 0)) {
+      if (_.size(this.keywords) > 0) {
         this.spin.start(); 
         request = {limit:this.PAGE_SIZE, q:JSON.stringify({keywords: this.keywords})};
         if (sort !== 'no sort') {

@@ -8,6 +8,7 @@ from mapreduce import operation as op
 import re
 import htmlentitydefs
 import os
+import time
 
 IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
 
@@ -244,16 +245,17 @@ def build_search_index(entity):
     if eventdate:
         doc.fields.append(search.DateField(name='eventdate', value=eventdate))
 
-    try:
-        namespace = namespace_manager.get_namespace()
-        search.Index('dwc', namespace=namespace).put(doc)
-        #logging.info('Put document into dwc index: %s' % data['keyname'])
-    except Exception, e:
-        logging.error('Put failed for doc %s (%s)' % (doc.doc_id, e))
-        return
-
-    # logging.info('Put document into dwc index: %s' % data['keyname'])
-
+    max_retries = 5
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            namespace = namespace_manager.get_namespace()
+            search.Index('dwc', namespace=namespace).put(doc)
+            return
+        except Exception, e:
+            logging.error('Put #%s failed for doc %s (%s)' % (retry_count, doc.doc_id, e))
+            retry_count += 1
+            time.sleep(1)
 
 def _get_rec(doc):
     for field in doc.fields:
