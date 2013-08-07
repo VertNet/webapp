@@ -273,6 +273,7 @@ define([
         //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
+        this.spatialMap.resize();
         store.set('search-carat-closed', true);
       }, this));
 

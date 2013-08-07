@@ -201,10 +201,11 @@ input.span2.search {
 }
 
 #occ-detail-map {
+  border: 1px solid grey;
   height: 200px;
   width: 100%;
   margin-bottom: 30px;
-  margin-top: 25px;
+  margin-top: 8px;
 }
 
 #mapper {
