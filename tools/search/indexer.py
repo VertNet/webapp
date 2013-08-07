@@ -19,6 +19,7 @@ def index():
 
 
 
+
 # create a subclass and override the handler methods
 class MyHTMLParser(HTMLParser):
     # def __init__(self):

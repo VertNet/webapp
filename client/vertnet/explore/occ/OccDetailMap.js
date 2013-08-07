@@ -40,7 +40,7 @@ define([
         if (!window.google || !window.google.maps) {
           return this;
         }
-        this.map = new google.maps.Map(this.$('#map')[0], this.options);
+        this.map = new google.maps.Map(this.$('#detailmap')[0], this.options);
         if (this.latlon) {
           marker = new google.maps.Marker({
             map: this.map,
@@ -48,8 +48,8 @@ define([
             animation: google.maps.Animation.DROP,
             position: this.latlon
           });
-          $('#occ-detail-map.occ-detail-map').css('height', '400px');
-          this.$('#map').css('height', '400px');
+          //$('#occ-detail-map.occ-detail-map').css('height', '400px');
+          //this.$('#map').css('height', '400px');
         } else {
           // this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
           $('#occ-detail-map.occ-detail-map').hide();

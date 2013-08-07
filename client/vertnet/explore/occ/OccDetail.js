@@ -4,8 +4,10 @@ define([
   'Underscore',
   'util',
   'explore/occ/DarwinCoreTab',
-  'text!explore/occ/OccDetail.html'
-  ], function ($, Backbone, _, util, DarwinCoreTab, template) {
+  'text!explore/occ/OccDetail.html',
+  'explore/occ/OccDetailMap',
+  'map'
+  ], function ($, Backbone, _, util, DarwinCoreTab, template, OccDetailMap, map) {
     return Backbone.View.extend({
 
       initialize: function(options, app) {
@@ -15,8 +17,45 @@ define([
 
       render: function() {
         this.$el.html(this.template(this.model.attributes));
-        this.darwinCoreTab = new DarwinCoreTab({model: this.model}, this.app);
-        this.$('#darwincore').html(this.darwinCoreTab.render().el);
+        //this.darwinCoreTab = new DarwinCoreTab({model: this.model}, this.app);
+        //this.$('#darwincore').html(this.darwinCoreTab.render().el);
+        map.init(_.bind(function() {
+          var lat = this.$('#DecimalLatitude').text();
+          var lon = this.$('#DecimalLongitude').text();
+          if (lat && lon) {
+            this.latlon = new google.maps.LatLng(lat, lon);
+            this.options = {
+              zoom: 6,
+              scrollwheel: false,
+              center: new google.maps.LatLng(lat, lon),
+              mapTypeId: google.maps.MapTypeId.TERRAIN
+            };
+          }
+          //this.mapView = new OccDetailMap({lat: lat, lon: lon});
+          //this.mapView.render();
+          //this.$('#map').css('height', '400px');
+          //this.$('#occ-detail-map').html(this.mapView.render().el);
+          //this.mapView.resize();
+          if (!this.map) {
+            if (!window.google || !window.google.maps) {
+              return this;
+            }
+            this.map = new google.maps.Map(this.$('#detailmap')[0], this.options);
+            if (this.latlon) {
+              marker = new google.maps.Marker({
+                map: this.map,
+                draggable: false,
+                animation: google.maps.Animation.DROP,
+                position: this.latlon
+              });
+              //$('#occ-detail-map.occ-detail-map').css('height', '400px');
+              //this.$('#map').css('height', '400px');
+            } else {
+              // this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
+              $('#occ-detail-map.occ-detail-map').hide();
+            }          
+          }
+        }, this));
         return this;
       },
 
@@ -26,26 +65,26 @@ define([
      },
 
      setup: function () {
-        this.darwinCoreTab.setup();
-        this.setTab(this.options.show);
-        if (this.options.show === 'datasource') {
-          this.$('#rights').hide();
-        } else {
-          this.$('#rights').show();          
-        }
-        this.$('#detailTabs a').click(_.bind(function (e) {
-          var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';
-          var path = util.getOccPath(this.model.get('keyname'), tab); 
-          if (tab === 'datasource') {
-            this.$('#rights').hide();
-          } else {
-            this.$('#rights').show();          
-          }
-           this.app.router.navigate(path);
-          this.setTab(tab);
-          this.darwinCoreTab.setup();
-        }, this));
-        window.scrollTo(0, 0);
+        //this.darwinCoreTab.setup();
+        // this.setTab(this.options.show);
+        // if (this.options.show === 'datasource') {
+        //   this.$('#rights').hide();
+        // } else {
+        //   this.$('#rights').show();          
+        // }
+        // this.$('#detailTabs a').click(_.bind(function (e) {
+        //   var tab = e.target.id === 'dwc' ? 'darwincore' : 'datasource';
+        //   var path = util.getOccPath(this.model.get('keyname'), tab); 
+        //   if (tab === 'datasource') {
+        //     this.$('#rights').hide();
+        //   } else {
+        //     this.$('#rights').show();          
+        //   }
+        //    this.app.router.navigate(path);
+        //   this.setTab(tab);
+        //   this.darwinCoreTab.setup();
+        // }, this));
+        // window.scrollTo(0, 0);
         return this;
       },
 

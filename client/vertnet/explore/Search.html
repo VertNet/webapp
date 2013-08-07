@@ -13,10 +13,10 @@
 
  <!-- Search form. -->
     <div id="search-form">
-      <div class="row-fluid">
-         <div class="span11">
+      <div class="row">
+         <div class="col-lg-11">
             <div id="search-keywords-div">
-              <input id="search-keywords-box" type="text" placeholder="Keywords (e.g., Bubo Colorado)">
+              <input id="search-keywords-box" type="text" placeholder="">
                 <a id="show-search-options" href="#">
                   <span id="search-carat" class="caret"></span>
                 </a>
@@ -25,47 +25,35 @@
 
             
             <div id="advanced-search-form">
-                <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
-                <legend>Advanced search</legend>
-                Find occurrences with...<p>
-                <form class="form-horizontal">
-                
-                <div class="control-group">
-                  <label class="control-label">These filters</label>
-                  <div id="filters" class="controls">
-                    <label class="checkbox inline">
-                      <input id="mappable" type="checkbox"> Is mappable
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="spatialfilter" type="checkbox"> Within point radius
-                    </label>                    
-                    <label class="checkbox inline">
-                      <input id="tissue" type="checkbox"> Has tissues
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="media" type="checkbox"> Has media
-                    </label>
-
-                   <!--  <label class="checkbox inline">
-                      <input id="manis" type="checkbox"> MaNIS
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="ornis" type="checkbox"> ORNIS
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="herpnet" type="checkbox"> HerpNet
-                    </label>
-                    <label class="checkbox inline">
-                      <input id="fishnet"type="checkbox"> FishNet
-                    </label> -->
+              <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
+              <legend>Advanced search</legend>
+              Find occurrences with...<p>
+              <form class="form-horizontal form-inline">
+                <!-- Filters -->
+                <div id="filters">
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">These filters</label>
+                      <div class="checkbox">
+                      <label class="col-lg-10">
+                        <input id="tissue" type="checkbox"> Has tissues
+                      </label>
+                      <label class="col-lg-10">
+                        <input id="media" type="checkbox"> Has media
+                      </label>
+                      <label class="col-lg-10">
+                        <input id="mappable" type="checkbox"> Is mappable
+                      </label>
+                      <label class="col-lg-10">
+                        <input id="spatialfilter" type="checkbox"> Is within a point radius...
+                      </label>                                          
+                    </div>
                   </div>
                 </div>
-
-                 <div class="3accordion" id="spatialsearch">
-                  <div class="3accordion-group">
-                    <div class="3accordion-heading">
+                <!-- Collapsible map for spatial search. -->
+                <div id="spatialsearch">
+                  <div>
+                    <div>
                       <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                         <!--  <span class="icon-arrow-down"></span>  -->
                       </a>
                     </div>
                     <div id="collapseOne" class="accordion-body collapse" style="height: 0px;">
@@ -74,43 +62,49 @@
                       </div>
                     </div>
                   </div>
-                </div>                  
-                <div class="control-group">
-                  <label class="control-label">All these words</label>
-                  <div class="controls">
-                    <input style="width:98%;" type="text" id="allwords" placeholder="mvz grinnell">
+                </div>
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">All these words</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="allwords" placeholder="mvz grinnell">
                   </div>
                 </div>
-                <div class="control-group">
-                  <label class="control-label">Exact phrase</label>
-                  <div class="controls">
-                    <input style="width:98%;" type="text" id="exactphrase" placeholder='"butorides virescens"'>
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">Exact phrase</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="exactphrase" placeholder='"butorides virescens"'>
+                  </div>
+                </div>                
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">Any of these words</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="anywords" placeholder='tissue OR preserved'>
                   </div>
                 </div>
-                <div class="control-group">
-                  <label class="control-label">Any of these words</label>
-                  <div class="controls">
-                    <input style="width:98%;" type="text" id="anywords" placeholder='tissue OR preserved'>
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">None of these words</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="nonewords" placeholder='NOT bufo NOT california'>
                   </div>
                 </div>
-                <div class="control-group">
-                  <label class="control-label">None of these words</label>
-                  <div class="controls">
-                    <input style="width:98%;" type="text" id="nonewords" placeholder='NOT bufo NOT california'>
-                  </div>
-                </div>
-                <div class="control-group">
-                  <label class="control-label">Years ranging from</label>
-                  <div class="controls">
-                    <input style="width:10%;" type="text" id="datestart" placeholder='1888'>
+                
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">Years ranging from</label>
+                  <div class="col-lg-10">
+                    <input style="width:10%;" class="form-control" type="text" id="datestart" placeholder='1888'>
                     to
-                    <input style="width:10%;" type="text" id="dateend" placeholder='1922'>
+                    <input style="width:10%;" class="form-control" type="text" id="dateend" placeholder='1922'>
                   </div>
                 </div>
-                <div class="control-group">
-                  <label class="control-label">Record type</label>
-                  <div class="controls">
-                    <select id="recordtype">
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">Record type</label>
+                  <div class="col-lg-10">
+                    <select class="form-control" id="recordtype">
                       <option value="Any type">Any type</option>
                       <option>Specimen</option>
                       <option>Observation</option>
@@ -118,27 +112,29 @@
                     </select>
                   </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Darwin Core terms</label>
-                    <div id="dwcterms" class="controls">
-                      <input id="institutioncode" style="width:17%;" type="text" placeholder="InstitutionCode">
-                      <input id="catalognumber" style="width:17%;" type="text" placeholder="CatalogNumber">
-                      <input id="class" style="width:17%;" type="text" placeholder="Class">
-                      <input id="genus" style="width:18%;" type="text" placeholder="Genus">
-                      <input id="specificepithet" style="width:17%;" type="text" placeholder="SpecificEpithet">
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Darwin Core terms</label>
+                    <div id="dwcterms" class="col-lg-10">
+                      <input id="institutioncode" class="form-control" style="width:19%;" type="text" placeholder="InstitutionCode">
+                      <input id="catalognumber" class="form-control" style="width:19%;" type="text" placeholder="CatalogNumber">
+                      <input id="class" class="form-control" style="width:19%;" type="text" placeholder="Class">
+                      <input id="genus" class="form-control" style="width:19%;" type="text" placeholder="Genus">
+                      <input id="specificepithet" class="form-control" style="width:22%;" type="text" placeholder="SpecificEpithet">
                       <p>
-                      <input id="country" type="text" style="width:17%; margin-top:10px;" placeholder="Country">
-                      <input id="stateprovince" style="width:17%; margin-top:10px;" type="text" placeholder="StateProvince">
-                      <input id="county" style="width:17%; margin-top:10px;" type="text" placeholder="County">
-                      <input id="year" type="text" style="width:18%; margin-top:10px;" placeholder="Year">
-                      <input id="recordedby" style="width:17%; margin-top:10px;" type="text" placeholder="RecordedBy">
+                      <input id="country" type="text" class="form-control" style="width:19%; margin-top:10px;" placeholder="Country">
+                      <input id="stateprovince" class="form-control"style="width:19%; margin-top:10px;" type="text" placeholder="StateProvince">
+                      <input id="county" class="form-control" style="width:19%; margin-top:10px;" type="text" placeholder="County">
+                      <input id="year" class="form-control" type="text" style="width:19%; margin-top:10px;" placeholder="Year">
+                      <input id="recordedby" class="form-control" style="width:22%; margin-top:10px;" type="text" placeholder="RecordedBy">
                       </p>
                     </div>
-                </div>
-                <div class="control-group">
-                  <label class="control-label">Sorted by</label>
-                  <div class="controls">
-                    <select id="sort">
+                </div>                
+
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">Sorted by</label>
+                  <div class="col-lg-10">
+                    <select class="form-control" id="sort">
                       <option value="No sort">No sort</option>
                       <option value="institutioncode">InstitutionCode</option>
                       <option value="catalognumber">CatalogNumber</option>
@@ -153,38 +149,13 @@
                     </select>
                   </div>
                 </div>    
-<!--                 <div class="control-group">
-                  <label class="control-label">Season</label>
-                  <div class="controls">
-                    <select id="season">
-                      <option value="Any season">Any season</option>
-                      <option value="Northern spring">Northern spring</option>
-                      <option value="Northern summer">Northern summer</option>
-                      <option value="Northern fall">Northern fall</option>
-                      <option value="Northern winter">Northern winter</option>
-                      <option value="Southern spring">Southern spring</option>
-                      <option value="Southern summer">Southern summer</option>
-                      <option value="Southern fall">Southern fall</option>
-                      <option value="Southern winter">Southern winter</option>
-                    </select>
-                  </div>
-                </div>  -->   
-                
-               
-               <!--  <div class="control-group">
-                  <div class="controls">
-                    <button id="advanced-search-button" type="button" class="btn btn-large btn-primary">
-                      <span class="icon-search icon-white"></span>
-                    </button>
-                  </div>
-                </div> -->
               </form>
               <div class="spacer"></div>
             </div>
           </div>
-          <div class="span1">
+          <div class="col-lg-1">
             <button id="search-button" type="button" class="btn btn-large btn-primary">
-              <span class="icon-search icon-white"></span>
+              <span class="glyphicon glyphicon-search icon-white"></span>
             </button>
           </div>
         </div>
@@ -207,11 +178,12 @@
   </div>
 
   <div style="visibility:hidden" id="load-more-control">
-    <div class="control-group">
+<!--     <div class="form-group">
         <label class="button">
-          <button id="loadmore" class="btn btn-mini" type="submit" ><strong>Load more...</strong></button>
-        </label>
-    </div>
+ -->          <button id="loadmore" type="button" class="btn btn-primary">Load more...</button>
+          <!-- <button id="loadmore" class="btn btn-mini" type="submit" ><strong>Load more...</strong></button> -->
+<!--         </label>
+    </div> -->
   </div>
 
   <!-- Occurrence search sub-tabs for table, map, download. -->
@@ -228,11 +200,11 @@
     <div class="tab-pane fade in active" id="table">   
       
       <!-- <div class="container-fluid"> -->
-        <div class="row-fluid">
-          <div class="span1 offset10">
+        <div class="row">
+          <div class="col-lg-1 col-offset-10">
             <span class="counter">0 results</span>
           </div>
-          <div class="span1">
+          <div class="col-lg-1">
             <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
@@ -256,8 +228,8 @@
         </tbody>
       </table>
       
-      <div id="bottom-pager" class="row-fluid">
-        <div class="span6">
+      <div id="bottom-pager" class="row">
+        <div class="col-lg-6">
           <ul class="pager load-more">
             <li class="table-pager">
               <a href="#">Load more results...</a>
@@ -268,11 +240,11 @@
     </div>  
     <!-- Occurrence search: Results map tab. -->
     <div class="tab-pane fade" id="tablemap">
-        <div class="row-fluid">
-          <div class="span1 offset10">
+        <div class="row">
+          <div class="col-lg-1 col-offset-10">
             <span class="counter"></span>
           </div>
-          <div id="download-span" class="span1">
+          <div id="download-span" class="col-lg-1">
             <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
           </div>
         </div>
