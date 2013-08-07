@@ -305,15 +305,6 @@ define([
         }, this));
       }
 
-      // this.$('#spatial-search-tip').show(); 
-      if (store.get('spatial-search-protip-closed') === true) {
-        this.$('#spatial-search-tip').hide();       
-      } else {
-        this.$('#spatial-search-tip').bind('closed.bs.alert', _.bind(function () {
-          store.set('spatial-search-protip-closed', true);
-        }, this));
-      }
-
       this.$("#search-keywords-box").focus();
       this.spin = new Spin(this.$('.search-spinner'));
       //this.downloadTab = new Download(this.options, this.app, this.model);
@@ -420,7 +411,7 @@ define([
 
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
-          this.$('#search-carat').popover({placement: 'top', content: 'Try advanced search!'});
+          this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
           this.$('#search-carat').popover('show');
         } 
 

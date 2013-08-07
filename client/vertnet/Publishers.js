@@ -29,11 +29,11 @@
         if (store.get('protip-pub-closed') === true) {
           this.$('#click-row-tip').hide();       
         } else {
-          this.$('#click-row-tip').bind('closed', _.bind(function () {
+          this.$('.close').click(_.bind(function () {
             store.set('protip-pub-closed', true);
           }, this));
         }
-          return this;
+        return this;
       },
 
       _clickHandler: function(e) {
