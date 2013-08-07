@@ -6,6 +6,7 @@ def fix_path():
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'vertnet'))
 
 fix_path()
+IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
 
 appstats_CALC_RPC_COSTS = True
 COOKIE_KEY = "\xb4\xa4\x94x\xee6\x16\x84r'\xf2~a\xad^\xaf,<2\x84!\xc35m\xd9.f\xad~\xdd\xb2q\xac\xda\xb3\xd7\xc5\xc3{\x05tx\xfd\x94\xc0J\xbdw\xe2\xa7\xbfjc\x90\x1f\xac\xb0\xe7K\xedg,\x1a\xdb"
@@ -20,4 +21,7 @@ COOKIE_KEY = "\xb4\xa4\x94x\xee6\x16\x84r'\xf2~a\xad^\xaf,<2\x84!\xc35m\xd9.f\xa
 
 # Called only if the current namespace is not set.
 def namespace_manager_default_namespace_for_request():
-    return 'index000001'
+    if IS_DEV:
+    	return ''
+    else:
+    	return 'index000001'

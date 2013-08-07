@@ -22,6 +22,8 @@ handlers:
 - url: /css
   static_dir: client/vertnet/css
 
+- url: /fonts
+  static_dir: client/vertnet/fonts
 - url: /vertnet
   static_dir: client/vertnet
 

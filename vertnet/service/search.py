@@ -7,6 +7,9 @@ from google.appengine.api.search import SortOptions, SortExpression
 from mapreduce import operation as op
 import re
 import htmlentitydefs
+import os
+
+IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
 
 # TODO: Pool search api puts?
 
@@ -263,14 +266,19 @@ def delete_entity(entity):
     yield op.db.Delete(entity)
 
 def query(q, limit, sort=None, curs=search.Cursor()):
-    limit = limit + 1
+    if IS_DEV:
+        index_name = 'dwc_search'
+    else:
+        index_name = 'dwc'
+
+    # limit = limit + 1
     if not curs:
         curs = search.Cursor()
     
     if q.startswith('id:'):
         did = q.split(':')[1].strip()
         namespace = namespace_manager.get_namespace()
-        results = search.Index(name='dwc', namespace=namespace).get_range(start_id=did, limit=1)
+        results = search.Index(name=index_name, namespace=namespace).get_range(start_id=did, limit=1)
         if results:
             recs = map(_get_rec, results)
             logging.info('SUCCESS recs=%s' % recs)
@@ -291,14 +299,14 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     
         options = search.QueryOptions(
             limit=limit,
-            #number_found_accuracy=51,
+            # number_found_accuracy=limit+1,
             cursor=curs,
             sort_options=sort_options)
             #returned_fields=['record', 'location'])        
     else:
         options = search.QueryOptions(
             limit=limit,
-            #number_found_accuracy=51,
+            number_found_accuracy=limit+1,
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
 
@@ -311,7 +319,7 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     while retry_count < max_retries:
         try:
             namespace = namespace_manager.get_namespace()
-            results = search.Index(name='dwc', namespace=namespace).search(query)
+            results = search.Index(name=index_name, namespace=namespace).search(query)
             if results:
                 recs = map(_get_rec, results)
                 return recs, results.cursor, results.number_found
