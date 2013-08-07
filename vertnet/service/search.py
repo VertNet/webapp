@@ -310,7 +310,6 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
 
-    q = q.replace('class:', 'classs:')
     logging.info('QUERY %s' % q)
     query = search.Query(query_string=q, options=options)
 
