@@ -63,7 +63,7 @@ define([
       'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks'],
 
     DWC_SUMMARY: ['InstitutionCode', 'CollectionCode', 'CatalogNumber',
-      'Preperations', 'Year', 'Country', 'State', 'County',
+      'Preperations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
     DWC_ALL: function() {
