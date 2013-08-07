@@ -6,6 +6,7 @@
 
   <ul id="detailTabs" class="nav nav-tabs">
     <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>     
+    <li><a class="" href="#datasource" data-toggle="tab">Data Rights</a></li>
     <li class="dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
       <ul class="dropdown-menu">
@@ -18,14 +19,25 @@
         <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
       </ul>
     </li>
-    <li><a class="" href="#datasource" data-toggle="tab">Data Rights</a></li>
   </ul>
 
   <div id="myTabContent" class="tab-content">
 
   <div class="tab-pane fade active in" id="summary">
     <p>
-    <p class="lead">Summary for <%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></p>
+      <div class="row">
+        <div class="col-lg-11">
+          <span class="lead">Occurrence <%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></span>      
+        </div>
+        <div class="col-lg-2">
+          <%if (this.model.get('associatedmedia')) { 
+            var link = this.model.get('associatedmedia'); %>
+            <div id="hasmedia">
+            <span id="has-media-icon" class="glyphicon glyphicon-film"></span> <a target='_blank' href="<%= link %>">View media</a></div>
+         <% } %>
+        </div>
+      </div>
+
     <div id="occ-detail-map" class="occ-detail-map">
       <div id="detailmap"></div>
     </div>
@@ -231,10 +243,6 @@
 
     <!-- All tab.  -->
     <div class="tab-pane" id="allterms">
-       <%if (this.model.get('associatedmedia')) { 
-          var link = this.model.get('associatedmedia'); %>
-          <p class="lead"><span id="has-media-icon" class="glyphicon glyphicon-film"></span> Media associated with this occurrence: <a target='_blank' href="<%= link %>">Click here</a></p>
-       <% } %>
        <table class="table table-striped">
         <thead>
           <tr>

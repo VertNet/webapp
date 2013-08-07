@@ -34,7 +34,7 @@ define([
       // Open the occurrence detail page.
       _clickHandler: function(e) {
         var keyname = this.model.get('keyname');
-        var path = window.location.origin + '/' + util.getOccPath(keyname, 'darwincore');
+        var path = window.location.origin + '/' + util.getOccPath(keyname);
         var sel = getSelection().toString();
         if (!sel) {
           this.trigger('onClick');
