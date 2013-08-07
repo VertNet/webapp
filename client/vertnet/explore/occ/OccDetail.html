@@ -1,7 +1,7 @@
 <div id="occ-detail-content" class="container">
 
   <div class="page-header">
-    <h1>Occurrence <small><%= this.model.getSciName() %></small></h1>
+    <h1>Occurrence <small><%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></small></h1>
   </div>
 
   <ul id="detailTabs" class="nav nav-tabs">
@@ -25,19 +25,12 @@
 
   <div class="tab-pane fade active in" id="summary">
     <p>
-      <div class="row">
-        <div class="col-lg-11">
-          <span class="lead">Occurrence <%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></span>      
-        </div>
-        <div class="col-lg-2">
-          <%if (this.model.get('associatedmedia')) { 
-            var link = this.model.get('associatedmedia'); %>
-            <div id="hasmedia">
-            <span id="has-media-icon" class="glyphicon glyphicon-film"></span> <a target='_blank' href="<%= link %>">View media</a></div>
-         <% } %>
-        </div>
-      </div>
-
+    <!-- <p class="lead">Overview</p> -->
+    <%if (this.model.get('associatedmedia')) { 
+        var link = this.model.get('associatedmedia'); %>
+        <div id="hasmedia">
+        <span id="has-media-icon" class="glyphicon glyphicon-film"></span> <a target='_blank' href="<%= link %>">View media</a></div>
+     <% } %>
     <div id="occ-detail-map" class="occ-detail-map">
       <div id="detailmap"></div>
     </div>
@@ -274,7 +267,7 @@
  -->      <!-- Data source tab -->
     <div id="datasource" class="tab-pane fade"> 
       <p>
-      <p class="lead">Data rights for <%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></p>
+      <!-- <p class="lead">Data rights</p> -->
       <dl class="">
         <dt>Rights</dt>
         <dd><% if (this.model.get('emlrights')) { %>
