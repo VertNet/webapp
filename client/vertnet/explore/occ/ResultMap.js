@@ -161,7 +161,7 @@
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
         var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
-        var url = '../'+specificURLright+'&view=darwincore';
+        var url = '../'+specificURLright;
 
         var latlon = null;
         var marker = null;

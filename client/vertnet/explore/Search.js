@@ -190,6 +190,7 @@ define([
      },
 
     setup: function () {
+      this.$('#whoops').hide();
       // this.$('#resultmap').hide();
       $("#spatialfilter").click(_.bind(function() {
         if (this.$('#spatialfilter').is(':checked')) {
@@ -548,7 +549,19 @@ define([
     _executeSearch: function() {
       var request = null;
       var sort = this.$('#sort :selected').val().toLowerCase();
-      //this._prepTerms();
+      
+      if (!this.retrying) {
+        this.retryCount = 0;
+        this.maxRetries = 3;
+        this.$('#whoops').hide();
+        this.$('#whoops').removeClass('alert-danger');
+      } 
+
+      if (this.waitingForResponse) {
+        console.log('Execute search? Nope. Waiting for response...');
+        return;
+      }
+
       this._explodeKeywords();
       this.model.set({terms: this.terms, keywords:this.keywords});
       if (_.size(this.keywords) > 0) {
@@ -560,11 +573,30 @@ define([
          if (this.response && this.response.cursor) {
           request['cursor'] = this.response.cursor;
         }
+      
+        this.waitingForResponse = true;        
         rpc.execute('/service/rpc/record.search', request, {
-          success: _.bind(this._resultsHandler, this), 
+          success: _.bind(function(response) {
+            this.waitingForResponse = false;
+            this.retrying = false;
+            this.$('#whoops').hide();
+            this._resultsHandler(response);
+          }, this), 
           error: _.bind(function(x) {
-            console.log('ERROR: ', request);
+            console.log('ERROR #' + this.retryCount + ': ', request);
             this.spin.stop();
+            this.waitingForResponse = false;
+            this.retrying = false;
+            if (this.retryCount < this.maxRetries) {
+              this.$('#whoops').html('<strong>Hmmmm.</strong> Search is a little slow right now! Automatic retry ' + (this.retryCount+1) + ' of ' + this.maxRetries + '...');              
+              this.$('#whoops').show();
+              this.retrying = true;
+              this.retryCount += 1;
+              this._executeSearch();
+            } else {
+              this.$('#whoops').addClass('alert-danger');
+              this.$('#whoops').html('<strong>Whoops!</strong> Search failed. We notified the team. Please try adding additional keywords and searching again.');              
+            }
           }, this)
         });
       } else {
