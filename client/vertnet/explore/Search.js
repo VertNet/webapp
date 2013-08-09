@@ -190,6 +190,12 @@ define([
      },
 
     setup: function () {
+      $("#tissue,#media,#mappable").each(_.bind(function(index, el) {
+          $(el).click(_.bind(function() {
+            this._submitHandler(null, true);
+        }, this))
+      }, this));
+
       this.$('#whoops').hide();
       // this.$('#resultmap').hide();
       $("#spatialfilter").click(_.bind(function() {
@@ -274,7 +280,9 @@ define([
         //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
-        this.spatialMap.resize();
+        if (this.spatialMap) {
+          this.spatialMap.resize();
+        }
         store.set('search-carat-closed', true);
       }, this));
 
