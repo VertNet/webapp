@@ -55,6 +55,7 @@ class RecordService(remote.Service):
         q = json.loads(message.q)
         logging.info('Q %s' % q)
         keywords = ' '.join([x for x in q['keywords'] if x])
+        taskqueue.add(url='/apitracker', params=dict(query=keywords), queue_name="apitracker")
         sort = message.sort
         if 'distance' in keywords:
             sort = None
