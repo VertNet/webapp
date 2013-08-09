@@ -7,8 +7,13 @@ from google.appengine.api.search import SortOptions, SortExpression
 from mapreduce import operation as op
 import re
 import htmlentitydefs
+from vertnet.service.model import IndexJob
 import os
 import time
+from google.appengine.ext import ndb
+from google.appengine.api import files
+from mapreduce import context
+
 
 IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
 
@@ -193,6 +198,36 @@ def get_rec_dict(rec):
             val[name] = value
     return val
 
+    @classmethod
+    def initalize(cls, resource):
+        namespace = namespace_manager.get_namespace()
+        filename = '/gs/vn-indexer/failures-%s-%s.csv' % (namespace, resource)
+        log = cls.get_or_insert(key_name=filename, namespace=namespace)
+        return log
+
+def handle_failed_index_put(line, resource, did, write_path, mrid):
+    logging.info('Handling failed index.put() - mrid:%s did:%s write_path:%s' % (mrid, did, write_path))
+    max_retries = 5
+    retry_count = 0
+
+    # Write line to file:
+    while retry_count < max_retries:
+        try:
+            with files.open(write_path, 'a') as f:
+                f.write('%s\n' % line)
+                f.close(finalize=False)
+                logging.info('Successfully logged failure to GCS for %s' % did)
+                return
+        except:
+            logging.error('Failure %s of %s to write line to failure log: %s' % (retry_count, max_retries, line))
+            retry_count += 1
+
+    logging.critical('Failed to index and failed to log %s' % did)
+    namespace = namespace_manager.get_namespace()
+    job = IndexJob.get_by_id(mrid, namespace=namespace)
+    job.failed_logs.append(did)
+    job.put()
+
 def build_search_index(entity):
     #data = json.loads(entity.record)
     data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
@@ -245,17 +280,25 @@ def build_search_index(entity):
     if eventdate:
         doc.fields.append(search.DateField(name='eventdate', value=eventdate))
 
-    max_retries = 5
+    max_retries = 2
     retry_count = 0
     while retry_count < max_retries:
         try:
             namespace = namespace_manager.get_namespace()
             search.Index('dwc', namespace=namespace).put(doc)
-            return
+            return # Successfully indexed record.
         except Exception, e:
             logging.error('Put #%s failed for doc %s (%s)' % (retry_count, doc.doc_id, e))
             retry_count += 1
-            time.sleep(1)
+
+    # Failed to index record, so handle it:
+    resource = '%s-%s' % (resource_slug, data['harvestid'])
+    did = data['keyname']
+    ctx = context.get()
+    mrid = ctx.mapreduce_id
+    params = ctx.mapreduce_spec.mapper.params
+    write_path = params['write_path']
+    handle_failed_index_put(entity, resource, did, write_path, mrid)
 
 def _get_rec(doc):
     for field in doc.fields:

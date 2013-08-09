@@ -8,6 +8,14 @@ from vertnet.service import util
 import json
 import logging
 
+# Model for MapReduce index jobs. Key is mapreduce id:
+class IndexJob(ndb.Model):
+    write_path = ndb.TextProperty(required=True)
+    failed_logs = ndb.StringProperty(repeated=True)
+    resource = ndb.StringProperty()
+    done = ndb.BooleanProperty(default=False)
+    failures = ndb.ComputedProperty(lambda self: len(self.failed_logs) > 1)
+
 # Dummpy stats for testing.
 DUMMY_STATS = dict(
     record_count=1606374, 

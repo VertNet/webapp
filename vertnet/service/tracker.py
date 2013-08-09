@@ -23,8 +23,17 @@ def apikey():
 
 class TrackerHandler(webapp2.RequestHandler):
     def post(self):  
-        query = self.request.get('query')
-        log_sql = """INSERT INTO query_log(client, query) VALUES ('%s','%s')""" % (CLIENT, query)
+        query, error, type, count, downloader, latlon = map(self.request.get, ['query', 'error', 'type', 'count', 'downloader', 'latlon'])
+        try:
+            count = int(count)
+        except:
+            count = 0
+        try:
+            lat, lon = map(float, latlon.split(','))
+        except:
+            lat, lon = -99999, -99999
+        log_sql = """INSERT INTO query_log(client,query,error,type,count,downloader,lat,lon) VALUES ('%s','%s','%s','%s',%s,'%s',%s,%s);update query_log set the_geom = CDB_LatLng(lat,lon)""" 
+        log_sql = log_sql % (CLIENT, query, error, type, count, downloader,lat,lon)
         rpc = urlfetch.create_rpc()
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
         urlfetch.make_fetch_call(rpc, log_url)
