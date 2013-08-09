@@ -62,16 +62,20 @@ class RecordService(remote.Service):
 
         logging.info('keywords=%s, limit=%s, sort=%s, curs=%s' % (keywords, limit, sort, curs))
 
-        recs, cursor, count = vnsearch.query(keywords, limit, sort=sort, curs=curs)
+        result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
+        if len(result) == 3:
+            recs, cursor, count = result
+        else:
+            response = RecordList(error=unicode(result[0].__class__.__name__))
+            return response
+
         if cursor:
             cursor = cursor.web_safe_string
 
         items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
             for x in recs if x]
 
-        logging.info('ITEMS CHECK')
         response = RecordList(items=items, cursor=cursor, count=count)
-        logging.info('RESPONSE CHECK %s ' % response)
 
         return response
 
