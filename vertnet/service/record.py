@@ -45,6 +45,10 @@ class RecordService(remote.Service):
         response = record_list(message.limit, curs, q, message=True)
         return response
 
+    def initialize_request_state(self, state):
+        self.cityLatLong = state.headers.get('X-AppEngine-CityLatLong')
+        logging.info('CITY_LAT_LONG %s' % self.cityLatLong)
+
     @remote.method(RecordList, RecordList)
     def search(self, message):
         curs = None
@@ -55,7 +59,6 @@ class RecordService(remote.Service):
         q = json.loads(message.q)
         logging.info('Q %s' % q)
         keywords = ' '.join([x for x in q['keywords'] if x])
-        taskqueue.add(url='/apitracker', params=dict(query=keywords), queue_name="apitracker")
         sort = message.sort
         if 'distance' in keywords:
             sort = None
@@ -63,11 +66,24 @@ class RecordService(remote.Service):
 
         logging.info('keywords=%s, limit=%s, sort=%s, curs=%s' % (keywords, limit, sort, curs))
 
+        logging.info('REQUEST LATLON %s' % self.cityLatLong)
+
         result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
         if len(result) == 3:
             recs, cursor, count = result
+            if not message.cursor:
+                type = 'query'
+                query_count = count
+            else:
+                type = 'query-view'
+                query_count = limit
+            params = dict(query=keywords, type=type, count=query_count, latlon=self.cityLatLong)
+            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
-            response = RecordList(error=unicode(result[0].__class__.__name__))
+            error = result[0].__class__.__name__
+            params = dict(error=error, query=keywords, type='query', latlon=self.cityLatLong)
+            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+            response = RecordList(error=unicode(error))
             return response
 
         if cursor:

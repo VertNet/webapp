@@ -257,7 +257,7 @@ define([
         this._submitHandler(null, true);
       }, this));
       
-      this.$('#advanced-search-button').click(_.bind(function() {
+      this.$('#search-button-advanced').click(_.bind(function() {
         this._submitHandler(null, true);
       }, this));
 

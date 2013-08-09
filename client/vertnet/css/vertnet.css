@@ -294,6 +294,11 @@ input.span2.search {
 	margin-bottom: 10px;
 }
 
+#search-button-advanced {
+	width: 97px;
+	height: 63px;
+}
+
 
 #homesearch-button {
 	width: 97px;
