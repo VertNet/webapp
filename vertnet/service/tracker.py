@@ -3,7 +3,12 @@ import webapp2
 import urllib
 import logging
 import os
-import json
+
+IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
+if IS_DEV:
+    CLIENT = 'portal-dev'
+else:
+    CLIENT = 'portal-prod'
 
 from google.appengine.api import urlfetch
 
@@ -18,25 +23,15 @@ def apikey():
 
 class TrackerHandler(webapp2.RequestHandler):
     def post(self):  
-        logging.info("HIiiiiii")
-        log_sql = """INSERT INTO api_log(version,keywords,genus,specificepithet,year,country,institutioncode) 
-           VALUES ('%s','%s','%s','%s','%s','%s','%s')"""
+        query = self.request.get('query')
+        log_sql = """INSERT INTO query_log(client, query) VALUES ('%s','%s')""" % (CLIENT, query)
         rpc = urlfetch.create_rpc()
-        query = json.loads(self.request.get('query'))
-        keywords = ' '.join(query['keywords'])
-        g = query['terms'].get('genus', '')
-        se = query['terms'].get('specificepithet', '')
-        y = query['terms'].get('year', '')
-        c = query['terms'].get('country', '')
-        ic = query['terms'].get('institutioncode', '')
-        version = '0.0.1'
-        log_sql = log_sql % (version, keywords, g, se, y, c, ic)
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
         urlfetch.make_fetch_call(rpc, log_url)
         try:
             rpc.get_result()
         except urlfetch.DownloadError:
-            logging.error("Error logging API(%s, %s)" % (query, version))            
+            logging.error("Error logging API - %s" % (query))            
             
 api = webapp2.WSGIApplication(
     [('/apitracker', TrackerHandler)],
