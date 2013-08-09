@@ -374,32 +374,32 @@ define([
 
       this.timer = null;
       // $(document).on('keyup', _.bind(function(e) {
-      this.$('#search-form').on('keyup', _.bind(function(e) {
-        var q = this.$('#search-keywords-box').val();
-        var radius = null;
-        if (!this.$('#search-keywords-div').is(":visible")) {
-          return;
-        }
-        if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
-          return;
-        }
-        if (!this.spatialSearch && this.marker) {
-          this.marker.setMap(null);
-        } 
-        if (!this.spatialSearch && this.circle) {
-          this.circle.setMap(null);
-        }
-        this._prepTerms();
-        this._explodeKeywords();
-        if (this.timer) {
-          clearTimeout(this.timer);
-        }
-        this.timer = setTimeout(_.bind(function() {
-          if (this.$('#search-keywords-div').is(":visible")) {
-            this._submitHandler(null, true);
-          }
-        }, this), 300);
-      }, this));
+      // this.$('#search-form').on('keyup', _.bind(function(e) {
+      //   var q = this.$('#search-keywords-box').val();
+      //   var radius = null;
+      //   if (!this.$('#search-keywords-div').is(":visible")) {
+      //     return;
+      //   }
+      //   if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
+      //     return;
+      //   }
+      //   if (!this.spatialSearch && this.marker) {
+      //     this.marker.setMap(null);
+      //   } 
+      //   if (!this.spatialSearch && this.circle) {
+      //     this.circle.setMap(null);
+      //   }
+      //   this._prepTerms();
+      //   this._explodeKeywords();
+      //   if (this.timer) {
+      //     clearTimeout(this.timer);
+      //   }
+      //   this.timer = setTimeout(_.bind(function() {
+      //     if (this.$('#search-keywords-div').is(":visible")) {
+      //       this._submitHandler(null, true);
+      //     }
+      //   }, this), 300);
+      // }, this));
 
       this.$('#occTable').popover('show');      
 
@@ -557,8 +557,8 @@ define([
         this.$('#whoops').removeClass('alert-danger');
       } 
 
-      if (this.waitingForResponse) {
-        console.log('Execute search? Nope. Waiting for response...');
+      if (this.waitingForResponse || this.cancel) {
+        console.log('No execute search... Waiting for response or a cancelled request.');
         return;
       }
 
@@ -577,32 +577,72 @@ define([
         this.waitingForResponse = true;        
         rpc.execute('/service/rpc/record.search', request, {
           success: _.bind(function(response) {
+            if (response.error) {
+              this._handleError(response.error);
+              return;
+            }
+            if (this.cancelSearch) {
+              this.cancelSearch = false;
+              this.waitingForResponse = false;
+              this.$('#whoops').hide();
+              this._clearResults();
+              this._showResultsTable(false);
+              this.spin.stop();
+              return;
+            }
             this.waitingForResponse = false;
             this.retrying = false;
             this.$('#whoops').hide();
             this._resultsHandler(response);
           }, this), 
           error: _.bind(function(x) {
-            console.log('ERROR #' + this.retryCount + ': ', request);
-            this.spin.stop();
-            this.waitingForResponse = false;
-            this.retrying = false;
-            if (this.retryCount < this.maxRetries) {
-              this.$('#whoops').html('<strong>Hmmmm.</strong> Search is a little slow right now! Automatic retry ' + (this.retryCount+1) + ' of ' + this.maxRetries + '...');              
-              this.$('#whoops').show();
-              this.retrying = true;
-              this.retryCount += 1;
-              this._executeSearch();
-            } else {
-              this.$('#whoops').addClass('alert-danger');
-              this.$('#whoops').html('<strong>Whoops!</strong> Search failed. We notified the team. Please try adding additional keywords and searching again.');              
-            }
+            this._handleError(x)  
           }, this)
         });
       } else {
         this._clearResults();
         this._showResultsTable(false);
         this.spin.stop();
+      }
+    },
+
+    _handleError: function(error) {
+      console.log(error);
+      if (error === 'QueryError' || error === 'InvalidRequest') {
+        this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>Whoops!</strong> Invalid query! Check the syntax and try again.');              
+        this.$('#whoops').show();
+        this.waitingForResponse = false;
+        this.spin.stop();
+        return;
+      }
+      if (this.cancelSearch) {
+        this.cancelSearch = false;
+        this.waitingForResponse = false;
+        this._clearResults();
+        this._showResultsTable(false);
+        this.$('#whoops').hide();
+        this.spin.stop();
+        return;
+      }
+      this.spin.stop();
+      this.waitingForResponse = false;
+      this.retrying = false;
+      if (this.retryCount < this.maxRetries) {
+        this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>Hmmmm.</strong> Search is a little slow right now! Automatic retry ' + (this.retryCount+1) + ' of ' + this.maxRetries + '... (<a id="whoops-cancel" href="#">cancel</a>)');              
+        this.$('#whoops-cancel').click(_.bind(function() {
+          this.cancelSearch = true;
+          this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>OK!</strong> Cancelling search request now. Please try adding additional keywords and searching again. Almost done cancelling...');              
+          this._clearResults();
+          this._showResultsTable(false);
+          // this.spin.stop();
+        }, this));
+        this.$('#whoops').show();
+        this.retrying = true;
+        this.retryCount += 1;
+        this._executeSearch();
+      } else {
+        this.$('#whoops').addClass('alert-danger');
+        this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>Whoops!</strong> Search failed. We notified the team. Please try adding additional keywords and searching again.');              
       }
     },
 
@@ -637,12 +677,22 @@ define([
         this.count = response.count;
       }
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      displayCount = null;
+      if (response.count < 100) {
+        displayCount = 'dozens';
+      } else if (response.count < 1000) {
+        displayCount = 'hundreds';
+      } else if (response.count < 1000000) {
+        displayCount = 'thousands';
+      } else {
+        displayCount = 'millions';
+      }
       this.countLoaded = items.length + this.occList.length;
 
       if (items.length < this.PAGE_SIZE || items.legth === 0) {
         this.$('.counter').text('1-' + this.countLoaded + ' of ' + this.countLoaded);
       } else {
-        this.$('.counter').text('1-' + this.countLoaded + ' of many');
+        this.$('.counter').text('1-' + this.countLoaded + ' of ' + displayCount);
       }
 
       this.response = response;

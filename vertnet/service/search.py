@@ -313,12 +313,13 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             #returned_fields=['record', 'location'])        
 
     logging.info('QUERY %s' % q)
-    query = search.Query(query_string=q, options=options)
 
-    max_retries = 5
+    max_retries = 2
     retry_count = 0
+    error = None
     while retry_count < max_retries:
         try:
+            query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
             results = search.Index(name=index_name, namespace=namespace).search(query)
             if results:
@@ -329,8 +330,10 @@ def query(q, limit, sort=None, curs=search.Cursor()):
                 return [], None, 0
         except Exception, e:
             logging.exception('Search failed: %s' % e)   
+            error = e
             retry_count += 1
 
+    return [error]
 
 
 

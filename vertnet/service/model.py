@@ -246,6 +246,7 @@ class RecordList(messages.Message):
     name = messages.StringField(9) # name of downloaded record set
     offset = messages.IntegerField(10) # integer offset
     sort = messages.StringField(11) # integer offset
+    error = messages.StringField(12)
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 
