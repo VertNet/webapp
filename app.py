@@ -26,7 +26,7 @@ routes = [
     webapp2.Route(r'/mr/<name>/<resource>', handler='app.AppHandler:mapreduce', name='mapreduce'),
     webapp2.Route(r'/mr/finalize', handler='app.AppHandler:mapreduce_finalize', name='mapreduce_finalize'),
     webapp2.Route(r'/mr/indexall', handler='app.AppHandler:index', name='index'),
-    webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', name='explore'),
+    webapp2.Route(r'/search', handler='app.AppHandler:search', name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
@@ -124,7 +124,7 @@ class AppHandler(webapp2.RequestHandler):
 
         IndexJob(id=mrid, namespace=namespace, resource=resource, write_path=write_path, failed_logs=['NONE']).put()
 
-    def search(self, type):
+    def search(self):
         """Render the explore page."""
         self.render_template('explore.html')
     

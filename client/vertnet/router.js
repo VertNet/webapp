@@ -1,7 +1,6 @@
 /*
- * Handle URL paths and changes.
+ * App router.
  */
-
 define([
   'jQuery',
   'Underscore',
@@ -9,113 +8,108 @@ define([
   'backbonequeryparams',
   'rpc',
   'mps',
-  'home/Home',
-  'common/Header',
-  'common/Footer',
-  'explore/Search',
+  'views/home',
+  'views/header',
+  'views/footer',
+  'views/search',
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
   'About',
   'Feedback',
   'Publishers',
   'Spin'
-], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, 
-  FooterView, Search, OccDetail, OccModel, About, Feedback, Publishers, Spin) {
-
-  // Our application URL router.
+], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, About, Feedback, Publishers, Spin) {
   var Router = Backbone.Router.extend({
-
     initialize: function (app) {
       this.spin = new Spin($('#main-spinner'));
-      // Save app reference.
+      this.spin.start();
       this.app = app;
-      
-      // Page routes:
-      this.route('', 'home', _.bind(this.home, this, 'home'));
-
-      // this.route('explore/:type?:params', 'explore', _.bind(this.explore, this, 'explore'));
-      this.route('search/:type', 'search', _.bind(this.search, this, 'search'));
-      
+      this.route('', 'home', _.bind(this.home, this));
+      this.route('search', 'search', _.bind(this.search, this));      
       this.route('about', 'about', _.bind(this.about, this));
-
       this.route('publishers', 'publishers', _.bind(this.publishers, this));
+      
+      mps.subscribe('navigate', _.bind(function (place) {
+        this.navigate(place.path, {trigger: place.trigger});
+      }, this));
 
-      this.route('feedback', 'feedback', _.bind(this.feedback, this));
+      mps.subscribe('spin', _.bind(function(show) {
+        if (show) {
+          this.spin.start();
+        } else {
+          this.spin.stop();
+        }
+      }, this));
+    },
 
-      // Subscriptions
-      mps.subscribe('navigate', _.bind(function (path) {
-
-        // Fullfill navigation request from mps.
-        this.navigate(path, {trigger: true});
-      }, this))
+    // Hack: mps in views/home.js isn't loading.
+    stopSpin: function() {
+      this.spin.stop();
     },
 
     routes: {
-      // Catch all:
-      ':publisher/:resource':  'occurrence',
-     '*actions': 'default'
+      ':publisher/:resource':  'occurrence'
     },
 
-    query: function(entity, args) {
-      console.log('wow', entity, args);
-    },
-
-    /**
-     * Initialize header and footer.
-     */
     initHeaderFooter: function() {
-      // Don't re-create the header.
-      if (!this.header) {
-          this.header = new HeaderView(this.app).render();
-      } else {
-        this.header.render();
+      if (!this.headerView) {
+        this.headerView = new HeaderView(this.app);
+        $('#header').html(this.headerView.render().el); 
+        this.headerView.setup();
       }
+      if (!this.footerView) {
+        this.footerView = new FooterView(this.app);
+        $('#footer').html(this.footerView.render().el); 
+      }
+    },
 
-      // Don't re-render the footer.
-      if (!this.footer) {
-        this.footer = new FooterView(this.app).render();
+    detachCurrentView: function() {
+      var currentView = $('#content').children();
+      if (!_.isEmpty(currentView)) {
+        $(currentView).detach();
+      }
+    },
+
+    home: function () {
+      this.detachCurrentView();
+      this.initHeaderFooter();
+      if (!this.homeView) {
+        this.homeView = new HomeView(this.app);
+        $('#content').append(this.homeView.render().el);
+        this.homeView.setup();
+      } else {
+        $('#content').append(this.homeView.el); 
+        this.homeView.onShow();
+      }
+    },    
+
+    search: function(params) {
+      var query = params || {};
+      this.detachCurrentView();
+      this.initHeaderFooter();
+      if (!this.searchView) {
+        this.searchView = new SearchView({query:query}, this.app);
+        $('#content').append(this.searchView.render().el);
+        this.searchView.setup();
+      } else {
+        $('#content').append(this.searchView.el);
+        this.searchView.onShow({query:query});
       }
     },
 
     publishers: function() {
-      // if (this.page)
-      //   this.page.destroy();
-
       this.initHeaderFooter();
-
       this.page = new Publishers({}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();      
     },
 
     about: function() {
-      console.log('router.about():');
-
-      // Kill the page view if it exists.
-      // if (this.page)
-      //   this.page.destroy();
-
-      // Setup header/footer.
       this.initHeaderFooter();
-
       this.page = new About({}, this.app);
       $('#content').html(this.page.render().el);
     },
-    
-    feedback: function() {
-      console.log('router.feedback():');
-
-      // Kill the page view if it exists.
-      // if (this.page)
-      //   this.page.destroy();
-
-      // Setup header/footer.
-      this.initHeaderFooter();
-
-      this.page = new Feedback({}, this.app);
-      $('#content').html(this.page.render().el);
-    },
-    
+        
     occurrence: function(publisher, resource, params) {
       var model = this.app.occDetailModel;
       var request = {};
@@ -124,13 +118,6 @@ define([
       var occurrence = params['id'];
       var tab = params['view'];
 
-      console.log('OCCURRENCE');
-      // Kill page view if exists.
-      // if (this.page) {
-      //   this.page.destroy();
-      // }
-
-      // Setup header/footer.
       this.initHeaderFooter();
 
       if (!model) {
@@ -154,53 +141,9 @@ define([
       this.page = new OccDetail({model: model, show: tab}, this.app);
       $('#content').html(this.page.render().el);
       this.page.setup();
-    },
-
-    search: function(type, name, params) {
-      var query = params || {};
-      console.log('router.explore():', type, name, params);
-      console.log('spinstart');
-      //this.spin.start();
-
-
-      // Kill the page view if it exists.
-      //if (this.page)
-       // this.page.destroy();
-
-      // Setup header/footer.
-      this.initHeaderFooter();
-      // this.page = new Search({el: '#explore-page-content', show: name, query:query}, this.app);
-      // $('#content').html(this.page.el);
-      // this.page.setup();
-      this.page = new Search({show: name, query:query}, this.app);
-      $('#content').html(this.page.render().el);
-      this.page.setup();
-      // setTimeout(_.bind(function() {
-      //   this.spin.stop();
-      // }, this), 1000);
-      console.log('spinstop');
-
-    },
-
-    home: function (name) {
-      console.log('router.home()');
-
-      // Kill the page view if it exists.
-      // if (this.page)
-      //   this.page.destroy();
-
-      // Setup header/footer.
-      this.initHeaderFooter();
-
-      this.page = new HomeView(this.app).render();
-    },
-
-    default: function (actions) {
-      console.warn('No route:', actions);
     }
-  
   });
   
   return Router;
-
 });
+

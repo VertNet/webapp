@@ -39,12 +39,14 @@ define([
       this.countLoaded = 0;
       this.model = new SearchModel();
       this.spatialSearch = false;
+      mps.publish('spin', [true]);
     },
 
     render: function() {
       this.$el.html(_.template(template));
       this.resultMap = new ResultMap({collection: this.occList}, this.app);
       this.searchMap = new SearchMap({collection: this.occList}, this.app);
+
       map.init(_.bind(function() { 
         var spatialSearchControl = this.$('#spatial-search-control');
         var loadMoreControl = this.$('#load-more-control');
@@ -130,9 +132,9 @@ define([
       }, this));
       this.$('#occTable').hide();
       this._disableTablePager(true);
-      if (!this.spin) {
-        this.spin = new Spin(this.$('.search-spinner'));
-      }
+      // if (!this.spin) {
+      //   this.spin = new Spin(this.$('.search-spinner'));
+      // }
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(function(e) {
         if (e.keyCode == 13) { // ENTER key
@@ -140,6 +142,7 @@ define([
         } else if (e.keyCode == 27) { // ESC key
           this.$('#advanced-search-form').hide();
           this.$('#search-keywords-div').show();
+          this.$('#search-keywords-box').focus();
         }
       }, this));
          
@@ -151,7 +154,6 @@ define([
           this.$('#search-keywords-div').show();
         }
       }, this));
-
       return this;
     },
 
@@ -159,21 +161,14 @@ define([
       var keywords = this.$('#search-keywords-box').val();
       var query = 'distance(location,geopoint({0},{1}))<{2}';
       var listener = null;
+
       this.spin.start();
-      // query = query.format(lat, lng, radius); // doesn't work in FF
       query = query.replace("{0}", lat);
       query = query.replace("{1}", lng);
       query = query.replace("{2}", radius);
       this.spatialQuery = query;
       console.log(query);
-      //this.resultMap.map.fitBounds(this.circle.getBounds());
-      //this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
-      // listener = google.maps.event.addListener(map, "idle", _.bind(function() { 
-      //   this.resultMap.map.setZoom(this.resultMap.map.getZoom() - 1);
-      //   google.maps.event.removeListener(listener); 
-      // }, this));
-      // this.$('#search-keywords-box').val(query);
-      // this.spatialQuery = query
+
       if (submit) {
         this._submitHandler(null, true);
       }
@@ -257,14 +252,14 @@ define([
         this._submitHandler(null, true);
       }, this));
 
-      if (this.options.query.advanced) {
-        this.$('#advanced-search-form').show();
-        this.$('#allwords').focus();
-        this.$('#search-keywords-div').hide();
-        delete this.options.query['advanced'];
-      } else {
-        this.$('#advanced-search-form').hide();
-      }
+      // if (this.options.query.advanced) {
+      //   this.$('#advanced-search-form').show();
+      //   this.$('#allwords').focus();
+      //   this.$('#search-keywords-div').hide();
+      //   delete this.options.query['advanced'];
+      // } else {
+      //   this.$('#advanced-search-form').hide();
+      // }
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
@@ -363,45 +358,40 @@ define([
         } 
       }, this));
 
-      this.$('#search-keywords-box').val(this.options.query.q);
-      this.$('#genus').val(this.options.query.genus);
-      this.$('#specificepithet').val(this.options.query.specificepithet);
-      this.$('#year').val(this.options.query.year);
-      this.$('#country').val(this.options.query.country);
-      this.$('#institutioncode').val(this.options.query.institutioncode);
-      this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
+      // this.$('#search-keywords-box').val(this.options.query.q);
+      // this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
     
+      // //this.$('#occTable').popover('show');      
 
-      this.timer = null;
-      // $(document).on('keyup', _.bind(function(e) {
-      // this.$('#search-form').on('keyup', _.bind(function(e) {
-      //   var q = this.$('#search-keywords-box').val();
-      //   var radius = null;
-      //   if (!this.$('#search-keywords-div').is(":visible")) {
-      //     return;
+      // setTimeout(_.bind(function() {
+      //   if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
+      //     delete this.options.query['advanced'];
+      //     this._submitHandler(null, true);
       //   }
-      //   if (!/[a-zA-Z0-9]/.test(String.fromCharCode(e.keyCode))) { // alphanumeric with space
-      //     return;
-      //   }
-      //   if (!this.spatialSearch && this.marker) {
-      //     this.marker.setMap(null);
+      // }, this), 500);
+
+      // setTimeout(_.bind(function() {
+      //   if (!store.get('search-carat-closed') && !this.options.query.advanced) {
+      //     this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
+      //     this.$('#search-carat').popover('show');
       //   } 
-      //   if (!this.spatialSearch && this.circle) {
-      //     this.circle.setMap(null);
-      //   }
-      //   this._prepTerms();
-      //   this._explodeKeywords();
-      //   if (this.timer) {
-      //     clearTimeout(this.timer);
-      //   }
-      //   this.timer = setTimeout(_.bind(function() {
-      //     if (this.$('#search-keywords-div').is(":visible")) {
-      //       this._submitHandler(null, true);
-      //     }
-      //   }, this), 300);
-      // }, this));
 
-      this.$('#occTable').popover('show');      
+      // }, this), 2000);
+
+      mps.publish('spin', [false]);
+
+      this.onShow(this.options);
+
+      return this;
+    },
+
+    onShow: function(options) {
+      if (options) {
+        this.options.query = options.query;
+      }
+
+      this.$('#search-keywords-box').val(this.options.query.q);
+      this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
 
       setTimeout(_.bind(function() {
         if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
@@ -415,10 +405,20 @@ define([
           this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
           this.$('#search-carat').popover('show');
         } 
-
       }, this), 2000);
 
-      return this;
+      if (this.options.query.advanced) {
+        this.$('#advanced-search-form').show();
+        this.$('#allwords').focus();
+        this.$('#search-keywords-div').hide();
+        this.$("#search-keywords-box").val('');
+        delete this.options.query['advanced'];
+      } else {
+        this.$('#advanced-search-form').hide();
+        this.$('#search-keywords-div').show();
+        this.$("#search-keywords-box").focus();
+        this._submitHandler(null, true);
+      }
     },
 
     // Load more results.
@@ -535,14 +535,14 @@ define([
       var search = this._getSearch();
       var q = this.$('#search-keywords-box').val();
       var radius = null;
-      if (search) {
+      if (search !== 'q=') {
         path += '?' + search;
+        mps.publish('navigate', [{path: path, trigger: true}]);
       } 
       this.paging = false;
       this.response = null;
       this._disableTablePager(true);
       this._executeSearch();
-      this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
     },
 
     // Executes search request to server.
