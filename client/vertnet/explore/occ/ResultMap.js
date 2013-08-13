@@ -17,6 +17,21 @@
 
       map: null,
 
+      events: {
+        'click #detail-link': 'handleDetailClick'
+      },
+
+      handleDetailClick: function(e) {
+        var path = [e.target.href.split('/')[3], e.target.href.split('/')[4]].join('/');
+        var check = path.replace('?id=', '/');
+        var model = _.find(this.collection.models, _.bind(function(model) {
+          return check === model.attributes.keyname;
+        }, this));
+        this.app.occDetailModel = model;
+        mps.publish('navigate', [{path: path, trigger: true}]);
+        e.preventDefault();
+      },
+
       initialize: function (options, app) {
         var lat = options.lat ? parseFloat(options.lat) : 0;
         var lon = options.lon ? parseFloat(options.lon) : 0;
@@ -147,16 +162,6 @@
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
         var latlon = lat + ',' + lon;
-        /*var sciname = model.get('scientificname') ? model.get('scientificname') : null;
-        var year = model.get('year') ? parseInt(model.get('year')) : null;
-        var country = model.get('country') ? model.get('country') : null;
-        var stateprov = model.get('stateprovince') ? model.get('stateprovince') : null;
-        var county = model.get('county') ? model.get('county') : null;
-        var instcode= model.get('institutioncode') ? model.get('institutioncode') : null;
-        var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
-        var occid = model.get('id') ? model.get('id') : null;
-        var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
-        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;*/
         var contentString = null;
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
@@ -178,42 +183,8 @@
           contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
           contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
           contentString += '<tr><td><b>LatLon</b></td><td>'+latlon+'</td></tr>';
-          /*contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
-          if (sciname) {
-            contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
-          }
-          if (instcode) {
-            contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
-          }
-          if (catalogno) {
-            contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
-          }
-          if (year) {
-            contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
-          }
-          if (country) {
-            contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
-          }
-          if (stateprov) {
-            contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
-          }
-          if (county) {
-            contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
-          }
-          if (lat) {
-            contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
-          }
-          if (lon) {
-            contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
-          }
-          if (datum) {
-            contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
-          }
-          if (uncert) {
-            contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
-          }*/
           contentString += '</table>';
-          contentString += '<a target="_blank" href="'+url+'">Occurrence details »</a>';
+          contentString += '<a id="detail-link" target="_blank" href="'+url+'">Occurrence details »</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({

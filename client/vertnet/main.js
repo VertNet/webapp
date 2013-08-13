@@ -3,7 +3,7 @@
  */
 require.config({ 
   
-  urlArgs: "busta=" + (new Date()).getTime(),
+  //urlArgs: "busta=" + (new Date()).getTime(),
 
   paths: {
     jQuery: 'libs/jquery/jquery',

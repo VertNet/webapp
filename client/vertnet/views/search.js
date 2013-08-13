@@ -253,16 +253,8 @@ define([
         this._submitHandler(null, true);
       }, this));
 
-      // if (this.options.query.advanced) {
-      //   this.$('#advanced-search-form').show();
-      //   this.$('#allwords').focus();
-      //   this.$('#search-keywords-div').hide();
-      //   delete this.options.query['advanced'];
-      // } else {
-      //   this.$('#advanced-search-form').hide();
-      // }
-      
-      this.$('#show-search-options').click(_.bind(function() {
+      this.$('#show-search-options').click(_.bind(function(e) {
+        e.preventDefault();
         this.$('#advanced-search-form').show();
         this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
         this.$('#allwords').focus();
@@ -388,17 +380,24 @@ define([
     },
 
     onShow: function(options) {
+      var queryVal = this.$('#search-keywords-box').val();
+
       if (options) {
         this.options.query = options.query;
       }
 
+      this.resultMap.resize();
       this.$('#search-keywords-box').val(this.options.query.q);
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
 
       setTimeout(_.bind(function() {
         if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
           delete this.options.query['advanced'];
-          this._submitHandler(null, true);
+          if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
+            this._submitHandler(null, true);
+          }
+        } else if (_.isEmpty(this.options.query)) {
+          this._submitHandler(null, true);          
         }
       }, this), 500);
 
@@ -420,7 +419,7 @@ define([
         this.$('#advanced-search-form').hide();
         this.$('#search-keywords-div').show();
         this.$("#search-keywords-box").focus();
-        this._submitHandler(null, true);
+        // if (this.countLoaded  0) this._submitHandler(null, true);
       }
     },
 
@@ -510,7 +509,7 @@ define([
       var sort = this.$('#sort :selected').val();
 
       if (sort) {
-        sort = toLowerCase();
+        sort = sort.toLowerCase();
       } else {
         sort = 'no sort';
       }
@@ -528,7 +527,7 @@ define([
       if (sort !== 'no sort') {
         terms['sort'] = sort;      
       }
-      return $.param(terms);
+      return decodeURIComponent($.param(terms));
     },
 
     // Submit handler for search.

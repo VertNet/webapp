@@ -6,13 +6,15 @@ define([
   'explore/occ/DarwinCoreTab',
   'text!explore/occ/OccDetail.html',
   'explore/occ/OccDetailMap',
-  'map'
-  ], function ($, Backbone, _, util, DarwinCoreTab, template, OccDetailMap, map) {
+  'map',
+  'mps'
+  ], function ($, Backbone, _, util, DarwinCoreTab, template, OccDetailMap, map, mps) {
     return Backbone.View.extend({
 
       initialize: function(options, app) {
         this.app = app;
         this.template = _.template(template);
+        mps.publish('spin', [true]);
       }, 
 
       render: function() {
@@ -85,6 +87,7 @@ define([
         //   this.darwinCoreTab.setup();
         // }, this));
         // window.scrollTo(0, 0);
+        mps.publish('spin', [false]);
         return this;
       },
 
