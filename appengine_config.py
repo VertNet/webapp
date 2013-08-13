@@ -24,5 +24,5 @@ def namespace_manager_default_namespace_for_request():
     if IS_DEV:
     	return ''
     else:
-    	#return 'index-2013-08-08'
-    	return 'index000001'
+    	return 'index-2013-08-08'
+    	#return 'index000001'

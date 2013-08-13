@@ -25,6 +25,7 @@ routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
     webapp2.Route(r'/mr/<name>/<resource>', handler='app.AppHandler:mapreduce', name='mapreduce'),
     webapp2.Route(r'/mr/finalize', handler='app.AppHandler:mapreduce_finalize', name='mapreduce_finalize'),
+    webapp2.Route(r'/mr/indexall', handler='app.AppHandler:index', name='index'),
     webapp2.Route(r'/search/<type>', handler='app.AppHandler:search', name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
@@ -66,6 +67,36 @@ class AppHandler(webapp2.RequestHandler):
         job.put()
         logging.info('Index job finalized for resource %s' % job.resource)
 
+    def index(self):
+        input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
+        path = self.request.get('path')
+        shard_count = self.request.get_range('shard_count', default=8)
+        processing_rate = self.request.get_range('processing_rate', default=100)
+        files_pattern = '/gs/%s' % path
+
+        # Create file on GCS to log any failed index puts:
+        namespace = namespace_manager.get_namespace()
+        filename = '/gs/vn-staging/errors/failures-%s-all.csv' % namespace
+        write_path = files.gs.create(filename, mime_type='text/tab-separated-values', acl='public-read')
+
+        mrid = mrc.start_map(
+            path,
+            "vertnet.service.search.build_search_index",
+            input_class,
+            {
+                "input_reader": dict(
+                    files=[files_pattern], 
+                    format='lines'),
+                "resource": path,
+                "write_path": write_path,
+                "processing_rate": processing_rate,
+                "shard_count": shard_count
+            },
+            mapreduce_parameters={'done_callback': '/mr/finalize'},
+            shard_count=shard_count)
+
+        IndexJob(id=mrid, namespace=namespace, resource=path, write_path=write_path, failed_logs=['NONE']).put()
+
     def mapreduce(self, name, resource):
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
         files_pattern = '/gs/vn-staging/data/2013-08-08/%s/part*' % resource
@@ -84,10 +115,12 @@ class AppHandler(webapp2.RequestHandler):
                     files=[files_pattern], 
                     format='lines'),
                 "resource": resource,
-                "write_path": write_path
+                "write_path": write_path,
+                "processing_rate": 150,
+                "shard_count": 16
             },
             mapreduce_parameters={'done_callback': '/mr/finalize'},
-            shard_count=8)
+            shard_count=16)
 
         IndexJob(id=mrid, namespace=namespace, resource=resource, write_path=write_path, failed_logs=['NONE']).put()
 

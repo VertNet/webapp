@@ -18,7 +18,6 @@ import time
 #             time.sleep(3)
 
 def index():
-    count = 0
     urls = set()
     for line in open('files.txt', 'r').read().split('\n'):
         if line.startswith('gs://vn-staging/data/2013-08-08/'):
@@ -27,13 +26,10 @@ def index():
                 url = "http://index.vertnet-portal.appspot.com/mr/%s/%s" % (resource, resource)
                 urls.add(url)
     for url in urls:
-        if count > 10:
-            return
-        count = count + 1
         print url
         f = urllib.urlopen(url)
         print f.read()
-        time.sleep(3)
+        time.sleep(1)
     print len(urls)
 
 index()
