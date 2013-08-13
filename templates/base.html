@@ -8,18 +8,18 @@
     <meta name="description" content="VertNet data portal">
     <meta name="author" content="Vertnet project">
     <link href="/css/docs.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css"
           rel="stylesheet">
-    <link href="http://libs.cartodb.com/cartodb.js/v2/themes/css/cartodb.css" 
-          rel="stylesheet">
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+    <link href="/css/bootstrap-glyphicons.css" rel="stylesheet">
     <link href="/css/vertnet.css?v=2" rel="stylesheet">
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="https://raw.github.com/twitter/bootstrap/master/docs/assets/js/html5shiv.js></script>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     {% endblock %}
 </head>
-<body data-spy="scroll" data-target=".bs-docs-sidebar">
+<body>
   <div id="holder">
     <div id="main-spinner"></div>
     <div id="header">{% include 'header.html' %}</div>
@@ -34,5 +34,5 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-41203333-1', 'vertnet.org');
       ga('send', 'pageview');
-</script>
+    </script>
 </body>

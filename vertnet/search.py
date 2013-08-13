@@ -29,10 +29,9 @@ class SearchHandler(webapp2.RequestHandler):
             recs = []
             for doc in results:
                 for field in doc.fields:
-                    if field.name == 'json':
+                    if field.name == 'record':
                         recs.append(json.loads(field.value))  
             result['recs'] = recs
-            logging.info('CURSOR %s' % results.cursor)
             if results.cursor:
                 result['cursor'] = results.cursor.web_safe_string
             result['count'] = results.number_found
@@ -44,9 +43,4 @@ class SearchHandler(webapp2.RequestHandler):
 handler = webapp2.WSGIApplication([
     webapp2.Route('/api/search', handler=SearchHandler)],
     debug=True)
-         
-def main():
-    run_wsgi_app(handler)
-
-if __name__ == "__main__":
-    main()
+        

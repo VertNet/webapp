@@ -36,11 +36,13 @@ define([
       // After each lib is loaded, get the cartodb lib.
       var done = _.after(libs.length, function () {
         require(['libs/cartodb/cdb'], cb);
+        console.log('CARTODB LOADED');     
       });
 
       // Load the jsapi and then grab each lib.
       require(['https://www.google.com/jsapi?callback=?'
-              + '&key=AIzaSyDJdVhfQhecwp0ngAGzN9zwqak8FaEkSTA'], function () {        
+              + '&key=AIzaSyDJdVhfQhecwp0ngAGzN9zwqak8FaEkSTA'], function () {   
+              console.log('GMAPS LOADED');     
         _.each(libs, function (lib) {
           google.load(lib.name, lib.version,
                     _.extend(lib.options, { callback: done }));

@@ -8,6 +8,14 @@ from vertnet.service import util
 import json
 import logging
 
+# Model for MapReduce index jobs. Key is mapreduce id:
+class IndexJob(ndb.Model):
+    write_path = ndb.TextProperty(required=True)
+    failed_logs = ndb.StringProperty(repeated=True)
+    resource = ndb.StringProperty()
+    done = ndb.BooleanProperty(default=False)
+    failures = ndb.ComputedProperty(lambda self: len(self.failed_logs) > 1)
+
 # Dummpy stats for testing.
 DUMMY_STATS = dict(
     record_count=1606374, 
@@ -103,6 +111,7 @@ class Record(ndb.Model):
     resource_title = ndb.StringProperty()
     resource_title_slug = ndb.StringProperty()
     record = ndb.TextProperty() # record as JSON string
+    indexed = ndb.BooleanProperty(default=False)
 
     @property
     def json(self):
@@ -118,11 +127,10 @@ class Record(ndb.Model):
     def tsv(self):
         json = self.json
         json['datasource_and_rights'] = json.get('url')
-        header = util.DWC_HEADER_LIST #['datasource_and_rights'] + util.DWC_ALL_LOWER
-        values = [] #[json.get('url')]
+        header = util.DWC_HEADER_LIST
+        values = []
         for x in header:
             if json.has_key(x):
-                # logging.info('%s=%s' % (x, json[x]))
                 values.append(unicode(json[x]))
             else:
                 values.append('')
@@ -245,6 +253,8 @@ class RecordList(messages.Message):
     email = messages.StringField(8) # email to ping when download is done
     name = messages.StringField(9) # name of downloaded record set
     offset = messages.IntegerField(10) # integer offset
+    sort = messages.StringField(11) # integer offset
+    error = messages.StringField(12)
 
 class ListPayload(messages.Message):
     organizations = messages.MessageField(OrganizationPayload, 1, 
