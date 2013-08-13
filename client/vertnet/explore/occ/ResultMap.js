@@ -78,7 +78,7 @@
         this._updateMarkers();
       }
       //map = this.map;
-      this.resize();
+      //this.resize();
 
       google.maps.event.addListener(this.map, 'click', function(e) {
         console.log(e);

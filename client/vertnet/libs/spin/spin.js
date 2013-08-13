@@ -2,7 +2,7 @@
 
 define([
   'Underscore',
-  'libs/spin/spin.min',
+  '//cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js',
   ], function (_, spin) {
 
   var defaults = {
