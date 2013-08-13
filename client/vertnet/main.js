@@ -5,7 +5,7 @@
 
 require.config({ // VertNet app configuration.
   
-  //urlArgs: "bust=" + (new Date()).getTime(),
+  //urlArgs: "busta=" + (new Date()).getTime(),
 
   paths: {
     jQuery: 'libs/jquery/jquery',

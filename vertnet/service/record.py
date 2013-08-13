@@ -1,14 +1,15 @@
 """API handlers for VertNet records."""
 
-import webapp2
 from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
+from vertnet.service import search as vnsearch
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
 import json
 from google.appengine.api import taskqueue
 import logging
-from protorpc.message_types import VoidMessage
+from google.appengine.api import search
+
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -30,11 +31,11 @@ class RecordService(remote.Service):
     @remote.method(RecordPayload, RecordPayload)
     def get(self, message):
         """Return a RecordList."""
-        record = Record.get_by_id(message.id)
-        return RecordPayload(id=message.id, json=record.record)
+        recs, cursor, count = vnsearch.query('id:%s' % message.id, 1)
+        return RecordPayload(id=message.id, json=json.dumps(recs[0]))
 
     @remote.method(RecordList, RecordList)
-    def search(self, message):
+    def _search(self, message):
         """Return a RecordList."""
         curs = None
         if message.cursor:
@@ -42,6 +43,57 @@ class RecordService(remote.Service):
         q = json.loads(message.q)
         taskqueue.add(url='/apitracker', params=dict(query=message.q), queue_name="apitracker")
         response = record_list(message.limit, curs, q, message=True)
+        return response
+
+    def initialize_request_state(self, state):
+        self.cityLatLong = state.headers.get('X-AppEngine-CityLatLong')
+        logging.info('CITY_LAT_LONG %s' % self.cityLatLong)
+
+    @remote.method(RecordList, RecordList)
+    def search(self, message):
+        curs = None
+        if message.cursor:
+            curs = search.Cursor(web_safe_string=message.cursor)
+        else:
+            curs = search.Cursor()
+        q = json.loads(message.q)
+        logging.info('Q %s' % q)
+        keywords = ' '.join([x for x in q['keywords'] if x])
+        sort = message.sort
+        if 'distance' in keywords:
+            sort = None
+        limit = message.limit
+
+        logging.info('keywords=%s, limit=%s, sort=%s, curs=%s' % (keywords, limit, sort, curs))
+
+        logging.info('REQUEST LATLON %s' % self.cityLatLong)
+
+        result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
+        if len(result) == 3:
+            recs, cursor, count = result
+            if not message.cursor:
+                type = 'query'
+                query_count = count
+            else:
+                type = 'query-view'
+                query_count = limit
+            params = dict(query=keywords, type=type, count=query_count, latlon=self.cityLatLong)
+            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+        else:
+            error = result[0].__class__.__name__
+            params = dict(error=error, query=keywords, type='query', latlon=self.cityLatLong)
+            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+            response = RecordList(error=unicode(error))
+            return response
+
+        if cursor:
+            cursor = cursor.web_safe_string
+
+        items = [RecordPayload(id=x['keyname'], json=json.dumps(x)) \
+            for x in recs if x]
+
+        response = RecordList(items=items, cursor=cursor, count=count)
+
         return response
 
     @remote.method(RecordList, RecordList)

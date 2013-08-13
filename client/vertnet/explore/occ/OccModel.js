@@ -62,6 +62,10 @@ define([
       'ScientificNameAuthorship', 'VernacularName', 'NomenclaturalCode', 
       'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks'],
 
+    DWC_SUMMARY: ['InstitutionCode', 'CollectionCode', 'CatalogNumber',
+      'Preperations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
+      'Locality', 'DecimalLatitude', 'DecimalLongitude'],
+
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
@@ -84,6 +88,14 @@ define([
       }
     },
 
+    getSciName: function() {
+      var name = this.get('scientificname');
+      if (name) {
+        return name.toLowerCase().charAt(0).toUpperCase() + name.slice(1);
+      }
+      return 'detail';
+    },
+    
     getLocation: function() {
       var loc = '';
       var locality = this.get('locality');
@@ -163,6 +175,10 @@ define([
     all: function() {
       return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.event(), this.geo(),
         this.iden(), this.taxon());
+    },
+
+    summary: function() {
+      return this._terms(this.DWC_SUMMARY);      
     },
 
     _terms: function(terms) {
