@@ -135,7 +135,7 @@ html,body{
 
 #map {
 	height: 675px;
-	display: block;
+	/*display: block;*/
 	/*z-index: 1;*/
 	border: 1px solid grey;
 }

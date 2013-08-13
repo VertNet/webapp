@@ -1,34 +1,20 @@
 /*
  * VertNet app.
  */
-
 define([
   'jQuery',
   'Underscore',
   'Backbone',
   'router',
-  //'bus',
   'rpc',
   'bootstrap'
 ], function ($, _, Backbone, Router, rpc, bootstrap) {
-
-  // For dev:
-  // window._bus = bus;
+  // For dev console:
   window._rpc = rpc;
   window._ = _;
   window._bootstrap = bootstrap;
 
   var App = function () {
-    // NOOP
-  }
-
-  App.prototype.update = function (profile) {
-
-    // Set the app profile model.
-    this.profile = new Backbone.Model(profile);
-
-    // Open a channel on the bus.
-    //if (!bus.channel() && this.profile.get('person')) bus.init();
   }
 
   App.prototype.parseUrl = function() {
@@ -46,16 +32,15 @@ define([
     return urlParams;
   }
 
+  App.prototype.update = function (profile) {
+    this.profile = new Backbone.Model(profile);
+  }
 
   return {
-
-    // Creates the instance.
-    init: function () {
+   init: function () {
       var app = new App;
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
-    },
-
-    
+    },  
   };
 });

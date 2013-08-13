@@ -89,9 +89,9 @@ define([
     },
 
     resize: function() {
-      if (window.google && window.google.maps)
-        google.maps.event.trigger(this.map, 'resize');
-      Backbone.View.prototype.resize.call(this);
+      google.maps.event.trigger(this.map, 'resize');
+      this.map.setZoom(this.map.getZoom());
+      this.map.setCenter(this.map.getCenter());
     },
 
   });

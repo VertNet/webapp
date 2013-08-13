@@ -1,10 +1,6 @@
 /*
- * The Occurrence search tab composite view for the explore page.
- *
- * This is a composite list view intended to be initialized by the explore page view.
- * It contains a list of search results viewable in a table, on a map, or downloadable.
+ * Search view.
  */
-
 define([
   'jQuery',
   'Underscore',
@@ -26,9 +22,6 @@ define([
 ], function ($, _, Backbone, mps, map, rpc, template, DowloadTemp, Download, 
   OccList, OccRow, OccModel, ResultMap, SearchMap, SearchModel, Spin, store) {
   return Backbone.View.extend({
-
-    //tagName: 'explore-page-content',
-
     events: {
       'click .pager': '_loadMore',
     },
@@ -46,7 +39,6 @@ define([
       this.countLoaded = 0;
       this.model = new SearchModel();
       this.spatialSearch = false;
-      // $(document).on('keyup', _.bind(this._submitHandler, this));
     },
 
     render: function() {
@@ -59,24 +51,14 @@ define([
 
         this.$('#resultmap').html(this.resultMap.render().el);
         this.$('#searchmap').html(this.searchMap.render().el);
-
-   
-        
         this.resultMap.resize();
         this.searchMap.resize();
-
-        //spatialSearchControl[0].index = 1;
-        //this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(spatialSearchControl[0]);
-        //this.$('#spatial-search-control').show();
-
         loadMoreControl[0].index = 1;
         this.resultMap.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(loadMoreControl[0]);
         this.$('#load-more-control').show();
-
         this.$('#loadmore').click(_.bind(function(e) {
           this._loadMore(e);
         }, this));
-
 
         google.maps.event.addListener(this.searchMap.map, 'click', _.bind(function(e) {
           var lat = e.latLng.lat();
@@ -90,11 +72,9 @@ define([
           }
 
           this.spin.start();
-          //query = query.format(lat, lng); // doesn't work in FF
           query = query.replace("{0}",lat);
           query = query.replace("{1}",lng);
           console.log(query);
-          //this.$('#search-keywords-box').val(query);
           this.spatialQuery = query;
 
           if (this.circle) {
