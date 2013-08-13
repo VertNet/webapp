@@ -116,7 +116,6 @@ define([
         rpc.execute('/service/rpc/record.get', request, {
           success: _.bind(function(response) {
             model = new OccModel(JSON.parse(response.json));
-            this.app.occDetailModel = model;
           }, this), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
@@ -124,14 +123,20 @@ define([
         });
       } 
 
-      if (!this.occurrenceView) {
-        this.occurrenceView = new OccDetail({model: model}, this.app);
-        $('#content').append(this.occurrenceView.render().el);
-        this.occurrenceView.setup();
-      } else {
-        $('#content').append(this.occurrenceView.el);
-        // this.occurrenceView.onShow({query:query});
-      }
+      this.app.occDetailModel = model;
+      this.occurrenceView = new OccDetail({model: model}, this.app);
+      $('#content').append(this.occurrenceView.render().el);
+      this.occurrenceView.setup();
+
+        // $('#content').append(this.occurrenceView.render().el);
+      // if (!this.occurrenceView) {
+      //   this.occurrenceView = new OccDetail({model: model}, this.app);
+        // $('#content').append(this.occurrenceView.render().el);
+        // this.occurrenceView.setup();
+      // } else {
+      //   $('#content').append(this.occurrenceView.render().el);
+      //   // this.occurrenceView.onShow({model});
+      // }
     }
   });
   

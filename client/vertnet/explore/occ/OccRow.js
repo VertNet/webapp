@@ -3,8 +3,9 @@ define([
   'Backbone',
   'Underscore',
   'util',
+  'mps',
   'text!explore/occ/OccRow.html'
-  ], function ($, Backbone, _, util, template) {
+  ], function ($, Backbone, _, util, mps, template) {
     return Backbone.View.extend({
 
       tagName: 'tr',
@@ -33,14 +34,16 @@ define([
 
       // Open the occurrence detail page.
       _clickHandler: function(e) {
+        e.preventDefault();
         var keyname = this.model.get('keyname');
-        var path = window.location.origin + '/' + util.getOccPath(keyname);
+        var path = util.getOccPath(keyname);
         var sel = getSelection().toString();
         if (!sel) {
           this.trigger('onClick');
           this.app.occDetailModel = this.model;
+          mps.publish('navigate', [{path: path, trigger: true}]);
           // this.app.router.navigate(path, {trigger: true});
-          window.open(path, '_blank');
+          // window.open(path, '_blank');
         }
       }
     });
