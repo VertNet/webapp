@@ -8,6 +8,9 @@ builtins:
 - remote_api: on
 #- appstats: on
 
+# includes:
+# - mapreduce/include.yaml
+
 libraries:
 - name: jinja2
   version: "latest"
@@ -19,6 +22,8 @@ handlers:
 - url: /css
   static_dir: client/vertnet/css
 
+- url: /fonts
+  static_dir: client/vertnet/fonts
 - url: /vertnet
   static_dir: client/vertnet
 
@@ -52,6 +57,10 @@ handlers:
 
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
+
+# - url: /mapreduce(/.*)?
+#   script: mapreduce/main.py
+#   login: admin
 
 - url: /.*
   script: app.handler

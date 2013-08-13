@@ -1,39 +1,280 @@
 <div id="occ-detail-content" class="container">
-  <!-- Title -->
+
   <div class="page-header">
-    <h1>Occurrence <small>detail</small></h1>
+    <h1>Occurrence <small><%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> - <%= this.model.getSciName() %></small></h1>
   </div>
 
-  <!-- Rights -->
-  <!-- <div id="rights" class="alert alert-success">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <h4>Access rights - <%= this.model.get('orgname') %></h4>
-    <% if (this.model.get('emlrights')) { %>
-      <%= this.model.getRights() %>
-    <% } else { %>
-      Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
-    <% } %>
-  </div> -->
-  
-  <!-- Top level tabs links -->
   <ul id="detailTabs" class="nav nav-tabs">
-    <li class="active">
-      <a id="dwc" href="#darwincore" data-toggle="tab">Darwin Core</a>
-    </li>
-    <li>
-      <a id="source" href="#datasource" data-toggle="tab">Source & Rights</a>
+    <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>     
+    <li><a class="" href="#datasource" data-toggle="tab">Data Rights</a></li>
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="#allterms" data-toggle="tab">All Terms</a></li>
+        <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
+        <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
+        <li><a href="#event" data-toggle="tab">Event</a></li>
+        <li><a href="#location" data-toggle="tab">Location</a></li>
+        <li><a href="#identification" data-toggle="tab">Identification</a></li>
+        <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
+      </ul>
     </li>
   </ul>
 
-  <!-- Top level tab content -->
-  <div id="detailTabContent" class="tab-content">
-    <!-- Darwin core tab. -->
-    <div id="darwincore" class="tab-pane active"> 
-      <!-- DarwinCoreTab.html -->
+  <div id="myTabContent" class="tab-content">
+
+  <div class="tab-pane fade active in" id="summary">
+    <p>
+    <!-- <p class="lead">Overview</p> -->
+    <%if (this.model.get('associatedmedia')) { 
+        var link = this.model.get('associatedmedia'); %>
+        <div id="hasmedia">
+        <span id="has-media-icon" class="glyphicon glyphicon-film"></span> <a target='_blank' href="<%= link %>">View media</a></div>
+     <% } %>
+    <div id="occ-detail-map" class="occ-detail-map">
+      <div id="detailmap"></div>
     </div>
-      <!-- Data source tab -->
-    <div id="datasource" class="tab-pane"> 
-      <div class="lead">Primary data source, access rights, and citations. </div>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_SUMMARY, _.bind(function(key) { 
+          var val = this.model.summary()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+  <div class="tab-pane fade" id="location">
+       <p>
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Location Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_LOCATION, _.bind(function(key) { 
+          var val = this.model.loc()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <div class="tab-pane" id="reclevel">
+      <p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>RecordLevel Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_RECLEVEL, _.bind(function(key) { 
+          var val = this.model.reclevel()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>    
+
+ <!-- Occurrence tab.  -->
+    <div class="tab-pane" id="occ">
+      <p>      
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Occurrence Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_OCC, _.bind(function(key) { 
+          var val = this.model.occ()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Event tab.  -->
+    <div class="tab-pane" id="event">
+      <p>      
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Event Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_EVENT, _.bind(function(key) { 
+          var val = this.model.event()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>          
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    
+    <!-- Identification tab.  -->
+    <div class="tab-pane" id="identification">
+      <p>       
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Identification Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_ID, _.bind(function(key) { 
+          var val = this.model.iden()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Taxon tab.  -->
+    <div class="tab-pane" id="taxon">
+        <p>
+        <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Taxon Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_TAXON, _.bind(function(key) { 
+          var val = this.model.taxon()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- All tab.  -->
+    <div class="tab-pane" id="allterms">
+      <p>
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_ALL(), _.bind(function(key) { 
+          var val = this.model.all()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>    
+<!--     <div id="darwincore"> 
+    </div>
+ -->      <!-- Data source tab -->
+    <div id="datasource" class="tab-pane fade"> 
+      <p>
+      <!-- <p class="lead">Data rights</p> -->
       <dl class="">
         <dt>Rights</dt>
         <dd><% if (this.model.get('emlrights')) { %>
@@ -49,7 +290,7 @@
         <dd><%= this.model.get('title') %></dd>
         <dt>Contact</dt>
         <dd>
-            <%= this.model.get('contact') %> <<a href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
+        <%= this.model.get('contact') %> <<a href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
         </dd>
         <dt>Published</dt>
         <dd><%= this.model.get('pubdate') %></dd>
@@ -58,5 +299,5 @@
       </dl>
     </div>
 
-  </div>
+  <!-- </div> -->
 </div>

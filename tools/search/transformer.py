@@ -46,7 +46,7 @@ DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid',
 'vernacularname', 'decimallatitude', 'pointradiusspatialfit', 'language', 
 'institutionid', 'rightsholder', 'verbatimcoordinates', 'originalnameusage', 
 'nomenclaturalcode', 'associatedtaxa', 'nomenclaturalstatus', 'datasetid', 
-'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights']
+'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights', 'citation']
 
 
 

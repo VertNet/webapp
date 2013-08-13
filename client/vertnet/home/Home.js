@@ -48,8 +48,23 @@ define([
         var map = new MapView().render();
       });
 
+      this.$('#homesearch-button').click(_.bind(function(e) {
+        var q = this.$('#homesearch-keywords-box').val();
+        q = q ? q.trim() : '';
+        if (q !== '') {
+          window.open(window.location.pathname + 'search/occurrences?q=' + q, '_self');
+        }
+      }, this));
 
+      this.$('#homesearch').on('keyup', _.bind(function(e) {
+        var q = this.$('#homesearch-keywords-box').val();
+        q = q ? q.trim() : '';
+        if (e.keyCode == 13 && q !== '') {
+          window.open(window.location.pathname + 'search/occurrences?q=' + q, '_self');
+        }
+      }, this));
       
+      this.$('#homesearch-keywords-box').focus();
       return this;
     },
 
