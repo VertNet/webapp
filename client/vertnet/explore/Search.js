@@ -155,12 +155,22 @@ define([
       }
       // this._checkUrl();
       this.$('#search-form').on('keyup', _.bind(function(e) {
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13) { // ENTER key
           this._submitHandler(null, true);
+        } else if (e.keyCode == 27) { // ESC key
+          this.$('#advanced-search-form').hide();
+          this.$('#search-keywords-div').show();
         }
       }, this));
          
       this.$("#search-keywords-box").focus();
+
+      this.$(document).on('keyup', _.bind(function(e) {
+        if (e.keyCode == 27) { // ESC key
+          this.$('#advanced-search-form').hide();
+          this.$('#search-keywords-div').show();
+        }
+      }, this));
 
       return this;
     },
@@ -269,6 +279,7 @@ define([
 
       if (this.options.query.advanced) {
         this.$('#advanced-search-form').show();
+        this.$('#allwords').focus();
         this.$('#search-keywords-div').hide();
         delete this.options.query['advanced'];
       } else {
@@ -277,6 +288,7 @@ define([
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
+        this.$('#allwords').focus();
         //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
