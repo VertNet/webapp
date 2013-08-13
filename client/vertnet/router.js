@@ -22,7 +22,6 @@ define([
   var Router = Backbone.Router.extend({
     initialize: function (app) {
       this.spin = new Spin($('#main-spinner'));
-      this.spin.start();
       this.app = app;
       this.route('', 'home', _.bind(this.home, this));
       this.route('search', 'search', _.bind(this.search, this));      
@@ -30,21 +29,10 @@ define([
       this.route('publishers', 'publishers', _.bind(this.publishers, this));
       
       mps.subscribe('navigate', _.bind(function (place) {
-        this.navigate(place.path, {trigger: place.trigger});
+        var path = place.path;
+        delete place['path'];
+        this.navigate(path, place);
       }, this));
-
-      mps.subscribe('spin', _.bind(function(show) {
-        if (show) {
-          this.spin.start();
-        } else {
-          this.spin.stop();
-        }
-      }, this));
-    },
-
-    // Hack: mps in views/home.js isn't loading.
-    stopSpin: function() {
-      this.spin.stop();
     },
 
     routes: {
@@ -89,8 +77,10 @@ define([
       this.initHeaderFooter();
       if (!this.searchView) {
         this.searchView = new SearchView({query:query}, this.app);
-        $('#content').append(this.searchView.render().el);
-        this.searchView.setup();
+        this.searchView.render(_.bind(function() {
+          $('#content').append(this.searchView.el);
+          this.searchView.setup();
+        }, this));
       } else {
         $('#content').append(this.searchView.el);
         this.searchView.onShow({query:query});
@@ -116,31 +106,32 @@ define([
       var resource = resource.split('?')[0];
       var params = this.app.parseUrl();
       var occurrence = params['id'];
-      var tab = params['view'];
 
+      this.detachCurrentView();
       this.initHeaderFooter();
-
+      
+      // If no model cached in app, get it via RPC:
       if (!model) {
         request['id'] = [publisher, resource, occurrence].join('/');
         rpc.execute('/service/rpc/record.get', request, {
-          success: _.bind(this._occurrenceHandler, this, tab), 
+          success: _.bind(function(response) {
+            model = new OccModel(JSON.parse(response.json));
+            this.app.occDetailModel = model;
+          }, this), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
           }, this)
         });
-      } else {
-        this.page = new OccDetail({model: model, show: tab}, this.app);
-        $('#content').html(this.page.render().el);
-        this.page.setup();
-      }
-    },
+      } 
 
-    _occurrenceHandler: function(tab, response) {
-      var model = new OccModel(JSON.parse(response.json));
-      this.app.occDetailModel = model;
-      this.page = new OccDetail({model: model, show: tab}, this.app);
-      $('#content').html(this.page.render().el);
-      this.page.setup();
+      if (!this.occurrenceView) {
+        this.occurrenceView = new OccDetail({model: model}, this.app);
+        $('#content').append(this.occurrenceView.render().el);
+        this.occurrenceView.setup();
+      } else {
+        $('#content').append(this.occurrenceView.el);
+        // this.occurrenceView.onShow({query:query});
+      }
     }
   });
   

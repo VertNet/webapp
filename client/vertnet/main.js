@@ -1,11 +1,9 @@
 /*
  * Require.js bootstrapping.
  */
-
-
-require.config({ // VertNet app configuration.
+require.config({ 
   
-  //urlArgs: "busta=" + (new Date()).getTime(),
+  urlArgs: "busta=" + (new Date()).getTime(),
 
   paths: {
     jQuery: 'libs/jquery/jquery',
@@ -47,6 +45,5 @@ require.config({ // VertNet app configuration.
 
 // Application entry point:
 require(['app'], function (app) {
-  console.log('main.entry()');
   app.init();
 });

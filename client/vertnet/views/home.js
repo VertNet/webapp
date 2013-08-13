@@ -5,12 +5,12 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'text!views/home.html',
   'home/Map',
   'mps',
   'rpc',
-  'map'
-  ], function ($, _, Backbone, template, MapView, mps, rpc, map) {
+  'map',
+  'text!views/home.html',
+  ], function ($, _, Backbone, MapView, mps, rpc, map, template) {
   return Backbone.View.extend({
     events: {
       'click #homesearch-button': 'onSearchClick',
@@ -28,12 +28,11 @@ define([
     },
 
     setup: function () {
+      var thisMps = mps; // FIXME: mps undefined in map.init callback.
       this.$('#myCarousel').carousel();
       map.init(_.bind(function() {
         this.mapView = new MapView().render();
-        // FIXME: mps is undefined.
-        // this.mps.publish('spin/home/stop');
-        this.app.router.stopSpin(); // hack
+        thisMps.publish('spin', [false]);
         this.$('#homesearch-keywords-box').focus();
       }, this));
       return this;
@@ -58,7 +57,7 @@ define([
     navigateToSearch: function(path) {
       var searchPath = path ? path : this.getSearchPath();
       if (searchPath) {
-        mps.publish('navigate', [{path: searchPath, trigger: true}]);        
+        mps.publish('navigate', [{path: searchPath, trigger: true, replace: false}]);        
       }
     },
 

@@ -7,8 +7,10 @@ define([
   'Backbone',
   'router',
   'rpc',
-  'bootstrap'
-], function ($, _, Backbone, Router, rpc, bootstrap) {
+  'bootstrap',
+  'Spin',
+  'mps'
+], function ($, _, Backbone, Router, rpc, bootstrap, Spin, mps) {
   // For dev console:
   window._rpc = rpc;
   window._ = _;
@@ -39,6 +41,15 @@ define([
   return {
    init: function () {
       var app = new App;
+      app.spin = new Spin($('#main-spinner'));
+      app.spin.start();
+      mps.subscribe('spin', _.bind(function(show) {
+        if (show) {
+          this.spin.start();
+        } else {
+          this.spin.stop();
+        }
+      }, app));
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
     },  

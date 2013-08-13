@@ -126,7 +126,7 @@ class AppHandler(webapp2.RequestHandler):
 
     def search(self):
         """Render the explore page."""
-        self.render_template('explore.html')
+        self.render_template('search.html')
     
     def about(self):
         """Render the about page."""

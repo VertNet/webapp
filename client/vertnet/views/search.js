@@ -8,7 +8,7 @@ define([
   'mps',
   'map',
   'rpc',
-  'text!explore/Search.html',
+  'text!views/search.html',
   'text!explore/occ/Download.html',
   'explore/occ/Download',
   'explore/occ/OccList',
@@ -42,14 +42,36 @@ define([
       mps.publish('spin', [true]);
     },
 
-    render: function() {
-      this.$el.html(_.template(template));
-      this.resultMap = new ResultMap({collection: this.occList}, this.app);
-      this.searchMap = new SearchMap({collection: this.occList}, this.app);
-
+    // The cb is needed since rendering is async due to maps.
+    render: function(cb) {
       map.init(_.bind(function() { 
+        this.$el.html(_.template(template));
+        this.resultMap = new ResultMap({collection: this.occList}, this.app);
+        this.searchMap = new SearchMap({collection: this.occList}, this.app);
         var spatialSearchControl = this.$('#spatial-search-control');
         var loadMoreControl = this.$('#load-more-control');
+
+        this.$('#occTable').hide();
+        this._disableTablePager(true);
+        this.$('#search-form').on('keyup', _.bind(function(e) {
+          if (e.keyCode == 13) { // ENTER key
+            this._submitHandler(null, true);
+          } else if (e.keyCode == 27) { // ESC key
+            this.$('#advanced-search-form').hide();
+            this.$('#search-keywords-div').show();
+            this.$('#search-keywords-box').focus();
+          }
+        }, this));
+           
+        this.$("#search-keywords-box").focus();
+
+        this.$(document).on('keyup', _.bind(function(e) {
+          if (e.keyCode == 27) { // ESC key
+            this.$('#advanced-search-form').hide();
+            this.$('#search-keywords-div').show();
+          }
+        }, this));
+
 
         this.$('#resultmap').html(this.resultMap.render().el);
         this.$('#searchmap').html(this.searchMap.render().el);
@@ -126,35 +148,14 @@ define([
 
           this._submitHandler(null, true);
 
-
         }, this));
+        
+        // Hack https://github.com/VertNet/webapp/issues/316
+        setTimeout(_.bind(function() {
+          cb(this);
+        }, this), 500);
 
       }, this));
-      this.$('#occTable').hide();
-      this._disableTablePager(true);
-      // if (!this.spin) {
-      //   this.spin = new Spin(this.$('.search-spinner'));
-      // }
-      // this._checkUrl();
-      this.$('#search-form').on('keyup', _.bind(function(e) {
-        if (e.keyCode == 13) { // ENTER key
-          this._submitHandler(null, true);
-        } else if (e.keyCode == 27) { // ESC key
-          this.$('#advanced-search-form').hide();
-          this.$('#search-keywords-div').show();
-          this.$('#search-keywords-box').focus();
-        }
-      }, this));
-         
-      this.$("#search-keywords-box").focus();
-
-      this.$(document).on('keyup', _.bind(function(e) {
-        if (e.keyCode == 27) { // ESC key
-          this.$('#advanced-search-form').hide();
-          this.$('#search-keywords-div').show();
-        }
-      }, this));
-      return this;
     },
 
     circleHandler: function(lat, lng, radius, submit) {
@@ -263,6 +264,7 @@ define([
       
       this.$('#show-search-options').click(_.bind(function() {
         this.$('#advanced-search-form').show();
+        this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
         this.$('#allwords').focus();
         //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
@@ -409,6 +411,7 @@ define([
 
       if (this.options.query.advanced) {
         this.$('#advanced-search-form').show();
+        this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
         this.$('#allwords').focus();
         this.$('#search-keywords-div').hide();
         this.$("#search-keywords-box").val('');
@@ -504,7 +507,13 @@ define([
       var terms = {};
       var q = this.$('#search-keywords-box').val();
       var query = null;
-      var sort = this.$('#sort :selected').val().toLowerCase();
+      var sort = this.$('#sort :selected').val();
+
+      if (sort) {
+        sort = toLowerCase();
+      } else {
+        sort = 'no sort';
+      }
 
       //this._prepTerms();
       //terms = this.terms;
@@ -548,7 +557,13 @@ define([
     // Executes search request to server.
     _executeSearch: function() {
       var request = null;
-      var sort = this.$('#sort :selected').val().toLowerCase();
+      var sort = this.$('#sort :selected').val();
+
+      if (sort) {
+        sort = sort.toLowerCase();
+      } else {
+        sort = 'no sort';
+      }
       
       if (!this.retrying) {
         this.retryCount = 0;
