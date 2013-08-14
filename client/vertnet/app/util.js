@@ -3,8 +3,8 @@
  */
 
 define([
-  'jQuery',
-  'Underscore'
+  'jquery',
+  'underscore'
 ], function ($, _) {
 
   if (typeof String.prototype.startsWith !== 'function') {

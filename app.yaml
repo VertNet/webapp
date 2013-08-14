@@ -24,8 +24,21 @@ handlers:
 
 - url: /fonts
   static_dir: client/vertnet/fonts
+
 - url: /vertnet
   static_dir: client/vertnet
+
+- url: /vertnet/lib
+  static_dir: client/vertnet/lib
+
+- url: /vertnet/app
+  static_dir: client/vertnet/app
+
+- url: /vertnet/views
+  static_dir: client/vertnet/app/views
+
+- url: /vertnet/models
+  static_dir: client/vertnet/app/models
 
 - url: /img
   static_dir: client/vertnet/img

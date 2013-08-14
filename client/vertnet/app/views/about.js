@@ -3,9 +3,9 @@
  */
 
  define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
   'mps',
   'rpc',
   'text!views/about.html'

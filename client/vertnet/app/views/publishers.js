@@ -2,9 +2,9 @@
  * Publishers view.
  */
  define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
   'store',
   'mps',
   'text!views/publishers.html'

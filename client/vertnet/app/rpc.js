@@ -3,7 +3,7 @@
  */
 
 define([
-  'jQuery',
+  'jquery',
   'mps'
 ], function ($, mps) {
   return {  

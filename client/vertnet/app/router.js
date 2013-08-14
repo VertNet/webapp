@@ -2,9 +2,9 @@
  * App router.
  */
 define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
   'backbonequeryparams',
   'rpc',
   'mps',
@@ -16,7 +16,7 @@ define([
   'models/detail',
   'views/about',
   'views/publishers',
-  'Spin'
+  'spin'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, AboutView, PublishersView, Spin) {
   var Router = Backbone.Router.extend({
     initialize: function (app) {

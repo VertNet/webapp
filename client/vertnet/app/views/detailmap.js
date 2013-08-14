@@ -2,10 +2,10 @@
  * Occurrence detail map.
  */
 define([
-  'jQuery',
-  'Underscore',
+  'jquery',
+  'underscore',
   'mps',
-  'Backbone',
+  'backbone',
   'text!views/detailmap.html'
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({

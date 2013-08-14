@@ -3,8 +3,8 @@
  */
 
 define([
-  'Underscore',
-  'Backbone'
+  'underscore',
+  'backbone'
 ], function (_, Backbone) {
   return Backbone.Model.extend({ 
   });

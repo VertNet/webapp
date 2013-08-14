@@ -1,7 +1,7 @@
 define([
-  'jQuery',
-  'Backbone',
-  'Underscore',
+  'jquery',
+  'backbone',
+  'underscore',
   'util',
   'text!views/detail.html',
   'views/detailmap',
