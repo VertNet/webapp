@@ -390,16 +390,16 @@ define([
       this.$('#search-keywords-box').val(this.options.query.q);
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
 
-      setTimeout(_.bind(function() {
-        if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
-          delete this.options.query['advanced'];
-          if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
-            this._submitHandler(null, true);
-          }
-        } else if (_.isEmpty(this.options.query)) {
-          this._submitHandler(null, true);          
-        }
-      }, this), 500);
+      // setTimeout(_.bind(function() {
+      //   if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
+      //     delete this.options.query['advanced'];
+      //     if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
+      //       this._submitHandler(null, true);
+      //     }
+      //   } else if (_.isEmpty(this.options.query)) {
+      //     this._submitHandler(null, true);          
+      //   }
+      // }, this), 500);
 
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
@@ -419,7 +419,9 @@ define([
         this.$('#advanced-search-form').hide();
         this.$('#search-keywords-div').show();
         this.$("#search-keywords-box").focus();
-        // if (this.countLoaded  0) this._submitHandler(null, true);
+        if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
+          this._submitHandler(null, true);
+        }
       }
     },
 

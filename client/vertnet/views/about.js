@@ -9,18 +9,22 @@
   'mps',
   'rpc',
   'About',
-  'text!About.html'
+  'text!views/about.html'
   ], function ($, _, Backbone, mps, rpc, About, template) {
 
     return Backbone.View.extend({
       initialize: function (options, app) {
         this.app = app;
-        this.template = _.template(template);
+        mps.publish('spin', [true]);
       },
 
       render: function () {
-        this.$el.html(this.template());
+        this.$el.html(_.template(template));
         return this;
+      },
+
+      setup: function() {
+        mps.publish('spin', [false]);
       }
   });
 });

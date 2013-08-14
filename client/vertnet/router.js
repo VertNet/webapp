@@ -14,11 +14,10 @@ define([
   'views/search',
   'explore/occ/OccDetail',
   'explore/occ/OccModel',
-  'About',
-  'Feedback',
-  'Publishers',
+  'views/about',
+  'views/publishers',
   'Spin'
-], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, About, Feedback, Publishers, Spin) {
+], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, AboutView, PublishersView, Spin) {
   var Router = Backbone.Router.extend({
     initialize: function (app) {
       this.spin = new Spin($('#main-spinner'));
@@ -88,16 +87,29 @@ define([
     },
 
     publishers: function() {
+      this.detachCurrentView();
       this.initHeaderFooter();
-      this.page = new Publishers({}, this.app);
-      $('#content').html(this.page.render().el);
-      this.page.setup();      
+      if (!this.publishersView) {
+        this.publishersView = new PublishersView({}, this.app);
+        $('#content').append(this.publishersView.render().el);
+        this.publishersView.setup();
+      } else {
+        $('#content').append(this.publishersView.el); 
+        this.publishersView.onShow();
+      }    
     },
 
     about: function() {
+      this.detachCurrentView();
       this.initHeaderFooter();
-      this.page = new About({}, this.app);
-      $('#content').html(this.page.render().el);
+      if (!this.aboutView) {
+        this.aboutView = new AboutView({}, this.app);
+        $('#content').append(this.aboutView.render().el);
+        this.aboutView.setup();
+      } else {
+        $('#content').append(this.aboutView.el); 
+        this.aboutView.setup();
+      }    
     },
         
     occurrence: function(publisher, resource, params) {
@@ -116,27 +128,22 @@ define([
         rpc.execute('/service/rpc/record.get', request, {
           success: _.bind(function(response) {
             model = new OccModel(JSON.parse(response.json));
+            this.showOccurrence(model);
           }, this), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
           }, this)
         });
-      } 
+      } else {
+        this.showOccurrence(model);
+      }
+    },
 
+    showOccurrence: function(model) {
       this.app.occDetailModel = model;
       this.occurrenceView = new OccDetail({model: model}, this.app);
       $('#content').append(this.occurrenceView.render().el);
       this.occurrenceView.setup();
-
-        // $('#content').append(this.occurrenceView.render().el);
-      // if (!this.occurrenceView) {
-      //   this.occurrenceView = new OccDetail({model: model}, this.app);
-        // $('#content').append(this.occurrenceView.render().el);
-        // this.occurrenceView.setup();
-      // } else {
-      //   $('#content').append(this.occurrenceView.render().el);
-      //   // this.occurrenceView.onShow({model});
-      // }
     }
   });
   
