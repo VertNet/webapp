@@ -2,9 +2,9 @@
  * Footer view.
  */
 define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
   'mps',
   'rpc',
   'text!views/footer.html'

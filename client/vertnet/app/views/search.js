@@ -2,9 +2,9 @@
  * Search view.
  */
 define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
   'mps',
   'map',
   'rpc',
@@ -15,10 +15,9 @@ define([
   'views/resultmap',
   'views/searchmap',
   'models/search',
-  'Spin',
   'store'
 ], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, 
-    OccModel, ResultMap, SearchMap, SearchModel, Spin, store) {
+    OccModel, ResultMap, SearchMap, SearchModel, store) {
   return Backbone.View.extend({
     events: {
       'click .pager': '_loadMore',
@@ -93,7 +92,7 @@ define([
             return;
           }
 
-          this.spin.start();
+          mps.publish('spin', [true]);
           query = query.replace("{0}",lat);
           query = query.replace("{1}",lng);
           console.log(query);
@@ -161,7 +160,7 @@ define([
       var query = 'distance(location,geopoint({0},{1}))<{2}';
       var listener = null;
 
-      this.spin.start();
+      mps.publish('spin', [true]);
       query = query.replace("{0}", lat);
       query = query.replace("{1}", lng);
       query = query.replace("{2}", radius);
@@ -294,7 +293,6 @@ define([
       }
 
       this.$("#search-keywords-box").focus();
-      this.spin = new Spin(this.$('.search-spinner'));
       //this.downloadTab = new Download(this.options, this.app, this.model);
       //this.$('#downloadform').html(this.downloadTab.render().el);
       this.$('#bottom-pager').hide();
@@ -362,7 +360,9 @@ define([
       }
 
       this.resultMap.resize();
-      this.$('#search-keywords-box').val(this.options.query.q);
+      if (this.options.query.q) {
+        this.$('#search-keywords-box').val(this.app.parseUrl().q);
+      }
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
@@ -486,7 +486,9 @@ define([
         } 
       } else {
         terms['q'] = this._getQuery();
-        this.$('#search-keywords-box').val(terms['q']);
+        if (terms['q']) {
+          this.$('#search-keywords-box').val(decodeURIComponent(terms['q']));
+        }
       }
       if (sort !== 'no sort') {
         terms['sort'] = sort;      
@@ -500,7 +502,7 @@ define([
             this.$('#search-keywords-box').val().trim() === '') {
         this._clearResults();
         this._showResultsTable(false);
-        this.spin.stop();
+        mps.publish('spin', [false]);
         return;
       }
       var path = window.location.pathname;
@@ -543,7 +545,7 @@ define([
       this._explodeKeywords();
       this.model.set({terms: this.terms, keywords:this.keywords});
       if (_.size(this.keywords) > 0) {
-        this.spin.start(); 
+        mps.publish('spin', [true]);
         request = {limit:this.PAGE_SIZE, q:JSON.stringify({keywords: this.keywords})};
         if (sort !== 'no sort') {
           request.sort = sort;
@@ -565,7 +567,7 @@ define([
               this.$('#whoops').hide();
               this._clearResults();
               this._showResultsTable(false);
-              this.spin.stop();
+              mps.publish('spin', [false]);
               return;
             }
             this.waitingForResponse = false;
@@ -580,7 +582,7 @@ define([
       } else {
         this._clearResults();
         this._showResultsTable(false);
-        this.spin.stop();
+        mps.publish('spin', [false]);
       }
     },
 
@@ -590,7 +592,7 @@ define([
         this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>Whoops!</strong> Invalid query! Check the syntax and try again.');              
         this.$('#whoops').show();
         this.waitingForResponse = false;
-        this.spin.stop();
+        mps.publish('spin', [false]);
         return;
       }
       if (this.cancelSearch) {
@@ -599,10 +601,10 @@ define([
         this._clearResults();
         this._showResultsTable(false);
         this.$('#whoops').hide();
-        this.spin.stop();
+        mps.publish('spin', [false]);
         return;
       }
-      this.spin.stop();
+      mps.publish('spin', [false]);
       this.waitingForResponse = false;
       this.retrying = false;
       if (this.retryCount < this.maxRetries) {
@@ -692,7 +694,7 @@ define([
       }
       // this._disableTablePager(this.count === this.countLoaded);
       this._disableTablePager((items.length < this.PAGE_SIZE) || !response.cursor);      
-      this.spin.stop();
+      mps.publish('spin', [false]);
     },
 
     // Disable table pager.

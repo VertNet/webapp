@@ -2,8 +2,8 @@
  * Detail model. 
  */
 define([
-  'Underscore',
-  'Backbone'
+  'underscore',
+  'backbone'
 ], function (_, Backbone) {
   return Backbone.Model.extend({
     DWC_RECLEVEL: ['Type', 'Modified', 'Language', 'Rights', 'RightsHolder', 

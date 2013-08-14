@@ -2,9 +2,9 @@
  * Occurrence result table row view.
  */
 define([
-  'jQuery',
-  'Backbone',
-  'Underscore',
+  'jquery',
+  'backbone',
+  'underscore',
   'util',
   'mps',
   'text!views/detailrow.html'

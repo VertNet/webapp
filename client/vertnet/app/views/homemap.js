@@ -4,10 +4,10 @@
 
 define([
   // dependencies
-  'jQuery',
-  'Underscore',
+  'jquery',
+  'underscore',
   'mps',
-  'Backbone',
+  'backbone',
   'text!views/homemap.html',
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({

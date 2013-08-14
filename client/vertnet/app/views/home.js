@@ -2,15 +2,16 @@
  * Home view.
  */
 define([
-  'jQuery',
-  'Underscore',
-  'Backbone',
+  'jquery',
+  'underscore',
+  'backbone',
+  'bootstrap',
   'views/homemap',
   'mps',
   'rpc',
   'map',
   'text!views/home.html',
-  ], function ($, _, Backbone, MapView, mps, rpc, map, template) {
+  ], function ($, _, Backbone, bs, MapView, mps, rpc, map, template) {
   return Backbone.View.extend({
     events: {
       'click #homesearch-button': 'onSearchClick',

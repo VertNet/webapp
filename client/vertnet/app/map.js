@@ -6,8 +6,8 @@
 
 define([
   // dependencies
-  'jQuery',
-  'Underscore'
+  'jquery',
+  'underscore'
 ], function ($, _) {
   
   var libs = [
