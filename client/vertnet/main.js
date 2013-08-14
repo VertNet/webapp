@@ -15,6 +15,7 @@ require.config({
     spin: ['lib/spin'],
     bootstrap: ['lib/bootstrap'],
     backbonequeryparams: ['lib/backbone.queryparams'],
+    cartodb: ['lib/cartodb'],
     store: ['lib/store'],
     app: ['app/app'],
     router: ['app/router'],
