@@ -1,24 +1,39 @@
 {
-    appDir: '../client/vertnet',
+    appDir: '../client/',
     mainConfigFile: '../client/vertnet/main.js',
     dir: '../www-built',
+    paths: {
+        jquery: 'lib/jquery',
+        underscore: 'lib/underscore',
+        backbone: 'lib/backbone',
+        mps: 'lib/minpubsub',
+        spin: 'lib/spin',
+        bootstrap: 'lib/bootstrap',
+        backbonequeryparams: 'lib/backbone.queryparams',
+        cartodb: 'lib/cartodb',
+        store: 'lib/store',
+        app: 'app/app',
+        router: 'app/router',
+        rpc: 'app/rpc',
+        map: 'app/map',
+        text: 'app/text',
+        util: 'app/util',
+        views: 'app/views/',
+        models: 'app/models/'
+      },
+
     modules: [
         //First set up the common build layer.
         {
             //module names are relative to baseUrl
-            name: '',
+            name: 'main',
+          
             //List common dependencies here. Only need to list
             //top level dependencies, "include" will find
             //nested dependencies.
-            include: ['libs/jquery',
-                      'app',
-                      'map',
-                      'router',
-                      'rpc',
-                      'text',
-                      'util',
-                      'models',
-                      'views'
+            include: [
+                'jquery',
+                'views/about'
             ]
         },
 
@@ -33,17 +48,6 @@
         //In this example, common.js will hold jquery, so backbone
         //needs to be delayed from loading until common.js finishes.
         //That loading sequence is controlled in page1.js.
-        {
-            //module names are relative to baseUrl/paths config
-            //name: 'app/main1',
-            //exclude: ['../common']
-        },
-
-        {
-            //module names are relative to baseUrl
-            //name: 'app/main2',
-            //exclude: ['../common']
-        }
-
+       
     ]
 }
