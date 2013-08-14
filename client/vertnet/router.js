@@ -20,7 +20,6 @@ define([
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, AboutView, PublishersView, Spin) {
   var Router = Backbone.Router.extend({
     initialize: function (app) {
-      this.spin = new Spin($('#main-spinner'));
       this.app = app;
       this.route('', 'home', _.bind(this.home, this));
       this.route('search', 'search', _.bind(this.search, this));      
@@ -58,6 +57,7 @@ define([
     },
 
     home: function () {
+      mps.publish('spin', [true]);
       this.detachCurrentView();
       this.initHeaderFooter();
       if (!this.homeView) {

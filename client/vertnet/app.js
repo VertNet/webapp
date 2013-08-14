@@ -42,7 +42,6 @@ define([
    init: function () {
       var app = new App;
       app.spin = new Spin($('#main-spinner'));
-      app.spin.start();
       mps.subscribe('spin', _.bind(function(show) {
         if (show) {
           this.spin.start();
