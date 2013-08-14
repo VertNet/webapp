@@ -1,9 +1,0 @@
-AV	21661
-Bird	42423
-Egg	14011
-FH	1633
-Fish	4794
-HE	2441
-MAM	8307
-OS	5113
-WildlifeMammals	1
