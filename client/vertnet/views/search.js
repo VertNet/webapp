@@ -349,31 +349,8 @@ define([
           this.resultMap.resize();
         } 
       }, this));
-
-      // this.$('#search-keywords-box').val(this.options.query.q);
-      // this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
-    
-      // //this.$('#occTable').popover('show');      
-
-      // setTimeout(_.bind(function() {
-      //   if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
-      //     delete this.options.query['advanced'];
-      //     this._submitHandler(null, true);
-      //   }
-      // }, this), 500);
-
-      // setTimeout(_.bind(function() {
-      //   if (!store.get('search-carat-closed') && !this.options.query.advanced) {
-      //     this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
-      //     this.$('#search-carat').popover('show');
-      //   } 
-
-      // }, this), 2000);
-
       mps.publish('spin', [false]);
-
       this.onShow(this.options);
-
       return this;
     },
 
@@ -387,18 +364,6 @@ define([
       this.resultMap.resize();
       this.$('#search-keywords-box').val(this.options.query.q);
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
-
-      // setTimeout(_.bind(function() {
-      //   if (!_.isEmpty(this.options.query) && !this.options.query.advanced) {
-      //     delete this.options.query['advanced'];
-      //     if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
-      //       this._submitHandler(null, true);
-      //     }
-      //   } else if (_.isEmpty(this.options.query)) {
-      //     this._submitHandler(null, true);          
-      //   }
-      // }, this), 500);
-
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
           this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
@@ -494,7 +459,6 @@ define([
         if (input.is(':checked')) {
           return [' ', input.attr('id'), ':', '1 '].join('') + memo
         } else {
-          // return [input.attr('id'), ':', '0 '].join('') + memo
           return memo;
         }
       }, '');
