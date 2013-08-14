@@ -5,7 +5,7 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'home/Map',
+  'views/homemap',
   'mps',
   'rpc',
   'map',
