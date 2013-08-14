@@ -29,7 +29,9 @@
     <%if (this.model.get('associatedmedia')) { 
         var link = this.model.get('associatedmedia'); %>
         <div id="hasmedia">
-        <span id="has-media-icon" class="glyphicon glyphicon-film"></span> <a target='_blank' href="<%= link %>">View media</a></div>
+          <a target='_blank' href="<%= link %>">View media</a>
+          <span id="has-media-icon" class="glyphicon glyphicon-facetime-video"></span> 
+        </div>
      <% } %>
     <div id="occ-detail-map" class="occ-detail-map">
       <div id="detailmap"></div>

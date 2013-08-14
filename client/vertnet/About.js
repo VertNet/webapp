@@ -21,22 +21,6 @@
       render: function () {
         this.$el.html(this.template());
         return this;
-      },
-
-
-      empty: function () {
-        this.$el.empty();
-        return this;
-      },
-
-    // Kill this view.
-    destroy: function () {
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      this.undelegateEvents();
-      //this.stopListening();
-      this.empty();
-    }
+      }
   });
 });

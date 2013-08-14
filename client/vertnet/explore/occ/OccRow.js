@@ -1,3 +1,6 @@
+/*
+ * Occurrence result table row view.
+ */
 define([
   'jQuery',
   'Backbone',
@@ -42,8 +45,6 @@ define([
           this.trigger('onClick');
           this.app.occDetailModel = this.model;
           mps.publish('navigate', [{path: path, trigger: true}]);
-          // this.app.router.navigate(path, {trigger: true});
-          // window.open(path, '_blank');
         }
       }
     });

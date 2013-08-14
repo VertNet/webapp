@@ -40,7 +40,11 @@ define([
         var id = el.attr('id') === 'home' ? '' : el.attr('id');
         el.click(_.bind(function(e) {
           e.preventDefault();
-          mps.publish('navigate', [{path: id, trigger: true}]);
+          if (id === 'feedback-nav') {
+            window.open('http://form.jotform.us/form/31397097595166', '_blank');
+          } else {
+            mps.publish('navigate', [{path: id, trigger: true}]);
+          }
         }, this));
       }, this));      
 

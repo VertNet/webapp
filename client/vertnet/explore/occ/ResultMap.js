@@ -67,7 +67,7 @@
           }
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
-          zoom: 3,
+          zoom: 2,
           minZoom: 2,
           scrollwheel: false,
           center: new google.maps.LatLng(58, -150),
@@ -221,6 +221,9 @@ resize: function() {
   google.maps.event.trigger(this.map, 'resize');
   this.map.setZoom(this.map.getZoom());
   this.map.setCenter(this.map.getCenter());
+  if (!_.isEmpty(this.markers)) {
+    this.map.fitBounds(this.bounds)
+  }
   //this.map.setZoom(2);
   //centerZero = new google.maps.LatLng(0, 0);
   //this.map.setCenter(centerZero);
