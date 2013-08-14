@@ -1,13 +1,12 @@
 /*
  * Occurrence detail map.
  */
-
 define([
   'jQuery',
   'Underscore',
   'mps',
   'Backbone',
-  'text!explore/occ/OccDetailMap.html'
+  'text!views/detailmap.html'
 ], function ($, _, mps, Backbone, template) {
   return Backbone.View.extend({
 
@@ -48,14 +47,10 @@ define([
             animation: google.maps.Animation.DROP,
             position: this.latlon
           });
-          //$('#occ-detail-map.occ-detail-map').css('height', '400px');
-          //this.$('#map').css('height', '400px');
         } else {
-          // this.$('#map')[0].innerHTML = "<p>No coordinates found</p>";
           $('#occ-detail-map.occ-detail-map').hide();
         }
       }
-      //map = this.map;
       return this;
     },
 

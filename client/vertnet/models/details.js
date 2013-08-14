@@ -1,6 +1,6 @@
 define([
   'Backbone', 
-  'explore/occ/OccModel'
+  'models/detail'
   ], function (Backbone, OccModel) {
     return Backbone.Collection.extend({
 

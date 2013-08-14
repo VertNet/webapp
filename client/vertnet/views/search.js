@@ -9,18 +9,16 @@ define([
   'map',
   'rpc',
   'text!views/search.html',
-  'text!explore/occ/Download.html',
-  'explore/occ/Download',
-  'explore/occ/OccList',
-  'explore/occ/OccRow',
-  'explore/occ/OccModel',
-  'explore/occ/ResultMap',
-  'explore/occ/SearchMap',
-  'explore/occ/SearchModel',
+  'models/details',
+  'views/detailrow',
+  'models/detail',
+  'views/resultmap',
+  'views/searchmap',
+  'models/search',
   'Spin',
   'store'
-], function ($, _, Backbone, mps, map, rpc, template, DowloadTemp, Download, 
-  OccList, OccRow, OccModel, ResultMap, SearchMap, SearchModel, Spin, store) {
+], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, 
+    OccModel, ResultMap, SearchMap, SearchModel, Spin, store) {
   return Backbone.View.extend({
     events: {
       'click .pager': '_loadMore',

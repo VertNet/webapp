@@ -1,10 +1,14 @@
+/*
+ * Occurrence result table row view.
+ */
 define([
   'jQuery',
   'Backbone',
   'Underscore',
   'util',
-  'text!explore/occ/PubRow.html'
-  ], function ($, Backbone, _, util, template) {
+  'mps',
+  'text!views/detailrow.html'
+  ], function ($, Backbone, _, util, mps, template) {
     return Backbone.View.extend({
 
       tagName: 'tr',
@@ -33,9 +37,15 @@ define([
 
       // Open the occurrence detail page.
       _clickHandler: function(e) {
-        var code = this.model.get('code');
-        var path = '/search/occurrences?institutioncode=' + code;
-        this.app.router.navigate(path, {trigger: true});
+        e.preventDefault();
+        var keyname = this.model.get('keyname');
+        var path = util.getOccPath(keyname);
+        var sel = getSelection().toString();
+        if (!sel) {
+          this.trigger('onClick');
+          this.app.occDetailModel = this.model;
+          mps.publish('navigate', [{path: path, trigger: true}]);
+        }
       }
     });
 });

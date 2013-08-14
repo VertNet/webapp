@@ -12,8 +12,8 @@ define([
   'views/header',
   'views/footer',
   'views/search',
-  'explore/occ/OccDetail',
-  'explore/occ/OccModel',
+  'views/detail',
+  'models/detail',
   'views/about',
   'views/publishers',
   'Spin'
