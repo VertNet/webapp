@@ -20,31 +20,31 @@ libraries:
 handlers:
 
 - url: /css
-  static_dir: client/vertnet/css
+  static_dir: www-built/vertnet/css
 
 - url: /fonts
-  static_dir: client/vertnet/fonts
+  static_dir: www-built/vertnet/fonts
 
 - url: /vertnet
-  static_dir: client/vertnet
+  static_dir: www-built/vertnet
 
 - url: /vertnet/lib
-  static_dir: client/vertnet/lib
+  static_dir: www-built/vertnet/lib
 
 - url: /vertnet/app
-  static_dir: client/vertnet/app
+  static_dir: www-built/vertnet/app
 
 - url: /vertnet/views
-  static_dir: client/vertnet/app/views
+  static_dir: www-built/vertnet/app/views
 
 - url: /vertnet/models
-  static_dir: client/vertnet/app/models
+  static_dir: www-built/vertnet/app/models
 
 - url: /img
-  static_dir: client/vertnet/img
+  static_dir: www-built/vertnet/img
 
 - url: /prototypes
-  static_dir: client/docs/prototypes
+  static_dir: www-built/docs/prototypes
 
 # backends
 
