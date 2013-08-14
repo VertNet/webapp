@@ -1,7 +1,6 @@
 /*
- * Model for an occurrence.
+ * Detail model. 
  */
-
 define([
   'Underscore',
   'Backbone'

@@ -8,9 +8,8 @@
   'Backbone',
   'mps',
   'rpc',
-  'About',
   'text!views/about.html'
-  ], function ($, _, Backbone, mps, rpc, About, template) {
+  ], function ($, _, Backbone, mps, rpc, template) {
 
     return Backbone.View.extend({
       initialize: function (options, app) {

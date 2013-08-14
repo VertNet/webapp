@@ -9,28 +9,13 @@
   'mps',
   'map',
   'Backbone',
-  'text!explore/occ/ResultMap.html'
+  'text!views/searchmap.html'
   ], function ($, _, util, mps, map, Backbone, template) {
     return Backbone.View.extend({
 
       options: null,
 
       map: null,
-
-      events: {
-        'click #detail-link': 'handleDetailClick'
-      },
-
-      handleDetailClick: function(e) {
-        var path = [e.target.href.split('/')[3], e.target.href.split('/')[4]].join('/');
-        var check = path.replace('?id=', '/');
-        var model = _.find(this.collection.models, _.bind(function(model) {
-          return check === model.attributes.keyname;
-        }, this));
-        this.app.occDetailModel = model;
-        mps.publish('navigate', [{path: path, trigger: true}]);
-        e.preventDefault();
-      },
 
       initialize: function (options, app) {
         var lat = options.lat ? parseFloat(options.lat) : 0;
@@ -67,7 +52,7 @@
           }
         //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
-          zoom: 2,
+          zoom: 3,
           minZoom: 2,
           scrollwheel: false,
           center: new google.maps.LatLng(58, -150),
@@ -87,13 +72,13 @@
           streetViewControl: false,
           overviewMapControl: false
         };
-        this.map = new google.maps.Map(this.$('#map')[0], this.options);
+        this.map = new google.maps.Map(this.$('#searchmap')[0], this.options);
         this.collection.on('add', this._updateMarkers, this);
         this.collection.on('reset', this._updateMarkers, this);
         this._updateMarkers();
       }
       //map = this.map;
-      //this.resize();
+      this.resize();
 
       google.maps.event.addListener(this.map, 'click', function(e) {
         console.log(e);
@@ -161,12 +146,21 @@
         // Old values
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
-        var latlon = lat + ',' + lon;
+        /*var sciname = model.get('scientificname') ? model.get('scientificname') : null;
+        var year = model.get('year') ? parseInt(model.get('year')) : null;
+        var country = model.get('country') ? model.get('country') : null;
+        var stateprov = model.get('stateprovince') ? model.get('stateprovince') : null;
+        var county = model.get('county') ? model.get('county') : null;
+        var instcode= model.get('institutioncode') ? model.get('institutioncode') : null;
+        var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
+        var occid = model.get('id') ? model.get('id') : null;
+        var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
+        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;*/
         var contentString = null;
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
         var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
-        var url = '../'+specificURLright;
+        var url = '../'+specificURLright+'&view=darwincore';
 
         var latlon = null;
         var marker = null;
@@ -182,9 +176,42 @@
           contentString += '<tr><td><b>Taxonomy</b></td><td>'+taxonomy+'</td></tr>';
           contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
           contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
-          contentString += '<tr><td><b>LatLon</b></td><td>'+latlon+'</td></tr>';
+          /*contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
+          if (sciname) {
+            contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
+          }
+          if (instcode) {
+            contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
+          }
+          if (catalogno) {
+            contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
+          }
+          if (year) {
+            contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
+          }
+          if (country) {
+            contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
+          }
+          if (stateprov) {
+            contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
+          }
+          if (county) {
+            contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
+          }
+          if (lat) {
+            contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
+          }
+          if (lon) {
+            contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
+          }
+          if (datum) {
+            contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
+          }
+          if (uncert) {
+            contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
+          }*/
           contentString += '</table>';
-          contentString += '<a id="detail-link" target="_blank" href="'+url+'">Occurrence details »</a>';
+          contentString += '<a target="_blank" href="'+url+'">Occurrence details »</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
@@ -221,9 +248,6 @@ resize: function() {
   google.maps.event.trigger(this.map, 'resize');
   this.map.setZoom(this.map.getZoom());
   this.map.setCenter(this.map.getCenter());
-  if (!_.isEmpty(this.markers)) {
-    this.map.fitBounds(this.bounds)
-  }
   //this.map.setZoom(2);
   //centerZero = new google.maps.LatLng(0, 0);
   //this.map.setCenter(centerZero);
