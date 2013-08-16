@@ -1,5 +1,5 @@
 /*
- * Occurrence result table row view.
+ * Publisher table row view.
  */
 define([
   'jquery',
@@ -7,7 +7,7 @@ define([
   'underscore',
   'util',
   'mps',
-  'text!views/detailrow.html'
+  'text!views/publisherrow.html'
   ], function ($, Backbone, _, util, mps, template) {
     return Backbone.View.extend({
 
@@ -38,12 +38,10 @@ define([
       // Open the occurrence detail page.
       _clickHandler: function(e) {
         e.preventDefault();
-        var keyname = this.model.get('keyname');
-        var path = 'o/'+util.getOccPath(keyname);
         var sel = getSelection().toString();
+        var path = 'p/'+util.slugify(this.model.get('orgname'));
         if (!sel) {
-          this.trigger('onClick');
-          this.app.occDetailModel = this.model;
+          this.app.publisherModel = this.model;
           mps.publish('navigate', [{path: path, trigger: true}]);
         }
       }

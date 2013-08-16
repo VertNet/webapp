@@ -9,7 +9,8 @@ from vertnet.service.model import IndexJob
 from mapreduce import control as mrc
 from mapreduce import input_readers
 from google.appengine.api import files
-
+from google.appengine.api import urlfetch
+import urllib
 import os
 import webapp2
 
@@ -17,24 +18,19 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
 routes = [
-    webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
     webapp2.Route(r'/mr/<name>/<resource>', handler='app.AppHandler:mapreduce', name='mapreduce'),
     webapp2.Route(r'/mr/finalize', handler='app.AppHandler:mapreduce_finalize', name='mapreduce_finalize'),
     webapp2.Route(r'/mr/indexall', handler='app.AppHandler:index', name='index'),
-    webapp2.Route(r'/search', handler='app.AppHandler:search', name='explore'),
-    webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
-    webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
-    webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
-    webapp2.Route(r'/publishers', handler='app.AppHandler:publishers', name='publishers'),
-    
-    webapp2.Route(r'/o/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
-        handler='app.AppHandler:occ', name='occ'),
-
-    webapp2.Route(r'/p/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', handler='app.AppHandler:pub', name='pub'),
-
-    
-   
+    webapp2.Router(r'/admin/sync-publishers', handler='admin.AdminHandler:sync_publishers'),
 ]
+
+def apikey():
+    """Return credentials file as a JSON object."""
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'vertnet', 'service', 'cdbkey.txt')
+    key = open(path, "r").read()
+    return key
+
+cdb_url = "http://vertnet.cartodb.com/api/v2/sql?%s"
 
 class AppHandler(webapp2.RequestHandler):
 
@@ -53,6 +49,19 @@ class AppHandler(webapp2.RequestHandler):
             return ''
         else:
             return '/' + '1.0' 
+
+
+    def sync_publishers(self):
+        sql = 'SELECT * FROM resource'
+        rpc = urlfetch.create_rpc()
+        url = cdb_url % (urllib.urlencode(dict(q=sql, api_key=apikey())))
+        urlfetch.make_fetch_call(rpc, url)
+        try:
+            response = rpc.get_result()
+        except urlfetch.DownloadError:
+            logging.error("Error logging API - %s" % (sql))
+        if not response:
+            return   
 
     def mapreduce_finalize(self):
         logging.info('HEADERS %s' % self.request.headers)
@@ -147,10 +156,6 @@ class AppHandler(webapp2.RequestHandler):
 
     def occ(self, publisher, resource):
         self.render_template('occurrence.html')        
-
-    def pub(self, publisher):
-        logging.info('dude %s' % publisher)
-        self.render_template('occurrence.html')  
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          

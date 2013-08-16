@@ -6,195 +6,22 @@
     <h1>Publishers <small>VertNet</small></h1>
   </div>
   
+  <p class="lead">Explore over <span id="reccount" class="text-primary pub-stats"></span> from <span id="rescount" class="text-primary pub-stats"></span> shared by <span id="pubcount" class="text-primary pub-stats"></span> globally.</p>
+
   <div id="click-row-tip" class="alert alert-success">
     <button type="button" class="close" data-dismiss="alert">×</button>
-    <strong>Pro tip! </strong>Click on a table row to search records by publisher.
+    <strong>Pro tip! </strong>Click on a table row to view the publisher detail page.
   </div>
 
-  <table class="table table-striped table-hover search-results-hover">
+  <table id="pubTable" class="table table-striped table-hover search-results-hover">
     <thead>
       <tr>
-        <th>Publisher</th>
-        <th>InstitutionCode</th>
+        <th>Publisher</th>        
+        <th>Code</th>
+        <th>Records</th>
+        <th>Resources</th>
       </tr>
     </thead>
     <tbody> 
-     <tr id="CAS">
-       <td>California Academy of Sciences</td>
-       <td>CAS</td>
-     </tr> 
-     <tr id="CM">
-       <td>Carnegie Museum of Natural History</td>
-       <td>CM</td>
-     </tr> 
-     <tr id="UTEP">
-       <td>Centennial Museum</td>
-       <td>UTEP</td>
-     </tr> 
-     <tr id="CRCM">
-       <td>Charles R. Conner Museum</td>
-       <td>CRCM</td>
-     </tr> 
-     <tr id="CMC">
-       <td>Cincinnati Museum Center</td>
-       <td>CMC</td>
-     </tr> 
-     <tr id="CUMV">
-       <td>Cornell University Museum of Vertebrates</td>
-       <td>CUMV</td>
-     </tr> 
-     <tr id="DMNH">
-       <td>Delaware Museum of Natural History</td>
-       <td>DMNH</td>
-     </tr> 
-     <tr id="DMNS">
-       <td>Denver Museum of Nature & Science</td>
-       <td>DMNS</td>
-     </tr> 
-     <tr id="FMNH">
-       <td>Field Museum of Natural History</td>
-       <td>FMNH</td>
-     </tr> 
-     <tr id="FLMNH">
-       <td>Florida Museum of Natural History</td>
-       <td>FLMNH</td>
-     </tr> 
-     <tr id="GSU">
-       <td>Georgia Southern University</td>
-       <td>GSU</td>
-     </tr> 
-     <tr id="HSU">
-       <td>Humboldt State University, Wildlife Department</td>
-       <td>HSU</td>
-     </tr> 
-     <tr id="ISU">
-       <td>John Wesley Powell-Dale Birkenholz Natural History Collections</td>
-       <td>ISU</td>
-     </tr> 
-     <tr id="KU">
-       <td>KU Biodiversity Institute</td>
-       <td>KU</td>
-     </tr> 
-     <tr id="CUML">
-       <td>Macaulay Library</td>
-       <td>CUML</td>
-     </tr> 
-     <tr id="MPM">
-       <td>Milwaukee Public Museum</td>
-       <td>MPM</td>
-     </tr> 
-     <tr id="MLZ">
-       <td>Moore Laboratory of Zoology</td>
-       <td>MLZ</td>
-     </tr> 
-     <tr id="MCZ">
-       <td>Museum of Comparative Zoology</td>
-       <td>MCZ</td>
-     </tr> 
-     <tr id="MSB">
-       <td>Museum of Southwestern Biology</td>
-       <td>MSB</td>
-     </tr> 
-     <tr id="MVZ">
-       <td>Museum of Vertebrate Zoology, UC Berkeley</td>
-       <td>MVZ</td>
-     </tr> 
-     <tr id="LACM">
-       <td>Natural History Museum of Los Angeles County</td>
-       <td>LACM</td>
-     </tr> 
-     <tr id="NMMNH">
-       <td>New Mexico Museum of Natural History and Science</td>
-       <td>NMMNH</td>
-     </tr> 
-     <tr id="NYSM">
-       <td>New York State Museum</td>
-       <td>NYSM</td>
-     </tr> 
-     <tr id="OS">
-       <td>Oregon State University</td>
-       <td>OS</td>
-     </tr> 
-     <tr id="PMNS">
-       <td>Perot Museum of Nature and Science</td>
-       <td>PMNS</td>
-     </tr> 
-     <tr id="ROM">
-       <td>Royal Ontario Museum</td>
-       <td>ROM</td>
-     </tr> 
-     <tr id="SBMNH">
-       <td>Santa Barbara Museum of Natural History</td>
-       <td>SBMNH</td>
-     </tr> 
-     <tr id="KSTC">
-       <td>Schmidt Museum of Natural History, Emporia State University</td>
-       <td>KSTC</td>
-     </tr> 
-     <tr id="PSM">
-       <td>Slater Museum of Natural History, University of Puget Sound</td>
-       <td>PSM</td>
-     </tr> 
-     <tr id="SMNS">
-       <td>Staatliches Museum für Naturkunde Stuttgart</td>
-       <td>SMNS</td>
-     </tr> 
-     <tr id="TTRS">
-       <td>Tall Timbers Research Station and Land Conservancy</td>
-       <td>TTRS</td>
-     </tr> 
-     <tr id="TCWC">
-       <td>Texas Cooperative Wildlife Collection</td>
-       <td>TCWC</td>
-     </tr> 
-     <tr id="UMZC">
-       <td>University Museum of Zoology Cambridge (Zoology)</td>
-       <td>UMZC</td>
-     </tr> 
-     <tr id="UAM">
-       <td>University of Alaska Museum</td>
-       <td>UAM</td>
-     </tr> 
-     <tr id="UAFMC">
-       <td>University of Arkansas Collections Facility</td>
-       <td>UAFMC</td>
-     </tr> 
-     <tr id="UBCBBM">
-       <td>University of British Columbia Beaty Biodiversity Museum</td>
-       <td>UBCBBM</td>
-     </tr> 
-     <tr id="UCMP">
-       <td>University of California Museum of Paleontology</td>
-       <td>UCMP</td>
-     </tr> 
-     <tr id="UMMZ">
-       <td>University of Michigan Museum of Zoology</td>
-       <td>UMMZ</td>
-     </tr> 
-     <tr id="UNR">
-       <td>University of Nevada, Reno</td>
-       <td>UNR</td>
-     </tr> 
-     <tr id="UTA">
-       <td>University of Texas at Arlington Amphibian and Reptile Diversity Research Center</td>
-       <td>UTA</td>
-     </tr> 
-     <tr id="UWBM">
-       <td>University of Washington Burke Museum</td>
-       <td>UWBM</td>
-     </tr> 
-     <tr id="UWYMV">
-       <td>University of Wyoming Museum of Vertebrates</td>
-       <td>UWYMV</td>
-     </tr> 
-     <tr id="WFVZ">
-       <td>Western Foundation of Vertebrate Zoology</td>
-       <td>WFVZ</td>
-     </tr> 
-     <tr id="WNMU">
-       <td>Western New Mexico University</td>
-       <td>WNMU</td>
-     </tr> 
-
   </tbody>
 </table>

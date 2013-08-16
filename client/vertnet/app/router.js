@@ -16,8 +16,17 @@ define([
   'models/detail',
   'views/about',
   'views/publishers',
-  'spin'
-], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, SearchView, OccDetail, OccModel, AboutView, PublishersView, Spin) {
+  'views/publisher',
+  'models/publisher',
+  'models/resource',
+  'models/resources',
+  'spin',
+  'util',
+  'map'
+], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, 
+      SearchView, OccDetail, OccModel, AboutView, PublishersView, PubView, PubModel, 
+      ResourceModel, ResourceList, Spin, util, map) {
+  
   var Router = Backbone.Router.extend({
     initialize: function (app) {
       this.app = app;
@@ -25,6 +34,8 @@ define([
       this.route('search', 'search', _.bind(this.search, this));      
       this.route('about', 'about', _.bind(this.about, this));
       this.route('publishers', 'publishers', _.bind(this.publishers, this));
+      this.route('o/:publisher/:resource', 'occurrece', _.bind(this.occurrence, this));
+      this.route('p/:publisher', 'publisher', _.bind(this.publisher, this));
       
       mps.subscribe('navigate', _.bind(function (place) {
         var path = place.path;
@@ -33,9 +44,10 @@ define([
       }, this));
     },
 
-    routes: {
-      ':publisher/:resource':  'occurrence'
-    },
+    // routes: {
+    //   ':publisher/:resource':  'occurrence',
+    //   ':publisher': 'publisher'
+    // },
 
     initHeaderFooter: function() {
       if (!this.headerView) {
@@ -72,6 +84,7 @@ define([
 
     search: function(params) {
       var query = params || {};
+      var init = _.isEmpty(params);
       this.detachCurrentView();
       this.initHeaderFooter();
       if (!this.searchView) {
@@ -82,7 +95,7 @@ define([
         }, this));
       } else {
         $('#content').append(this.searchView.el);
-        this.searchView.onShow({query:query});
+        this.searchView.onShow({query:query}, init);
       }
     },
 
@@ -92,7 +105,9 @@ define([
       if (!this.publishersView) {
         this.publishersView = new PublishersView({}, this.app);
         $('#content').append(this.publishersView.render().el);
-        this.publishersView.setup();
+        this.publishersView.setup(_.bind(function() {
+          this.publishersView.onShow();
+        }, this));
       } else {
         $('#content').append(this.publishersView.el); 
         this.publishersView.onShow();
@@ -144,7 +159,53 @@ define([
       this.occurrenceView = new OccDetail({model: model}, this.app);
       $('#content').append(this.occurrenceView.render().el);
       this.occurrenceView.setup();
-    }
+    },
+
+    publisher: function(publisher) {
+      var model = null;
+      var resCount = 0;
+      var recCount = 0;
+      var resource = [];
+      this.detachCurrentView();
+      this.initHeaderFooter();
+
+      if (!this.publisherCache) {
+        map.init(_.bind(function() {
+          var sql = new cartodb.SQL({ user: 'vertnet' });
+          var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url FROM resource GROUP BY orgname,icode,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url ORDER BY title";
+          sql.execute(query, {})
+            .done(_.bind(function(data) {
+              this.publisherCache = _.groupBy(data.rows, _.bind(function(row) {
+                return util.slugify(row['orgname']);
+              }, this));
+              this.showPublisher(publisher);
+            }, this))
+            .error(function(errors) {
+              console.log("error:" + err);
+            });
+        }, this));
+      } else {
+        this.showPublisher(publisher);
+      }
+    },
+
+    showPublisher: function(publisher) {
+      var resources = this.publisherCache[publisher];
+      var resource = resources[0];
+      var resCount = _.size(resources);
+      var recCount = _.reduce(resources, function(memo, resource) {
+        return resource.count + memo;
+      }, 0);
+      var model = new PubModel({orgname: resource.orgname, resources: resCount, 
+        records: recCount, icode: resource.icode}); 
+      var resourceList = _.map(resources, function(x) {
+        return new ResourceModel(x);
+      });
+      this.publisherView = new PubView({model: model, resourceList: resourceList}, 
+        this.app);
+      $('#content').append(this.publisherView.render().el);
+      this.publisherView.setup();
+    }    
   });
   
   return Router;

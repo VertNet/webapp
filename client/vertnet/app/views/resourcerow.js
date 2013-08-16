@@ -1,5 +1,5 @@
 /*
- * Occurrence result table row view.
+ * Resource table row view.
  */
 define([
   'jquery',
@@ -7,7 +7,7 @@ define([
   'underscore',
   'util',
   'mps',
-  'text!views/detailrow.html'
+  'text!views/resourcerow.html'
   ], function ($, Backbone, _, util, mps, template) {
     return Backbone.View.extend({
 
@@ -38,13 +38,9 @@ define([
       // Open the occurrence detail page.
       _clickHandler: function(e) {
         e.preventDefault();
-        var keyname = this.model.get('keyname');
-        var path = 'o/'+util.getOccPath(keyname);
         var sel = getSelection().toString();
         if (!sel) {
-          this.trigger('onClick');
-          this.app.occDetailModel = this.model;
-          mps.publish('navigate', [{path: path, trigger: true}]);
+          window.open(this.model.get('url'), '_self');
         }
       }
     });

@@ -5,7 +5,7 @@ require.config({
   
   //urlArgs: "busta=" + (new Date()).getTime(),
 
-  baseUrl: 'vertnet',
+  baseUrl: '/vertnet',
 
   paths: {
     jquery: ['lib/jquery'],
@@ -23,8 +23,8 @@ require.config({
     map: ['app/map'],
     text: ['app/text'],
     util: ['app/util'],
-    views: ['app/views/'],
-    models: ['app/models/']
+    views: ['app/views'],
+    models: ['app/models']
   },
   
   // Dependency mappings:
