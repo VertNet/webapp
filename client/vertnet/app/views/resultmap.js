@@ -22,14 +22,16 @@
       },
 
       handleDetailClick: function(e) {
-        var path = [e.target.href.split('/')[3], e.target.href.split('/')[4]].join('/');
-        var check = path.replace('?id=', '/');
+        e.preventDefault();
+        var parts = e.target.href.split('/');
+        var path = [parts[3], parts[4] ,parts[5]].join('/');
+        // var path = [e.target.href.split('/')[3], e.target.href.split('/')[4]].join('/');
+        var check = path.replace('?id=', '/').replace('o/', '');
         var model = _.find(this.collection.models, _.bind(function(model) {
           return check === model.attributes.keyname;
         }, this));
         this.app.occDetailModel = model;
         mps.publish('navigate', [{path: path, trigger: true}]);
-        e.preventDefault();
       },
 
       initialize: function (options, app) {
@@ -165,7 +167,7 @@
         var infowindow = null;
         var specificURL = model.get('keyname') ? model.get('keyname') : null;
         var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
-        var url = '../'+specificURLright;
+        var url = 'o/'+specificURLright;
 
         var latlon = null;
         var marker = null;
@@ -183,7 +185,7 @@
           contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
           contentString += '<tr><td><b>LatLon</b></td><td>'+latlon+'</td></tr>';
           contentString += '</table>';
-          contentString += '<a id="detail-link" target="_blank" href="'+url+'">Occurrence details »</a>';
+          contentString += '<a id="detail-link" href="'+url+'">Occurrence details »</a>';
 
           // Create infoWindow
           infowindow = new google.maps.InfoWindowZ({
@@ -200,10 +202,25 @@
             clickable: true,
           });
 
+
+
           // Listener to open the infowindow
-          google.maps.event.addListener(marker, 'click', function() {
+          google.maps.event.addListener(marker, 'click', _.bind(function() {
             infowindow.open(this.map, marker);
-          });
+            // this.$('.detail-link').click(_.bind(function(e) {
+            //   e.preventDefault();
+            //   var parts = e.target.split('/');
+            //   var path = [parts[3], parts[4] ,parts[5]].join('/');
+            //   var keyname = [parts[4], parts[5].split('?')[0], parts[5].split('?')[1]].join('/');
+            //   var model = this.collection 
+            //   var sel = getSelection().toString();
+            //   if (!sel) {
+            //     this.trigger('onClick');
+            //     this.app.occDetailModel = this.model;
+            //     mps.publish('navigate', [{path: path, trigger: true}]);
+            //   }
+            // }, this));
+          }, this));
           // Optional, when clicking on the map, all infoWindows disappear
           google.maps.event.addListener(this.map, 'click', function() {
             infowindow.close();

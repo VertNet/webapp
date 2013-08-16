@@ -16,33 +16,89 @@ libraries:
 
 handlers:
 
+# DEV
 - url: /css
   static_dir: client/vertnet/css
-
 - url: /fonts
   static_dir: client/vertnet/fonts
-
 - url: /vertnet
   static_dir: client/vertnet
-
 - url: /vertnet/lib
   static_dir: client/vertnet/lib
-
 - url: /vertnet/app
   static_dir: client/vertnet/app
-
 - url: /vertnet/views
   static_dir: client/vertnet/app/views
-
 - url: /vertnet/models
   static_dir: client/vertnet/app/models
-
 - url: /img
   static_dir: client/vertnet/img
-
 - url: /prototypes
   static_dir: client/docs/prototypes
-  
+
+# # HACK for requirejs optimization bug.  
+# - url: /*./css
+#   static_dir: client/vertnet/css
+# - url: /*./fonts
+#   static_dir: client/vertnet/fonts
+# - url: /*./vertnet
+#   static_dir: client/vertnet
+# - url: /*./vertnet/lib
+#   static_dir: client/vertnet/lib
+# - url: /*./vertnet/app
+#   static_dir: client/vertnet/app
+# - url: /*./vertnet/views
+#   static_dir: client/vertnet/app/views
+# - url: /*./vertnet/models
+#   static_dir: client/vertnet/app/models
+# - url: /*./img
+#   static_dir: client/vertnet/img
+# - url: /*./prototypes
+#   static_dir: client/docs/prototypes
+# # HACK for requirejs optimization bug.  
+
+# # PRODUCTION
+# - url: /css
+#   static_dir: www-built/vertnet/css
+# - url: /fonts
+#   static_dir: www-built/vertnet/fonts
+# - url: /vertnet
+#   static_dir: www-built/vertnet
+# - url: /vertnet/lib
+#   static_dir: www-built/vertnet/lib
+# - url: /vertnet/app
+#   static_dir: www-built/vertnet/app
+# - url: /vertnet/views
+#   static_dir: www-built/vertnet/app/views
+# - url: /vertnet/models
+#   static_dir: www-built/vertnet/app/models
+# - url: /img
+#   static_dir: www-built/vertnet/img
+# - url: /prototypes
+#   static_dir: www-built/docs/prototypes
+
+# # HACK for requirejs optimization bug.  
+# - url: /*./css
+#   static_dir: www-built/vertnet/css
+# - url: /*./fonts
+#   static_dir: www-built/vertnet/fonts
+# - url: /*./vertnet
+#   static_dir: www-built/vertnet
+# - url: /*./vertnet/lib
+#   static_dir: www-built/vertnet/lib
+# - url: /*./vertnet/app
+#   static_dir: www-built/vertnet/app
+# - url: /*./vertnet/views
+#   static_dir: www-built/vertnet/app/views
+# - url: /*./vertnet/models
+#   static_dir: www-built/vertnet/app/models
+# - url: /*./img
+#   static_dir: www-built/vertnet/img
+# - url: /*./prototypes
+#   static_dir: www-built/docs/prototypes
+# # HACK for requirejs optimization bug. 
+
+
 # - url: /css
 #   static_dir: www-built/vertnet/css
 
@@ -53,6 +109,12 @@ handlers:
 #   static_dir: www-built/vertnet
 
 # - url: /vertnet/lib
+#   static_dir: www-built/vertnet/lib
+
+# - url: /o/vertnet/lib
+#   static_dir: www-built/vertnet/lib
+
+# - url: /p/vertnet/lib
 #   static_dir: www-built/vertnet/lib
 
 # - url: /vertnet/app

@@ -3,7 +3,7 @@
  */
 require.config({ 
   
-  //urlArgs: "busta=" + (new Date()).getTime(),
+  // urlArgs: "/vertnet=" + (new Date()).getTime(),
 
   baseUrl: '/vertnet',
 
