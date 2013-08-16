@@ -43,6 +43,7 @@ define([
       this.$('#homesearch-keywords-box').focus();
       this.$('#homesearch-keywords-box').val('');
       this.mapView.resize();
+      mps.publish('spin', [false]);
     },
 
     getSearchPath: function() {

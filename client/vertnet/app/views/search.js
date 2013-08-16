@@ -173,11 +173,11 @@ define([
      },
 
     setup: function () {
-      $("#tissue,#media,#mappable").each(_.bind(function(index, el) {
-          $(el).click(_.bind(function() {
-            this._submitHandler(null, true);
-        }, this))
-      }, this));
+      // $("#tissue,#media,#mappable").each(_.bind(function(index, el) {
+      //     $(el).click(_.bind(function() {
+      //       this._submitHandler(null, true);
+      //   }, this))
+      // }, this));
 
       this.$('#whoops').hide();
       // this.$('#resultmap').hide();
@@ -352,7 +352,7 @@ define([
       return this;
     },
 
-    onShow: function(options) {
+    onShow: function(options, init) {
       var queryVal = this.$('#search-keywords-box').val();
 
       if (options) {
@@ -382,7 +382,12 @@ define([
         this.$('#advanced-search-form').hide();
         this.$('#search-keywords-div').show();
         this.$("#search-keywords-box").focus();
-        if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
+        if (init) {
+           mps.publish('navigate', [{path: 'search', trigger: false}]);
+           this.$('#search-keywords-box').val('');
+           this._clearResults();
+           this._showResultsTable(false);
+         } else if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
           this._submitHandler(null, true);
         }
       }
@@ -503,6 +508,7 @@ define([
         this._clearResults();
         this._showResultsTable(false);
         mps.publish('spin', [false]);
+        mps.publish('navigate', [{path: 'search', trigger: false}]);
         return;
       }
       var path = window.location.pathname;
@@ -511,7 +517,7 @@ define([
       var radius = null;
       if (search !== 'q=') {
         path += '?' + search;
-        mps.publish('navigate', [{path: path, trigger: true}]);
+        mps.publish('navigate', [{path: path, trigger: false}]);
       } 
       this.paging = false;
       this.response = null;

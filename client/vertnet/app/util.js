@@ -300,7 +300,7 @@ define([
     },
 
     slugify: function (str) {
-      str = this.blurb(str, 30);
+      str = this.blurb(str, 100);
       str = str
         .toLowerCase()
         .replace(/[^\w ]+/g,'')

@@ -6,17 +6,12 @@ from webapp2_extras import jinja2
 from google.appengine.api import namespace_manager
 from vertnet.service.model import IndexJob
 
-import mapreduce
-
 from mapreduce import control as mrc
-from mapreduce import base_handler
 from mapreduce import input_readers
 from google.appengine.api import files
 
 import os
 import webapp2
-
-from mapreduce import mapreduce_pipeline
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
@@ -31,8 +26,14 @@ routes = [
     webapp2.Route(r'/test', handler='app.AppHandler:test', name='test'),
     webapp2.Route(r'/feedback', handler='app.AppHandler:feedback', name='feedback'),
     webapp2.Route(r'/publishers', handler='app.AppHandler:publishers', name='publishers'),
-    webapp2.Route(r'/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
+    
+    webapp2.Route(r'/o/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', 
         handler='app.AppHandler:occ', name='occ'),
+
+    webapp2.Route(r'/p/<:([a-zA-Z0-9]*-?[a-zA-Z0-9]*)*>', handler='app.AppHandler:pub', name='pub'),
+
+    
+   
 ]
 
 class AppHandler(webapp2.RequestHandler):
@@ -146,6 +147,10 @@ class AppHandler(webapp2.RequestHandler):
 
     def occ(self, publisher, resource):
         self.render_template('occurrence.html')        
+
+    def pub(self, publisher):
+        logging.info('dude %s' % publisher)
+        self.render_template('occurrence.html')  
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          

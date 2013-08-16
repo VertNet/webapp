@@ -39,7 +39,7 @@ define([
       _clickHandler: function(e) {
         e.preventDefault();
         var keyname = this.model.get('keyname');
-        var path = util.getOccPath(keyname);
+        var path = 'o/'+util.getOccPath(keyname);
         var sel = getSelection().toString();
         if (!sel) {
           this.trigger('onClick');

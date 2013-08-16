@@ -18,8 +18,8 @@
         map: 'app/map',
         text: 'app/text',
         util: 'app/util',
-        views: 'app/views/',
-        models: 'app/models/'
+        views: 'app/views',
+        models: 'app/models'
       },
 
     modules: [
@@ -31,10 +31,10 @@
             //List common dependencies here. Only need to list
             //top level dependencies, "include" will find
             //nested dependencies.
-            include: [
-                'jquery',
-                'views/about'
-            ]
+            // include: [
+            //     'jquery',
+            //     'views/about'
+            // ]
         },
 
         //Now set up a build layer for each main layer, but exclude
