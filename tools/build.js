@@ -26,14 +26,14 @@
         //First set up the common build layer.
         {
             //module names are relative to baseUrl
-            name: 'main',
+            name: 'main'
           
             //List common dependencies here. Only need to list
             //top level dependencies, "include" will find
             //nested dependencies.
             // include: [
             //     'jquery',
-            //     'views/about'
+            //     'backbone'
             // ]
         },
 
