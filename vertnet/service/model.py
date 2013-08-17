@@ -45,10 +45,13 @@ class StatsPayload(messages.Message):
     """JSON message for stats RPC."""
     stats = messages.StringField(1)
 
-class Organization(ndb.Model):
-    """Model for an organization."""
+class Publisher(ndb.Model):
+    """Model for a publisher."""
     name = ndb.StringProperty()
     name_slug = ndb.StringProperty()
+    # record_count = ndb.IntegerProperty()
+    # resource_count = ndb.ResourceProperty()
+    # code = ndb.StringProperty()
 
     @property 
     def json(self):
@@ -56,11 +59,11 @@ class Organization(ndb.Model):
 
     @property 
     def message(self):
-        return OrganizationPayload(**self.json)
+        return PublisherPayload(**self.json)
 
     @classmethod
     def page(cls, limit, cursor, format='model'):
-        """Return page of organizations as models, json, or RPC messages."""
+        """Return page of publishers as models, json, or RPC messages."""
         models, next, more = cls.query().fetch_page(limit, start_cursor=cursor)
         if format == 'json':
             return [x.json for x in models], next, more
@@ -208,7 +211,7 @@ class RecordIndex(ndb.Model):
         count = qry.count(limit=1000)
         return (records, next_cursor, more, count)
 
-class OrganizationPayload(messages.Message):
+class PublisherPayload(messages.Message):
     """JSON Organization payload for RPC."""
     name = messages.StringField(1)
     name_slug = messages.StringField(2)
@@ -257,7 +260,7 @@ class RecordList(messages.Message):
     error = messages.StringField(12)
 
 class ListPayload(messages.Message):
-    organizations = messages.MessageField(OrganizationPayload, 1, 
+    organizations = messages.MessageField(PublisherPayload, 1, 
         repeated=True)
     resources = messages.MessageField(ResourcePayload, 2, repeated=True)
     datasets = messages.MessageField(DatasetPayload, 3, repeated=True)
