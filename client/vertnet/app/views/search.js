@@ -355,6 +355,12 @@ define([
     onShow: function(options, init) {
       var queryVal = this.$('#search-keywords-box').val();
 
+      if (search == null) {
+        load = false;
+      } else {
+        load =  queryVal !== decodeURIComponent(this._getSearch().replace('+',' ').replace('q=',''));
+      }
+
       if (options) {
         this.options.query = options.query;
       }
@@ -387,7 +393,7 @@ define([
            this.$('#search-keywords-box').val('');
            this._clearResults();
            this._showResultsTable(false);
-         } else if (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '') {
+         } else if (!load && (this.countLoaded === 0 || queryVal !== options.query.q || queryVal === '')) {
           this._submitHandler(null, true);
         }
       }
