@@ -1,45 +1,69 @@
 /*
  * Require.js bootstrapping.
  */
-
-
-require.config({ // VertNet app configuration.
+require.config({ 
   
-  //urlArgs: "busta=" + (new Date()).getTime(),
+  // urlArgs: "/vertnet=" + (new Date()).getTime(),
+
+  baseUrl: '/vertnet',
 
   paths: {
-    jQuery: 'libs/jquery/jquery',
-    Underscore: 'libs/underscore/underscore',
-    Backbone: 'libs/backbone/backbone',
-    mps: 'libs/minpubsub/minpubsub',
-    Spin: 'libs/spin/spin',
-    bootstrap: 'libs/bootstrap/bootstrap',
-    backbonequeryparams: 'libs/backbone/backbonequeryparams',
-    store: 'libs/store/store.min'
+    jquery: ['lib/jquery'],
+    underscore: ['lib/underscore'],
+    backbone: ['lib/backbone'],
+    mps: ['lib/minpubsub'],
+    spin: ['lib/spin'],
+    bootstrap: ['lib/bootstrap'],
+    backbonequeryparams: ['lib/backbone.queryparams'],
+    cartodb: ['lib/cartodb'],
+    store: ['lib/store'],
+    app: ['app/app'],
+    router: ['app/router'],
+    rpc: ['app/rpc'],
+    map: ['app/map'],
+    text: ['app/text'],
+    util: ['app/util'],
+    views: ['app/views'],
+    models: ['app/models']
   },
   
   // Dependency mappings:
   shim: {
-    Underscore: {
+    underscore: {
       exports: '_'
     },
-    Backbone: {
-      deps: ['jQuery', 'Underscore'],
+    backbone: {
+      deps: ['jquery', 'underscore'],
       exports: 'Backbone',
     },
     backbonequeryparams: {
-      deps: ['Backbone', 'Underscore'],
+      deps: ['backbone', 'underscore'],
       exports: 'backbonequeryparams'
     },
-    mps: {
-      deps: ['jQuery', 'Underscore'],
-      exports: 'mps'
+    app: {
+      deps: ['mps'],
+      exports: 'app'
+    },  
+    views: {
+      deps: ['bootstrap']
     },
-    Spin: {
+    mps: {
+      deps: ['jquery', 'underscore'],
+      exports: 'mps',
+      init: function(foo) {
+        var mps = {
+          subscribe: window.subscribe,
+          unsubscribe: window.unsubscribe,
+          publish: window.publish
+        };
+        return mps;
+      }
+    },
+    spin: {
       exports: 'Spin'
     },
     bootstrap: {
-      deps: ['jQuery'],
+      deps: ['jquery'],
       exports: 'bootstrap'
     }
   }
@@ -47,6 +71,5 @@ require.config({ // VertNet app configuration.
 
 // Application entry point:
 require(['app'], function (app) {
-  console.log('main.entry()');
   app.init();
 });
