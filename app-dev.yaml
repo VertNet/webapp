@@ -1,12 +1,9 @@
 application: vertnet-portal
-version: 0-0-2-wip
+version: wip
 runtime: python27
 threadsafe: true
 api_version: 1
 
-# builtins:
-# - remote_api: on
-#- appstats: on
 
 # includes:
 # - mapreduce/include.yaml
@@ -19,36 +16,39 @@ libraries:
 
 handlers:
 
+# DEV
+
+- url: /js/lib/*.
+  static_dir: www/lib
+
+- url: /js
+  static_dir: www/js
+
 - url: /css
-  static_dir: client/vertnet/css
+  static_dir: www/css
 
 - url: /fonts
-  static_dir: client/vertnet/fonts
-
-- url: /vertnet
-  static_dir: client/vertnet
-
-- url: /vertnet/lib
-  static_dir: client/vertnet/lib
-
-- url: /vertnet/app
-  static_dir: client/vertnet/app
-
-- url: /vertnet/views
-  static_dir: client/vertnet/app/views
-
-- url: /vertnet/models
-  static_dir: client/vertnet/app/models
+  static_dir: www/fonts
 
 - url: /img
-  static_dir: client/vertnet/img
+  static_dir: www/img
 
-- url: /prototypes
-  static_dir: client/docs/prototypes
+# PROD
 
+# - url: /js/lib/*.
+#   static_dir: www-builtjs/lib
 
+# - url: /js
+#   static_dir: www-built/js
 
-# backends
+# - url: /css
+#   static_dir: www-built/css
+
+# - url: /fonts
+#   static_dir: www-built/fonts
+
+# - url: /img
+#   static_dir: www-built/img
 
 # services
 
