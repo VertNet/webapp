@@ -1,6 +1,7 @@
 {
-    appDir: '../client/',
-    mainConfigFile: '../client/vertnet/main.js',
+    baseUrl: 'js',
+    appDir: '../www',
+    mainConfigFile: '../www/js/main.js',
     dir: '../www-built',
     paths: {
         jquery: 'lib/jquery',
