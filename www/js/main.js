@@ -5,7 +5,7 @@ require.config({
   
   // urlArgs: "/vertnet=" + (new Date()).getTime(),
 
-  baseUrl: '/vertnet',
+  baseUrl: '/js',
 
   paths: {
     jquery: ['lib/jquery'],
