@@ -1,7 +1,21 @@
-/*
- * Map view
+/**
+ * This file is part of VertNet: https://github.com/VertNet/webapp
+ * 
+ * VertNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * VertNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see: http://www.gnu.org/licenses
  */
 
+// Defines the view for the home page map.
 define([
   // dependencies
   'jquery',
@@ -33,7 +47,6 @@ define([
         this.$el.html(this.template());
         if (!window.google || !window.google.maps) return this;
         this.map = new google.maps.Map($('#homemap').get(0), this.options);
-        //this.addEvents();
       }
       map = this.map;
       cartodb.createLayer(map, 'http://vertnet.cartodb.com/api/v1/viz/26/viz.json', {
@@ -54,7 +67,6 @@ define([
 
       return this;
     },
-
 
     addDisplays: function () {
       // top-left widgets
@@ -93,6 +105,5 @@ define([
       this.map.setZoom(this.map.getZoom());
       this.map.setCenter(this.map.getCenter());
     },
-
   });
 });

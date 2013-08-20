@@ -32,11 +32,11 @@ require.config({
     backbonequeryparams: ['lib/backbone.queryparams'],
     cartodb: ['lib/cartodb'],
     store: ['lib/store'],
+    text: ['lib/text'],
     app: ['app/app'],
     router: ['app/router'],
     rpc: ['app/rpc'],
     map: ['app/map'],
-    text: ['app/text'],
     util: ['app/util'],
     views: ['app/views'],
     models: ['app/models']
