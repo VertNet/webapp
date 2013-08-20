@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This file is part of VertNet: https://github.com/VertNet/webapp
 #
 # VertNet is free software: you can redistribute it and/or modify
@@ -13,12 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see: http://www.gnu.org/licenses
 
-# Queue configuration for the app:
-total_storage_limit: 120M
-queue:
-- name: apitracker
-  rate: 35/s
-- name: download
-  rate: 35/s
-- name: downloadwrite
-  rate: 35/s
+# This script launches the dev app server on localhost:8080
+# Example usage: $ ./dev.sh
+dev_appserver.py --storage_path=../data/ ../app-dev.yaml
