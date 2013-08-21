@@ -30,9 +30,10 @@ define([
   'views/resultmap',
   'views/searchmap',
   'models/search',
-  'store'
+  'store',
+  'util'
 ], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, 
-    OccModel, ResultMap, SearchMap, SearchModel, store) {
+    OccModel, ResultMap, SearchMap, SearchModel, store, util) {
   return Backbone.View.extend({
     events: {
       'click .pager': '_loadMore',
@@ -74,7 +75,27 @@ define([
             this.$('#search-keywords-box').focus();
           }
         }, this));
+
+
+        this.$('#nameval').on('keyup', _.bind(function(e) {
+          if (e.keyCode == 13) { // ENTER key
+            this._submitDownload(e);
+          } 
+        }, this));   
+        this.$('#emailval').on('keyup', _.bind(function(e) {
+          if (e.keyCode == 13) { // ENTER key
+            this._submitDownload(e);
+          } 
+        }, this));      
            
+        this.$('#myModal').on('shown.bs.modal', _.bind(function () {
+          this.$('#nameval').focus();
+          this.$('#nameval').val('MyResults');
+          this.$('#email').removeClass('has-error');
+          this.$('#name').removeClass('has-error');
+          this.$('#nameval').select();
+        }, this));
+
         this.$("#search-keywords-box").focus();
 
         this.$(document).on('keyup', _.bind(function(e) {
@@ -327,7 +348,7 @@ define([
           this.$('#email').show();
         }
         this.$('#confirmation').hide();
-        this.$('#reccount').text(this.count);
+        this.$('#reccount').text(util.addCommas(this.count));
         this.recCount = this.count;
         this.$('#myModal').modal();
         this.$('#name').focus();
@@ -629,7 +650,7 @@ define([
     // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
-      _.each(this.$('#dwcterms input'), _.bind(function (input) {
+      _.each(this.$('#dwcterm input'), _.bind(function (input) {
         var value = $(input).val();
         this.terms[input.id] = value.trim();
       }, this));
@@ -744,15 +765,33 @@ define([
 
     _submitDownload: function(e) {
         this._explodeKeywords();
-        var email = this.$('#email').val();
-        var name = this.$('#name').val();
+        var email = this.$('#emailval').val();
+        var name = this.$('#nameval').val();
         var count = this.count; 
+        var error = false;
         var request = {
           count: count,
           email: email, 
           name: name, 
           keywords: JSON.stringify(this.keywords)}
+
         e.preventDefault();
+        if (this.$('#email').is(':visible') && !email) {
+          this.$('#email').addClass('has-error');
+          error = true;
+        } else {
+          this.$('#email').removeClass('has-error');
+        }
+        if (!name) {
+          this.$('#name').addClass('has-error');
+          error = true;
+        } else {
+          this.$('#name').removeClass('has-error');
+        }
+        if (error) {
+          return;
+        }
+        
         if (count <= this.DOWNLOAD_THRES) {
           window.location.href = '/service/download?' + $.param(request);
           this.$('#myModal').modal('hide');
