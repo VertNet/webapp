@@ -1,6 +1,21 @@
-/*
- * Search view.
+/**
+ * This file is part of VertNet: https://github.com/VertNet/webapp
+ * 
+ * VertNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * VertNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see: http://www.gnu.org/licenses
  */
+
+// Defines the view for the search page.
 define([
   'jquery',
   'underscore',
@@ -15,9 +30,10 @@ define([
   'views/resultmap',
   'views/searchmap',
   'models/search',
-  'store'
+  'store',
+  'util'
 ], function ($, _, Backbone, mps, map, rpc, template, OccList, OccRow, 
-    OccModel, ResultMap, SearchMap, SearchModel, store) {
+    OccModel, ResultMap, SearchMap, SearchModel, store, util) {
   return Backbone.View.extend({
     events: {
       'click .pager': '_loadMore',
@@ -59,7 +75,27 @@ define([
             this.$('#search-keywords-box').focus();
           }
         }, this));
+
+
+        this.$('#nameval').on('keyup', _.bind(function(e) {
+          if (e.keyCode == 13) { // ENTER key
+            this._submitDownload(e);
+          } 
+        }, this));   
+        this.$('#emailval').on('keyup', _.bind(function(e) {
+          if (e.keyCode == 13) { // ENTER key
+            this._submitDownload(e);
+          } 
+        }, this));      
            
+        this.$('#myModal').on('shown.bs.modal', _.bind(function () {
+          this.$('#nameval').focus();
+          this.$('#nameval').val('MyResults');
+          this.$('#email').removeClass('has-error');
+          this.$('#name').removeClass('has-error');
+          this.$('#nameval').select();
+        }, this));
+
         this.$("#search-keywords-box").focus();
 
         this.$(document).on('keyup', _.bind(function(e) {
@@ -173,14 +209,7 @@ define([
      },
 
     setup: function () {
-      // $("#tissue,#media,#mappable").each(_.bind(function(index, el) {
-      //     $(el).click(_.bind(function() {
-      //       this._submitHandler(null, true);
-      //   }, this))
-      // }, this));
-
       this.$('#whoops').hide();
-      // this.$('#resultmap').hide();
       $("#spatialfilter").click(_.bind(function() {
         if (this.$('#spatialfilter').is(':checked')) {
           $("#collapseOne").collapse('show');
@@ -195,7 +224,6 @@ define([
           if (this.circle) {
             this.circle.setMap(null);
           }
-          //this.resultMap.toggleSpatialSearchStyle(false);
           this._explodeKeywords();
           this._submitHandler(null, true);
         }
@@ -211,34 +239,25 @@ define([
 
       setTimeout(_.bind(function() {
         if (store.get('try-spatial-closed') !== true) {
-          // this.$('#maptab').popover({container: '#maptab', content:'Try spatial search!', html: true, placement: 'bottom'});
-          //this.$('#maptab').popover('show');
           this.$('#maptab').click(_.bind(function() {
             store.set('try-spatial-closed', true);
-            //this.$('#maptab').popover('destroy');
           }, this));
         }
       }, this), 3000);
 
-      // this.$('#search-button').popover({content:'<strong>Spatial search is on.</strong>', html: true, placement: 'top'});
       this.$('#spatial-search-control').hide();
       this.$('#spatial-search-control').click(_.bind(function(e) {
         var check = this.$('#spatial-label');
         this.spatialSearch = check.is(':checked');
         if (!this.spatialSearch) {
-          //this.$('#search-button').popover('hide');      
           if (this.marker) {
             this.marker.setMap(null);
           }
           if (this.circle) {
             this.circle.setMap(null);
           }
-          //this.resultMap.toggleSpatialSearchStyle(false);
           this._explodeKeywords();
           this._submitHandler(null, true);
-        } else {
-          //this.$('#search-button').popover('show');      
-          //this.resultMap.toggleSpatialSearchStyle(true);
         }
       }, this));
     
@@ -255,7 +274,6 @@ define([
         this.$('#advanced-search-form').show();
         this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
         this.$('#allwords').focus();
-        //this.$('#maptab').popover('hide');
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
         if (this.spatialMap) {
@@ -269,7 +287,6 @@ define([
         e.stopPropagation();
         this.$('#advanced-search-form').hide();        
         this.$('#search-keywords-div').show();
-        //this.$('#maptab').popover('show'); 
       }, this));
 
       this.$('#show-search-options').tooltip({
@@ -293,17 +310,13 @@ define([
       }
 
       this.$("#search-keywords-box").focus();
-      //this.downloadTab = new Download(this.options, this.app, this.model);
-      //this.$('#downloadform').html(this.downloadTab.render().el);
       this.$('#bottom-pager').hide();
       this.$('#resultTabs a').on('shown.bs.tab', _.bind(function (e) {
         var tab = e.target.id;
         if (tab === 'maptab') {
           this.resultMap._updateMarkers();
           this.resultMap.resize();
-        } else if (tab === 'download-tab') {
-          //this.downloadTab.calculateCount();
-        }
+        } 
       }, this));
    
       this.$('#submit-download-btn').click(_.bind(function(e) {
@@ -335,7 +348,7 @@ define([
           this.$('#email').show();
         }
         this.$('#confirmation').hide();
-        this.$('#reccount').text(this.count);
+        this.$('#reccount').text(util.addCommas(this.count));
         this.recCount = this.count;
         this.$('#myModal').modal();
         this.$('#name').focus();
@@ -403,7 +416,6 @@ define([
     _loadMore: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      // if (this.countLoaded < this.count) {
       if (this.response.items.length >= this.PAGE_SIZE) {
         this.paging = true;
         this._executeSearch(null, true);
@@ -489,8 +501,6 @@ define([
         sort = 'no sort';
       }
 
-      //this._prepTerms();
-      //terms = this.terms;
       if (this.$('#search-keywords-div').is(":visible")) {
         if (q !== '') {
           terms['q'] = q;
@@ -626,7 +636,6 @@ define([
           this.$('#whoops').html('<button type="button" class="close" data-dismiss="alert">×</button><strong>OK!</strong> Cancelling search request now. Please try adding additional keywords and searching again. Almost done cancelling...');              
           this._clearResults();
           this._showResultsTable(false);
-          // this.spin.stop();
         }, this));
         this.$('#whoops').show();
         this.retrying = true;
@@ -641,7 +650,7 @@ define([
     // Prepare the dictionary of search terms.
     _prepTerms: function() {
       this.terms = {};
-      _.each(this.$('#dwcterms input'), _.bind(function (input) {
+      _.each(this.$('#dwcterm input'), _.bind(function (input) {
         var value = $(input).val();
         this.terms[input.id] = value.trim();
       }, this));
@@ -697,14 +706,12 @@ define([
           this.viewList.push(view);
           this.$('#occTable > tbody:last').append(view.render().el);
           view.on('onClick', function() {
-            //this.app.router.navigate(window.location.pathname + '?' + this._getSearch());
           }, this);
         }, this));
       } else {
         this.terms = {};
         this.keywords.splice(0, this.keywords.length);
       }
-      // this._disableTablePager(this.count === this.countLoaded);
       this._disableTablePager((items.length < this.PAGE_SIZE) || !response.cursor);      
       mps.publish('spin', [false]);
     },
@@ -754,28 +761,37 @@ define([
       this.occList.reset(); // clear models.
       this.count = 0;
       this.countLoaded = 0;
-      // this.$('#spatial-label').prop("checked", false);
-      // this.resultMap.toggleSpatialSearchStyle(false);
-      // if (this.cirlce) {
-      //   this.circle.setMap(null);
-      // }
-      // if (this.marker) {
-      //   this.marker.setMap(null);
-      // }
-      // this.spatialSearch = false;
     },
 
     _submitDownload: function(e) {
         this._explodeKeywords();
-        var email = this.$('#email').val();
-        var name = this.$('#name').val();
-        var count = this.count; //Number(this.$('#reccount').text());
+        var email = this.$('#emailval').val();
+        var name = this.$('#nameval').val();
+        var count = this.count; 
+        var error = false;
         var request = {
           count: count,
           email: email, 
           name: name, 
           keywords: JSON.stringify(this.keywords)}
+
         e.preventDefault();
+        if (this.$('#email').is(':visible') && !email) {
+          this.$('#email').addClass('has-error');
+          error = true;
+        } else {
+          this.$('#email').removeClass('has-error');
+        }
+        if (!name) {
+          this.$('#name').addClass('has-error');
+          error = true;
+        } else {
+          this.$('#name').removeClass('has-error');
+        }
+        if (error) {
+          return;
+        }
+        
         if (count <= this.DOWNLOAD_THRES) {
           window.location.href = '/service/download?' + $.param(request);
           this.$('#myModal').modal('hide');

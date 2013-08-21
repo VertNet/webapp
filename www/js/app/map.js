@@ -1,11 +1,22 @@
 /**
- * This module loads the Google Maps API and the Google Visualization API,
- * and then the CartoDB API, putting both into global scope
- * as "google" and "CartoDB", respectively. 
+ * This file is part of VertNet: https://github.com/VertNet/webapp
+ * 
+ * VertNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * VertNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see: http://www.gnu.org/licenses
  */
 
+// Defines and loads google and cartodb modules into global scope.
 define([
-  // dependencies
   'jquery',
   'underscore'
 ], function ($, _) {
@@ -44,6 +55,7 @@ define([
         _.each(libs, function (lib) {
           google.load(lib.name, lib.version,
                     _.extend(lib.options, { callback: done }));
+          google.maps.visualRefresh = true;
         });
       });
     }

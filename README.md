@@ -2,6 +2,8 @@
 
 This repo contains code for the VertNet webapp.
 
+![](http://i.imgur.com/txileCt.jpg?1)
+
 ## Developing
 
 On the server side, VertNet rides on [Google App Engine](https://developers.google.com/appengine) Python 2.7 runtime, so we need to [download and install](https://developers.google.com/appengine/downloads) the latest Python SDK. Add it to your PATH and you are good to go. On the client side it rides on [Twitter Bootstrap](https://github.com/twitter/bootstrap) and [RequireJS](http://requirejs.org/) for pure HTML5, JavaScript, and CSS.
