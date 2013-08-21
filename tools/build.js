@@ -1,3 +1,19 @@
+/**
+ * This file is part of VertNet: https://github.com/VertNet/webapp
+ * 
+ * VertNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * VertNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see: http://www.gnu.org/licenses
+ */
 {
     baseUrl: 'js',
     appDir: '../www',
@@ -13,42 +29,18 @@
         backbonequeryparams: 'lib/backbone.queryparams',
         cartodb: 'lib/cartodb',
         store: 'lib/store',
+        text: 'lib/text',
         app: 'app/app',
         router: 'app/router',
         rpc: 'app/rpc',
         map: 'app/map',
-        text: 'app/text',
         util: 'app/util',
         views: 'app/views',
         models: 'app/models'
       },
-
     modules: [
-        //First set up the common build layer.
         {
-            //module names are relative to baseUrl
             name: 'main'
-          
-            //List common dependencies here. Only need to list
-            //top level dependencies, "include" will find
-            //nested dependencies.
-            // include: [
-            //     'jquery',
-            //     'backbone'
-            // ]
-        },
-
-        //Now set up a build layer for each main layer, but exclude
-        //the common one. "exclude" will exclude nested
-        //the nested, built dependencies from "common". Any
-        //"exclude" that includes built modules should be
-        //listed before the build layer that wants to exclude it.
-        //The "page1" and "page2" modules are **not** the targets of
-        //the optimization, because shim config is in play, and
-        //shimmed dependencies need to maintain their load order.
-        //In this example, common.js will hold jquery, so backbone
-        //needs to be delayed from loading until common.js finishes.
-        //That loading sequence is controlled in page1.js.
-       
+        }
     ]
 }

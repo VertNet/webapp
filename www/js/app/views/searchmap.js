@@ -1,8 +1,22 @@
-/*
- * Occurrence search result map.
+/**
+ * This file is part of VertNet: https://github.com/VertNet/webapp
+ * 
+ * VertNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * VertNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see: http://www.gnu.org/licenses
  */
 
- define([
+// Defines the view for the spatial search map in advanced search.
+define([
   'jquery',
   'underscore',
   'util',
@@ -50,7 +64,6 @@
           if (!window.google || !window.google.maps) {
             return this;
           }
-        //this.latlon = new google.maps.LatLng(lat, lon);
         this.options = {
           zoom: 3,
           minZoom: 2,
@@ -88,45 +101,7 @@
     },
 
     _updateMarkers: function() {
-      // wrapper for infoWindow
-      google.maps.InfoWindowZ=function(opts){
-        var GM = google.maps,
-        GE = GM.event,
-        iw = new GM.InfoWindow(),
-        ce;
-
-        if(!GM.InfoWindowZZ){
-          GM.InfoWindowZZ=Number(GM.Marker.MAX_ZINDEX);
-        }
-
-        GE.addListener(iw,'content_changed',function(){
-         if(typeof this.getContent()=='string'){
-          var n=document.createElement('div');
-          n.innerHTML=this.getContent();
-          this.setContent(n);
-          return;
-        }
-        GE.addListener(this,'domready',
-         function(){
-          var _this=this;
-          _this.setZIndex(++GM.InfoWindowZZ);
-          if(ce){
-            GM.event.removeListener(ce);
-          }
-          ce=GE.addDomListener(this.getContent().parentNode
-            .parentNode.parentNode,'click',
-            function(){
-              _this.setZIndex(++GM.InfoWindowZZ);
-            });
-        })
-      });
-
-        if(opts)iw.setOptions(opts);
-        return iw;
-      }
-        // end of wrapper
-
-        this.bounds = new google.maps.LatLngBounds();
+      this.bounds = new google.maps.LatLngBounds();
 
       // Remove markers from map.
       _.each(this.markers, _.bind(function(marker) {
@@ -137,125 +112,31 @@
       this.markers.splice(0, this.markers.length);
 
       _.each(this.collection.models, _.bind(function(model) {
-
-        // Values for the infoWindow
-        var identification = model.get('icode') + ' ' + model.get('collectioncode') + ' ' + model.get('catalognumber');
-        var taxonomy = model.get('class') + ': ' + model.get('scientificname');
-        var location =  model.getLocation();
-        var year = model.getYear();
-        // Old values
         var lat = model.get('decimallatitude') ? parseFloat(model.get('decimallatitude')) : null;
         var lon = model.get('decimallongitude') ? parseFloat(model.get('decimallongitude')) : null;
-        /*var sciname = model.get('scientificname') ? model.get('scientificname') : null;
-        var year = model.get('year') ? parseInt(model.get('year')) : null;
-        var country = model.get('country') ? model.get('country') : null;
-        var stateprov = model.get('stateprovince') ? model.get('stateprovince') : null;
-        var county = model.get('county') ? model.get('county') : null;
-        var instcode= model.get('institutioncode') ? model.get('institutioncode') : null;
-        var catalogno = model.get('catalognumber') ? model.get('catalognumber') : null;
-        var occid = model.get('id') ? model.get('id') : null;
-        var datum = model.get('geodeticdatum') ? model.get('geodeticdatum') : null;
-        var uncert = model.get('coordinateuncertaintyinmeters') ? model.get('coordinateuncertaintyinmeters') : null;*/
-        var contentString = null;
-        var infowindow = null;
-        var specificURL = model.get('keyname') ? model.get('keyname') : null;
-        var specificURLright = specificURL.substr(0, specificURL.lastIndexOf('/'))+"?id="+specificURL.substr(specificURL.lastIndexOf('/')+1);
-        var url = '../'+specificURLright+'&view=darwincore';
-
         var latlon = null;
         var marker = null;
         
         if (lat && lon) { 
           latlon = new google.maps.LatLng(lat, lon);
           this.bounds.extend(latlon);
-          
-          // Create content for the infoWindow
-          //contentString += '<font size="2"><b>Occurrence Record</b></font>'
-          contentString = '<table class="table table-striped table-condensed table-bordered">';
-          contentString += '<tr><td><b>Identification</b></td><td>'+identification+'</td></tr>';
-          contentString += '<tr><td><b>Taxonomy</b></td><td>'+taxonomy+'</td></tr>';
-          contentString += '<tr><td><b>Location</b></td><td>'+location+'</td></tr>';
-          contentString += '<tr><td><b>Year</b></td><td>'+year+'</td></tr>';
-          /*contentString += '<tr><th><b>Darwin Core Term</b></th><th><b>Value</b></th></tr>';
-          if (sciname) {
-            contentString += '<tr><td>ScientificName</td><td>'+sciname+'</td></tr>';
-          }
-          if (instcode) {
-            contentString += '<tr><td>InstitutionCode</td><td>'+instcode+'</td></tr>';
-          }
-          if (catalogno) {
-            contentString += '<tr><td>CatalogNumber</td><td>'+catalogno+'</td></tr>';
-          }
-          if (year) {
-            contentString += '<tr><td>Year</td><td>'+year+'</td></tr>';
-          }
-          if (country) {
-            contentString += '<tr><td>Country</td><td>'+country+'</td></tr>';
-          }
-          if (stateprov) {
-            contentString += '<tr><td>StateProvince</td><td>'+stateprov+'</td></tr>';
-          }
-          if (county) {
-            contentString += '<tr><td>County</td><td>'+county+'</td></tr>';
-          }
-          if (lat) {
-            contentString += '<tr><td>DecimalLatitude</td><td>'+lat+'</td></tr>';
-          }
-          if (lon) {
-            contentString += '<tr><td>DecimalLongitude</td><td>'+lon+'</td></tr>';
-          }
-          if (datum) {
-            contentString += '<tr><td>GeodeticDatum</td><td>'+datum+'</td></tr>';
-          }
-          if (uncert) {
-            contentString += '<tr><td>CoordinateUncertaintyInMeters</td><td>'+uncert+'</td></tr>';
-          }*/
-          contentString += '</table>';
-          contentString += '<a target="_blank" href="'+url+'">Occurrence details »</a>';
-
-          // Create infoWindow
-          infowindow = new google.maps.InfoWindowZ({
-            //title: occid,
-            content : contentString,
-            maxWidth: 400
-          });
-
-          // Create marker
           marker = new google.maps.Marker({
             map: this.map,
             draggable: false,
             position: latlon,
-            clickable: true,
+            clickable: false,
           });
-
-          // Listener to open the infowindow
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(this.map, marker);
-          });
-          // Optional, when clicking on the map, all infoWindows disappear
-          google.maps.event.addListener(this.map, 'click', function() {
-            infowindow.close();
-          });
-
-          // Add marker to the array
           this.markers.push(marker);
         }
       }, this));
-this.resize();
-},
+      
+      this.resize();
+    },
 
-resize: function() {
-  google.maps.event.trigger(this.map, 'resize');
-  this.map.setZoom(this.map.getZoom());
-  this.map.setCenter(this.map.getCenter());
-  //this.map.setZoom(2);
-  //centerZero = new google.maps.LatLng(0, 0);
-  //this.map.setCenter(centerZero);
-  // if (this.markers.length != 0) {
-  //   this.map.fitBounds(this.bounds);
-  //   this.map.setZoom(this.map.getZoom() - 4);
-  // }
-},
-
-});
+    resize: function() {
+      google.maps.event.trigger(this.map, 'resize');
+      this.map.setZoom(this.map.getZoom());
+      this.map.setCenter(this.map.getCenter());
+    },
+  });
 });
