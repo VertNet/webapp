@@ -24,12 +24,12 @@
     {% block head %}
     <title>VertNet beta</title
     <meta charset="utf-8">
+    <meta http-equiv="Accept-Encoding" content="gzip, deflate"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="VertNet data portal">
     <meta name="author" content="Vertnet project">
     <link href="/css/docs.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">    
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
     <link href="/css/bootstrap-glyphicons.css" rel="stylesheet">
     <link href="/css/vertnet.css?v=2" rel="stylesheet">
@@ -42,7 +42,7 @@
 <body>
   <div id="holder">
     <div id="main-spinner"></div>
-    <div id="header">{% include 'header.html' %}</div>
+    <div id="header2">{% include 'header.html' %}</div>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">{% include 'footer.html' %}</div>
   </div>

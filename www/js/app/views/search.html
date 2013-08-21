@@ -41,22 +41,23 @@
       <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
       <legend>Advanced search</legend>
       Find occurrences with...<p>
-      <form class="form-horizontal form-inline">
+
+      <form class="form-horizontal" role="form">
         <div id="filters">
           <div class="form-group">
-            <label class="col-lg-2 control-label">These filters</label>
+            <label class="col-md-2 control-label">These filters</label>
             <div class="checkbox">
-              <label class="col-lg-10">
+              <label class="col-md-2">
                 <input id="tissue" type="checkbox"> Has tissues
               </label>
-              <label class="col-lg-10">
+              <label class="col-md-2">
                 <input id="media" type="checkbox"> Has media
               </label>
-              <label class="col-lg-10">
+              <label class="col-md-2">
                 <input id="mappable" type="checkbox"> Is mappable
               </label>
-              <label class="col-lg-10">
-                <input id="spatialfilter" type="checkbox"> Is within specified circle on map...
+              <label class="col-md-3">
+                <input id="spatialfilter" type="checkbox"> Within specified circle on map...
               </label>                                          
             </div>
           </div>
@@ -104,13 +105,18 @@
         </div>
         
         <div class="form-group">
-          <label class="col-lg-2 control-label">Years ranging from</label>
-          <div class="col-lg-10">
-            <input style="width:10%;" class="form-control" type="text" id="datestart" placeholder='1888'>
-            to
-            <input style="width:10%;" class="form-control" type="text" id="dateend" placeholder='1922'>
+          <label class="col-md-2 control-label">Years ranging from</label>
+          <div class="col-md-2">
+            <input class="form-control" type="text" id="datestart" placeholder='1888'>
+          </div>
+          <div id="dateto" class="col-md-1">
+                 to
+          </div>
+          <div class="col-md-2">
+            <input class="form-control" type="text" id="dateend" placeholder='1922'>
           </div>
         </div>
+        <!-- </div> -->
 
         <div class="form-group">
           <label class="col-lg-2 control-label">Record type</label>
@@ -124,24 +130,45 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="col-lg-2 control-label">Darwin Core terms</label>
-          <div id="dwcterms" class="col-lg-10">
-            <input id="institutioncode" class="form-control" style="width:19%;" type="text" placeholder="InstitutionCode">
-            <input id="catalognumber" class="form-control" style="width:19%;" type="text" placeholder="CatalogNumber">
-            <input id="class" class="form-control" style="width:19%;" type="text" placeholder="Class">
-            <input id="genus" class="form-control" style="width:19%;" type="text" placeholder="Genus">
-            <input id="specificepithet" class="form-control" style="width:22%;" type="text" placeholder="SpecificEpithet">
-            <p>
-              <input id="country" type="text" class="form-control" style="width:19%; margin-top:10px;" placeholder="Country">
-              <input id="stateprovince" class="form-control"style="width:19%; margin-top:10px;" type="text" placeholder="StateProvince">
-              <input id="county" class="form-control" style="width:19%; margin-top:10px;" type="text" placeholder="County">
-              <input id="year" class="form-control" type="text" style="width:19%; margin-top:10px;" placeholder="Year">
-              <input id="recordedby" class="form-control" style="width:22%; margin-top:10px;" type="text" placeholder="RecordedBy">
-            </p>
-          </div>
-        </div>                
+        <div id="dwcterm">
+          <div class="form-group">
+            <label class="col-md-2 control-label">Darwin Core terms</label>
+              <div class="col-md-2">
+                <input id="institutioncode" class="form-control" type="text" placeholder="InstitutionCode">
+              </div>
+              <div class="col-md-2">
+                <input id="catalognumber" class="form-control" type="text" placeholder="CatalogNumber">
+              </div>
+              <div class="col-md-2">
+                <input id="class" class="form-control" type="text" placeholder="Class">
+              </div>
+              <div class="col-md-2">
+                <input id="genus" class="form-control" type="text" placeholder="Genus">
+              </div>
+              <div class="col-md-2">
+                <input id="specificepithet" class="form-control" type="text" placeholder="SpecificEpithet">
+              </div>            
+            </div>
 
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+                <div class="col-md-2">
+                  <input id="country" class="form-control" type="text" placeholder="Country">
+                </div>
+                <div class="col-md-2">
+                  <input id="stateprovince" class="form-control" type="text" placeholder="StateProvince">
+                </div>
+                <div class="col-md-2">
+                  <input id="county" class="form-control" type="text" placeholder="County">
+                </div>
+                <div class="col-md-2">
+                  <input id="year" class="form-control" type="text" placeholder="Year">
+                </div>
+                <div class="col-md-2">
+                  <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
+                </div>                        
+              </div>
+          </div> 
         <div class="form-group">
           <label class="col-lg-2 control-label">Sorted by</label>
           <div class="col-lg-10">
@@ -203,13 +230,16 @@
 <div id="occ-search-tabs-content" class="tab-content">
   <div class="tab-pane fade in active" id="table">   
     <div class="row">
-      <div class="col-lg-1 col-offset-10">
-        <span class="counter">0 results</span>
+      <div class="col-md-1 col-md-offset-10">
+        <span class="counter"></span>
       </div>
-      <div class="col-lg-1">
-        <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
+      <div class="col-md-1">
+        <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">
+         <span class="glyphicon glyphicon-download"></span></button>   
+
       </div>
     </div>
+
     <div id="click-row-tip" class="alert alert-success">
       <button type="button" class="close" data-dismiss="alert">×</button>
       <strong>Pro tip! </strong>Click on a table row to see the full occurrence details.
@@ -242,38 +272,46 @@
   </div>  
 
   <div class="tab-pane fade" id="tablemap">
-    <div class="row">
-      <div class="col-lg-1 col-offset-10">
+     <div class="row">
+      <div class="col-md-1 col-md-offset-10">
         <span class="counter"></span>
       </div>
-      <div id="download-span" class="col-lg-1">
-        <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">Download all</button>   
+      <div class="col-md-1">
+        <button type="button" class="btn btn-mini btn-success dl-btn" data-toggle="button">
+         <span class="glyphicon glyphicon-download"></span></button>   
       </div>
-    </div> 
+    </div>
     <div id="resultmap"></div>
   </div>
 </div>
 
-<div id="myModal" class="modal fade">
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Download all <span id="reccount"></span> search results</h3>
+        <h1 id="myModalLabel">Download ~<span id="reccount"></span> records</h1>
       </div>
       <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> when it's ready.</div>
       <div id="queue" class="modal-body">
-        <p id="queue-msg">You're search results are pretty big so it's going to take us a few minutes to prepare them for download. Name your result set, give us your email, and we'll send you a download link as soon as it's ready. Simple as that!</p>
-        <p id="instant-msg">Your results are ready for download right now. Just name your result set, click the download button below, and you're set.</p>
-        <form id="dl-form">
-          <fieldset>
-            <input id='name' type="text" placeholder="Result set name" required>
-            <input id='email' placeholder="Your email address" type="email" required>
-          </fieldset>
+        <p id="queue-msg" class="lead">You're search results are pretty big so it's going to take us a few minutes to prepare them for download. Name your result set, give us your email, and we'll send you a download link to a tab-separated text file containing all your search results as soon as it's ready. Simple as that!</p>
+        <p id="instant-msg" class="lead">Your results are ready for download right now. Just enter a filename and click the download button for a tab-separated text file containing all your search results.</p>
+        <form class="form-horizontal" role="form">
+          <div id="name" class="form-group">
+            <label class="col-lg-2 control-label">Filename</label>
+            <div class="col-lg-10">
+              <input id="nameval" type="text" class="form-control" id="inputEmail1" required>
+            </div>
+          </div>
+          <div id="email" class="form-group">
+            <label class="col-lg-2 control-label">Email</label>
+            <div class="col-lg-10">
+              <input id="emailval" type="email" class="form-control" id="inputEmail1" required>
+            </div>
+          </div>          
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn" data-dismiss="modal">Close</button>
         <button id="submit-download-btn" class="btn btn-success">Download</button>
       </div>
     </div>

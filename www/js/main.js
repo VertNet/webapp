@@ -18,7 +18,7 @@
 // Contains the RequireJS configuration and application entry point:
 require.config({ 
 
-  // urlArgs: "/vertnet=" + (new Date()).getTime(),
+  //urlArgs: "v=" + (new Date()).getTime(),
 
   baseUrl: '/js',
 
