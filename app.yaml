@@ -1,12 +1,26 @@
+# This file is part of VertNet: https://github.com/VertNet/webapp
+#
+# VertNet is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# VertNet is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+# This is the App Engine configuration file for deployment to production.
+# Note that static assets are sources from www-built/ which contains 
+# sourcecode fully minified and obfuscated.
 application: vertnet-portal
-version: wip
+version: beta
 runtime: python27
 threadsafe: true
 api_version: 1
-
-
-# includes:
-# - mapreduce/include.yaml
 
 libraries:
 - name: jinja2
@@ -16,27 +30,10 @@ libraries:
 
 handlers:
 
-# DEV
-
-# - url: /js/lib/*.
-#   static_dir: www/lib
-
-# - url: /js
-#   static_dir: www/js
-
-# - url: /css
-#   static_dir: www/css
-
-# - url: /fonts
-#   static_dir: www/fonts
-
-# - url: /img
-#   static_dir: www/img
-
-# PROD
+# Static assets:
 
 - url: /js/lib/*.
-  static_dir: www-builtjs/lib
+  static_dir: www-built/js/lib
 
 - url: /js
   static_dir: www-built/js
@@ -50,7 +47,7 @@ handlers:
 - url: /img
   static_dir: www-built/img
 
-# services
+# APIs:
 
 - url: /service/download.*
   script: vertnet.service.download.api
@@ -72,10 +69,6 @@ handlers:
 
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
-
-# - url: /mapreduce(/.*)?
-#   script: mapreduce/main.py
-#   login: admin
 
 - url: /.*
   script: app.handler
