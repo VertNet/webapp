@@ -1,6 +1,18 @@
+.github-btn {
+	display: inline-block;
+	list-style: none;
+	padding: 5px;
+}
+
 #pubsearch {
 	margin-left: -66px;
 }
+
+#subissue {
+	margin-left: 765px;
+	width: 40px;
+}
+
 .pub-stats {
 	font-weight: bold;
 }
