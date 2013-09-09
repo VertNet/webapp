@@ -9,8 +9,6 @@ import re
 import htmlentitydefs
 from vertnet.service.model import IndexJob
 import os
-import time
-from google.appengine.ext import ndb
 from google.appengine.api import files
 from mapreduce import context
 
@@ -205,10 +203,12 @@ def get_rec_dict(rec):
         log = cls.get_or_insert(key_name=filename, namespace=namespace)
         return log
 
-def handle_failed_index_put(line, resource, did, write_path, mrid):
+def handle_failed_index_put(data, resource, did, write_path, mrid):
     logging.info('Handling failed index.put() - mrid:%s did:%s write_path:%s' % (mrid, did, write_path))
     max_retries = 5
     retry_count = 0
+
+    line = '\t'.join([data[x] for x in HEADER])
 
     # Write line to file:
     while retry_count < max_retries:
@@ -228,16 +228,14 @@ def handle_failed_index_put(line, resource, did, write_path, mrid):
     job.failed_logs.append(did)
     job.put()
 
-def build_search_index(entity):
-    #data = json.loads(entity.record)
-    data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
-    #logging.info(data)
+def index_record(data, issue=None):
     county, stateprov, year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
         ['county', 'stateprovince', 'year', 'genus', 'icode', 'country', 'specificepithet', 
         'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'url'])
 
     if data.has_key('classs'):        
         data.pop('classs')
+
     data['class'] = classs
     organization_slug = slugify(data['orgname'])
     resource_slug = slugify(data['title'])
@@ -260,12 +258,7 @@ def build_search_index(entity):
                 search.TextField(name='url', value=url),
                 search.NumberField(name='media', value=has_media(data)),            
                 search.NumberField(name='tissue', value=has_tissue(data)),            
-                # search.NumberField(name='manis', value=network(data, 'manis')),            
-                # search.NumberField(name='ornis', value=network(data, 'ornis')),            
-                # search.NumberField(name='herpnet', value=network(data, 'herpnet')),            
-                # search.NumberField(name='fishnet', value=network(data, 'fishnet')),            
                 search.NumberField(name='rank', value=rank(data)),            
-                # search.TextField(name='season', value=season),            
         		search.TextField(name='record', value=json.dumps(data))])
 
     location = _location(lat, lon)
@@ -298,7 +291,11 @@ def build_search_index(entity):
     mrid = ctx.mapreduce_id
     params = ctx.mapreduce_spec.mapper.params
     write_path = params['write_path']
-    handle_failed_index_put(entity, resource, did, write_path, mrid)
+    handle_failed_index_put(data, resource, did, write_path, mrid)
+
+def build_search_index(entity):
+    data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
+    index_record(data)
 
 def _get_rec(doc):
     for field in doc.fields:
