@@ -12,6 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with VertNet.  If not, see: http://www.gnu.org/licenses
+import json
+import logging
 import os
 import sys
 
@@ -22,6 +24,13 @@ def fix_path():
 fix_path()
 
 IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
+
+def get_auth():
+    """Return auth file as a JSON object."""
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'auth.txt')
+    logging.info(path)
+    auth = json.loads(open(path, "r").read())
+    return auth
 
 # Set namespace:
 def namespace_manager_default_namespace_for_request():
@@ -41,20 +50,16 @@ engineauth = {
     #'user_model': 'models.CustomUser',
 }
 
+auth = get_auth()
+
 if IS_DEV:
     # GitHub settings for Development
-    GITHUB_APP_KEY = 'cf7a23281644715323e2'
-    GITHUB_APP_SECRET = 'faffff031a9479d4691c43cd8e8d92b930fcedae'
+    provider = auth['dev']
 else:
     # GitHub settings for Production
-    GITHUB_APP_KEY = '7d8ea7c70e29925779d7'
-    GITHUB_APP_SECRET = 'e8c6493c20fd33bc97fea2f9473c952318a51f91'
+    provider = auth['prod']
 
-engineauth['provider.github'] = {
-    'client_id': GITHUB_APP_KEY,
-    'client_secret': GITHUB_APP_SECRET,
-    'scope': 'user,user:email,repo'
-    }
+engineauth['provider.github'] = provider
 
 def webapp_add_wsgi_middleware(app):
     from engineauth import middleware
