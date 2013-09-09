@@ -30,6 +30,8 @@
         cartodb: 'lib/cartodb',
         store: 'lib/store',
         text: 'lib/text',
+        oop: 'lib/class',
+        user: 'app/user',
         app: 'app/app',
         router: 'app/router',
         rpc: 'app/rpc',

@@ -30,7 +30,7 @@ libraries:
 
 handlers:
 
-# DEV
+# Static assets
 
 - url: /js/lib/*.
   static_dir: www/lib
@@ -47,7 +47,13 @@ handlers:
 - url: /img
   static_dir: www/img
 
-# PROD
+# APIs
+
+- url: /api/user.*
+  script: vertnet.service.user.handler
+
+- url: /api/github.*
+  script: vertnet.service.github.handler
 
 - url: /service/download.*
   script: vertnet.service.download.api
