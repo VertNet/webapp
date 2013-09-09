@@ -1,4 +1,4 @@
-<!-- 
+<!--
   This file is part of VertNet: https://github.com/VertNet/webapp
 
   VertNet is free software: you can redistribute it and/or modify
@@ -24,9 +24,29 @@
     <h1><%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> <small><%= this.model.getSciName() %> </small></h1>
   </div>
 
+  <!--   <div class="row">
+    <div class="col-lg-10">
+      <span class="lead">
+        Hi
+      </span>  
+    </div>
+    <div class="col-lg-1">
+      <button id="pubsearch" type="button" class="btn btn-primary btn-lg">
+        Search this publisher <span class="glyphicon glyphicon-search icon-white"></span>
+      </button>
+    </div>
+  </div> -->
+
   <ul id="detailTabs" class="nav nav-tabs">
-    <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>     
-    <li><a class="" href="#datasource" data-toggle="tab">Data Rights</a></li>
+    <button id="subissue" type="button" class="btn btn-success">
+        <span class="glyphicon glyphicon-flag icon-white"></span>
+      </button>
+    <li class="active">
+      <a href="#summary" data-toggle="tab">Summary</a>
+    </li>     
+    <li>
+      <a class="" href="#datasource" data-toggle="tab">Data Rights</a>
+    </li>   
     <li class="dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
       <ul class="dropdown-menu">
@@ -265,7 +285,7 @@
     <!-- All tab.  -->
     <div class="tab-pane" id="allterms">
       <p>
-       <table class="table table-striped">
+       <table id="alltable" class="table table-striped">
         <thead>
           <tr>
             <th>Term</th>
@@ -319,4 +339,86 @@
         <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
       </dl>
     </div>
+
+     <!-- Feedback tab -->
+    <div id="feedback" class="tab-pane fade"> 
+      <p>
+      GitHub
+      <ul>
+        <li class="github-btn">
+          <a href="/auth/github" class="btn btn-default"><img src="/img/github.png"></a>
+        </li>  
+    </div>
 </div>
+
+
+
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h1 id="myModalLabel">Submit data issue</h1>
+      </div>
+
+      <div id="queue" class="modal-body">
+        
+        <div id="confirmation" class="lead">
+            Your issue was submitted: <a id="issuelink" target="_blank" href=""></a>
+        </div>
+
+        <div id="queue-msg">
+          <p class="lead">
+            Help publishers easily track data issues using <a href="http://github.com" target="_blank">GitHub</a>!
+          </p>
+          <div class="lead" id="login">
+            <p>Over three million people use GitHub to build amazing things together. VertNet uses GitHub to collaboratively submit, track, and resolve data quality issues.</p> <p>To submit an issue, simply <a href="#">login or create a new account</a>. Once you're logged in, you can submit issues right from VertNet. It's super easy.</a></p>
+          </div>
+          <form id="issueform" class="form-horizontal" role="form">
+            <div id="name" class="form-group">
+              <input id="nameval" type="text" class="form-control" id="inputEmail1" placeholder="Issue title" required>
+            </div>
+            <div id="comment" class="form-group">
+              <textarea id="bodyval" class='form-control' rows='3' placeholder='Issue details...'></textarea>
+            </div>
+          </form>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-issue-btn" class="btn btn-success">Submit data issue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- <form class='form-horizontal' role='form'>   <div class='form-group'>
+    <label for='inputEmail1' class='col-lg-2 control-label'>Email</label>
+    <div class='col-lg-10'>
+      <input type='email' class='form-control' id='inputEmail1' placeholder='Email'>
+    </div>
+  </div>
+  <div class='form-group'>
+    <label for='inputPassword1' class='col-lg-2 control-label'>Password</label>
+    <div class='col-lg-10'>
+  <textarea class="form-control" rows="3"></textarea>
+    </div>
+  </div>
+  <div class='form-group'>
+    <div class='col-lg-offset-2 col-lg-10'>
+      <div class='checkbox'>
+        <label>
+          <input type='checkbox'> Remember me
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class='form-group'>
+    <div class='col-lg-offset-2 col-lg-10'>
+      <button type='submit' class='btn btn-default'>Sign in</button>
+    </div>
+  </div>
+</form>

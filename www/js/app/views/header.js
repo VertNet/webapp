@@ -22,12 +22,11 @@ define([
   'backbone',
   'mps',
   'rpc',
+  'user',
   'text!views/header.html'
-  ], function ($, _, Backbone, mps, rpc, template) {
+  ], function ($, _, Backbone, mps, rpc, user, template) {
 
   return Backbone.View.extend({
-    events: {},
-
     initialize: function (app) {
       this.app = app;
     },
@@ -38,6 +37,17 @@ define([
     },
 
     setup: function () {
+      mps.subscribe('user/logout', _.bind(function() {
+        this.showLogin();
+      }, this));
+
+      user.getUser(_.bind(function(user) {
+        this.showLogin(user);
+      }, this));
+
+      this.$('#authenticated').hide();
+      this.$('#login').hide();
+
       this.$('#feedback-nav').mouseover(_.bind(function(e) {
         this.$('#feedback-nav-icon').addClass('icon-white');
       }, this)).mouseout(_.bind(function(e) {
@@ -49,16 +59,20 @@ define([
       }, this)).mouseout(_.bind(function(e) {
         this.$('#project-nav-icon').removeClass('icon-white');        
       }, this));
-      
-      $("#home,#search,#publishers,#about,#feedback-nav").each(_.bind(function(index, el) {
+
+      this.$("#home,#search,#publishers,#about,#feedback-nav,#login,#logout").each(_.bind(function(index, el) {
         var el = $(el);
         var id = el.attr('id') === 'home' ? '' : el.attr('id');
-        el.click(_.bind(function(e) {
+        console.log(el);
+        el.on('click', _.bind(function(e) {
           e.preventDefault();
-          if (id === 'feedback-nav') {
+          if (id == 'login') {
+            mps.publish('user/login', []);
+          } else if (id === 'logout') {
+            user.logout();
+          } else if (id === 'feedback-nav') {
             window.open('http://form.jotform.us/form/31397097595166', '_blank');
           } else {
-            // window.location.href = window.location.href.split('?')[0];
             mps.publish('navigate', [{path: id, trigger: true}]);
           }
         }, this));
@@ -66,5 +80,23 @@ define([
 
       return this;
     },
+
+    showLogin: function(user) {
+      var auth = this.$('#authenticated');
+      var login = this.$('#login');
+      var logout = this.$('#logout');
+      if (user && user.login) {
+        login.hide();
+        this.$('#auth-text').text(' ' + user.login + '@github');
+        auth.attr('href', 'http://github.com/' + user.login);
+        auth.show();
+        logout.show();
+      } else {
+        this.$('#login-text').text(' Login');
+        login.show();
+        auth.hide();
+        logout.hide();
+      }  
+    }
   });
 });

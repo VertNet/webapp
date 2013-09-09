@@ -33,6 +33,8 @@ require.config({
     cartodb: ['lib/cartodb'],
     store: ['lib/store'],
     text: ['lib/text'],
+    oop: ['lib/class'],
+    user: ['app/user'],
     app: ['app/app'],
     router: ['app/router'],
     rpc: ['app/rpc'],
@@ -60,6 +62,19 @@ require.config({
     },  
     views: {
       deps: ['bootstrap']
+    },
+    user: {
+      deps: ['oop']
+    },
+    oop: {
+      deps: [],
+      exports: 'oop',
+      init: function() {
+        var oop = {
+          Class: window.Class
+        };
+        return oop;
+      }
     },
     mps: {
       deps: ['jquery', 'underscore'],
