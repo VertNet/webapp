@@ -52,7 +52,6 @@ define([
       this.route('publishers', 'publishers', _.bind(this.publishers, this));
       this.route('o/:publisher/:resource', 'occurrece', _.bind(this.occurrence, this));
       this.route('p/:publisher', 'publisher', _.bind(this.publisher, this));
-      
       mps.subscribe('navigate', _.bind(function (place) {
         var path = place.path;
         delete place['path'];
@@ -142,8 +141,15 @@ define([
       var model = this.app.occDetailModel;
       var request = {};
       var resource = resource.split('?')[0];
-      var params = this.app.parseUrl();
       var occurrence = params['id'];
+
+      if (occurrence.indexOf('-issue') !== -1) {
+        occurrence = occurrence.split('-issue')[0];
+        params['issue'] = true;
+        this.navigate('/o/' + publisher + '/' + resource + '?id=' + occurrence + '&issue=1',
+          {trigger: true, replace: true});   
+        return;
+      } 
 
       this.detachCurrentView();
       this.initHeaderFooter();
@@ -154,20 +160,20 @@ define([
         rpc.execute('/service/rpc/record.get', request, {
           success: _.bind(function(response) {
             model = new OccModel(JSON.parse(response.json));
-            this.showOccurrence(model);
+            this.showOccurrence(model, params);
           }, this), 
           error: _.bind(function(x) {
             console.log('ERROR: ', x);
           }, this)
         });
       } else {
-        this.showOccurrence(model);
+        this.showOccurrence(model, params);
       }
     },
 
-    showOccurrence: function(model) {
+    showOccurrence: function(model, params) {
       this.app.occDetailModel = model;
-      this.occurrenceView = new OccDetail({model: model}, this.app);
+      this.occurrenceView = new OccDetail({model: model, params: params}, this.app);
       $('#content').append(this.occurrenceView.render().el);
       this.occurrenceView.setup();
     },
