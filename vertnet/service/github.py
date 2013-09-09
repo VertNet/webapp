@@ -43,7 +43,6 @@ def repos(action, user, access_token, params):
             return result.content
         else:
             logging.info(result.status_code)
-            logging.info(result.content)
             return None
 
 def issues(action, owner, repo, access_token, params):
