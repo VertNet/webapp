@@ -84,7 +84,7 @@ define([
         this.$('#subissue').popover({placement: 'top', content: 'Submit data issue'});
         this.$('#subissue').popover('show');
         
-        this.$('#login a').click(_.bind(function(e) {
+        this.$('#login button').click(_.bind(function(e) {
           var next = window.location.pathname + window.location.search.split('&')[0] + '-issue';
           e.preventDefault();
           mps.publish('user/login', [next]);
