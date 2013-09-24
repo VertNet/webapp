@@ -61,7 +61,7 @@ def issues(action, owner, repo, access_token, params):
             return result.content
         else:
             logging.info(result.status_code)
-            logging.info(result.content)
+            # logging.info(result.content)
             return None
 
 class GitHubHandler(webapp2.RequestHandler):

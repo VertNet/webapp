@@ -91,6 +91,7 @@ class AppHandler(webapp2.RequestHandler):
         #     logging.info(profile)
         #     access_token = json.loads(profile.credentials.to_json())['access_token']
         #     github.issues('create', 'VertNet', 'webapp', access_token, dict(title='whoa'))
+        logging.info(self.request)
         self.render_template('home.html')
 
     def occ(self, publisher, resource):
