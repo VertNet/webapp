@@ -25,8 +25,8 @@ api_version: 1
 libraries:
 - name: jinja2
   version: "latest"
-- name: webapp2
-  version: "2.5.1"
+# - name: webapp2
+#   version: "2.5.1"
 
 handlers:
 
