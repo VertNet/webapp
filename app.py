@@ -30,6 +30,7 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # App routes:
 routes = [
     webapp2.Route(r'/', handler='app.AppHandler:home', name='home'),
+    webapp2.Route(r'/sitemap.xml', handler='app.AppHandler:sitemap', name='sitemap'),
     webapp2.Route(r'/search', handler='app.AppHandler:search', name='explore'),
     webapp2.Route(r'/about', handler='app.AppHandler:about', name='about'),
     webapp2.Route(r'/publishers', handler='app.AppHandler:publishers', name='publishers'),
@@ -49,7 +50,6 @@ config = {
             },
         },
     }
-
 
 class AppHandler(webapp2.RequestHandler):
 
@@ -81,6 +81,9 @@ class AppHandler(webapp2.RequestHandler):
         """Render the publishers page."""
         self.render_template('base.html')
 
+    def sitemap(self):
+        self.render_template('sitemap.xml')
+        
     def home(self):
         """Render page html."""
         # session = self.request.session if self.request.session else None
