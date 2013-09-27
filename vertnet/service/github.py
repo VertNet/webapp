@@ -1,5 +1,6 @@
 """This module provides GitHub interop services."""
 
+from google.appengine.api import mail
 from google.appengine.api import urlfetch
 import json
 import logging
@@ -61,7 +62,7 @@ def issues(action, owner, repo, access_token, params):
             return result.content
         else:
             logging.info(result.status_code)
-            logging.info(result.content)
+            # logging.info(result.content)
             return None
 
 class GitHubHandler(webapp2.RequestHandler):
@@ -71,8 +72,16 @@ class GitHubHandler(webapp2.RequestHandler):
             ['owner', 'repo', 'title', 'body', 'record', 'link', 'data'])
 
         data = json.loads(data)
+        contact = data.get('contact')
+        email = data.get('email')
+
+        html_body = body
+
         body += '\n\n.....................................................\n\nYou can [view the original detail page](%s) on VertNet. ' % link 
         body += 'Here are the original record contents:\n%s\n' % record
+
+        html_body += '<p>.....................................................<p>You can <a href="%s">view the original detail page</a> on VertNet. ' % link 
+        html_body += 'Here are the original record contents:<p>%s</p>' % record
 
         if user:
             auth_id = user.auth_ids[0]
@@ -80,6 +89,16 @@ class GitHubHandler(webapp2.RequestHandler):
             access_token = json.loads(profile.credentials.to_json())['access_token']
             response = issues('create', owner, repo, access_token, 
                 dict(title=title, body=body))
+            html_url = json.loads(response)['html_url']
+         
+            # FOR TESTING
+            email = "eightysteele@gmail.com"
+
+            # Email contact
+            mail.send_mail("VertNet <eightysteele@gmail.com>", 
+                "%s <%s>" % (contact, email), title, body,
+                html="View on GitHub: %s<p>%s" % (html_url, html_body))
+
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.headers['charset'] = 'utf-8'
             self.response.out.write(response)

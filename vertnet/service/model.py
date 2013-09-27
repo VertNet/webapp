@@ -1,5 +1,20 @@
+# This file is part of VertNet: https://github.com/VertNet/webapp
+#
+# VertNet is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# VertNet is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with VertNet.  If not, see: http://www.gnu.org/licenses
 """Datastore models and RPC payload messages."""
 
+from engineauth import models
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import tasklets
 from protorpc import messages
@@ -8,6 +23,14 @@ from vertnet.service import util
 import json
 import logging
 
+class VertNetUser(models.User):
+    @classmethod
+    def _get_kind(cls):
+        # Override the datastore entity name.
+        # The string that is returned here will be used to name the entity
+        # group in the datastore
+        return 'VertNetUser'
+        
 # Model for MapReduce index jobs. Key is mapreduce id:
 class IndexJob(ndb.Model):
     write_path = ndb.TextProperty(required=True)
