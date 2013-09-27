@@ -44,10 +44,10 @@ engineauth = {
     'login_uri': '/', # default 'login/'
     # The user is sent here after successfull authentication.
     'success_uri': '/',
-    'secret_key': 'CHANGE_TO_A_SECRET_KEY',
+    'secret_key': 'alice+bob4ever',
     # Comment out the following lines to use default
     # User and UserProfile models.
-    #'user_model': 'models.CustomUser',
+    #'user_model': 'vertnet.service.model.VertNetUser',
 }
 
 auth = get_auth()
