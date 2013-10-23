@@ -36,6 +36,20 @@ define([
         this.params = options.params;
         this.template = _.template(template);
         mps.publish('spin', [true]);
+        this.githubbers = ['MVZ', 'MLZ', 'DMNS', 'WFVZ', 'DMNH', 'ROM', 'TTRS',
+          'UBCBBM', 'CUML', 'PMNS'];
+
+        // testers
+        // MVZ (Arctos) - Birds, Herps, Mammals, Observations (Carla, Dusty) 
+        // MLZ (Arctos) - Birds and Mammals (John McCormick, Dusty)
+        // DMNS (Arctos) - Birds and Mammals (John Demboski, Dusty)
+        // WFVZ - Birds (Rene Corado and Linnea Hall)
+        // DMNH - Birds (Jean Woods)
+        // ROM - Birds, Herps, Mammals, Fish (Brad Millen)
+        // TTRS - Birds and Mammals (Gil Nelson)
+        // UBCBBM - Birds, Mammals, Herps (Grant Hurley and Ildiko Szabo)
+        // CUML - Audio/Video (Brian Maltzan)
+        // PSMN - Birds and Herps (Teresa Mayfield and Karen Morton)
       }, 
 
       render: function() {
@@ -74,8 +88,11 @@ define([
 
      setup: function () {
         var orgSlug = this.model.get('keyname').split('/')[0];
+        var icode = this.model.get('icode');
 
-        if (orgSlug !== 'museum-of-vertebrate-zoology-uc-berkeley') {
+        console.log(icode, this.githubbers);
+
+        if (!_.contains(this.githubbers, icode)) {
           this.$('#subissue').hide();
           mps.publish('spin', [false]);
           return this;
@@ -101,7 +118,6 @@ define([
           var record = '<table>' + this.$('#alltable').html() + '</table>'; 
           var data = JSON.stringify(this.model.attributes, null, 4);
           var link = window.location.href.split('&')[0];
-
 
           rpc.execute('/api/github/issue/create', 
             {owner:owner, title:title, body:body, repo:repo, record:record, link:link, data:data}, {
