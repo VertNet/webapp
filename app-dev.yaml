@@ -1,0 +1,80 @@
+# This file is part of VertNet: https://github.com/VertNet/webapp
+#
+# VertNet is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# VertNet is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+# This is the App Engine configuration file for local development.
+# Note that static assets are sources from www/ which contains full
+# sourcecode without minification.
+application: vertnet-portal
+version: dev
+runtime: python27
+threadsafe: true
+api_version: 1
+
+libraries:
+- name: jinja2
+  version: "latest"
+# - name: webapp2
+#   version: "2.5.1"
+
+handlers:
+
+# Static assets
+
+- url: /js/lib/*.
+  static_dir: www/lib
+
+- url: /js
+  static_dir: www/js
+
+- url: /css
+  static_dir: www/css
+
+- url: /fonts
+  static_dir: www/fonts
+
+- url: /img
+  static_dir: www/img
+
+# APIs
+
+- url: /api/user.*
+  script: vertnet.service.user.handler
+
+- url: /api/github.*
+  script: vertnet.service.github.handler
+
+- url: /service/download.*
+  script: vertnet.service.download.api
+
+- url: /apitracker.*
+  script: vertnet.service.tracker.api
+
+- url: /service/rpc/record.*
+  script: vertnet.service.record.rpc
+
+- url: /service/organization.*
+  script: vertnet.service.organization.rpc
+
+- url: /api/search.*
+  script: vertnet.api.search.handler
+
+- url: /api/organization.*
+  script: vertnet.api.organization.rpc
+
+- url: /api/stats.*
+  script: vertnet.api.stats.rpc
+
+- url: /.*
+  script: app.handler

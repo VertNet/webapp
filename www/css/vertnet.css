@@ -1,0 +1,454 @@
+.github-btn {
+	display: inline-block;
+	list-style: none;
+	padding: 5px;
+}
+
+#pubsearch {
+	margin-left: -66px;
+}
+
+#subissue {
+	margin-left: 765px;
+	width: 40px;
+}
+
+.pub-stats {
+	font-weight: bold;
+}
+
+#detailmap {
+	width: 100%;
+	height: 100%;
+}
+
+#advanced-search {
+	color: #0088cc;
+	margin-top: 5px;
+}
+
+#myCarousel {
+	margin-top: 54px;
+}
+
+.carosel-inner-home {
+	border: 1px solid grey;
+}
+#homesearch {
+	margin-top: 20px;
+}
+#homehead {
+	margin-top: 3%;
+}
+#spatial-search-control {
+	background-color: white;
+	margin-top: 5px;
+	padding-right: 10px;
+	padding-left: 10px;
+	border: 1px solid grey;
+	height: 23px;
+	text-align: center;
+}
+
+.home-vertnet {
+	color: grey;
+	font-size: 21px;
+	font-weight: 200;
+}
+
+#loadmore {
+	/*border: 1px solid grey !important;
+	height: 25px;
+	width: 134px;
+	font-size: 14px;*/
+}
+
+#load-more-control {
+	/*background-color: white;*/
+	margin-top: 5px;
+	margin-right: -5px;
+	padding-right: 10px;
+	padding-left: 10px;
+	/*border: 1px solid grey;*/
+	height: 23px;
+	text-align: center;
+}
+
+
+html,body{
+    height: 100%
+}
+
+#holder{
+    min-height: 100%;
+    position:relative;
+}
+
+#content{
+    padding-bottom: 151px !important;    /* height of footer */
+    height: 100%;
+}
+
+#footer{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  margin-top: 0px !important;
+}
+
+.dl-btn {
+	display: inline-block !important;
+	margin-left: -30px;
+	margin-top: 10px;
+	width: 97px;
+}
+
+.showing {
+	width: 170px !important;
+}
+
+.pager {
+	margin: 0px 0;
+}
+
+.notifications-spin {
+  width: 100%;
+}
+
+.notifications-spin .empty-feed {
+  display: none;
+}
+
+.notifications-spin > div {
+  width: 50px;
+  height: 40px;
+  margin: 0 auto;
+}
+
+.search-spinner {
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+  	z-index: 101;
+}
+
+#main-spinner {
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+  	z-index: 101;
+}
+
+/*#vertnet-headline {
+	font-size: 40px;
+}*/
+
+.counter {
+/*	text-align: right;
+	font-weight: bold;
+	color: grey;
+	display: inline-block;
+	vertical-align: bottom;
+	margin-top: 7px;
+	width: 125px;
+	margin-left: 80px;
+	margin-top: 6px;*/
+	color: grey;
+	width: 125px;
+	display: inline-block;
+	margin-left: -55px;
+	margin-top: 17px;
+}
+
+#map {
+	height: 350px;
+	/*display: block;*/
+	/*z-index: 1;*/
+	border: 1px solid grey;
+}
+
+#resultmap {
+	margin-top: 10px;
+}
+
+#search-form {
+	z-index: 0;	
+}
+
+#searchmap {
+	height: 400px;
+	display: block;
+	z-index: 0;
+	border: 1px solid grey;
+	margin-bottom: 15px;
+}
+
+#dateto {
+	text-align: center;
+}
+
+#mapContainer {
+	height: 300px;
+	display: block;
+	z-index: 0;
+	border: 1px solid grey;
+}
+
+#map img {
+	max-width: none;
+}
+
+#homemap {
+	/*height: 300px;
+	display: block;
+	z-index: 0;*/
+	border: 1px solid grey;
+	height: 100%;
+        padding: 0;
+        margin: 0;
+}
+
+#homemap img {
+	max-width: none;
+}
+
+.footer {
+	text-align: center;
+	padding: 10px 0;
+	margin-top: 0px;
+	border-top: 1px solid #e5e5e5;
+	background-color: #f5f5f5;
+}
+
+h1.stats {
+	color: white;
+	font-size: 38px;
+	font-weight: normal;
+}
+
+.carousel.stats {
+	/*padding-top: 30px;
+	width: 450px;*/
+}
+
+input.span2.search {
+	width: 400px;
+}
+
+input.span2.search {
+	width: 300px;
+}
+
+#occ-detail-map {
+  border: 1px solid grey;
+  height: 200px;
+  width: 100%;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+#mapper {
+	height: 398px;
+	width: 100%;
+	margin-top: 21px;
+}
+
+.form-horizontal .control-label{
+  /* text-align:right; */
+  text-align:left;
+}
+
+#search-keywords-div {
+	border: 1px solid #cccccc; 
+	border-radius: 3px; 
+	width: 98%; 
+	height: 60px;
+	display: inline-block;
+	background-color: white;
+
+	/*max-width:300px;*/
+/*
+	height: 50px;
+	width: 1040px;
+	line-height: 50px;
+	border: 1px solid grey;*/
+}
+
+#homesearch-keywords-div {
+	border: 1px solid #cccccc; 
+	border-radius: 3px; 
+	width: 98%; 
+	height: 60px;
+	display: inline-block;
+	background-color: white;
+
+	/*max-width:300px;*/
+/*
+	height: 50px;
+	width: 1040px;
+	line-height: 50px;
+	border: 1px solid grey;*/
+}
+
+#spatialsearch {
+	padding: 0px !important;
+}
+
+#show-search-options {
+	height:20px;
+	padding: 5px;
+
+}
+
+#search-carat {
+	vertical-align:middle; 
+	/*height:100%*/
+}
+
+.spacer {
+    height: 125px;
+    margin: 0 0 -125px 0;
+    /* margin: 20px 0 -50px 0; use this if you want #container to have a 'bottom padding', in this case of 20px */
+    background: transparent; /* you'll need this if #container's parent element has a different background from #container itself */
+}
+
+
+#advanced-search-form {
+	width: 1029px; 
+	margin-bottom: 20px;
+	border: 1px solid #cccccc; 
+	border-radius: 3px; 
+	display: inline-block;
+	padding: 10px;
+	/*position: absolute;*/
+	background-color: white;
+	box-shadow: 3px 3px 4px #BBB;
+	z-index: 0;
+}
+
+#search-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -30px;
+	margin-bottom: 10px;
+}
+
+#search-button-advanced {
+	width: 97px;
+	height: 63px;
+}
+
+
+#homesearch-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -8px;
+	margin-bottom: 10px;
+}
+
+#advanced-search-button {
+	width: 97px;
+	height: 63px;
+	margin-left: -179px;
+	margin-bottom: -19px;
+	margin-top: -5px;
+}
+
+#search-keywords-box {
+	/*box-shadow:none !important;*/
+	outline: none;
+  	border:none !important;
+	box-shadow:none !important;
+	padding-left: 15px;
+	border: none; 
+	width: 95%; 
+	/*line-height: 52px; */
+	/*padding: 0px 0px 0px 0px;	*/
+	font-size: 30px;
+	height: 50px;
+	font-weight: lighter;
+	color: grey;
+	padding-top: 7px;
+	/*height: 50px;
+	width: 1040px;
+	font-size: 28px;
+	line-height: 50px;
+	border: none;*/
+}
+
+#homesearch-keywords-box {
+	/*box-shadow:none !important;*/
+	outline: none;
+  	border:none !important;
+	box-shadow:none !important;
+	padding-left: 15px;
+	border: none; 
+	width: 95%; 
+	/*line-height: 52px; */
+	/*padding: 0px 0px 0px 0px;	*/
+	font-size: 30px;
+	height: 50px;
+	margin-bottom: 10px;
+
+	font-weight: lighter;
+	color: grey;
+	padding-top: 7px;
+	/*height: 50px;
+	width: 1040px;
+	font-size: 28px;
+	line-height: 50px;
+	border: none;*/
+}
+
+#search-keywords-box::-webkit-input-placeholder { /* WebKit browsers */
+	color:    #aaa;
+}
+#search-keywords-box:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color:    #555;
+}
+#search-keywords-box::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color:    #555;
+}
+#search-keywords-box:-ms-input-placeholder { /* Internet Explorer 10+ */
+	color:    #555;
+}
+
+#search-options {
+	font-size: 0;
+	margin-left: -10px;
+}
+
+.search-results-hover {
+	cursor: hand; 
+	cursor: pointer; 
+}
+
+.search-box {
+	height: 30px !important;
+	width: 212px;
+	font-size: 18px !important;
+	line-height: 30px !important;
+	margin-left: 10px;
+}
+
+.search-legend {
+	font-size: 25px;
+	display: block;
+	margin: 10px 0;
+}
+
+.load-more {
+	text-align: right !important;
+}
+
+.bread {
+	margin-top: 10px;
+}
+
+.col-center {
+	text-align: center;
+}
+
+.col-right {
+	text-align: right;
+}

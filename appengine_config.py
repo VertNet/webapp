@@ -1,3 +1,19 @@
+# This file is part of VertNet: https://github.com/VertNet/webapp
+#
+# VertNet is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# VertNet is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with VertNet.  If not, see: http://www.gnu.org/licenses
+import json
+import logging
 import os
 import sys
 
@@ -7,12 +23,44 @@ def fix_path():
 
 fix_path()
 
-appstats_CALC_RPC_COSTS = True
-COOKIE_KEY = "\xb4\xa4\x94x\xee6\x16\x84r'\xf2~a\xad^\xaf,<2\x84!\xc35m\xd9.f\xad~\xdd\xb2q\xac\xda\xb3\xd7\xc5\xc3{\x05tx\xfd\x94\xc0J\xbdw\xe2\xa7\xbfjc\x90\x1f\xac\xb0\xe7K\xedg,\x1a\xdb"
+IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
+
+def get_auth():
+    """Return auth file as a JSON object."""
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'auth.txt')
+    logging.info(path)
+    auth = json.loads(open(path, "r").read())
+    return auth
+
+# Set namespace:
+def namespace_manager_default_namespace_for_request():
+    if IS_DEV:
+    	return ''
+    else:
+    	return 'index-2013-08-08'
+
+engineauth = {
+    # Login uri. The user will be returned here if an error occures.
+    'login_uri': '/', # default 'login/'
+    # The user is sent here after successfull authentication.
+    'success_uri': '/',
+    'secret_key': 'alice+bob4ever',
+    # Comment out the following lines to use default
+    # User and UserProfile models.
+    #'user_model': 'vertnet.service.model.VertNetUser',
+}
+
+auth = get_auth()
+
+if IS_DEV:
+    # GitHub settings for Development
+    provider = auth['dev']
+else:
+    # GitHub settings for Production
+    provider = auth['prod']
+
+engineauth['provider.github'] = provider
 
 def webapp_add_wsgi_middleware(app):
-  from google.appengine.ext.appstats import recording
-  from gaesessions import SessionMiddleware
-  app = SessionMiddleware(app, cookie_key=COOKIE_KEY)
-  app = recording.appstats_wsgi_middleware(app)
-  return app
+    from engineauth import middleware
+    return middleware.AuthMiddleware(app)
