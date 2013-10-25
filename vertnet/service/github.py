@@ -129,9 +129,9 @@ class GitHubHandler(webapp2.RequestHandler):
             # email = "eightysteele@gmail.com"
 
             # Email contact
-            mail.send_mail("VertNet <eightysteele@gmail.com>", 
+            mail.send_mail("VertNet <vertnetinfo@vertnet.org>", 
                 "%s <%s>" % (contact, email), title, body,
-                html="View on GitHub: %s<p>%s" % (html_url, html_body))
+                html="You are receiving this email from VertNet because someone submitted an issue for a record for which you are the primary contact. Please view this issue on GitHub (and do not reply to this email): %s<p>%s" % (html_url, html_body))
 
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.headers['charset'] = 'utf-8'
