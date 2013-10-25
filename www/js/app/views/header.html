@@ -1,0 +1,70 @@
+<!-- 
+  This file is part of VertNet: https://github.com/VertNet/webapp
+
+  VertNet is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  VertNet is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+  This is the App Engine configuration file for local development.
+  Note that static assets are sources from www/ which contains full
+  sourcecode without minification. 
+-->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="container">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex5-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/">VertNet <sup><small class="text-muted">beta</small></sup></a>
+  </div>
+  <div class="collapse navbar-collapse navbar-ex5-collapse">
+    <ul class="nav navbar-nav">
+      <li class="">
+        <a id="search" href="/search">Search</a>
+      </li>
+      <li class="">
+        <a id="publishers" href="/publishers">Publishers</a>
+      </li>       
+      <li class="">
+        <a id="about" href="/about">About</a>
+      </li>
+      <li id="feedback-nav">
+        <a target="_blank" href="http://form.jotform.us/form/31397097595166">Feedback <span id="feedback-nav-icon" class="glyphicon glyphicon-share-alt"></span>
+        </a>
+      </li> 
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <a id="login" href="#">
+          <small>
+            <span id="login-text" class="glyphicon glyphicon-user"></span>
+          </small>
+        </a>
+        <a id="authenticated" href="">
+          <small>
+            <span id="auth-text" class="glyphicon glyphicon-user"></span>              
+          </small>
+        </a>      
+      </li>
+      <li>
+         <a id="logout" href="">
+          <small>logout</small>
+        </a>
+      </li>
+     </li>
+    </ul>      
+  </div>
+</div>
+</nav>

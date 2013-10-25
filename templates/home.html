@@ -1,0 +1,103 @@
+<!-- 
+  This file is part of VertNet: https://github.com/VertNet/webapp
+
+  VertNet is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  VertNet is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+  This is the App Engine configuration file for local development.
+  Note that static assets are sources from www/ which contains full
+  sourcecode without minification. 
+-->
+{% extends "base.html" %}
+{% block content %}
+<div class="masthead">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7">
+        <h1>VertNet</h1>
+        <p>Search and download millions of vertebrate records.</p>
+        <div id="homesearch" class="row">
+         <div class="col-lg-8">
+          <div id="homesearch-keywords-div">
+            <input id="homesearch-keywords-box" type="text" placeholder="full text record search..."></input>
+            <br>
+            <a id="advanced-search" href='search?advanced=1'>Advanced search</a>
+          </div>
+        </div>
+        <div class="col-lg-1">
+          <button id="homesearch-button" type="button" class="btn btn-large btn-primary">
+            <span class="glyphicon glyphicon-search icon-white"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div id="myCarousel" class="carousel stats slide">
+        <ol class="carousel-indicators">
+          <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#myCarousel" data-slide-to="1" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="2" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="3" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="4" class=""></li>
+          <li data-target="#myCarousel" data-slide-to="5" class=""></li>
+        </ol>
+        <div class="carousel-inner carosel-inner-home">
+          <div class="item active">
+            <img src="/img/Institutions.jpg" alt="">
+            <div class="carousel-caption">
+              <h1 class="stats">8,196,215 records</h1>
+            </div>
+          </div>
+          <div class="item">
+            <img src="/img/Species.jpg" alt="">
+            <div class="carousel-caption">
+              <h1 class="stats">44 data publishers</h1>
+            </div>
+          </div>
+          <div class="item">
+            <img src="img/Records.png" alt="">  
+            <div class="carousel-caption">
+              <h1 class="stats">161,014 scientific names</h1>
+            </div>
+          </div>
+          <div class="item">
+            <img src="/img/WorldCountries.png" alt="">
+            <div class="carousel-caption">
+              <h1 class="stats">196 countries represented</h1>
+            </div>
+          </div>
+          <div class="item">
+            <img src="/img/Collections.jpg" alt="">
+            <div class="carousel-caption">
+              <h1 class="stats">17 collections</h1>
+            </div>
+          </div>
+          <div class="item">
+            <img src="/img/Classes.jpg" alt="">
+            <div class="carousel-caption">
+              <h1 class="stats">15 vertebrate classes</h1>
+            </div>
+          </div>
+        </div>
+        <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="icon-prev"></span></a>
+        <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="icon-next"></span></a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="bs-docs-social">
+ <div class="mapContainer" id="mapContainer"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,433 @@
+<!--
+  This file is part of VertNet: https://github.com/VertNet/webapp
+
+  VertNet is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  VertNet is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+  This is the App Engine configuration file for local development.
+  Note that static assets are sources from www/ which contains full
+  sourcecode without minification. 
+-->
+<div id="occ-detail-content" class="container">
+
+  <div class="page-header">
+    <h1><%= this.model.get('icode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> <small><%= this.model.getSciName() %> </small></h1>
+  </div>
+
+  <!--   <div class="row">
+    <div class="col-lg-10">
+      <span class="lead">
+        Hi
+      </span>  
+    </div>
+    <div class="col-lg-1">
+      <button id="pubsearch" type="button" class="btn btn-primary btn-lg">
+        Search this publisher <span class="glyphicon glyphicon-search icon-white"></span>
+      </button>
+    </div>
+  </div> -->
+
+  <ul id="detailTabs" class="nav nav-tabs">
+    <button id="subissue" type="button" class="btn btn-success">
+        <span class="glyphicon glyphicon-flag icon-white"></span>
+      </button>
+    <li class="active">
+      <a href="#summary" data-toggle="tab">Summary</a>
+    </li>     
+    <li>
+      <a class="" href="#datasource" data-toggle="tab">Data Rights</a>
+    </li>   
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="#allterms" data-toggle="tab">All Terms</a></li>
+        <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
+        <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
+        <li><a href="#event" data-toggle="tab">Event</a></li>
+        <li><a href="#location" data-toggle="tab">Location</a></li>
+        <li><a href="#identification" data-toggle="tab">Identification</a></li>
+        <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div id="myTabContent" class="tab-content">
+
+  <div class="tab-pane fade active in" id="summary">
+    <p>
+    <!-- <p class="lead">Overview</p> -->
+    <%if (this.model.get('associatedmedia')) { 
+        var link = this.model.get('associatedmedia'); %>
+        <div id="hasmedia">
+          <a target='_blank' href="<%= link %>">View media</a>
+          <span id="has-media-icon" class="glyphicon glyphicon-facetime-video"></span> 
+        </div>
+     <% } %>
+    <div id="occ-detail-map" class="occ-detail-map">
+      <div id="detailmap"></div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_SUMMARY, _.bind(function(key) { 
+          var val = this.model.summary()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+  <div class="tab-pane fade" id="location">
+       <p>
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Location Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_LOCATION, _.bind(function(key) { 
+          var val = this.model.loc()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <div class="tab-pane" id="reclevel">
+      <p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>RecordLevel Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_RECLEVEL, _.bind(function(key) { 
+          var val = this.model.reclevel()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>    
+
+    <!-- Occurrence tab.  -->
+    <div class="tab-pane" id="occ">
+      <p>      
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Occurrence Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_OCC, _.bind(function(key) { 
+          var val = this.model.occ()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Event tab.  -->
+    <div class="tab-pane" id="event">
+      <p>      
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Event Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_EVENT, _.bind(function(key) { 
+          var val = this.model.event()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>          
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    
+    <!-- Identification tab.  -->
+    <div class="tab-pane" id="identification">
+      <p>       
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Identification Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_ID, _.bind(function(key) { 
+          var val = this.model.iden()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Taxon tab.  -->
+    <div class="tab-pane" id="taxon">
+        <p>
+        <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Taxon Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_TAXON, _.bind(function(key) { 
+          var val = this.model.taxon()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- All tab.  -->
+    <div class="tab-pane" id="allterms">
+      <p>
+       <table id="alltable" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_ALL(), _.bind(function(key) { 
+          var val = this.model.all()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>    
+    
+    <!-- Data source tab -->
+    <div id="datasource" class="tab-pane fade"> 
+      <p>
+      <!-- <p class="lead">Data rights</p> -->
+      <dl class="">
+        <dt>Rights</dt>
+        <dd><% if (this.model.get('emlrights')) { %>
+              <%= this.model.getRights() %>
+            <% } else { %>
+              Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
+            <% } %></dd>
+        <dt>Citation</dt>
+        <dd><%= this.model.get('citation') %></dd>
+        <dt>Institution</dt>
+        <dd><%= this.model.get('orgname') %></dd>
+        <dt>Resource</dt>
+        <dd><%= this.model.get('title') %></dd>
+        <dt>Contact</dt>
+        <dd>
+        <%= this.model.get('contact') %> <<a href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
+        </dd>
+        <dt>Published</dt>
+        <dd><%= this.model.get('pubdate') %></dd>
+        <dt>URL</dt>
+        <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
+      </dl>
+    </div>
+
+     <!-- Feedback tab -->
+    <div id="feedback" class="tab-pane fade"> 
+      <p>
+      GitHub
+      <ul>
+        <li class="github-btn">
+          <a href="/auth/github" class="btn btn-default"><img src="/img/github.png"></a>
+        </li>  
+    </div>
+</div>
+
+
+
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h1 id="myModalLabel">Submit data issue</h1>
+      </div>
+
+      <div id="queue" class="modal-body">
+        
+        <div id="confirmation" class="lead">
+            Your issue was submitted: <a id="issuelink" target="_blank" href=""></a>
+        </div>
+
+        <div id="queue-msg">
+          <p class="lead">
+            Help data publishers track data issues using <a href="http://github.com" target="_blank">GitHub</a>!
+          </p>
+          <div class="lead" id="login">
+            <p>
+              What's GitHub? Over three million people use it to build amazing things together.
+              VertNet uses GitHub to collaboratively submit, track, and resolve data quality issues. Login or sign-up to start submitting issues!
+            </p>
+            <br></br>
+            <p>
+              <button class="btn btn-success btn-lg hglogin">Login</button> 
+              <button class="btn btn-primary btn-lg hglogin">Sign-up</button>
+            </p>
+
+          </div>
+          <form id="issueform" class="form-horizontal" role="form">
+            <div id="name" class="form-group">
+              <input id="nameval" type="text" class="form-control" id="inputEmail1" placeholder="Issue title" required>
+            </div>
+            <div id="comment" class="form-group">
+              <textarea id="bodyval" class='form-control' rows='3' placeholder='Issue details...'></textarea>
+            </div>
+          </form>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-issue-btn" class="btn btn-success">Submit data issue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- <form class='form-horizontal' role='form'>   <div class='form-group'>
+    <label for='inputEmail1' class='col-lg-2 control-label'>Email</label>
+    <div class='col-lg-10'>
+      <input type='email' class='form-control' id='inputEmail1' placeholder='Email'>
+    </div>
+  </div>
+  <div class='form-group'>
+    <label for='inputPassword1' class='col-lg-2 control-label'>Password</label>
+    <div class='col-lg-10'>
+  <textarea class="form-control" rows="3"></textarea>
+    </div>
+  </div>
+  <div class='form-group'>
+    <div class='col-lg-offset-2 col-lg-10'>
+      <div class='checkbox'>
+        <label>
+          <input type='checkbox'> Remember me
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class='form-group'>
+    <div class='col-lg-offset-2 col-lg-10'>
+      <button type='submit' class='btn btn-default'>Sign in</button>
+    </div>
+  </div>
+</form>
