@@ -49,6 +49,12 @@ handlers:
 
 # APIs:
 
+- url: /api/search.*
+  script: vertnet.service.api.handlers
+
+- url: /api/download.*
+  script: vertnet.service.api.handlers
+
 - url: /api/user/get
   script: vertnet.service.user.handler
 
@@ -70,14 +76,14 @@ handlers:
 - url: /api/user.*
   script: vertnet.service.user.handler
 
-- url: /api/search.*
-  script: vertnet.api.search.handler
+# - url: /api/search.*
+#   script: vertnet.api.search.handler
 
 - url: /api/organization.*
   script: vertnet.api.organization.rpc
 
-- url: /api/stats.*
-  script: vertnet.api.stats.rpc
+# - url: /api/stats.*
+#   script: vertnet.api.stats.rpc
 
 - url: /.*
   script: app.handler
