@@ -248,7 +248,7 @@ def index_record(data, issue=None):
 				search.TextField(name='genus', value=genus),
         		search.TextField(name='institutioncode', value=icode),
                 search.TextField(name='country', value=country),            
-                search.TextField(name='stateprovince', value=stateprov),  
+                search.AtomField(name='stateprovince', value=stateprov),  
                 search.TextField(name='county', value=county),            
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
