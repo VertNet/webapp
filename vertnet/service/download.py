@@ -81,7 +81,7 @@ class WriteHandler(webapp2.RequestHandler):
         # Finalize and email.
         else:
             files.finalize(writable_file_name)
-            mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
+            mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
 You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads/%s

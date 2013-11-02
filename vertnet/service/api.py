@@ -84,9 +84,10 @@ class DownloadApi(webapp2.RequestHandler):
 
     def get(self):
         request = json.loads(self.request.get('q'))
-        q, c, e, n = map(request.get, ['q', 'c', 'e', 'n'])
+        q, e, n = map(request.get, ['q', 'e', 'n'])
         keywords = q.split()
-        params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=c, email=e, name=n))
+        params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=1001, email=e, 
+            name=n))
         url = '/service/download?%s' % params
         self.redirect(url)
 
@@ -95,10 +96,13 @@ class FeedbackApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        pass
+        request = json.loads(self.request.get('q'))
+        url = '/api/github/issue/create?q=%s' % request
+        self.redirect(url)
 
 handlers = webapp2.WSGIApplication([
     webapp2.Route(r'/api/search', handler=SearchApi),
-    webapp2.Route(r'/api/download', handler=DownloadApi),],
+    webapp2.Route(r'/api/download', handler=DownloadApi),
+    webapp2.Route(r'/api/feedback', handler=FeedbackApi),],
     debug=True)
         
