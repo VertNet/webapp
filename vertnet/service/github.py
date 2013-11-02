@@ -37,7 +37,8 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 routes = [
     webapp2.Route(r'/api/github/issue/create', 
-        handler='vertnet.service.github.GitHubHandler:issue_create', name='issue_create'),
+        handler='vertnet.service.github.GitHubHandler:issue_create', 
+        name='issue_create', methods=['GET', 'POST']),
 ]
 
 PUBLISHER_ORGS = {
@@ -96,13 +97,11 @@ def issues(action, owner, repo, access_token, params):
             # logging.info(result.content)
             return None
 
-class GitHubHandler(webapp2.RequestHandler):
-    def issue_create(self):
-        user = self.request.user if self.request.user else None
-        owner, repo, title, body, record, link, data = map(json.loads(self.request.body).get, 
-            ['owner', 'repo', 'title', 'body', 'record', 'link', 'data'])
 
-        data = json.loads(data)
+class GitHubHandler(webapp2.RequestHandler):
+    def create_issue(self, user, owner, repo, title, body, record, link, data):
+        if type(data) == str or type(data) == unicode:
+            data = json.loads(data)
         contact = data.get('contact')
         email = data.get('email')
 
@@ -126,7 +125,7 @@ class GitHubHandler(webapp2.RequestHandler):
             html_url = json.loads(response)['html_url']
          
             # FOR TESTING
-            # email = "eightysteele@gmail.com"
+            email = "eightysteele@gmail.com"
 
             # Email contact
             mail.send_mail("VertNet <vertnetinfo@vertnet.org>", 
@@ -140,6 +139,15 @@ class GitHubHandler(webapp2.RequestHandler):
             self.response.out.headers['Content-Type'] = 'application/json'
             self.response.headers['charset'] = 'utf-8'
             self.response.out.write(None)
+
+    def issue_create(self):
+        user = self.request.user if self.request.user else None
+        request = self.request.get('q') if self.request.get('q') \
+            else self.request.body
+        logging.info('REQUEST: %s' % request)
+        owner, repo, title, body, record, link, data = map(json.loads(request).get, 
+            ['owner', 'repo', 'title', 'body', 'record', 'link', 'data'])
+        self.create_issue(user, owner, repo, title, body, record, link, data)
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          

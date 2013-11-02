@@ -55,6 +55,9 @@ handlers:
 - url: /api/download.*
   script: vertnet.service.api.handlers
 
+- url: /api/feedback.*
+  script: vertnet.service.api.handlers
+
 - url: /api/user.*
   script: vertnet.service.user.handler
 

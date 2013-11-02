@@ -118,9 +118,11 @@ define([
           var record = '<table>' + this.$('#alltable').html() + '</table>'; 
           var data = JSON.stringify(this.model.attributes, null, 4);
           var link = window.location.href.split('&')[0];
+          var q = {owner:owner, title:title, body:body, repo:repo, 
+              record:record, link:link, data:data};
 
           rpc.execute('/api/github/issue/create', 
-            {owner:owner, title:title, body:body, repo:repo, record:record, link:link, data:data}, {
+            q, {
             success: _.bind(function(issue) {
               var conf = this.$('#confirmation');
               var link = this.$('#issuelink');
