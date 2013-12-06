@@ -230,9 +230,9 @@ def full_text_key_trim(rec):
   return rec
 
 def index_record(data, issue=None):
-    county, stateprov, year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, url = map(data.get, 
+    county, stateprov, year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, family, url = map(data.get, 
         ['county', 'stateprovince', 'year', 'genus', 'icode', 'country', 'specificepithet', 
-        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'url'])
+        'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'family', 'url'])
 
     if data.has_key('classs'):        
         data.pop('classs')
@@ -248,13 +248,14 @@ def index_record(data, issue=None):
 		fields=[search.TextField(name='year', value=year),
 				search.TextField(name='genus', value=genus),
         		search.TextField(name='institutioncode', value=icode),
-                search.TextField(name='country', value=country),            
-                search.TextField(name='stateprovince', value=stateprov),  
+                search.AtomField(name='country', value=country),            
+                search.AtomField(name='stateprovince', value=stateprov),  
                 search.TextField(name='county', value=county),            
                 search.TextField(name='specificepithet', value=specep),
                 search.TextField(name='catalognumber', value=catnum),
                 search.TextField(name='collectorname', value=collname),
                 search.TextField(name='class', value=classs),                
+                search.TextField(name='family', value=family),                
                 search.TextField(name='type', value=_type(data)),
                 search.TextField(name='url', value=url),
                 search.NumberField(name='media', value=has_media(data)),            
