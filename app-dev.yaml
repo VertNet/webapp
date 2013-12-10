@@ -78,6 +78,7 @@ handlers:
 
 - url: /mr.*
   script: admin.handler
+  login: admin
 
 - url: /.*
   script: app.handler
