@@ -31,12 +31,11 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 routes = [
     webapp2.Route(
         r'/mr/finalize',
-        handler='app.AppHandler:mapreduce_finalize',
+        handler='admin.AppHandler:mapreduce_finalize',
         name='mapreduce_finalize'),
     webapp2.Route(
         r'/mr/indexall',
-        handler='app.AppHandler:index',
-        name='index'),
+        handler='admin.AppHandler:indexall', methods=['GET']),
 ]
 
 
@@ -54,7 +53,7 @@ class AppHandler(webapp2.RequestHandler):
         job.put()
         logging.info('Index job finalized for resource %s' % job.resource)
 
-    def index(self):
+    def indexall(self):
         """Fires off an indexing MR job over files in GCS at supplied path."""
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
         path = self.request.get('path')
