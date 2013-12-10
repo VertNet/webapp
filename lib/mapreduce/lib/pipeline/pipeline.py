@@ -52,6 +52,8 @@ from mapreduce.lib import simplejson
 import status_ui
 import util as mr_util
 
+# pylint: disable=g-bad-name
+# pylint: disable=protected-access
 
 # For convenience
 _PipelineRecord = models._PipelineRecord
@@ -74,6 +76,7 @@ _StatusRecord = models._StatusRecord
 #   barriers will fire but do nothing because the Pipeline is not ready.
 
 ################################################################################
+
 
 class Error(Exception):
   """Base class for exceptions in this module."""
@@ -143,6 +146,7 @@ _MAX_JSON_SIZE = 900000
 _ENFORCE_AUTH = True
 
 ################################################################################
+
 
 class Slot(object):
   """An output that is filled by a Pipeline as it executes."""
@@ -430,6 +434,9 @@ class Pipeline(object):
     self._context = None
     self._result_status = None
     self._set_class_path()
+    # Introspectively set the target so pipelines stick to the version it
+    # started.
+    self.target = mr_util._get_task_target()
 
     if _TEST_MODE:
       self._context = _PipelineContext('', 'default', '')
@@ -762,7 +769,7 @@ class Pipeline(object):
 
       status_record.put()
     except Exception, e:
-      raise PipelineRuntimeError('Could not set status for %s#%s: %s' % 
+      raise PipelineRuntimeError('Could not set status for %s#%s: %s' %
           (self, self.pipeline_id, str(e)))
 
   def complete(self, default_output=None):
@@ -825,11 +832,14 @@ class Pipeline(object):
     kwargs['method'] = 'POST'
     return taskqueue.Task(*args, **kwargs)
 
-  def send_result_email(self):
+  def send_result_email(self, sender=None):
     """Sends an email to admins indicating this Pipeline has completed.
 
     For developer convenience. Automatically called from finalized for root
     Pipelines that do not override the default action.
+
+    Args:
+      sender: (optional) Override the sender's email address.
     """
     status = 'successful'
     if self.was_aborted:
@@ -873,7 +883,8 @@ The Pipeline API
 </body></html>
 """ % param_dict
 
-    sender = '%s@%s.appspotmail.com' % (app_id, app_id)
+    if sender is None:
+      sender = '%s@%s.appspotmail.com' % (app_id, app_id)
     try:
       self._send_mail(sender, subject, body, html=html)
     except (mail.InvalidSenderError, mail.InvalidEmailError):
@@ -979,14 +990,11 @@ The Pipeline API
 
   # Internal methods.
   @classmethod
-  def _set_class_path(cls, module_dict=sys.modules):
+  def _set_class_path(cls):
     """Sets the absolute path to this class as a string.
 
     Used by the Pipeline API to reconstruct the Pipeline sub-class object
     at execution time instead of passing around a serialized function.
-
-    Args:
-      module_dict: Used for testing.
     """
     # Do not traverse the class hierarchy fetching the class path attribute.
     found = cls.__dict__.get('_class_path')
@@ -1000,26 +1008,7 @@ The Pipeline API
     if cls is Pipeline:
       return
 
-    # This is a brute-force approach to solving the module reverse-lookup
-    # problem, where we want to refer to a class by its stable module name
-    # but have no built-in facility for doing so in Python.
-    found = None
-    for name, module in module_dict.items():
-      if name == '__main__':
-        continue
-      found = getattr(module, cls.__name__, None)
-      if found is cls:
-        break
-    else:
-      # If all else fails, try the main module.
-      name = '__main__'
-      module = module_dict.get(name)
-      found = getattr(module, cls.__name__, None)
-      if found is not cls:
-        raise ImportError('Could not determine path for Pipeline '
-                          'function/class "%s"' % cls.__name__)
-
-    cls._class_path = '%s.%s' % (name, cls.__name__)
+    cls._class_path = '%s.%s' % (cls.__module__, cls.__name__)
 
   def _set_values_internal(self,
                            context,
@@ -1294,18 +1283,18 @@ def _generate_args(pipeline, future, queue_name, base_path):
         None if the params data size was small enough to fit in the entity.
   """
   params = {
-    'args': [],
-    'kwargs': {},
-    'after_all': [],
-    'output_slots': {},
-    'class_path': pipeline._class_path,
-    'queue_name': queue_name,
-    'base_path': base_path,
-    'backoff_seconds': pipeline.backoff_seconds,
-    'backoff_factor': pipeline.backoff_factor,
-    'max_attempts': pipeline.max_attempts,
-    'task_retry': pipeline.task_retry,
-    'target': pipeline.target,
+      'args': [],
+      'kwargs': {},
+      'after_all': [],
+      'output_slots': {},
+      'class_path': pipeline._class_path,
+      'queue_name': queue_name,
+      'base_path': base_path,
+      'backoff_seconds': pipeline.backoff_seconds,
+      'backoff_factor': pipeline.backoff_factor,
+      'max_attempts': pipeline.max_attempts,
+      'task_retry': pipeline.task_retry,
+      'target': pipeline.target,
   }
   dependent_slots = set()
 
@@ -1669,7 +1658,6 @@ class _PipelineContext(object):
     # Adjust all pipeline output keys for this Pipeline to be children of
     # the _PipelineRecord, that way we can write them all and submit in a
     # single transaction.
-    entities_to_put = []
     for name, slot in pipeline.outputs._output_dict.iteritems():
       slot.key = db.Key.from_path(
           *slot.key.to_path(), **dict(parent=pipeline._pipeline_key))
@@ -1677,6 +1665,7 @@ class _PipelineContext(object):
     _, output_slots, params_text, params_blob = _generate_args(
         pipeline, pipeline.outputs, self.queue_name, self.base_path)
 
+    @db.transactional(propagation=db.INDEPENDENT)
     def txn():
       pipeline_record = db.get(pipeline._pipeline_key)
       if pipeline_record is not None:
@@ -1721,7 +1710,7 @@ class _PipelineContext(object):
         return task
       task.add(queue_name=self.queue_name, transactional=True)
 
-    task = db.run_in_transaction(txn)
+    task = txn()
     # Immediately mark the output slots as existing so they can be filled
     # by asynchronous pipelines or used in test mode.
     for output_slot in pipeline.outputs._output_dict.itervalues():
@@ -2344,7 +2333,7 @@ class _PipelineContext(object):
             pipeline_key.name())
         raise db.Rollback()
       if pipeline_record.status not in (
-             _PipelineRecord.WAITING, _PipelineRecord.RUN):
+          _PipelineRecord.WAITING, _PipelineRecord.RUN):
         logging.warning(
             'Tried to mark pipeline ID "%s" as complete, found bad state: %s',
             pipeline_key.name(), pipeline_record.status)
@@ -2373,14 +2362,15 @@ class _PipelineContext(object):
             pipeline_key.name())
         raise db.Rollback()
       if pipeline_record.status not in (
-             _PipelineRecord.WAITING, _PipelineRecord.RUN):
+          _PipelineRecord.WAITING, _PipelineRecord.RUN):
         logging.warning(
             'Tried to retry pipeline ID "%s", found bad state: %s',
             pipeline_key.name(), pipeline_record.status)
         raise db.Rollback()
 
       params = pipeline_record.params
-      offset_seconds = (params['backoff_seconds'] *
+      offset_seconds = (
+          params['backoff_seconds'] *
           (params['backoff_factor'] ** pipeline_record.current_attempt))
       pipeline_record.next_retry_time = (
           self._gettime() + datetime.timedelta(seconds=offset_seconds))
@@ -2391,7 +2381,7 @@ class _PipelineContext(object):
       if pipeline_record.current_attempt >= pipeline_record.max_attempts:
         root_pipeline_key = (
             _PipelineRecord.root_pipeline.get_value_for_datastore(
-            pipeline_record))
+                pipeline_record))
         logging.warning(
             'Giving up on pipeline ID "%s" after %d attempt(s); causing abort '
             'all the way to the root pipeline ID "%s"', pipeline_key.name(),
@@ -2434,7 +2424,7 @@ class _PipelineContext(object):
             pipeline_key.name())
         raise db.Rollback()
       if pipeline_record.status not in (
-             _PipelineRecord.WAITING, _PipelineRecord.RUN):
+          _PipelineRecord.WAITING, _PipelineRecord.RUN):
         logging.warning(
             'Tried to abort pipeline ID "%s", found bad state: %s',
             pipeline_key.name(), pipeline_record.status)
@@ -2447,6 +2437,7 @@ class _PipelineContext(object):
     db.run_in_transaction(txn)
 
 ################################################################################
+
 
 class _BarrierHandler(webapp.RequestHandler):
   """Request handler for triggering barriers."""
@@ -2860,8 +2851,8 @@ def _get_internal_slot(slot_key=None,
     output['status'] = 'filled'
     output['fillTimeMs'] = _get_timestamp_ms(slot_record.fill_time)
     output['value'] = slot_record.value
-    filler_pipeline_key = \
-        _SlotRecord.filler.get_value_for_datastore(slot_record)
+    filler_pipeline_key = (
+        _SlotRecord.filler.get_value_for_datastore(slot_record))
   else:
     output['status'] = 'waiting'
 
@@ -2892,7 +2883,7 @@ def get_status_tree(root_pipeline_id):
     raise PipelineStatusError(
         'Could not find pipeline ID "%s"' % root_pipeline_id)
 
-  if (root_pipeline_key != 
+  if (root_pipeline_key !=
       _PipelineRecord.root_pipeline.get_value_for_datastore(
           root_pipeline_record)):
     raise PipelineStatusError(

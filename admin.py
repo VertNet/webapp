@@ -56,6 +56,7 @@ class AppHandler(webapp2.RequestHandler):
     def indexall(self):
         """Fires off an indexing MR job over files in GCS at supplied path."""
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
+        logging.info("INPUTCLASS %s" % input_class)
         path = self.request.get('path')
         shard_count = self.request.get_range('shard_count', default=8)
         processing_rate = self.request.get_range(
