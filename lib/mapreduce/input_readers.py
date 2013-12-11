@@ -858,7 +858,6 @@ DatastoreEntityInputReader = RawDatastoreInputReader
 
 
 # TODO(user): Remove this after the only dependency GroomerMarkReader is
-# refactored to use megastore safetime.
 class _OldAbstractDatastoreInputReader(InputReader):
   """Abstract base class for classes that iterate over datastore entities.
 
@@ -2714,6 +2713,7 @@ class _GoogleCloudStorageRecordInputReader(_GoogleCloudStorageInputReader):
         self._record_reader = None
 
 
+# TODO(user): Use _GoogleCloudStorageInputReader instead of the File API.
 class _ReducerReader(RecordsReader):
   """Reader to read KeyValues records files from Files API."""
 
@@ -2737,13 +2737,15 @@ class _ReducerReader(RecordsReader):
       proto = file_service_pb.KeyValues()
       proto.ParseFromString(binary_record)
 
+      to_yield = None
+      if self.current_key is not None and self.current_key != proto.key():
+        to_yield = (self.current_key, self.current_values)
+        self.current_key = None
+        self.current_values = None
+
       if self.current_key is None:
         self.current_key = proto.key()
         self.current_values = []
-      else:
-        assert proto.key() == self.current_key, (
-            "inconsistent key sequence. Expected %s but got %s" %
-            (self.current_key, proto.key()))
 
       if combiner:
         combiner_result = combiner(
@@ -2759,21 +2761,30 @@ class _ReducerReader(RecordsReader):
           if isinstance(value, operation.Operation):
             value(ctx)
           else:
-            # with combiner current values always come from combiner
+            # With combiner the current values always come from the combiner.
             self.current_values.append(value)
+
+        # Check-point after each combiner call is run only when there's nothing
+        # that needs to be yielded below. Otherwise allowing a check-point here
+        # would cause the current to_yield data to be lost.
+        if not to_yield:
+          yield ALLOW_CHECKPOINT
       else:
-        # without combiner we just accumulate values.
+        # Without combiner we just accumulate values.
         self.current_values.extend(proto.value_list())
 
-      if not proto.partial():
-        key = self.current_key
-        values = self.current_values
-        # This is final value, don't try to serialize it.
-        self.current_key = None
-        self.current_values = None
-        yield (key, values)
-      else:
+      if to_yield:
+        yield to_yield
+        # Check-point after each key is yielded.
         yield ALLOW_CHECKPOINT
+
+    # There may be some accumulated values left at the end of an input file
+    # so be sure to yield those too.
+    if self.current_key is not None:
+      to_yield = (self.current_key, self.current_values)
+      self.current_key = None
+      self.current_values = None
+      yield to_yield
 
   @staticmethod
   def encode_data(data):
@@ -2781,7 +2792,6 @@ class _ReducerReader(RecordsReader):
 
     Works around limitations in JSON encoding, which cannot handle raw bytes.
     """
-    # TODO(user): Use something less slow/ugly.
     return base64.b64encode(pickle.dumps(data))
 
   @staticmethod
@@ -2796,8 +2806,8 @@ class _ReducerReader(RecordsReader):
       A json-izable version of the remaining InputReader.
     """
     result = super(_ReducerReader, self).to_json()
-    result["current_key"] = _ReducerReader.encode_data(self.current_key)
-    result["current_values"] = _ReducerReader.encode_data(self.current_values)
+    result["current_key"] = self.encode_data(self.current_key)
+    result["current_values"] = self.encode_data(self.current_values)
     return result
 
   @classmethod
