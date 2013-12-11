@@ -10,6 +10,7 @@ __all__ = ['AuthorizationError',
            'check_status',
            'Error',
            'FatalError',
+           'FileClosedError',
            'ForbiddenError',
            'NotFoundError',
            'ServerError',
@@ -39,6 +40,14 @@ class TimeoutError(TransientError):
 
 class FatalError(Error):
   """FatalError shouldn't be retried."""
+
+
+class FileClosedError(FatalError):
+  """File is already closed.
+
+  This can happen when the upload has finished but 'write' is called on
+  a stale upload handle.
+  """
 
 
 class NotFoundError(FatalError):
@@ -71,13 +80,17 @@ class ServerError(TransientError):
   """HTTP >= 500 server side error."""
 
 
-def check_status(status, expected, headers=None):
+def check_status(status, expected, path, headers=None,
+                 resp_headers=None, extras=None):
   """Check HTTP response status is expected.
 
   Args:
     status: HTTP response status. int.
     expected: a list of expected statuses. A list of ints.
-    headers: HTTP response headers.
+    path: filename or a path prefix.
+    headers: HTTP request headers.
+    resp_headers: HTTP response headers.
+    extras: extra info to be logged verbatim if error occurs.
 
   Raises:
     AuthorizationError: if authorization failed.
@@ -89,9 +102,12 @@ def check_status(status, expected, headers=None):
   if status in expected:
     return
 
-  msg = ('Expect status %r from Google Storage. But got status %d. Response '
-         'headers: %r' %
-         (expected, status, headers))
+  msg = ('Expect status %r from Google Storage. But got status %d.\n'
+         'Path: %r.\n'
+         'Request headers: %r.\n'
+         'Response headers: %r.\n'
+         'Extra info: %r.\n' %
+         (expected, status, path, headers, resp_headers, extras))
 
   if status == httplib.UNAUTHORIZED:
     raise AuthorizationError(msg)
@@ -103,6 +119,9 @@ def check_status(status, expected, headers=None):
     raise TimeoutError(msg)
   elif status == httplib.REQUESTED_RANGE_NOT_SATISFIABLE:
     raise InvalidRange(msg)
+  elif (status == httplib.OK and 308 in expected and
+        httplib.OK not in expected):
+    raise FileClosedError(msg)
   elif status >= 500:
     raise ServerError(msg)
   else:

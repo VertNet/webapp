@@ -15,11 +15,14 @@ import math
 import os
 import threading
 import time
+import urllib
 
 
 try:
   from google.appengine.api import urlfetch
   from google.appengine.datastore import datastore_rpc
+  from google.appengine.ext.ndb import eventloop
+  from google.appengine.ext.ndb import utils
   from google.appengine import runtime
   from google.appengine.runtime import apiproxy_errors
 except ImportError:
@@ -27,6 +30,8 @@ except ImportError:
   from google.appengine.datastore import datastore_rpc
   from google.appengine import runtime
   from google.appengine.runtime import apiproxy_errors
+  from google.appengine.ext.ndb import eventloop
+  from google.appengine.ext.ndb import utils
 
 
 _RETRIABLE_EXCEPTIONS = (urlfetch.DownloadError,
@@ -54,6 +59,18 @@ def _get_default_retry_params():
     return copy.copy(default)
 
 
+def _quote_filename(filename):
+  """Quotes filename to use as a valid URI path.
+
+  Args:
+    filename: user provided filename. /bucket/filename.
+
+  Returns:
+    The filename properly quoted to use as URI's path component.
+  """
+  return urllib.quote(filename)
+
+
 def _should_retry(resp):
   """Given a urlfetch response, decide whether to retry that request."""
   return (resp.status_code == httplib.REQUEST_TIMEOUT or
@@ -72,7 +89,8 @@ class RetryParams(object):
                min_retries=2,
                max_retries=5,
                max_retry_period=30.0,
-               urlfetch_timeout=None):
+               urlfetch_timeout=None,
+               save_access_token=False):
     """Init.
 
     This object is unique per request per thread.
@@ -89,8 +107,13 @@ class RetryParams(object):
         capped by max_retries.
       max_retries: max number of times to retry. Set this to 0 for no retry.
       max_retry_period: max total seconds spent on retry. Retry stops when
-       this period passed AND min_retries has been attempted.
-      urlfetch_timeout: timeout for urlfetch in seconds. Could be None.
+        this period passed AND min_retries has been attempted.
+      urlfetch_timeout: timeout for urlfetch in seconds. Could be None,
+        in which case the value will be chosen by urlfetch module.
+      save_access_token: persist access token to datastore to avoid
+        excessive usage of GetAccessToken API. Usually the token is cached
+        in process and in memcache. In some cases, memcache isn't very
+        reliable.
     """
     self.backoff_factor = self._check('backoff_factor', backoff_factor)
     self.initial_delay = self._check('initial_delay', initial_delay)
@@ -104,6 +127,8 @@ class RetryParams(object):
     self.urlfetch_timeout = None
     if urlfetch_timeout is not None:
       self.urlfetch_timeout = self._check('urlfetch_timeout', urlfetch_timeout)
+    self.save_access_token = self._check('save_access_token', save_access_token,
+                                         True, bool)
 
     self._request_id = os.getenv('REQUEST_LOG_ID')
 
@@ -195,13 +220,11 @@ def _retry_fetch(url, retry_params, **kwds):
   if delay <= 0:
     return
 
-  deadline = kwds.get('deadline', None)
-  if deadline is None:
-    kwds['deadline'] = retry_params.urlfetch_timeout
-
+  logging.info('Will retry request to %s.', url)
   while delay > 0:
     resp = None
     try:
+      logging.info('Retry in %s seconds.', delay)
       time.sleep(delay)
       resp = urlfetch.fetch(url, **kwds)
     except runtime.DeadlineExceededError:
@@ -218,19 +241,49 @@ def _retry_fetch(url, retry_params, **kwds):
       break
     elif resp:
       logging.info(
-          'Got status %s from GCS. Will retry in %s seconds.',
-          resp.status_code, delay)
+          'Got status %s from GCS.', resp.status_code)
     else:
       logging.info(
-          'Got exception while contacting GCS. Will retry in %s seconds.',
-          delay)
-      logging.info(e)
-    logging.debug('Tried to reach url %s', url)
+          'Got exception "%r" while contacting GCS.', e)
 
   if resp:
     return resp
 
-  logging.info('Urlfetch retry %s failed after %s seconds total',
+  logging.info('Urlfetch failed after %s retries and %s seconds in total.',
                n - 1, time.time() - start_time)
   raise
 
+
+def _run_until_rpc():
+  """Eagerly evaluate tasklets until it is blocking on some RPC.
+
+  Usually ndb eventloop el isn't run until some code calls future.get_result().
+
+  When an async tasklet is called, the tasklet wrapper evaluates the tasklet
+  code into a generator, enqueues a callback _help_tasklet_along onto
+  the el.current queue, and returns a future.
+
+  _help_tasklet_along, when called by the el, will
+  get one yielded value from the generator. If the value if another future,
+  set up a callback _on_future_complete to invoke _help_tasklet_along
+  when the dependent future fulfills. If the value if a RPC, set up a
+  callback _on_rpc_complete to invoke _help_tasklet_along when the RPC fulfills.
+  Thus _help_tasklet_along drills down
+  the chain of futures until some future is blocked by RPC. El runs
+  all callbacks and constantly check pending RPC status.
+  """
+  el = eventloop.get_event_loop()
+  while el.current:
+    el.run0()
+
+
+def _eager_tasklet(tasklet):
+  """Decorator to turn tasklet to run eagerly."""
+
+  @utils.wrapping(tasklet)
+  def eager_wrapper(*args, **kwds):
+    fut = tasklet(*args, **kwds)
+    _run_until_rpc()
+    return fut
+
+  return eager_wrapper
