@@ -92,11 +92,13 @@ define([
 
         console.log(icode, this.githubbers);
 
+/*
         if (!_.contains(this.githubbers, icode)) {
           this.$('#subissue').hide();
           mps.publish('spin', [false]);
           return this;
         }
+*/
     
         this.$('#subissue').popover({placement: 'top', content: 'Submit data issue'});
         this.$('#subissue').popover('show');
