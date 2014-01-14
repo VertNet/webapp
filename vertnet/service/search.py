@@ -296,8 +296,12 @@ def index_record(data, issue=None):
     handle_failed_index_put(data, resource, did, write_path, mrid)
 
 def build_search_index(entity):
-    data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
-    index_record(data)
+    try:
+        data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
+        index_record(data)
+    except Exception, e:
+        logging.error('%s\n%s' % (e, entity))
+
 
 def _get_rec(doc):
     for field in doc.fields:

@@ -64,7 +64,7 @@ class AppHandler(webapp2.RequestHandler):
 
         # Create file on GCS to log any failed index puts:
         namespace = namespace_manager.get_namespace()
-        filename = '/gs/vn-staging/errors/failures-%s-all.csv' % namespace
+        filename = '/gs/vertnet-harvesting/errors/failures-%s-all.csv' % namespace
         write_path = files.gs.create(
             filename, mime_type='text/tab-separated-values',
             acl='public-read')
