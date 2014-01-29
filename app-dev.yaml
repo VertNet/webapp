@@ -52,6 +52,12 @@ handlers:
 - url: /api/user.*
   script: vertnet.service.user.handler
 
+- url: /indexer.*
+  script: vertnet.service.indexer.api
+
+- url: /index-admin/.*
+  script: index_admin.handler
+
 - url: /api/github.*
   script: vertnet.service.github.handler
 
