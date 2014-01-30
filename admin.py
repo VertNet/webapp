@@ -43,7 +43,7 @@ class AppHandler(webapp2.RequestHandler):
     def mapreduce_finalize(self):
         """Finalizes indexing MR job by finalizing files on GCS."""
         mrid = self.request.headers.get('Mapreduce-Id')
-        namespace = namespace_manager.get_namespace()
+        namespace = self.request.get('namespace', namespace_manager.get_namespace())
         job = IndexJob.get_by_id(mrid, namespace=namespace)
         if not job:
             return
@@ -63,7 +63,7 @@ class AppHandler(webapp2.RequestHandler):
         files_pattern = '/gs/%s' % path
 
         # Create file on GCS to log any failed index puts:
-        namespace = namespace_manager.get_namespace()
+        namespace = self.request.get('namespace', namespace_manager.get_namespace())
         filename = '/gs/vertnet-harvesting/errors/failures-%s-all.csv' % namespace
         write_path = files.gs.create(
             filename, mime_type='text/tab-separated-values',
@@ -80,7 +80,8 @@ class AppHandler(webapp2.RequestHandler):
                 "resource": path,
                 "write_path": write_path,
                 "processing_rate": processing_rate,
-                "shard_count": shard_count
+                "shard_count": shard_count,
+                "namespace": namespace
             },
             mapreduce_parameters={'done_callback': '/mr/finalize'},
             shard_count=shard_count)
