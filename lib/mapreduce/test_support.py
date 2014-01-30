@@ -19,14 +19,17 @@
 
 
 import base64
-import cgi
 import collections
 import logging
+import traceback
 import os
 import re
 
 from mapreduce import main
+from mapreduce import model
 from google.appengine.ext.webapp import mock_webapp
+
+# TODO(user): Add tests for this file.
 
 
 def decode_task_payload(task):
@@ -46,13 +49,8 @@ def decode_task_payload(task):
     return {}
   # taskqueue_stub base64 encodes body when it returns the task to us.
   body = base64.b64decode(task["body"])
-  result = {}
-  for (name, value) in cgi.parse_qs(body).items():
-    if len(value) == 1:
-      result[name] = value[0]
-    else:
-      result[name] = value
-  return result
+  # pylint: disable=protected-access
+  return model.HugeTask._decode_payload(body)
 
 
 def execute_task(task, retries=0, handlers_map=None):
@@ -76,6 +74,7 @@ def execute_task(task, retries=0, handlers_map=None):
   Raises:
     Exception: whatever the task raises.
   """
+  # Find the handler class
   if not handlers_map:
     handlers_map = main.create_handlers_map()
 
@@ -92,7 +91,25 @@ def execute_task(task, retries=0, handlers_map=None):
   request = mock_webapp.MockRequest()
   request.set_url(url)
 
-  request.environ["HTTP_HOST"] = "myapp.appspot.com"
+  # Set dependent env vars if test hasn't set them.
+  version = "mr-test-support-version.1"
+  module = "mr-test-support-module"
+  default_version_hostname = "mr-test-support.appspot.com"
+  host = "%s.%s.%s" % (version.split(".")[0],
+                       module,
+                       default_version_hostname)
+
+  if "CURRENT_VERSION_ID" not in os.environ:
+    request.environ["CURRENT_VERSION_ID"] = version
+  if "DEFAULT_VERSION_HOSTNAME" not in os.environ:
+    request.environ["DEFAULT_VERSION_HOSTNAME"] = (
+        default_version_hostname)
+  if "CURRENT_MODULE_ID" not in os.environ:
+    request.environ["CURRENT_MODULE_ID"] = module
+  if "HTTP_HOST" not in os.environ:
+    request.environ["HTTP_HOST"] = host
+
+  # Set taskqueue specific headers and env vars.
   for k, v in task.get("headers", []):
     request.headers[k] = v
     environ_key = "HTTP_" + k.replace("-", "_").upper()
@@ -158,6 +175,8 @@ def execute_all_tasks(taskqueue, queue="default", handlers_map=None):
   taskqueue.FlushQueue(queue)
   task_run_counts = collections.defaultdict(lambda: 0)
   for task in tasks:
+    import logging
+    logging.error(task)
     retries = 0
     while True:
       try:
@@ -176,6 +195,8 @@ def execute_all_tasks(taskqueue, queue="default", handlers_map=None):
             "Task %s is being retried for the %s time",
             task["name"],
             retries)
+        logging.debug(traceback.format_exc())
+
   return task_run_counts
 
 

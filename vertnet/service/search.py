@@ -229,7 +229,7 @@ def full_text_key_trim(rec):
       rec.pop(key)
   return rec
 
-def index_record(data, issue=None):
+def index_record(data, issue=None, namespace=namespace_manager.get_namespace()):
     county, stateprov, year, genus, icode, country, specep, lat, lon, catnum, collname, season, classs, family, url = map(data.get, 
         ['county', 'stateprovince', 'year', 'genus', 'icode', 'country', 'specificepithet', 
         'decimallatitude', 'decimallongitude', 'catalognumber', 'collectorname', 'season', 'classs', 'family', 'url'])
@@ -279,7 +279,7 @@ def index_record(data, issue=None):
     retry_count = 0
     while retry_count < max_retries:
         try:
-            namespace = namespace_manager.get_namespace()
+            # namespace = namespace_manager.get_namespace()
             search.Index('dwc', namespace=namespace).put(doc)
             return # Successfully indexed record.
         except Exception, e:
@@ -296,8 +296,15 @@ def index_record(data, issue=None):
     handle_failed_index_put(data, resource, did, write_path, mrid)
 
 def build_search_index(entity):
-    data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
-    index_record(data)
+    ctx = context.get()
+    params = ctx.mapreduce_spec.mapper.params
+    namespace = params['namespace']
+    try:
+        data = get_rec_dict(dict(zip(HEADER, entity.split('\t'))))
+        index_record(data)
+    except Exception, e:
+        logging.error('%s\n%s' % (e, entity))
+
 
 def _get_rec(doc):
     for field in doc.fields:

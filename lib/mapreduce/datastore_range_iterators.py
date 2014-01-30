@@ -9,6 +9,7 @@ from google.appengine.datastore import datastore_query
 from google.appengine.datastore import datastore_rpc
 from google.appengine.ext import db
 from google.appengine.ext import key_range
+from mapreduce import json_util
 from mapreduce import key_ranges
 from mapreduce import model
 from mapreduce import namespace_range
@@ -75,7 +76,7 @@ class RangeIteratorFactory(object):
     return _RANGE_ITERATORS[json["name"]].from_json(json)
 
 
-class RangeIterator(model.JsonMixin):
+class RangeIterator(json_util.JsonMixin):
   """Interface for DatastoreInputReader helper iterators.
 
   RangeIterator defines Python's generator interface and additional
@@ -162,19 +163,22 @@ class _PropertyRangeModelIterator(RangeIterator):
 
   def to_json(self):
     """Inherit doc."""
-    cursor_object = False
+    cursor = self._cursor
     if self._query is not None:
       if isinstance(self._query, db.Query):
-        self._cursor = self._query.cursor()
+        cursor = self._query.cursor()
       else:
-        cursor_object = True
-        self._cursor = self._query.cursor_after().to_websafe_string()
+        cursor = self._query.cursor_after()
+
+    if isinstance(cursor, basestring):
+      cursor_object = False
     else:
-      self._cursor = None
+      cursor_object = True
+      cursor = cursor.to_websafe_string()
 
     return {"property_range": self._property_range.to_json(),
             "query_spec": self._query_spec.to_json(),
-            "cursor": self._cursor,
+            "cursor": cursor,
             "ns_range": self._ns_range.to_json_object(),
             "name": self.__class__.__name__,
             "cursor_object": cursor_object}
@@ -272,7 +276,7 @@ _RANGE_ITERATORS = {
     }
 
 
-class AbstractKeyRangeIterator(model.JsonMixin):
+class AbstractKeyRangeIterator(json_util.JsonMixin):
   """Iterates over a single key_range.KeyRange and yields value for each key."""
 
   def __init__(self, k_range, query_spec):
@@ -352,11 +356,13 @@ class KeyRangeModelIterator(AbstractKeyRangeIterator):
         yield model_instance
 
   def _get_cursor(self):
-    if self._query is not None:
-      if isinstance(self._query, db.Query):
-        return self._query.cursor()
-      else:
-        return self._query.cursor_after()
+    if self._query is None:
+      return self._cursor
+
+    if isinstance(self._query, db.Query):
+      return self._query.cursor()
+    else:
+      return self._query.cursor_after()
 
 
 class KeyRangeEntityIterator(AbstractKeyRangeIterator):
@@ -374,8 +380,9 @@ class KeyRangeEntityIterator(AbstractKeyRangeIterator):
       yield entity
 
   def _get_cursor(self):
-    if self._query is not None:
-      return self._query.GetCursor()
+    if self._query is None:
+      return self._cursor
+    return self._query.GetCursor()
 
 
 class KeyRangeKeyIterator(KeyRangeEntityIterator):
@@ -406,8 +413,9 @@ class KeyRangeEntityProtoIterator(AbstractKeyRangeIterator):
       yield entity_proto
 
   def _get_cursor(self):
-    if self._query is not None:
-      return self._query.cursor()
+    if self._query is None:
+      return self._cursor
+    return self._query.cursor()
 
 
 # TODO(user): update this map automatically using metaclass if needed.

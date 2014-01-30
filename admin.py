@@ -29,16 +29,21 @@ IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
 routes = [
-    webapp2.Route(r'/mr/finalize', handler='app.AppHandler:mapreduce_finalize', 
+    webapp2.Route(
+        r'/mr/finalize',
+        handler='admin.AppHandler:mapreduce_finalize',
         name='mapreduce_finalize'),
-    webapp2.Route(r'/mr/indexall', handler='app.AppHandler:index', name='index'),
+    webapp2.Route(
+        r'/mr/indexall',
+        handler='admin.AppHandler:indexall', methods=['GET']),
 ]
+
 
 class AppHandler(webapp2.RequestHandler):
     def mapreduce_finalize(self):
         """Finalizes indexing MR job by finalizing files on GCS."""
         mrid = self.request.headers.get('Mapreduce-Id')
-        namespace = namespace_manager.get_namespace()
+        namespace = self.request.get('namespace', namespace_manager.get_namespace())
         job = IndexJob.get_by_id(mrid, namespace=namespace)
         if not job:
             return
@@ -48,18 +53,20 @@ class AppHandler(webapp2.RequestHandler):
         job.put()
         logging.info('Index job finalized for resource %s' % job.resource)
 
-    def index(self):
+    def indexall(self):
         """Fires off an indexing MR job over files in GCS at supplied path."""
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
         path = self.request.get('path')
         shard_count = self.request.get_range('shard_count', default=8)
-        processing_rate = self.request.get_range('processing_rate', default=100)
+        processing_rate = self.request.get_range(
+            'processing_rate', default=100)
         files_pattern = '/gs/%s' % path
 
         # Create file on GCS to log any failed index puts:
-        namespace = namespace_manager.get_namespace()
-        filename = '/gs/vn-staging/errors/failures-%s-all.csv' % namespace
-        write_path = files.gs.create(filename, mime_type='text/tab-separated-values', 
+        namespace = self.request.get('namespace', namespace_manager.get_namespace())
+        filename = '/gs/vertnet-harvesting/errors/failures-%s-all.csv' % namespace
+        write_path = files.gs.create(
+            filename, mime_type='text/tab-separated-values',
             acl='public-read')
 
         mrid = mrc.start_map(
@@ -68,20 +75,24 @@ class AppHandler(webapp2.RequestHandler):
             input_class,
             {
                 "input_reader": dict(
-                    files=[files_pattern], 
+                    files=[files_pattern],
                     format='lines'),
                 "resource": path,
                 "write_path": write_path,
                 "processing_rate": processing_rate,
-                "shard_count": shard_count
+                "shard_count": shard_count,
+                "namespace": namespace
             },
             mapreduce_parameters={'done_callback': '/mr/finalize'},
             shard_count=shard_count)
+        logging.info('Stop!')
 
-        IndexJob(id=mrid, namespace=namespace, resource=path, write_path=write_path, 
-            failed_logs=['NONE']).put()
+        IndexJob(id=mrid, namespace=namespace, resource=path,
+                 write_path=write_path, failed_logs=['NONE']).put()
+
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
-         
+
+
 def main():
     run_wsgi_app(handler)

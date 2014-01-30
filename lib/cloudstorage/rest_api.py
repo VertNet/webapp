@@ -68,6 +68,7 @@ class _AE_TokenStorage_(ndb.Model):
   """Entity to store app_identity tokens in memcache."""
 
   token = ndb.StringProperty()
+  expires = ndb.FloatProperty()
 
 
 @ndb.tasklet
@@ -150,8 +151,11 @@ class _RestApi(object):
     it performs blocking retries.
     """
     headers = {} if headers is None else dict(headers)
-    token = yield self.get_token_async()
-    headers['authorization'] = 'OAuth ' + token
+    if self.token is None:
+      self.token = yield self.get_token_async()
+    headers['authorization'] = 'OAuth ' + self.token
+
+    deadline = deadline or self.retry_params.urlfetch_timeout
 
     retry = False
     resp = None
@@ -160,8 +164,8 @@ class _RestApi(object):
                                        headers=headers, follow_redirects=False,
                                        deadline=deadline, callback=callback)
       if resp.status_code == httplib.UNAUTHORIZED:
-        token = yield self.get_token_async(refresh=True)
-        headers['authorization'] = 'OAuth ' + token
+        self.token = yield self.get_token_async(refresh=True)
+        headers['authorization'] = 'OAuth ' + self.token
         resp = yield self.urlfetch_async(
             url, payload=payload, method=method, headers=headers,
             follow_redirects=False, deadline=deadline, callback=callback)
@@ -198,14 +202,18 @@ class _RestApi(object):
     key = '%s,%s' % (self.service_account_id, ','.join(self.scopes))
     ts = None
     if not refresh:
-      ts = yield _AE_TokenStorage_.get_by_id_async(key, use_datastore=False)
-    if ts is None:
+      ts = yield _AE_TokenStorage_.get_by_id_async(
+          key, use_cache=True, use_memcache=True,
+          use_datastore=self.retry_params.save_access_token)
+    if ts is None or ts.expires < (time.time() + 60):
       token, expires_at = yield self.make_token_async(
           self.scopes, self.service_account_id)
       timeout = int(expires_at - time.time())
-      ts = _AE_TokenStorage_(id=key, token=token)
+      ts = _AE_TokenStorage_(id=key, token=token, expires=expires_at)
       if timeout > 0:
-        yield ts.put_async(memcache_timeout=timeout, use_datastore=False)
+        yield ts.put_async(memcache_timeout=timeout,
+                           use_datastore=self.retry_params.save_access_token,
+                           use_cache=True, use_memcache=True)
     self.token = ts.token
     raise ndb.Return(self.token)
 

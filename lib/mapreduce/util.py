@@ -23,6 +23,7 @@
 __all__ = [
     "create_datastore_write_config",
     "for_name",
+    "get_queue_name",
     "get_short_name",
     "handler_for_name",
     "is_generator",
@@ -30,18 +31,99 @@ __all__ = [
     "total_seconds",
     "try_serialize_handler",
     "try_deserialize_handler",
+    "CALLBACK_MR_ID_TASK_HEADER",
     ]
 
 import inspect
+import os
 import pickle
 import types
 
+from google.appengine.ext import ndb
+
 from google.appengine.datastore import datastore_rpc
+from mapreduce import parameters
+
+# Taskqueue task header for mr id. Use internal by MR.
+_MR_ID_TASK_HEADER = "AE-MR-ID"
+_MR_SHARD_ID_TASK_HEADER = "AE-MR-SHARD-ID"
+
+# Callback task MR ID task header
+CALLBACK_MR_ID_TASK_HEADER = "Mapreduce-Id"
+
+
+def _get_task_host():
+  """Get the Host header value for all mr tasks.
+
+  Task Host header determines which instance this task would be routed to.
+
+  Current version id format is: v7.368834058928280579
+  Current module id is just the module's name. It could be "default"
+  Default version hostname is app_id.appspot.com
+
+  Returns:
+    A complete host name is of format version.module.app_id.appspot.com
+  If module is the default module, just version.app_id.appspot.com. The reason
+  is if an app doesn't have modules enabled and the url is
+  "version.default.app_id", "version" is ignored and "default" is used as
+  version. If "default" version doesn't exist, the url is routed to the
+  default version.
+  """
+  version = os.environ["CURRENT_VERSION_ID"].split(".")[0]
+  default_host = os.environ["DEFAULT_VERSION_HOSTNAME"]
+  module = os.environ["CURRENT_MODULE_ID"]
+  if os.environ["CURRENT_MODULE_ID"] == "default":
+    return "%s.%s" % (version, default_host)
+  return "%s.%s.%s" % (version, module, default_host)
+
+
+def _get_task_headers(mr_spec, mr_id_header_key=_MR_ID_TASK_HEADER):
+  """Get headers for all mr tasks.
+
+  Args:
+    mr_spec: an instance of model.MapreduceSpec.
+    mr_id_header_key: the key to set mr id with.
+
+  Returns:
+    A dictionary of all headers.
+  """
+  return {mr_id_header_key: mr_spec.mapreduce_id,
+          "Host": _get_task_host()}
 
 
 def _enum(**enums):
   """Helper to create enum."""
   return type("Enum", (), enums)
+
+
+def get_queue_name(queue_name):
+  """Determine which queue MR should run on.
+
+  How to choose the queue:
+  1. If user provided one, use that.
+  2. If we are starting a mr from taskqueue, inherit that queue.
+     If it's a special queue, fall back to the default queue.
+  3. Default queue.
+
+  If user is using any MR pipeline interface, pipeline.start takes a
+  "queue_name" argument. The pipeline will run on that queue and MR will
+  simply inherit the queue_name.
+
+  Args:
+    queue_name: queue_name from user. Maybe None.
+
+  Returns:
+    The queue name to run on.
+  """
+  if queue_name:
+    return queue_name
+  queue_name = os.environ.get("HTTP_X_APPENGINE_QUEUENAME",
+                              parameters.config.QUEUE_NAME)
+  if len(queue_name) > 1 and queue_name[0:2] == "__":
+    # We are currently in some special queue. E.g. __cron.
+    return parameters.config.QUEUE_NAME
+  else:
+    return queue_name
 
 
 def total_seconds(td):
@@ -254,3 +336,16 @@ def create_datastore_write_config(mapreduce_spec):
   else:
     # dev server doesn't support force_writes.
     return datastore_rpc.Configuration()
+
+
+def _set_ndb_cache_policy():
+  """Tell NDB to never cache anything in memcache or in-process.
+
+  This ensures that entities fetched from Datastore input_readers via NDB
+  will not bloat up the request memory size and Datastore Puts will avoid
+  doing calls to memcache. Without this you get soft memory limit exits,
+  which hurts overall throughput.
+  """
+  ndb_ctx = ndb.get_context()
+  ndb_ctx.set_cache_policy(lambda key: False)
+  ndb_ctx.set_memcache_policy(lambda key: False)
