@@ -25,6 +25,8 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from mapreduce import control as mrc
 from mapreduce import input_readers
 
+from google.appengine.api import search
+
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
@@ -33,9 +35,14 @@ routes = [
         r'/mr/finalize',
         handler='admin.AppHandler:mapreduce_finalize',
         name='mapreduce_finalize'),
+<<<<<<< HEAD
     webapp2.Route(
         r'/mr/indexall',
         handler='admin.AppHandler:indexall', methods=['GET']),
+=======
+    webapp2.Route(r'/mr/indexall', handler='app.AppHandler:index', name='index'),
+    webapp2.Route(r'/admin/delete-resource', handler='app.AppHandler:delete', name='delete')
+>>>>>>> 04a7e3484a73abc8ff9e3bbd1040fb35349f4274
 ]
 
 
@@ -53,7 +60,12 @@ class AppHandler(webapp2.RequestHandler):
         job.put()
         logging.info('Index job finalized for resource %s' % job.resource)
 
-    def indexall(self):
+    def delete(self):
+        name, ns, id = map(self.request.get, ['name', 'ns', 'id'])
+        params = dict(name=name, ns=ns, id=id)
+        taskqueue.add(url='/indexer-delete', params=params, queue_name="deleteindex")
+
+    def index(self):
         """Fires off an indexing MR job over files in GCS at supplied path."""
         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
         path = self.request.get('path')
