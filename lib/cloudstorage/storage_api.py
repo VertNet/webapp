@@ -11,9 +11,12 @@ __all__ = ['ReadBuffer',
           ]
 
 import collections
+import logging
 import os
 import urlparse
 
+from . import api_utils
+from . import common
 from . import errors
 from . import rest_api
 
@@ -23,6 +26,33 @@ try:
 except ImportError:
   from google.appengine.api import urlfetch
   from google.appengine.ext import ndb
+
+
+
+def _get_storage_api(retry_params, account_id=None):
+  """Returns storage_api instance for API methods.
+
+  Args:
+    retry_params: An instance of api_utils.RetryParams. If none,
+     thread's default will be used.
+    account_id: Internal-use only.
+
+  Returns:
+    A storage_api instance to handle urlfetch work to GCS.
+    On dev appserver, this instance by default will talk to a local stub
+    unless common.ACCESS_TOKEN is set. That token will be used to talk
+    to the real GCS.
+  """
+
+
+  api = _StorageApi(_StorageApi.full_control_scope,
+                    service_account_id=account_id,
+                    retry_params=retry_params)
+  if common.local_run() and not common.get_access_token():
+    api.api_url = common.local_api_url()
+  if common.get_access_token():
+    api.token = common.get_access_token()
+  return api
 
 
 class _StorageApi(rest_api._RestApi):
@@ -68,6 +98,7 @@ class _StorageApi(rest_api._RestApi):
     super(_StorageApi, self).__setstate__(superstate)
     self.api_url = localstate['api_url']
 
+  @api_utils._eager_tasklet
   @ndb.tasklet
   def do_request_async(self, url, method='GET', headers=None, payload=None,
                        deadline=None, callback=None):
@@ -75,6 +106,11 @@ class _StorageApi(rest_api._RestApi):
 
     This method translates urlfetch exceptions to more service specific ones.
     """
+    if headers is None:
+      headers = {}
+    if 'x-goog-api-version' not in headers:
+      headers['x-goog-api-version'] = '2'
+    headers['accept-encoding'] = 'gzip, *'
     try:
       resp_tuple = yield super(_StorageApi, self).do_request_async(
           url, method=method, headers=headers, payload=payload,
@@ -127,10 +163,7 @@ _StorageApi = rest_api.add_sync_methods(_StorageApi)
 
 
 class ReadBuffer(object):
-  """A class for reading Google storage files.
-
-  To achieve max prefetching benefit, always read by your buffer size.
-  """
+  """A class for reading Google storage files."""
 
   DEFAULT_BUFFER_SIZE = 1024 * 1024
   MAX_REQUEST_SIZE = 30 * DEFAULT_BUFFER_SIZE
@@ -138,29 +171,33 @@ class ReadBuffer(object):
   def __init__(self,
                api,
                path,
-               max_buffer_size=DEFAULT_BUFFER_SIZE,
+               buffer_size=DEFAULT_BUFFER_SIZE,
                max_request_size=MAX_REQUEST_SIZE):
     """Constructor.
 
     Args:
       api: A StorageApi instance.
       path: Path to the object, e.g. '/mybucket/myfile'.
-      max_buffer_size: Max bytes to buffer.
+      buffer_size: buffer size. The ReadBuffer keeps
+        one buffer. But there may be a pending future that contains
+        a second buffer. This size must be less than max_request_size.
       max_request_size: Max bytes to request in one urlfetch.
     """
     self._api = api
-    self._path = path
-    self._max_buffer_size = max_buffer_size
+    self.name = path
+    self.closed = False
+
+    assert buffer_size <= max_request_size
+    self._buffer_size = buffer_size
     self._max_request_size = max_request_size
     self._offset = 0
-    self._reset_buffer()
-    self._closed = False
+    self._buffer = _Buffer()
     self._etag = None
 
-    self._buffer_future = self._get_segment(0, self._max_buffer_size)
+    self._request_next_buffer()
 
     status, headers, _ = self._api.head_object(path)
-    errors.check_status(status, [200])
+    errors.check_status(status, [200], path, resp_headers=headers)
     self._file_size = long(headers['content-length'])
     self._check_etag(headers.get('etag'))
     if self._file_size == 0:
@@ -178,13 +215,13 @@ class ReadBuffer(object):
       A dictionary with the state of this object
     """
     return {'api': self._api,
-            'path': self._path,
-            'buffer_size': self._max_buffer_size,
+            'name': self.name,
+            'buffer_size': self._buffer_size,
             'request_size': self._max_request_size,
             'etag': self._etag,
             'size': self._file_size,
             'offset': self._offset,
-            'closed': self._closed}
+            'closed': self.closed}
 
   def __setstate__(self, state):
     """Restore state as part of deserialization/unpickling.
@@ -195,19 +232,37 @@ class ReadBuffer(object):
     Along with restoring the state, pre-fetch the next read buffer.
     """
     self._api = state['api']
-    self._path = state['path']
-    self._max_buffer_size = state['buffer_size']
+    self.name = state['name']
+    self._buffer_size = state['buffer_size']
     self._max_request_size = state['request_size']
     self._etag = state['etag']
     self._file_size = state['size']
     self._offset = state['offset']
-    self._reset_buffer()
-    self._closed = state['closed']
-    if self._offset < self._file_size and not self._closed:
-      self._buffer_future = self._get_segment(self._offset,
-                                              self._max_buffer_size)
-    else:
-      self._buffer_future = None
+    self._buffer = _Buffer()
+    self.closed = state['closed']
+    self._buffer_future = None
+    if self._remaining() and not self.closed:
+      self._request_next_buffer()
+
+  def __iter__(self):
+    """Iterator interface.
+
+    Note the ReadBuffer container itself is the iterator. It's
+    (quote PEP0234)
+    'destructive: they consumes all the values and a second iterator
+    cannot easily be created that iterates independently over the same values.
+    You could open the file for the second time, or seek() to the beginning.'
+
+    Returns:
+      Self.
+    """
+    return self
+
+  def next(self):
+    line = self.readline()
+    if not line:
+      raise StopIteration()
+    return line
 
   def readline(self, size=-1):
     """Read one line delimited by '\n' from the file.
@@ -229,31 +284,27 @@ class ReadBuffer(object):
       IOError: When this buffer is closed.
     """
     self._check_open()
-    self._buffer_future = None
-
-    data_list = []
-
-    if size == 0:
+    if size == 0 or not self._remaining():
       return ''
 
-    while True:
-      if size >= 0:
-        end_offset = self._buffer_offset + size
-      else:
-        end_offset = len(self._buffer)
-      newline_offset = self._buffer.find('\n', self._buffer_offset, end_offset)
-
-      if newline_offset >= 0:
-        data_list.append(
-            self._read_buffer(newline_offset + 1 - self._buffer_offset))
+    data_list = []
+    newline_offset = self._buffer.find_newline(size)
+    while newline_offset < 0:
+      data = self._buffer.read(size)
+      size -= len(data)
+      self._offset += len(data)
+      data_list.append(data)
+      if size == 0 or not self._remaining():
         return ''.join(data_list)
-      else:
-        result = self._read_buffer(size)
-        data_list.append(result)
-        size -= len(result)
-        if size == 0 or self._file_size == self._offset:
-          return ''.join(data_list)
-        self._fill_buffer()
+      self._buffer.reset(self._buffer_future.get_result())
+      self._request_next_buffer()
+      newline_offset = self._buffer.find_newline(size)
+
+    data = self._buffer.read_to_offset(newline_offset + 1)
+    self._offset += len(data)
+    data_list.append(data)
+
+    return ''.join(data_list)
 
   def read(self, size=-1):
     """Read data from RAW file.
@@ -270,68 +321,51 @@ class ReadBuffer(object):
       IOError: When this buffer is closed.
     """
     self._check_open()
-    if self._file_size == 0:
+    if not self._remaining():
       return ''
 
-    if size >= 0 and size <= len(self._buffer) - self._buffer_offset:
-      result = self._read_buffer(size)
-    else:
-      size -= len(self._buffer) - self._buffer_offset
-      data_list = [self._read_buffer()]
-
-      if self._buffer_future:
-        self._reset_buffer(self._buffer_future.get_result())
-        self._buffer_future = None
-
-      if size >= 0 and size <= len(self._buffer) - self._buffer_offset:
-        data_list.append(self._read_buffer(size))
+    data_list = []
+    while True:
+      remaining = self._buffer.remaining()
+      if size >= 0 and size < remaining:
+        data_list.append(self._buffer.read(size))
+        self._offset += size
+        break
       else:
-        size -= len(self._buffer)
-        data_list.append(self._read_buffer())
-        if self._offset == self._file_size:
-          return ''.join(data_list)
+        size -= remaining
+        self._offset += remaining
+        data_list.append(self._buffer.read())
 
-        if size < 0 or size >= self._file_size - self._offset:
-          needs = self._file_size - self._offset
-        else:
-          needs = size
-        data_list.extend(self._get_segments(self._offset, needs))
-        self._offset += needs
-      result = ''.join(data_list)
-      data_list = None
+        if self._buffer_future is None:
+          if size < 0 or size >= self._remaining():
+            needs = self._remaining()
+          else:
+            needs = size
+          data_list.extend(self._get_segments(self._offset, needs))
+          self._offset += needs
+          break
 
-    assert self._buffer_future is None
-    if self._offset != self._file_size and not self._buffer:
-      self._buffer_future = self._get_segment(self._offset,
-                                              self._max_buffer_size)
-    return result
+        if self._buffer_future:
+          self._buffer.reset(self._buffer_future.get_result())
+          self._buffer_future = None
 
-  def _read_buffer(self, size=-1):
-    """Returns bytes from self._buffer and update related offsets.
+    if self._buffer_future is None:
+      self._request_next_buffer()
+    return ''.join(data_list)
 
-    Args:
-      size: number of bytes to read. Read the entire buffer if negative.
+  def _remaining(self):
+    return self._file_size - self._offset
 
-    Returns:
-      Requested bytes from buffer.
+  def _request_next_buffer(self):
+    """Request next buffer.
+
+    Requires self._offset and self._buffer are in consistent state
     """
-    if size < 0:
-      size = len(self._buffer) - self._buffer_offset
-    result = self._buffer[self._buffer_offset : self._buffer_offset+size]
-    self._offset += len(result)
-    self._buffer_offset += len(result)
-    if self._buffer_offset == len(self._buffer):
-      self._reset_buffer()
-    return result
-
-  def _fill_buffer(self):
-    """Fill self._buffer."""
-    segments = self._get_segments(self._offset,
-                                  min(self._max_buffer_size,
-                                      self._max_request_size,
-                                      self._file_size-self._offset))
-
-    self._reset_buffer(''.join(segments))
+    self._buffer_future = None
+    next_offset = self._offset + self._buffer.remaining()
+    if not hasattr(self, '_file_size') or next_offset != self._file_size:
+      self._buffer_future = self._get_segment(next_offset,
+                                              self._buffer_size)
 
   def _get_segments(self, start, request_size):
     """Get segments of the file from Google Storage as a list.
@@ -342,12 +376,14 @@ class ReadBuffer(object):
     Args:
       start: start offset to request. Inclusive. Have to be within the
         range of the file.
-      request_size: number of bytes to request. Can not exceed the logical
-        range of the file.
+      request_size: number of bytes to request.
 
     Returns:
       A list of file segments in order
     """
+    if not request_size:
+      return []
+
     end = start + request_size
     futures = []
 
@@ -366,8 +402,9 @@ class ReadBuffer(object):
     Args:
       start: start offset of the segment. Inclusive. Have to be within the
         range of the file.
-      request_size: number of bytes to request. Have to be within the range
-        of the file.
+      request_size: number of bytes to request. Have to be small enough
+        for a single urlfetch request. May go over the logical range of the
+        file.
 
     Yields:
       a segment [start, start + request_size) of the file.
@@ -378,10 +415,10 @@ class ReadBuffer(object):
     end = start + request_size - 1
     content_range = '%d-%d' % (start, end)
     headers = {'Range': 'bytes=' + content_range}
-    status, headers, content = yield self._api.get_object_async(self._path,
-                                                                headers=headers)
-    errors.check_status(status, [200, 206], headers)
-    self._check_etag(headers.get('etag'))
+    status, resp_headers, content = yield self._api.get_object_async(
+        self.name, headers=headers)
+    errors.check_status(status, [200, 206], self.name, headers, resp_headers)
+    self._check_etag(resp_headers.get('etag'))
     raise ndb.Return(content)
 
   def _check_etag(self, etag):
@@ -409,8 +446,8 @@ class ReadBuffer(object):
       raise ValueError('File on GCS has changed while reading.')
 
   def close(self):
-    self._closed = True
-    self._reset_buffer()
+    self.closed = True
+    self._buffer = None
     self._buffer_future = None
 
   def __enter__(self):
@@ -437,7 +474,7 @@ class ReadBuffer(object):
     """
     self._check_open()
 
-    self._reset_buffer()
+    self._buffer.reset()
     self._buffer_future = None
 
     if whence == os.SEEK_SET:
@@ -451,9 +488,8 @@ class ReadBuffer(object):
 
     self._offset = min(self._offset, self._file_size)
     self._offset = max(self._offset, 0)
-    if self._offset != self._file_size:
-      self._buffer_future = self._get_segment(self._offset,
-                                              self._max_buffer_size)
+    if self._remaining():
+      self._request_next_buffer()
 
   def tell(self):
     """Tell the file's current offset.
@@ -468,12 +504,74 @@ class ReadBuffer(object):
     return self._offset
 
   def _check_open(self):
-    if self._closed:
+    if self.closed:
       raise IOError('Buffer is closed.')
 
-  def _reset_buffer(self, new_buffer='', buffer_offset=0):
-    self._buffer = new_buffer
-    self._buffer_offset = buffer_offset
+  def seekable(self):
+    return True
+
+  def readable(self):
+    return True
+
+  def writable(self):
+    return False
+
+
+class _Buffer(object):
+  """In memory buffer."""
+
+  def __init__(self):
+    self.reset()
+
+  def reset(self, content='', offset=0):
+    self._buffer = content
+    self._offset = offset
+
+  def read(self, size=-1):
+    """Returns bytes from self._buffer and update related offsets.
+
+    Args:
+      size: number of bytes to read starting from current offset.
+        Read the entire buffer if negative.
+
+    Returns:
+      Requested bytes from buffer.
+    """
+    if size < 0:
+      offset = len(self._buffer)
+    else:
+      offset = self._offset + size
+    return self.read_to_offset(offset)
+
+  def read_to_offset(self, offset):
+    """Returns bytes from self._buffer and update related offsets.
+
+    Args:
+      offset: read from current offset to this offset, exclusive.
+
+    Returns:
+      Requested bytes from buffer.
+    """
+    assert offset >= self._offset
+    result = self._buffer[self._offset: offset]
+    self._offset += len(result)
+    return result
+
+  def remaining(self):
+    return len(self._buffer) - self._offset
+
+  def find_newline(self, size=-1):
+    """Search for newline char in buffer starting from current offset.
+
+    Args:
+      size: number of bytes to search. -1 means all.
+
+    Returns:
+      offset of newline char in buffer. -1 if doesn't exist.
+    """
+    if size < 0:
+      return self._buffer.find('\n', self._offset)
+    return self._buffer.find('\n', self._offset, self._offset + size)
 
 
 class StreamingBuffer(object):
@@ -509,27 +607,26 @@ class StreamingBuffer(object):
     assert self._maxrequestsize % self._blocksize == 0
 
     self._api = api
-    self._path = path
+    self.name = path
+    self.closed = False
 
     self._buffer = collections.deque()
     self._buffered = 0
     self._written = 0
     self._offset = 0
 
-    self._closed = False
-
     headers = {'x-goog-resumable': 'start'}
     if content_type:
       headers['content-type'] = content_type
     if gcs_headers:
       headers.update(gcs_headers)
-    status, headers, _ = self._api.post_object(path, headers=headers)
-    errors.check_status(status, [201], headers)
-    loc = headers.get('location')
+    status, resp_headers, _ = self._api.post_object(path, headers=headers)
+    errors.check_status(status, [201], path, headers, resp_headers)
+    loc = resp_headers.get('location')
     if not loc:
       raise IOError('No location header found in 201 response')
     parsed = urlparse.urlparse(loc)
-    self._path_with_token = '%s?%s' % (self._path, parsed.query)
+    self._path_with_token = '%s?%s' % (self.name, parsed.query)
 
   def __getstate__(self):
     """Store state as part of serialization/pickling.
@@ -544,12 +641,13 @@ class StreamingBuffer(object):
 
     """
     return {'api': self._api,
+            'name': self.name,
             'path_token': self._path_with_token,
             'buffer': self._buffer,
             'buffered': self._buffered,
             'written': self._written,
             'offset': self._offset,
-            'closed': self._closed}
+            'closed': self.closed}
 
   def __setstate__(self, state):
     """Restore state as part of deserialization/unpickling.
@@ -563,12 +661,21 @@ class StreamingBuffer(object):
     self._buffered = state['buffered']
     self._written = state['written']
     self._offset = state['offset']
-    self._closed = state['closed']
+    self.closed = state['closed']
+    self.name = state['name']
 
   def write(self, data):
-    """Write some bytes."""
+    """Write some bytes.
+
+    Args:
+      data: data to write. str.
+
+    Raises:
+      TypeError: if data is not of type str.
+    """
     self._check_open()
-    assert isinstance(data, str)
+    if not isinstance(data, str):
+      raise TypeError('Expected str but got %s.' % type(data))
     if not data:
       return
     self._buffer.append(data)
@@ -592,7 +699,6 @@ class StreamingBuffer(object):
 
     (There is no seek() method.)
     """
-    self._check_open()
     return self._offset
 
   def close(self):
@@ -600,8 +706,8 @@ class StreamingBuffer(object):
 
     When this returns the new file is available for reading.
     """
-    if not self._closed:
-      self._closed = True
+    if not self.closed:
+      self.closed = True
       self._flush(finish=True)
       self._buffer = None
 
@@ -620,7 +726,6 @@ class StreamingBuffer(object):
     the file with finish=True.
     """
     flush_len = 0 if finish else self._blocksize
-    last = False
 
     while self._buffered >= flush_len:
       buffer = []
@@ -654,33 +759,91 @@ class StreamingBuffer(object):
           buffer.append(head)
           buffered += len(head)
 
-      if finish:
-        last = not self._buffered
-      self._send_data(''.join(buffer), last)
-      if last:
+      data = ''.join(buffer)
+      file_len = '*'
+      if finish and not self._buffered:
+        file_len = self._written + len(data)
+      self._send_data(data, self._written, file_len)
+      self._written += len(data)
+      if file_len != '*':
         break
 
-  def _send_data(self, data, last):
-    """Send the block to the storage service and update self._written."""
+  def _send_data(self, data, start_offset, file_len):
+    """Send the block to the storage service.
+
+    This is a utility method that does not modify self.
+
+    Args:
+      data: data to send in str.
+      start_offset: start offset of the data in relation to the file.
+      file_len: an int if this is the last data to append to the file.
+        Otherwise '*'.
+    """
     headers = {}
-    length = self._written + len(data)
+    end_offset = start_offset + len(data) - 1
 
     if data:
       headers['content-range'] = ('bytes %d-%d/%s' %
-                                  (self._written, length-1,
-                                   length if last else '*'))
+                                  (start_offset, end_offset, file_len))
     else:
-      headers['content-range'] = ('bytes */%s' %
-                                  length if last else '*')
-    status, _, _ = self._api.put_object(
+      headers['content-range'] = ('bytes */%s' % file_len)
+
+    status, response_headers, _ = self._api.put_object(
         self._path_with_token, payload=data, headers=headers)
-    if last:
-      expected = 200
-    else:
+    if file_len == '*':
       expected = 308
-    errors.check_status(status, [expected], headers)
-    self._written += len(data)
+    else:
+      expected = 200
+    errors.check_status(status, [expected], self.name, headers,
+                        response_headers,
+                        {'upload_path': self._path_with_token})
+
+  def _get_offset_from_gcs(self):
+    """Get the last offset that has been written to GCS.
+
+    This is a utility method that does not modify self.
+
+    Returns:
+      an int of the last offset written to GCS by this upload, inclusive.
+      -1 means nothing has been written.
+    """
+    headers = {'content-range': 'bytes */*'}
+    status, response_headers, _ = self._api.put_object(
+        self._path_with_token, headers=headers)
+    errors.check_status(status, [308], self.name, headers,
+                        response_headers,
+                        {'upload_path': self._path_with_token})
+    val = response_headers.get('range')
+    if val is None:
+      return -1
+    _, offset = val.rsplit('-', 1)
+    return int(offset)
+
+  def _force_close(self, file_length=None):
+    """Close this buffer on file_length.
+
+    Finalize this upload immediately on file_length.
+    Contents that are still in memory will not be uploaded.
+
+    This is a utility method that does not modify self.
+
+    Args:
+      file_length: file length. Must match what has been uploaded. If None,
+        it will be queried from GCS.
+    """
+    if file_length is None:
+      file_length = self._get_offset_from_gcs() + 1
+    self._send_data('', 0, file_length)
 
   def _check_open(self):
-    if self._closed:
+    if self.closed:
       raise IOError('Buffer is closed.')
+
+  def seekable(self):
+    return False
+
+  def readable(self):
+    return False
+
+  def writable(self):
+    return True
