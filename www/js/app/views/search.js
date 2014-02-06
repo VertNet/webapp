@@ -42,7 +42,7 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.DOWNLOAD_THRES = 1000;
-      this.PAGE_SIZE = 20;
+      this.PAGE_SIZE = 100;
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
