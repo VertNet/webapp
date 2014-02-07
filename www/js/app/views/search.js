@@ -328,7 +328,7 @@ define([
         var name = 'vertnet-download';
         var request = {
           count: -1,
-          name: name, 
+          name: name.replace(/ /g,'_'), 
           terms: JSON.stringify(this.model.get('terms')),
           keywords: this.keywords
         };
@@ -772,7 +772,7 @@ define([
         var request = {
           count: count,
           email: email, 
-          name: name, 
+          name: name.replace(/ /g,'_'), 
           keywords: JSON.stringify(this.keywords)}
 
         e.preventDefault();
