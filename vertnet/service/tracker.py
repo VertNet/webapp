@@ -17,7 +17,7 @@ cdb_url = "http://vertnet.cartodb.com/api/v2/sql?%s"
 def apikey():
     """Return credentials file as a JSON object."""
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
-    key = open(path, "r").read()
+    key = open(path, "r").read().rstrip()
     logging.info("CARTODB KEY %s" % key)
     return key
 
