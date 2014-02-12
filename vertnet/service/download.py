@@ -53,7 +53,7 @@ class WriteHandler(webapp2.RequestHandler):
                 with files.open(writable_file_name, 'a') as f:
                     records, next_cursor, count = vnsearch.query(q, 100, curs=curs)
                     if not curs:
-                        params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
+                        params = dict(query=q, type='download', count=count, downloader=email, download=filename, latlon=latlon)
                         taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
                     chunk = _get_tsv_chunk(records)
                     f.write(chunk) 
@@ -108,9 +108,9 @@ class DownloadHandler(webapp2.RequestHandler):
         self.get()
     
     def get(self):
-        count, keywords, email, name = map(self.request.get, 
-            ['count', 'keywords', 'email', 'name'])
-        logging.info(' . '.join([count, keywords, email, name]))
+        count, keywords, email, name, download = map(self.request.get, 
+            ['count', 'keywords', 'email', 'name', 'writable_file_name'])
+        logging.info(' . '.join([count, keywords, email, name, download]))
         q = ' '.join(json.loads(keywords))
         count = int(count)
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
@@ -119,7 +119,7 @@ class DownloadHandler(webapp2.RequestHandler):
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" % fname
             records, cursor, count = vnsearch.query(q, count)
-            params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
+            params = dict(query=q, type='download', count=count, downloader=email, download=download, latlon=latlon)
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
             data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
             self.response.out.write(data)
