@@ -385,7 +385,7 @@ input.span2.search {
 	border: none; 
 	width: 95%; 
 	/*line-height: 52px; */
-	/*padding: 0px 0px 0px 0px;	*/
+	/*padding: 0px 0px 0px 0px;	*/t
 	font-size: 30px;
 	height: 50px;
 	margin-bottom: 10px;
@@ -451,4 +451,13 @@ input.span2.search {
 
 .col-right {
 	text-align: right;
+}
+
+.navbar-brand {
+	padding: 3px 0px 5px 0px;
+}
+
+.navbar-collapse {
+	padding-right: 0px;
+	padding-left: 0px;
 }
