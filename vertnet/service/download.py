@@ -20,7 +20,7 @@ def _tsv(json):
     values = []
     for x in header:
         if json.has_key(x):
-            values.append(unicode(json[x]))
+            values.append(unicode(json[x]).rstrip())
         else:
             values.append(u'')
     return u'\t'.join(values).encode('utf-8')
