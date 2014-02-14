@@ -9,7 +9,7 @@ import htmlentitydefs
 import os
 
 
-IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 
 def _get_rec(doc):
