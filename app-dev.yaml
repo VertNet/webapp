@@ -76,5 +76,8 @@ handlers:
 - url: /api/stats.*
   script: vertnet.api.stats.rpc
 
+- url: /service/stats.*
+  script: vertnet.service.stats.main
+
 - url: /.*
   script: app.handler
