@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart", "table"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+
+        // Explicitly queried institutions piechart
+        
+        var explInstPieData = google.visualization.arrayToDataTable([
+          ['Institution Code', 'Queries'],
+          {% for i in explicitInstitutionsGood %}
+            ['{{i[0]}}', {{i[1]}}],
+          {% endfor %}
+          ]);
+
+        var explInstPieOptions = {
+          title: 'Number times somebody searched for a particular institution using the "institutioncode" label'
+        };
+
+        var explInstPieChart = new google.visualization.PieChart(document.getElementById('explInstPie_chart_div'));
+       explInstPieChart.draw(explInstPieData, explInstPieOptions);
+       
+
+        // Explicitly queried classes piechart
+        
+        var explClassPieData = google.visualization.arrayToDataTable([
+          ['Class', 'Queries'],
+          {% for i in explicitClassGood %}
+            ['{{i[0]}}', {{i[1]}}],
+          {% endfor %}
+          ]);
+
+        var explClassPieOptions = {
+          title: 'Number times somebody searched for a particular class using the "class" label',
+          caption: ''
+        };
+
+        var explClassPieChart = new google.visualization.PieChart(document.getElementById('explClassPie_chart_div'));
+       explClassPieChart.draw(explClassPieData, explClassPieOptions);
+       
+       
+        // Downloads
+        
+        var downloadData = google.visualization.arrayToDataTable([
+          ['Date', 'Downloads'],
+          {% for i in downloadsdata %}
+            ['{{i[0]}}', {{i[1]}}],
+          {% endfor %}
+          ]);
+
+        var downloadOptions = {
+          title: 'Number of Downloads, per month',
+          legend: 'none'
+        };
+
+        var downloadChart = new google.visualization.LineChart(document.getElementById('download_chart_div'));
+        downloadChart.draw(downloadData, downloadOptions);
+
+ }
+    </script>
+    <i>From {{mindate}} to {{maxdate}}</i>
+    <table><tr><td width="50%"><table>
+    <tr><td>Number of queries: </td><td>{{queries}}</td></tr>
+    <tr><td>Number of records queried: </td><td>{{qrecords}}</td></tr>
+    <tr><td>Number of downloads: </td><td>{{downloads}}</td></tr>
+    <tr><td>Number of records downloaded: </td><td>{{drecords}}</td></tr>
+    </table>
+    </td><td>
+    <div id="download_chart_div" style="width: 500px; height: 300px;"></div>
+    </td></tr><tr><td>
+    <div id="explInstPie_chart_div" style="width: 500px; height: 500px;"></div>
+    </td><td>
+    <div id="explClassPie_chart_div" style="width: 500px; height: 500px;"></div>
+    </td></tr></table>
+</div>
+{% endblock %}
