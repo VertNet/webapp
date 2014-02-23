@@ -33,13 +33,20 @@ class SearchApi(webapp2.RequestHandler):
         logging.info('HI')
         
         request = json.loads(self.request.get('q'))
-        q, c, limit = map(request.get, ['q', 'c', 'l'])
+        q, c, limit, cnt_accuracy = map(request.get, ['q', 'c', 'l', 'a'])
         if not limit:
             limit = 20
-        if limit > 20:
-            limit = 20
-        if limit < 0:
+        elif limit > 1000:
+            limit = 1000
+        elif limit < 0:
             limit = 1
+
+        if not cnt_accuracy:
+            cnt_accuracy = 100
+        elif cnt_accuracy > 10000:
+            cnt_accuracy = 10000
+        elif cnt_accuracy < 0:
+            cnt_accuracy = 1
 
         curs = None
         if c:
@@ -47,9 +54,9 @@ class SearchApi(webapp2.RequestHandler):
         else:
             curs = search.Cursor()
 
-        logging.info('q=%s, l=%s, c=%s' % (q, limit, curs))
+        logging.info('q=%s, l=%s, accuracy=%s, c=%s' % (q, limit, cnt_accuracy, curs))
 
-        result = vnsearch.query(q, limit, curs=curs)
+        result = vnsearch.query(q, limit, cnt_accuracy, curs=curs)
         response = None
 
         if len(result) == 3:

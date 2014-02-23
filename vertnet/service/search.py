@@ -307,7 +307,7 @@ def _get_rec(doc):
 def delete_entity(entity):
     yield op.db.Delete(entity)
 
-def query(q, limit, sort=None, curs=search.Cursor()):
+def query(q, limit, cnt_accuracy, sort=None, curs=search.Cursor()):
     if IS_DEV:
         index_name = 'dwc_search'
     else:
@@ -348,7 +348,7 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     else:
         options = search.QueryOptions(
             limit=limit,
-            number_found_accuracy=limit+1,
+            number_found_accuracy=cnt_accuracy,
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
 
