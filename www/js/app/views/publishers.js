@@ -82,7 +82,7 @@ define([
 
       onShow: function() {
         this.$('#reccount').text(util.addCommas(this.pubList.recordCount().toString()) + ' records');
-        this.$('#rescount').text(util.addCommas(this.pubList.resourceCount().toString()) + ' resources');
+        this.$('#rescount').text(util.addCommas(this.pubList.resourceCount().toString()) + ' data resources');
         this.$('#pubcount').text(util.addCommas(this.pubList.publisherCount().toString()) + ' publishers');
       },
 
