@@ -4,7 +4,7 @@ import urllib
 import logging
 import os
 
-IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 if IS_DEV:
     CLIENT = 'portal-dev'
