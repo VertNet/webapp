@@ -291,7 +291,7 @@ define([
 
       this.$('#show-search-options').tooltip({
           placement: 'bottom',
-          title: 'Show advanced search',
+          title: 'Click to expand search options',
           container: '#search-carat'
         });
       this.$('#search-carat').mouseover(_.bind(function(e) {
