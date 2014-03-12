@@ -56,6 +56,7 @@ define([
                 if (vals[0] == '[') vals = vals.substring(1);
                 if (vals[vals.length-1] == ']') vals = vals.substring(0, vals.length-1);
                 var vals2 = vals.split(", ");
+                vals2[0] = vals2[0].substring(1,vals2[0].length-1);
                 vals2[1] = parseInt(vals2[1]);
                 explInstArray.push(vals2);
             }
@@ -67,6 +68,7 @@ define([
                 if (vals[0] == '[') vals = vals.substring(1);
                 if (vals[vals.length-1] == ']') vals = vals.substring(0, vals.length-1);
                 var vals2 = vals.split(", ");
+                vals2[0] = vals2[0].substring(1,vals2[0].length-1);
                 vals2[1] = parseInt(vals2[1]);
                 explClassArray.push(vals2);
             }
@@ -78,6 +80,7 @@ define([
                 if (vals[0] == '[') vals = vals.substring(1);
                 if (vals[vals.length-1] == ']') vals = vals.substring(0, vals.length-1);
                 var vals2 = vals.split(", ");
+                vals2[0] = vals2[0].substring(1,vals2[0].length-1);
                 vals2[1] = parseInt(vals2[1]);
                 downloadsArray.push(vals2);
             }
@@ -97,7 +100,7 @@ define([
                 explInstPieChart.draw(explInstPieData, explInstPieOptions);
                 
                 var explClassPieData = google.visualization.arrayToDataTable(explClassArray);
-                var explClassPieOptions = {title: "Number times somebody searched for a particular class using the \"institutioncode\" label"};
+                var explClassPieOptions = {title: "Number times somebody searched for a particular class using the \"class\" label"};
                 var explClassPieChart = new google.visualization.PieChart(document.getElementById("explClassPie_chart_div"));
                 explClassPieChart.draw(explClassPieData, explClassPieOptions);
                 
