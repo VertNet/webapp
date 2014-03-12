@@ -36,13 +36,12 @@ define([
   'models/resource',
   'models/resources',
   'views/stats',
-  //'models/stats',
   'spin',
   'util',
   'map'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, 
       SearchView, OccDetail, OccModel, AboutView, PublishersView, PubView, PubModel, 
-      ResourceModel, ResourceList, StatsView, /*StatsModel,*/ Spin, util, map) {
+      ResourceModel, ResourceList, StatsView, Spin, util, map) {
   
   var Router = Backbone.Router.extend({
 
