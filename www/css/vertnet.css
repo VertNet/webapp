@@ -297,13 +297,28 @@ input.span2.search {
 #show-search-options {
 	height:20px;
 	padding: 5px;
+	margin-left:-35px
 
 }
 
 #search-carat {
-	vertical-align:middle; 
-	/*height:100%*/
+	vertical-align: middle;
+		margin-right: -5px;
+
 }
+
+.caretAdvanced {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	margin-top: -50px;
+	border-top: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 0 dotted;
+	border-left: 4px solid transparent;
+	content: ""
+}
+
 
 .spacer {
     height: 125px;
@@ -461,3 +476,20 @@ input.span2.search {
 	padding-right: 0px;
 	padding-left: 0px;
 }
+
+h7, .h7 {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 500;
+	line-height: 1;
+	font-size:12px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto
+}
+
+h7 small, .h7 small {
+	font-weight: normal;
+	line-height: 1;
+	color: #999
+}
+
