@@ -25,8 +25,6 @@ from jinja2.filters import do_pprint
 from vertnet.service import github
 from webapp2_extras import jinja2
 
-#from vertnet.service import stats
-
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
 # App routes:
@@ -107,7 +105,6 @@ class AppHandler(webapp2.RequestHandler):
         self.render_template('base.html')
     
     def stats(self):
-        #template_values = stats.main()
         self.render_template('base.html')
 
 handler = webapp2.WSGIApplication(routes, config=config, debug=IS_DEV)

@@ -1,3 +1,5 @@
+"""Service to generate stats for the stats page."""
+
 from urllib2 import urlopen
 from datetime import datetime
 import json
@@ -99,5 +101,4 @@ def main(environ, start_response):
     }
     logging.info("FINISHED PROCESSING")
     logging.info(template_values['mindate'])
-    #return template_values
     return [str(mindate), "|", str(maxdate), "|", str(metadata['query']['searches']), "|", str(metadata['query']['records']), "|", str(metadata['download']['searches']), "|", str(metadata['download']['records']), "|", str(explicitInstitutionsGood)[1:-1], "|", str(explicitClassGood)[1:-1], "|", str(downloadsdata)[1:-1]]
