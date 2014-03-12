@@ -23,7 +23,7 @@ def fix_path():
 
 fix_path()
 
-IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
+IS_DEV = os.environ.get('SERVER_SOFTWARE','').startswith('Development')
 
 def get_auth():
     """Return auth file as a JSON object."""
