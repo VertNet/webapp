@@ -1,5 +1,6 @@
 """Service to generate stats for the stats page."""
 
+import webapp2
 from urllib2 import urlopen
 from datetime import datetime
 import json
@@ -78,15 +79,28 @@ def getMaxDate():
     return d2
 
 def main(environ, start_response):
+    logging.info("Main stats function called")
     status = 200
     headers = {}
+    logging.info("Starting response")
     start_response(status, headers)
+    logging.info("Response started")
     mindate = format(threshold_date, '%b %d, %Y')
+    logging.info("Getting Max Date")
     maxdate = getMaxDate()
+    logging.info("Got Max Date")
+    logging.info("Getting Downloads data")
     downloadsdata = getDownloadsData()
+    logging.info("Got downloads data")
+    logging.info("Getting Metadata")
     metadata = getMetadata()
+    logging.info("Got Metadata")
+    logging.info("Getting Explicit Institutioncodes")
     explicitInstitutionsGood = getExplicitStuff('institutioncode')
+    logging.info("Got icodes")
+    logging.info("Getting explicit class")
     explicitClassGood = getExplicitStuff('class')
+    logging.info("Got Explicit class")
     
     template_values = {
         'mindate': mindate,
@@ -100,5 +114,15 @@ def main(environ, start_response):
         'downloadsdata': downloadsdata
     }
     logging.info("FINISHED PROCESSING")
-    logging.info(template_values['mindate'])
     return [str(mindate), "|", str(maxdate), "|", str(metadata['query']['searches']), "|", str(metadata['query']['records']), "|", str(metadata['download']['searches']), "|", str(metadata['download']['records']), "|", str(explicitInstitutionsGood)[1:-1], "|", str(explicitClassGood)[1:-1], "|", str(downloadsdata)[1:-1]]
+
+class StatsHandler(webapp2.RequestHandler):
+    
+    def post(self):
+        logging.info("From: StatsHandler. Calling main function")
+        main(self.environ, start_response)
+        logging.info("Exiting StatsHandler")
+
+api = webapp2.WSGIApplication(
+    [('/stats', StatsHandler)],
+    debug=False)
