@@ -37,6 +37,8 @@ define([
       render: function() {
         this.$el.html(_.template(template));       
         
+        console.log("About to call stats from JS");
+        
         rpc.execute('/service/stats', 
           {}, {
           success: _.bind(function(outp) {

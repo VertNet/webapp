@@ -105,6 +105,7 @@ class AppHandler(webapp2.RequestHandler):
         self.render_template('base.html')
     
     def stats(self):
+        logging.info("Calling stats from app.py")
         self.render_template('base.html')
 
 handler = webapp2.WSGIApplication(routes, config=config, debug=IS_DEV)
