@@ -25,7 +25,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from mapreduce import control as mrc
 from mapreduce import input_readers
 
-IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 # App routes:
 routes = [

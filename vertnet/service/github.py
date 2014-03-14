@@ -33,7 +33,7 @@ def load_githubbers():
         logging.error("Error github module - %s" % (sql))   
         GITHUBBERS = {}
 
-IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 routes = [
     webapp2.Route(r'/api/github/issue/create', 
