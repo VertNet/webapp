@@ -1,0 +1,19 @@
+query,observed,date
+institutioncode:dmns,100,22Feb2014
+institutioncode:hsu,64,22Feb2014
+institutioncode:hsu,64,22Feb2014
+institutioncode:nysm,96,22Feb2014
+institutioncode:KU OR institutioncode:DMNS,100,22Feb2014
+institutioncode:utep,100,22Feb2014
+institutioncode:dmns,100,22Feb2014
+institutioncode:hsu,64,22Feb2014
+institutioncode:nysm,96,22Feb2014
+institutioncode:pmns OR institutioncode:NYSM,96,22Feb2014
+institutioncode:DMNH OR institutioncode:HSU,64,22Feb2014
+institutioncode:DMNH OR institutioncode:HSU OR institutioncode:pmns OR institutioncode:NYSM,160,22Feb2014
+institutioncode:nysm,96,22Feb2014
+Reptilia,7,22Feb2014
+Chordata,821,22Feb2014
+country:United States genus:Corvus,19,22Feb2014
+country:United States genus:Corvus Chordata,19,22Feb2014
+country:United States Chordata,615,22Feb2014

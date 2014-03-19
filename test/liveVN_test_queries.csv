@@ -1,0 +1,79 @@
+query,Source,estimated,expected,observed,date
+country:United States class:Mammalia eventdate > 1879-1-1 eventdate < 2011-1-1,-,7700214,,No set returned,5Dec2013
+institutioncode:ku,-,7700214,687008,No set returned,5Dec2013
+class:reptilia institutioncode:KU,-,59832,,149764,5Dec2013
+class:amphibia institutioncode:KU,-,58407,,179080,5Dec2013
+genus:rana class:amphibia institutioncode:KU,-,9054,,12764,5Dec2013
+specificepithet:pipiens genus:Rana class:amphibia institutioncode:KU,-,562,,562,5Dec2013
+institutioncode:gsu,-,562,24851,562,5Dec2013
+institutioncode:gsu,-,7689,24851,24603,5Dec2013
+institutioncode:gsu class:reptilia,-,4080,,8972,5Dec2013
+institutioncode:dmns,-,137652,56144,55532,5Dec2013
+institutioncode:dmns class:aves,-,113137,42511,41655,5Dec2013
+institutioncode:dmns class:mammalia,-,11190,13633,13497,5Dec2013
+institutioncode:dmnh,-,168506,82758,81931,5Dec2013
+institutioncode:hsu,-,462,13711,Error (See Notes),5Dec2013
+institutioncode:hsu,-,462,13711,462,5Dec2013
+institutioncode:nysm,-,8216,14312,14169,5Dec2013
+institutioncode:mpm,-,982,29532,,5Dec2013
+institutioncode:mpm,-,982,29532,982,5Dec2013
+institutioncode:crcm,-,940,29458,940,5Dec2013
+institutioncode:cm class:amphibia OR class:reptilia,-,125114,168701,138837,5Dec2013
+institutioncode:uta,-,33,103202,33,5Dec2013
+institutioncode:ku class:amphibia OR class:reptilia,-,227087,333833,No set returned,5Dec2013
+class:amphibia institutioncode:KU,-,-,-,179080,5Dec2013
+institutioncode:KU OR institutioncode:DMNS,-,-,516477,,6Dec2013
+institutioncode:tcwc,-,42351,219758,217561,6Dec2013
+institutioncode:msb,-,1549433,271277,268557,6Dec2013
+institutioncode:utep,-,121466,54300,53758,6Dec2013
+institutioncode:psm,-,175731,63427,6,6Dec2013
+institutioncode:uta,-,33,103202,62792,6Dec2013
+institutioncode:uta class:amphibia,-,33,,33,6Dec2013
+institutioncode:lacm,-,483093,570167,No set returned,6Dec2013
+institutioncode:lacm class:amphibia,-,38922,,73241,6Dec2013
+institutioncode:lacm class:mammalia,-,45126,,96493,6Dec2013
+institutioncode:lacm class:Actinopterygii,-,45126,,160860,6Dec2013
+institutioncode:lacm class:aves,-,45376,,114674,6Dec2013
+institutioncode:crcm,-,940,29458,940,6Dec2013
+institutioncode:crcm class:mammalia,-,65,,65,6Dec2013
+institutioncode:crcm class:aves,-,940,,940,6Dec2013
+institutioncode:isu,-,45126,4410,4366,6Dec2013
+institutioncode:isu class:mammalia,-,8040,1157,1119,6Dec2013
+institutioncode:isu class:aves,-,16287,3253,3169,6Dec2013
+institutioncode:dmns,-,61334,56144,55532,6Dec2013
+institutioncode:gsu,-,7689,24851,24603,6Dec2013
+institutioncode:gsu class:reptilia,-,4080,,8972,6Dec2013
+institutioncode:dmnh,-,168506,82758,81931,6Dec2013
+institutioncode:hsu,-,462,13711,462,6Dec2013
+institutioncode:hsu class:mammalia,-,362,,362,6Dec2013
+institutioncode:mpm,-,982,,29532,6Dec2013
+institutioncode:mpm,-,982,29532,982,6Dec2013
+institutioncode:nysm,-,33750,14312,No set returned,6Dec2013
+institutioncode:pmns,-,63,7509,63,6Dec2013
+institutioncode:pmns OR institutioncode:NYSM,-,33750,21821,21603,6Dec2013
+institutioncode:DMNH OR institutioncode:HSU,-,77283,96469,95505,6Dec2013
+institutioncode:DMNH OR institutioncode:HSU OR institutioncode:pmns OR institutioncode:NYSM,-,187671,118290,117109,6Dec2013
+institutioncode:nysm,-,33750,14312,14169,9Dec2013
+catalognumber:29049 class:Aves,VN API,,,19,
+institutioncode:GSU pipiens,VN API,,,1,19Dec2013
+institutioncode:gsu recordedby:williamson,VN API,,,2033,19Dec2013
+"institutioncode:gsu ""in burned pinewoods""",VN API,,,63,19Dec2013
+"institutioncode:gsu ""in rotten pine""",VN API,,,63,19Dec2013
+"institutioncode:gsu ""under bark""",VN API,,,78,19Dec2013
+"institutioncode:mpm rana pipiens AND ""saint croix dam""",VN API,,,22,19Dec2013
+institutioncode:mpm mounted,VN API,,,27,19Dec2013
+"institutioncode:mpm ""gold coast""",VN API,,,7,19Dec2013
+institutioncode:crcm woodby,VN API,,,21,19Dec2013
+institutioncode:crcm Podicipedidae,VN API,,,109,19Dec2013
+institutioncode:crcm Gaviidae,VN API,,,69,19Dec2013
+"institutioncode:crcm ""Died within 2 weeks""",VN API,,,22,19Dec2013
+institutioncode:crcm Procellariidae,VN API,,,73,19Dec2013
+institutioncode:hsu order:carnivora,VN API,,,63,19Dec2013
+institutioncode:hsu order:rodentia,VN API,,,362,19Dec2013
+institutioncode:hsu family:Phalacrocoracidae,VN API,,,60,19Dec2013
+institutioncode:hsu collectioncode:WildlifeEggsNest county:del norte,VN API,,,62,19Dec2013
+institutioncode:hsu genus:uria,VN API,,,61,19Dec2013
+institutioncode:hsu class:aves preparations:skin,VN API,,,63,19Dec2013
+cyanocitta stelleri state:colorado,VN API,,,53,19Dec2013
+perisoreus canadensis state:colorado,VN API,,,74,19Dec2013
+Sus scrofa,VN API,,,670,10Jan2013
