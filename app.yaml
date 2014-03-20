@@ -17,7 +17,7 @@
 # Note that static assets are sources from www-built/ which contains 
 # sourcecode fully minified and obfuscated.
 application: vertnet-portal
-version: beta
+version: apicnttest 
 runtime: python27
 threadsafe: true
 api_version: 1
