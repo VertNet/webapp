@@ -310,12 +310,11 @@ def delete_entity(entity):
 def query(q, limit, cnt_accuracy, sort=None, curs=search.Cursor()):
     if IS_DEV:
         index_name = 'dwc_search'
+        # Set the index name to 'dwc' so that we can work with the test data generated
+        # by dwc-indexer.
+        index_name = 'dwc'
     else:
         index_name = 'dwc'
-
-    # Set the index name to 'dwc' so that we can work with the test data generated
-    # by dwc-indexer.
-    index_name = 'dwc'
 
     # limit = limit + 1
     if not curs:
@@ -365,7 +364,7 @@ def query(q, limit, cnt_accuracy, sort=None, curs=search.Cursor()):
         try:
             query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
-            print 'NAMESPACE:', namespace, ' INDEX:', index_name
+            #print 'NAMESPACE:', namespace, ' INDEX:', index_name
             results = search.Index(name=index_name, namespace=namespace).search(query)
             if results:
                 recs = map(_get_rec, results)

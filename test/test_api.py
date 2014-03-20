@@ -60,7 +60,7 @@ using_test_API = True
 # feature/apicnttest branch.  They allow easy testing of various combinations of
 # these query parameters.
 ae_limit = 100
-ae_cnt_accuracy = 1000
+ae_cnt_accuracy = 10
 
 
 # Get the HTTP response code messages.
