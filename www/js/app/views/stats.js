@@ -44,6 +44,7 @@ define([
           success: _.bind(function(outp) {
           }, this),
           error: _.bind(function(error) {
+            console.log(error);
             var mindate = error.responseText.split("|")[0];
             var maxdate = error.responseText.split("|")[1];
             var queries = util.addCommas(error.responseText.split("|")[2]);
