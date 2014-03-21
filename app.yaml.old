@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see: http://www.gnu.org/licenses
 
-# This is the App Engine configuration file for local development.
-# Note that static assets are sources from www/ which contains full
-# sourcecode without minification.
+# This is the App Engine configuration file for deployment to production.
+# Note that static assets are sources from www-built/ which contains 
+# sourcecode fully minified and obfuscated.
 application: vertnet-portal
-version: dev
+version: beta
 runtime: python27
 threadsafe: true
 api_version: 1
@@ -25,31 +25,31 @@ api_version: 1
 libraries:
 - name: jinja2
   version: "latest"
-# - name: webapp2
-#   version: "2.5.1"
+- name: webapp2
+  version: "2.5.1"
 
 handlers:
 
-# Static assets
+# Static assets:
 
 - url: /js/lib/*.
-  static_dir: www/lib
+  static_dir: www-built/js/lib
 
 - url: /js
-  static_dir: www/js
+  static_dir: www-built/js
 
 - url: /css
-  static_dir: www/css
+  static_dir: www-built/css
 
 - url: /fonts
-  static_dir: www/fonts
+  static_dir: www-built/fonts
 
 - url: /img
-  static_dir: www/img
+  static_dir: www-built/img
 
-# APIs
+# APIs:
 
-- url: /api/user.*
+- url: /api/user/get
   script: vertnet.service.user.handler
 
 - url: /api/github.*
@@ -67,6 +67,9 @@ handlers:
 - url: /service/organization.*
   script: vertnet.service.organization.rpc
 
+- url: /api/user.*
+  script: vertnet.service.user.handler
+
 - url: /api/search.*
   script: vertnet.api.search.handler
 
@@ -77,7 +80,7 @@ handlers:
   script: vertnet.api.stats.rpc
 
 - url: /service/stats.*
-  script: vertnet.service.stats.main
+  script: vertnet.service.stats
 
 - url: /.*
   script: app.handler

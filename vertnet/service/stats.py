@@ -115,14 +115,3 @@ def main(environ, start_response):
     }
     logging.info("FINISHED PROCESSING")
     return [str(mindate), "|", str(maxdate), "|", str(metadata['query']['searches']), "|", str(metadata['query']['records']), "|", str(metadata['download']['searches']), "|", str(metadata['download']['records']), "|", str(explicitInstitutionsGood)[1:-1], "|", str(explicitClassGood)[1:-1], "|", str(downloadsdata)[1:-1]]
-
-class StatsHandler(webapp2.RequestHandler):
-    
-    def post(self):
-        logging.info("From: StatsHandler. Calling main function")
-        main(self.environ, start_response)
-        logging.info("Exiting StatsHandler")
-
-api = webapp2.WSGIApplication(
-    [('/stats', StatsHandler)],
-    debug=False)
