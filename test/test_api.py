@@ -192,7 +192,7 @@ csvrow = {}
 
 # Variables to keep track of the total number of queries for which
 # error was calculated, the total sum error, and the start time.
-stime = time.clock()
+stime = time.time()
 qerror_cnt = 0
 qerror_total = 0.0
 
@@ -237,7 +237,7 @@ for testcase in csvf:
 
 # Write out the summary statistics.
 csvrow = {}
-csvrow['time_total'] = int(time.clock() - stime)
+csvrow['time_total'] = int(time.time() - stime)
 csvrow['time_finish'] = time.strftime('%d%b%y %H:%M:%S')
 csvrow['limit'] = ae_limit
 csvrow['ae_accuracy'] = ae_cnt_accuracy
