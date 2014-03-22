@@ -34,12 +34,14 @@ class SearchApi(webapp2.RequestHandler):
         
         request = json.loads(self.request.get('q'))
         q, c, limit, cnt_accuracy = map(request.get, ['q', 'c', 'l', 'a'])
+        print 'LIMIT RAW:', limit
         if not limit:
             limit = 20
         elif limit > 1000:
             limit = 1000
         elif limit < 0:
             limit = 1
+        print 'LIMIT:', limit
 
         if not cnt_accuracy:
             cnt_accuracy = 100
@@ -47,6 +49,7 @@ class SearchApi(webapp2.RequestHandler):
             cnt_accuracy = 10000
         elif cnt_accuracy < 0:
             cnt_accuracy = 1
+        print 'ACCURACY:', cnt_accuracy
 
         curs = None
         if c:

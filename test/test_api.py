@@ -14,6 +14,15 @@ Results are written to an output CSV file with 5 columns:
   'time' -- the date and time at which the query was started;
   'expcnt' -- the number of results according to the "count" result property;
   'obscnt' -- the actual number of records returned.
+  'error' -- the absolute percent error of expcnt compared to obscnt
+
+Summary statistics are written to a 2nd CSV file with 5 columns:
+  'limit' -- the number of results returned per API query
+  'ae_accuracy' -- the value of 'ae_cnt_accuracy' for this run
+  'time_total' -- the total time (in seconds) to complete all test queries
+  'time_finish' -- the date/time at which the tests were completed
+  'error' -- the mean error for all queries for which error was calculated
+  'error_n' -- the total number of queries for which error was calculated
 
 The names of the input and output CSV files should be specified as
 command-line arguments.  An example follows.
@@ -32,7 +41,8 @@ from optparse import OptionParser
 
 # The location of the search API.
 #searchurl = 'http://api.vertnet-portal.appspot.com/api/search'
-searchurl = 'http://localhost:8080/api/search'
+searchurl = 'http://apicnttest.vertnet-portal.appspot.com/api/search'
+#searchurl = 'http://localhost:8080/api/search'
 
 # Cutoff for the maximum response size to test, as estimated by the "observed"
 # column of the input CSV file.  Set this to -1 to test all queries regardless
@@ -48,7 +58,7 @@ get_rowcnts_maxrows = 10000
 
 # If "limit_rowcnts" == True, then record counting will stop if the total number of
 # records counted exceeds get_rowcnts_maxrows * 1.1.  If get_rowcnts_maxrows == -1
-# and limimt_rowcnts == True, then record counting is capped at 2,000.
+# and limit_rowcnts == True, then record counting is capped at 2,000.
 limit_rowcnts = True
 
 # Indicates whether the modified search API implemented in feature/apicnttest is
@@ -59,8 +69,8 @@ using_test_API = True
 # options.  These are for the modified version of the search API implemented in the
 # feature/apicnttest branch.  They allow easy testing of various combinations of
 # these query parameters.
-ae_limit = 100
-ae_cnt_accuracy = 10
+ae_limit = 1000
+ae_cnt_accuracy = 10000
 
 
 # Get the HTTP response code messages.
@@ -84,13 +94,13 @@ def queryVN(querystr, cursor=''):
     if cursor != '':
         datastr += ', "c":"' + cursor + '"'
     if using_test_API:
-        datastr += ', "l":"' + str(ae_limit) + '", "a":"' + str(ae_cnt_accuracy) + '"'
+        datastr += ', "l":' + str(ae_limit) + ', "a":' + str(ae_cnt_accuracy)
     datastr += '}'
     print datastr
     data = {'q': datastr}
     geturl = searchurl + '?' + urllib.urlencode(data)
     #print geturl
-
+    
     res = urllib2.urlopen(geturl)
 
     return json.load(res)
@@ -158,12 +168,20 @@ if len(args) != 0:
 elif options.fileout == '' or options.filein == '':
     argp.error('Missing input or output file name.')
 
-# Open the output file for writing, create a CSV writer for it,
+# Open the main output file for writing, create a CSV writer for it,
 # and write out the column headers.
 fout = open(options.fileout, 'wb')
-columns = ('query', 'prev_rowcnt', 'time', 'expcnt', 'obscnt')
+columns = ('query', 'prev_rowcnt', 'time', 'expcnt', 'obscnt', 'error')
 csvwriter = csv.DictWriter(fout, columns)
 csvwriter.writeheader()
+
+# Open the summary output file for writing, create a CSV writer for it,
+# and write out the column headers.
+fout2 = open(options.fileout.replace('.csv', '') + '_summary.csv', 'wb')
+columns2 = ('limit', 'ae_accuracy', 'time_total', 'time_finish', 'error', 'error_n')
+csvwriter2 = csv.DictWriter(fout2, columns2)
+csvwriter2.writeheader()
+
 
 # Open the input CSV file.
 fin = open(options.filein)
@@ -171,6 +189,12 @@ csvf = csv.DictReader(fin)
 
 # A dictionary for passing the query results to the CSV writer.
 csvrow = {}
+
+# Variables to keep track of the total number of queries for which
+# error was calculated, the total sum error, and the start time.
+stime = time.clock()
+qerror_cnt = 0
+qerror_total = 0.0
 
 for testcase in csvf:
     try:
@@ -187,6 +211,7 @@ for testcase in csvf:
         csvrow['query'] = testcase['query']
         csvrow['time'] = time.strftime('%d%b%y %H:%M:%S')
         csvrow['obscnt'] = ''
+        csvrow['error'] = ''
 
         try:
             # Attempt to query the VertNet search API with the test query.
@@ -195,6 +220,12 @@ for testcase in csvf:
                 # Count the actual number of records in the result set.
                 obscnt = getRowCount(robj, testcase['query'])
                 csvrow['obscnt'] = obscnt
+                if str(obscnt)[0] == '>':
+                    csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / robj['count'])
+                else:
+                    csvrow['error'] = float(abs(obscnt - int(robj['count']))) / robj['count']
+                    qerror_cnt += 1
+                    qerror_total += csvrow['error']
 
             csvrow['expcnt'] = robj['count']
             print 'previous rowcount:', csvrow['prev_rowcnt'], '; new rowcount:', robj['count']
@@ -203,4 +234,15 @@ for testcase in csvf:
             print 'Uh oh.  Got', csvrow['expcnt'] + '.'
 
         csvwriter.writerow(csvrow)
+
+# Write out the summary statistics.
+csvrow = {}
+csvrow['time_total'] = int(time.clock() - stime)
+csvrow['time_finish'] = time.strftime('%d%b%y %H:%M:%S')
+csvrow['limit'] = ae_limit
+csvrow['ae_accuracy'] = ae_cnt_accuracy
+csvrow['error'] = qerror_total / qerror_cnt
+csvrow['error_n'] = qerror_cnt
+
+csvwriter2.writerow(csvrow)
 
