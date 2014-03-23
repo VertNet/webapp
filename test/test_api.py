@@ -32,6 +32,7 @@ command-line arguments.  An example follows.
 """
 import urllib, urllib2
 from BaseHTTPServer import BaseHTTPRequestHandler
+import socket
 import json
 import csv
 import sys
@@ -57,7 +58,7 @@ maxrows = -1
 get_rowcnts_maxrows = 10000
 
 # If "limit_rowcnts" == True, then record counting will stop if the total number of
-# records counted exceeds get_rowcnts_maxrows * 1.1.  If get_rowcnts_maxrows == -1
+# records counted exceeds get_rowcnts_maxrows * 2.  If get_rowcnts_maxrows == -1
 # and limit_rowcnts == True, then record counting is capped at 2,000.
 limit_rowcnts = True
 
@@ -69,7 +70,7 @@ using_test_API = True
 # options.  These are for the modified version of the search API implemented in the
 # feature/apicnttest branch.  They allow easy testing of various combinations of
 # these query parameters.
-ae_limit = 1000
+ae_limit = 800
 ae_cnt_accuracy = 10000
 
 
@@ -100,10 +101,29 @@ def queryVN(querystr, cursor=''):
     data = {'q': datastr}
     geturl = searchurl + '?' + urllib.urlencode(data)
     #print geturl
-    
-    res = urllib2.urlopen(geturl)
 
-    return json.load(res)
+    # The number of times to retry the request in case of connection failure.
+    maxretries = 10
+    
+    success = False
+    retries = 0
+    # Try the request until we get a result back or the maximum number of
+    # retries has been exceeded due to TCP errors.
+    while not(success):
+        try:
+            res = urllib2.urlopen(geturl)
+            rjson = json.load(res)
+            success = True
+        except socket.error as err:
+            # We got a TCP connection error, so increment the retries counter
+            # and initiate the request again next time through the loop.
+            print 'Uh oh, got a TCP socket error:', err
+            print 'Retrying request.'
+            retries += 1
+            if retries > maxretries:
+                sys.exit('TCP connection failed; maximum retries exceeded.')
+
+    return rjson
 
 def getRowCount(resobj, querystr):
     """
@@ -123,7 +143,7 @@ def getRowCount(resobj, querystr):
     cursor = resobj['cursor']
 
     if get_rowcnts_maxrows != -1:
-        cnt_cutoff = get_rowcnts_maxrows * 1.1
+        cnt_cutoff = get_rowcnts_maxrows * 2
     else:
         cnt_cutoff = 2000
 
@@ -158,6 +178,10 @@ argp.add_option('-i', '--inputfile', dest='filein', help='name of the input CSV 
         default='')
 argp.add_option('-o', '--outputfile', dest='fileout', help='file name for CSV output',
         default='')
+argp.add_option('-l', '--limit', dest='limit', help='the number of records to return per query',
+        default=800)
+argp.add_option('-a', '--accuracy', dest='accuracy', help='the AppEngine number_found_accuracy value',
+        default=10000)
 
 # Get the command-line arguments.
 (options, args) = argp.parse_args()
@@ -167,6 +191,14 @@ if len(args) != 0:
     argp.error('Unrecognized command-line arguments.')
 elif options.fileout == '' or options.filein == '':
     argp.error('Missing input or output file name.')
+
+# Set the limit and accuracy values from the command-line arguments.
+ae_limit = int(options.limit)
+ae_cnt_accuracy = int(options.accuracy)
+if ae_limit < 1 or ae_limit > 1000:
+    ae_limit = 800
+if ae_cnt_accuracy < 1 or ae_cnt_accuracy > 10000:
+    ae_cnt_accuracy = 10000
 
 # Open the main output file for writing, create a CSV writer for it,
 # and write out the column headers.
@@ -220,6 +252,9 @@ for testcase in csvf:
                 # Count the actual number of records in the result set.
                 obscnt = getRowCount(robj, testcase['query'])
                 csvrow['obscnt'] = obscnt
+
+                # Calculate the percent error.  Check if we got back a string or integer
+                # for the total record count and handle it accordingly.
                 if str(obscnt)[0] == '>':
                     csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / robj['count'])
                 else:

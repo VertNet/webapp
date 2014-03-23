@@ -1,7 +1,6 @@
 query,Source,estimated,expected,observed,date
 catalognumber:29049 class:Aves,VN API,,,19,
 class:amphibia institutioncode:KU,-,58407,,179080,5Dec2013
-class:amphibia institutioncode:KU,-,-,-,179080,5Dec2013
 class:reptilia institutioncode:KU,-,59832,,149764,5Dec2013
 country:United States class:Mammalia eventdate > 1879-1-1 eventdate < 2011-1-1,-,7700214,,No set returned,5Dec2013
 cyanocitta stelleri state:colorado,VN API,,,53,19Dec2013
@@ -26,7 +25,6 @@ institutioncode:gsu,-,7689,24851,24603,6Dec2013
 "institutioncode:gsu ""in rotten pine""",VN API,,,63,19Dec2013
 "institutioncode:gsu ""under bark""",VN API,,,78,19Dec2013
 institutioncode:gsu class:reptilia,-,4080,,8972,5Dec2013
-institutioncode:gsu class:reptilia,-,4080,,8972,6Dec2013
 institutioncode:GSU pipiens,VN API,,,1,19Dec2013
 institutioncode:gsu recordedby:williamson,VN API,,,2033,19Dec2013
 institutioncode:hsu,-,462,13711,462,6Dec2013
