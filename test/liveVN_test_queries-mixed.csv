@@ -1,0 +1,39 @@
+query,observed,date,type
+catalognumber:29049 class:Aves,19,03/23/14,small
+cyanocitta stelleri state:colorado,36,03/23/14,small
+institutioncode:crcm Gaviidae,44,03/23/14,small
+institutioncode:crcm Podicipedidae,152,03/23/14,medium
+institutioncode:crcm woodby,21,03/23/14,small
+institutioncode:dmns class:mammalia,13633,03/23/14,medium
+institutioncode:gsu class:reptilia,9062,03/23/14,medium
+institutioncode:GSU pipiens,1,03/23/14,small
+institutioncode:hsu class:aves preparations:skin,7104,03/23/14,medium
+institutioncode:hsu class:mammalia,2833,03/23/14,medium
+institutioncode:hsu collectioncode:WildlifeEggsNest county:del norte,177,03/23/14,medium
+institutioncode:hsu family:Phalacrocoracidae,97,03/23/14,small
+institutioncode:hsu genus:uria,167,03/23/14,medium
+institutioncode:hsu order:carnivora,556,03/23/14,medium
+institutioncode:hsu order:rodentia,1215,03/23/14,medium
+institutioncode:isu,4410,03/23/14,medium
+institutioncode:isu class:aves,3200,03/23/14,medium
+institutioncode:isu class:mammalia,1130,03/23/14,medium
+institutioncode:mpm mounted,27,03/23/14,small
+institutioncode:pmns,7509,03/23/14,medium
+perisoreus canadensis state:colorado,51,03/23/14,small
+specificepithet:pipiens genus:Rana class:amphibia institutioncode:KU,2136,03/23/14,medium
+Sus scrofa,932,03/23/14,medium
+institutioncode:ku,,,large
+institutioncode:ku class:amphibia OR class:reptilia,,,large
+institutioncode:KU OR institutioncode:DMNS,,,large
+institutioncode:lacm,,,large
+institutioncode:lacm class:Actinopterygii,,,large
+institutioncode:lacm class:amphibia,,,large
+institutioncode:lacm class:aves,,,large
+institutioncode:pmns OR institutioncode:NYSM,,,large
+institutioncode:psm,,,large
+institutioncode:tcwc,,,large
+institutioncode:uta,,,large
+institutioncode:uta class:amphibia,,,large
+institutioncode:utep,,,large
+institutioncode:dmnh,,,large
+institutioncode:DMNH OR institutioncode:HSU,,,large
