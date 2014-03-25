@@ -47,7 +47,7 @@ searchurl = 'http://apicnttest.vertnet-portal.appspot.com/api/search'
 
 # Cutoff for the maximum response size to test, as estimated by the "observed"
 # column of the input CSV file.  Set this to -1 to test all queries regardless
-# of the number of rows returned.
+# of the number of rows expected to be returned.
 maxrows = -1
 
 # If the value of the "count" property is less than get_rowcnts_maxrows, then
@@ -55,23 +55,30 @@ maxrows = -1
 # if this is set to a large value, row counting will require many requests to the
 # search API and can take a long time.  Set this to -1 to count the records in all
 # queries regardless of expected size.  Set to 0 to disable record counting entirely.
-get_rowcnts_maxrows = 10000
+get_rowcnts_maxrows = -1#10000
+
+# Limits the queries for which all records are counted according to the total
+# number of test queries that have been processed.  No more result sets will be
+# counted after get_rowcnts_maxqueries have been processed.  Note that if
+# get_rowcnts_maxrows (above) is also > 0, then queries must still meet the maximum
+# size requirement.
+get_rowcnts_maxqueries = 23
 
 # If "limit_rowcnts" == True, then record counting will stop if the total number of
 # records counted exceeds get_rowcnts_maxrows * 2.  If get_rowcnts_maxrows == -1
 # and limit_rowcnts == True, then record counting is capped at 2,000.
-limit_rowcnts = True
+limit_rowcnts = False
 
 # Indicates whether the modified search API implemented in feature/apicnttest is
 # being used.  If this is false, the limit and count accuracy variables are ignored.
 using_test_API = True
 
-# Define the values of the app engine "limit" and "number_found_accuracy" query
-# options.  These are for the modified version of the search API implemented in the
-# feature/apicnttest branch.  They allow easy testing of various combinations of
+# Define the default values of the app engine "limit" and "number_found_accuracy"
+# query options.  These are for the modified version of the search API implemented in
+# the feature/apicnttest branch.  They allow easy testing of various combinations of
 # these query parameters.
-ae_limit = 800
-ae_cnt_accuracy = 10000
+default_ae_limit = 800
+default_ae_cnt_accuracy = 10000
 
 
 # Get the HTTP response code messages.
@@ -97,7 +104,8 @@ def queryVN(querystr, cursor=''):
     if using_test_API:
         datastr += ', "l":' + str(ae_limit) + ', "a":' + str(ae_cnt_accuracy)
     datastr += '}'
-    print datastr
+    if cursor == '':
+        print datastr
     data = {'q': datastr}
     geturl = searchurl + '?' + urllib.urlencode(data)
     #print geturl
@@ -179,9 +187,9 @@ argp.add_option('-i', '--inputfile', dest='filein', help='name of the input CSV 
 argp.add_option('-o', '--outputfile', dest='fileout', help='file name for CSV output',
         default='')
 argp.add_option('-l', '--limit', dest='limit', help='the number of records to return per query',
-        default=800)
+        default=default_ae_limit)
 argp.add_option('-a', '--accuracy', dest='accuracy', help='the AppEngine number_found_accuracy value',
-        default=10000)
+        default=default_ae_cnt_accuracy)
 
 # Get the command-line arguments.
 (options, args) = argp.parse_args()
@@ -196,9 +204,9 @@ elif options.fileout == '' or options.filein == '':
 ae_limit = int(options.limit)
 ae_cnt_accuracy = int(options.accuracy)
 if ae_limit < 1 or ae_limit > 1000:
-    ae_limit = 800
+    ae_limit = default_ae_limit
 if ae_cnt_accuracy < 1 or ae_cnt_accuracy > 10000:
-    ae_cnt_accuracy = 10000
+    ae_cnt_accuracy = default_ae_cnt_accuracy
 
 # Open the main output file for writing, create a CSV writer for it,
 # and write out the column headers.
@@ -221,6 +229,9 @@ csvf = csv.DictReader(fin)
 
 # A dictionary for passing the query results to the CSV writer.
 csvrow = {}
+
+# Keeps track of how many total queries have been processed.
+query_cnt = 0
 
 # Variables to keep track of the total number of queries for which
 # error was calculated, the total sum error, and the start time.
@@ -248,7 +259,7 @@ for testcase in csvf:
         try:
             # Attempt to query the VertNet search API with the test query.
             robj = queryVN(testcase['query'])
-            if robj['count'] < get_rowcnts_maxrows or get_rowcnts_maxrows == -1:
+            if (robj['count'] < get_rowcnts_maxrows or get_rowcnts_maxrows == -1) and query_cnt < get_rowcnts_maxqueries:
                 # Count the actual number of records in the result set.
                 obscnt = getRowCount(robj, testcase['query'])
                 csvrow['obscnt'] = obscnt
@@ -263,12 +274,18 @@ for testcase in csvf:
                     qerror_total += csvrow['error']
 
             csvrow['expcnt'] = robj['count']
-            print 'previous rowcount:', csvrow['prev_rowcnt'], '; new rowcount:', robj['count']
+            print 'expected count:', csvrow['expcnt'], '; actual count:', csvrow['obscnt']
         except urllib2.HTTPError as err:
             csvrow['expcnt'] = 'HTTP error ' + str(err.code) + ': ' + HTTPresponses[err.code][0]
             print 'Uh oh.  Got', csvrow['expcnt'] + '.'
 
+        query_cnt += 1
         csvwriter.writerow(csvrow)
+
+if qerror_cnt > 0:
+    meanerror = qerror_total / qerror_cnt
+else:
+    meanerror = 0
 
 # Write out the summary statistics.
 csvrow = {}
@@ -276,7 +293,7 @@ csvrow['time_total'] = int(time.time() - stime)
 csvrow['time_finish'] = time.strftime('%d%b%y %H:%M:%S')
 csvrow['limit'] = ae_limit
 csvrow['ae_accuracy'] = ae_cnt_accuracy
-csvrow['error'] = qerror_total / qerror_cnt
+csvrow['error'] = meanerror
 csvrow['error_n'] = qerror_cnt
 
 csvwriter2.writerow(csvrow)
