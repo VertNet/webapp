@@ -74,13 +74,12 @@ class RecordService(remote.Service):
             # Build json for search counts
             res_counts = {}
             for i in recs:
-                logging.info(i.keys())
-                dwca = i['dwca'].replace('archive.do','resource.do')
+                dwca = i['url']
                 if dwca not in res_counts:
                     res_counts[dwca] = 1
                 else:
                     res_counts[dwca] += 1
-            logging.info("RESCOUNTS: %s" % res_counts)
+            logging.info("RESOURCE COUNTS: %s" % res_counts)
             
             if not message.cursor:
                 type = 'query'
