@@ -22,7 +22,7 @@ import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 routes = [
     webapp2.Route(r'/api/user/get', handler='vertnet.service.user.UserHandler:get', name='get'),

@@ -25,7 +25,7 @@ from jinja2.filters import do_pprint
 from vertnet.service import github
 from webapp2_extras import jinja2
 
-IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 # App routes:
 routes = [

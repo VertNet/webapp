@@ -70,9 +70,10 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
             results = search.Index(name=index_name, namespace=namespace).search(query)
-            logging.info('NS %s NAME %s RESULTS %s' % (namespace, index_name, results))
+#            logging.info('NS %s NAME %s RESULTS %s' % (namespace, index_name, results))
             if results:
                 recs = map(_get_rec, results)
+                logging.info('NS %s NAME %s RECORD_COUNT %s' % (namespace, index_name, results.number_found))
                 return recs, results.cursor, results.number_found
             else:
                 logging.info('No search results for: %s' % q)

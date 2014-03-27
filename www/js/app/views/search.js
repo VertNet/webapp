@@ -655,7 +655,13 @@ define([
         this.terms[input.id] = value.trim();
       }, this));
       this.termsStr = _.reduce(this.terms, function(memo, val, key) {
-        if (val) {
+        if (val) { 
+          // Enclose country, stateprovince and county search terms in double quotes to
+          // support, for example, a search on "Virginia" that does not return records for
+          // "West Virginia".
+          if (key == 'country' || key == 'stateprovince' || key == 'county'){
+            return key + ':"' + val + '" ' + memo;
+          }
           return key + ':' + val + ' ' + memo;
         } else {
           return memo;
