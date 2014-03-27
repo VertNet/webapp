@@ -71,13 +71,23 @@ class RecordService(remote.Service):
         result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
         if len(result) == 3:
             recs, cursor, count = result
+            # Build json for search counts
+            res_counts = {}
+            for i in recs:
+                dwca = i['url']
+                if dwca not in res_counts:
+                    res_counts[dwca] = 1
+                else:
+                    res_counts[dwca] += 1
+            logging.info("RESOURCE COUNTS: %s" % res_counts)
+            
             if not message.cursor:
                 type = 'query'
                 query_count = count
             else:
                 type = 'query-view'
                 query_count = limit
-            params = dict(query=keywords, type=type, count=query_count, latlon=self.cityLatLong)
+            params = dict(query=keywords, type=type, count=query_count, latlon=self.cityLatLong, res_counts=json.dumps(res_counts))
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
