@@ -74,7 +74,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             if results:
                 recs = map(_get_rec, results)
                 logging.info('NS %s NAME %s RECORD_COUNT %s' % (namespace, index_name, results.number_found))
-#                return recs, results.cursor, results.number_found
+                return recs, results.cursor, results.number_found
             else:
                 logging.info('No search results for: %s' % q)
                 return [], None, 0
