@@ -461,17 +461,17 @@ define([
       }
 
       if (start && !end) {
-        start = Number(start) - 1;
-        query += [ ' eventdate > ', start + '-1-1 '].join('');      
+        start = Number(start);
+        query += [ ' year >= ', start].join('');      
       }
       if (!start && end) {
-        end = Number(end) + 1;
-        query += [' eventdate < ', end + '-1-1 '].join('');
+        end = Number(end);
+        query += [' year <= ', end].join('');
       }
       if (start && end) {
-        start = Number(start) - 1;
-        end = Number(end) + 1;
-        query += [ ' eventdate > ', start + '-1-1 ', 'eventdate < ', end + '-1-1 '].join('');      
+        start = Number(start);
+        end = Number(end);
+        query += [ ' year >= ', start, ' year <= ', end].join('');      
       }
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
