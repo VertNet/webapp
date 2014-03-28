@@ -178,7 +178,7 @@
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
-              <% if (val.startsWith('http')) { %>
+              <% if (replaceURLWithHTMLLinks(val)) { %>
                 <a target='_blank' href="<%= val %>"><%= val %></a>
               <% } else { %>
                 <%= val %>

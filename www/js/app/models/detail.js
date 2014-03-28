@@ -77,7 +77,7 @@ define([
       'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks'],
 
     DWC_SUMMARY: ['InstitutionCode', 'CollectionCode', 'CatalogNumber',
-      'Preperations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
+      'Preparations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
     DWC_ALL: function() {
@@ -87,7 +87,19 @@ define([
 
     replaceURLWithHTMLLinks: function(text) {
       var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      return text.replace(exp,"<a href='$1'>$1</a>"); 
+      var parts = test.split(/[;,|]/);
+      var newtext = "";
+      for (var i = 0; i < parts.length; i++)
+      {
+          if (newtext.length == 0)
+          {
+              newtext = parts[i].replace(exp,"<a href='$1'>$1</a>");
+          } else {
+              newtext = newtext + ", " + parts[i].replace(exp,"<a href='$1'>$1</a>");
+          }
+      }
+      return newtext;
+//      return text.replace(exp,"<a href='$1'>$1</a>"); 
     },
 
     getRights: function() {
