@@ -1,3 +1,12 @@
+.vncheckbox {
+       display: block;
+       min-height: 20px;
+       padding-left: 15px;
+       margin-top: 10px;
+       margin-bottom: 10px;
+       vertical-align: middle
+}
+
 .github-btn {
 	display: inline-block;
 	list-style: none;
