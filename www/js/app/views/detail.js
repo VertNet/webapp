@@ -53,7 +53,8 @@ define([
       }, 
 
       render: function() {
-        this.$el.html(this.template(this.model.attributes));
+        var data = _.extend(this.model.attributes, this.model.replaceURLWithHTMLLinks);
+        this.$el.html(this.template(data));
         map.init(_.bind(function() {
           var lat = this.$('#DecimalLatitude').text();
           var lon = this.$('#DecimalLongitude').text();
