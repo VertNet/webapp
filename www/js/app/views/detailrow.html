@@ -18,7 +18,10 @@
   Note that static assets are sources from www/ which contains full
   sourcecode without minification. 
 -->
+<!--
 <td><%= this.model.get('institutioncode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%></td>
+-->
+<td><% var occid = this.model.getOccIdentifier() %> <%= occid %></td>
 <td><%= this.model.get('class') + ': ' +  this.model.get('scientificname')%></td>
 <td><% var loc = this.model.getLocation() %> <%= loc %></td>
 <td><% var year = this.model.getYear() %> <%= year %></td>

@@ -1,10 +1,19 @@
 .vncheckbox {
-       display: block;
+       position: relative;
        min-height: 20px;
        padding-left: 15px;
        margin-top: 10px;
        margin-bottom: 10px;
        vertical-align: middle
+}
+
+.col-md-0 {
+       position: relative;
+       min-height: 1px;
+       margin-top: 10px;
+       padding-right: -30px;
+       padding-left: -25px;
+       float: left;
 }
 
 .github-btn {

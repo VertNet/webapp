@@ -85,6 +85,19 @@ define([
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
     },
 
+    getOccIdentifier: function() {
+      var occid = this.get('institutioncode');
+      if (this.get('collectioncode')) {
+        var ccode = this.get('collectioncode');
+        var newccode = ccode.replace(occid,'');
+        occid += ' ' + newccode;
+      } 
+      if (this.get('catalognumber')) {
+        occid += ' ' + this.get('catalognumber');
+      } 
+      return occid;
+    },
+
     replaceURLWithHTMLLinks: function(text) {
       var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       return text.replace(exp,"<a href='$1'>$1</a>"); 
