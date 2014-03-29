@@ -77,12 +77,25 @@ define([
       'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks'],
 
     DWC_SUMMARY: ['InstitutionCode', 'CollectionCode', 'CatalogNumber',
-      'Preperations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
+      'Preparations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
+    },
+
+    getOccIdentifier: function() {
+      var occid = this.get('institutioncode');
+      if (this.get('collectioncode')) {
+        var ccode = this.get('collectioncode');
+        var newccode = ccode.replace(occid,'');
+        occid += ' ' + newccode;
+      } 
+      if (this.get('catalognumber')) {
+        occid += ' ' + this.get('catalognumber');
+      } 
+      return occid;
     },
 
     replaceURLWithHTMLLinks: function(text) {
