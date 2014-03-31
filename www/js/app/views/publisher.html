@@ -24,8 +24,12 @@
     <h1>Publisher <small><%= this.model.get('orgname')%></small></h1>
   </div>
 
-
   <div class="row">
+    <div class="col-lg-10">
+      <span class="lead">
+        Location: <%= this.model.get('orglocation')%>
+      </span>
+    </div>
     <div class="col-lg-10">
       <span class="lead">
         <%= this.model.resources()%> with <%= this.model.records()%> published records. 

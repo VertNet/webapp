@@ -58,7 +58,7 @@ define([
         if (this.pubList.isEmpty()) {
           map.init(_.bind(function() {
             var sql = new cartodb.SQL({ user: 'vertnet' });
-            var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources FROM resource GROUP BY orgname, icode ORDER BY orgname";
+            var query = "SELECT orgname,icode,Concat(orgcountry,', ', orgstateprovince,', ',orgcity) AS orglocation, sum(count) AS records,count(title) AS resources FROM resource GROUP BY orgname, icode, orgcountry, orgstateprovince, orgcity ORDER BY orgname";
             sql.execute(query, {})
               .done(_.bind(function(data) {
                 _.each(data.rows, _.bind(function (i) {

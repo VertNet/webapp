@@ -189,7 +189,7 @@ define([
       if (!this.publisherCache) {
         map.init(_.bind(function() {
           var sql = new cartodb.SQL({ user: 'vertnet' });
-          var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url FROM resource GROUP BY orgname,icode,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url ORDER BY title";
+          var query = "SELECT orgname,icode,Concat(orgcountry,', ', orgstateprovince,', ',orgcity) AS orglocation,sum(count) AS records,count(title) AS resources,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url FROM resource GROUP BY orgname,icode,orgcountry, orgstateprovince, orgcity,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url ORDER BY title";
           sql.execute(query, {})
             .done(_.bind(function(data) {
               this.publisherCache = _.groupBy(data.rows, _.bind(function(row) {
@@ -214,7 +214,7 @@ define([
         return resource.count + memo;
       }, 0);
       var model = new PubModel({orgname: resource.orgname, resources: resCount, 
-        records: recCount, icode: resource.icode}); 
+        records: recCount, icode: resource.icode, orglocation: resource.orglocation}); 
       var resourceList = _.map(resources, function(x) {
         return new ResourceModel(x);
       });
