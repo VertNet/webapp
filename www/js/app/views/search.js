@@ -385,7 +385,7 @@ define([
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
-          this.$('#search-carat').popover({placement: 'top', content: 'Advanced search'});
+          this.$('#search-carat').popover({placement: 'top', content: 'More search options'});
           this.$('#search-carat').popover('show');
         } 
       }, this), 2000);
