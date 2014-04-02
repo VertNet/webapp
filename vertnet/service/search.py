@@ -309,11 +309,13 @@ def delete_entity(entity):
 
 def query(q, limit, sort=None, curs=search.Cursor()):
     if IS_DEV:
-        index_name = 'dwc_search'
+        # Set the index name to 'dwc' so that we can work with the test data generated
+        # by dwc-indexer.
+        #index_name = 'dwc_search'
+        index_name = 'dwc'
     else:
         index_name = 'dwc'
 
-    # limit = limit + 1
     if not curs:
         curs = search.Cursor()
     
@@ -346,9 +348,12 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             sort_options=sort_options)
             #returned_fields=['record', 'location'])        
     else:
+        # Always use 10,000 as the value for number_found_accuracy.  Based on
+        # extensive testing, using this maximum allowed value results in the best
+        # count accuracy and incurs only a minor performance penalty.
         options = search.QueryOptions(
             limit=limit,
-            number_found_accuracy=limit+1,
+            number_found_accuracy=10000,
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
 

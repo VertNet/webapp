@@ -34,10 +34,14 @@ class SearchApi(webapp2.RequestHandler):
         
         request = json.loads(self.request.get('q'))
         q, c, limit = map(request.get, ['q', 'c', 'l'])
+
+        # Set the limit to 400 by default.  This value is based on the results
+        # of substantial performance testing.
         if not limit:
-            limit = 20
-        if limit > 20:
-            limit = 20
+            limit = 400
+        if limit > 1000:
+            # 1000 is the maximum value allowed by Google.
+            limit = 1000
         if limit < 0:
             limit = 1
 
