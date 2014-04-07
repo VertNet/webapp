@@ -29,6 +29,10 @@ command-line arguments.  An example follows.
 
 >./test_api.py -i test_queries.csv -o test_results.csv
 
+To see descriptions of all command-line arguments, use the "-h" option.
+
+>./test_api.py -h
+
 """
 import urllib, urllib2
 from BaseHTTPServer import BaseHTTPRequestHandler
@@ -41,8 +45,8 @@ from optparse import OptionParser
 
 
 # The location of the search API.
-#searchurl = 'http://api.vertnet-portal.appspot.com/api/search'
-searchurl = 'http://apicnttest.vertnet-portal.appspot.com/api/search'
+searchurl = 'http://api.vertnet-portal.appspot.com/api/search'
+#searchurl = 'http://apicnttest.vertnet-portal.appspot.com/api/search'
 #searchurl = 'http://localhost:8080/api/search'
 
 # Cutoff for the maximum response size to test, as estimated by the "observed"
@@ -71,7 +75,7 @@ limit_rowcnts = False
 
 # Indicates whether the modified search API implemented in feature/apicnttest is
 # being used.  If this is false, the limit and count accuracy variables are ignored.
-using_test_API = True
+using_test_API = False
 
 # Define the default values of the app engine "limit" and "number_found_accuracy"
 # query options.  These are for the modified version of the search API implemented in
@@ -178,10 +182,13 @@ def getRowCount(resobj, querystr):
 
 # Set up command-line argument parsing.
 argp = OptionParser(
-        usage='''usage:  %prog -i filename -o filename
+        usage='''%prog -i filename -o filename [-l limit] [-a number_found_accuracy]
 \n    Runs a series of test queries agains the VertNet search API.
 The test queries are specified in an input CSV file and the results
-of running the queries are written to an output CSV file.''')
+of running the queries are written to an output CSV file.  Values for
+the App Engine parameters limit and number_found_accuracy can optionally
+be specified and are ignored unless the test version of the API is
+being used.''')
 argp.add_option('-i', '--inputfile', dest='filein', help='name of the input CSV file',
         default='')
 argp.add_option('-o', '--outputfile', dest='fileout', help='file name for CSV output',

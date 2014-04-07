@@ -16,7 +16,7 @@ rounds = 4
 limits = (400,)
 
 # The values of the "number_found_accuracy" parameter to test.
-accuracies = (100, 1000, 10000)
+accuracies = (4000, 7000)
 
 # The location to output the results.  Use a blank string or './' to output
 # to the current working directory.
