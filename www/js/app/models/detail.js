@@ -89,7 +89,7 @@ define([
       var occid = this.get('institutioncode');
       if (this.get('collectioncode')) {
         var ccode = this.get('collectioncode');
-        var newccode = ccode.replace(occid,'');
+        var newccode = ccode.replace(occid+' ','');
         occid += ' ' + newccode;
       } 
       if (this.get('catalognumber')) {
