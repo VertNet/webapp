@@ -1,0 +1,18 @@
+query,observed,date
+genus:rana class:amphibia institutioncode:KU,12764,5Dec2013
+institutioncode:cm class:amphibia OR class:reptilia,138837,5Dec2013
+institutioncode:crcm,29458,03/23/14
+institutioncode:dmnh,81931,6Dec2013
+institutioncode:dmns class:aves,41655,5Dec2013
+institutioncode:lacm class:Actinopterygii,160860,6Dec2013
+institutioncode:lacm class:amphibia,73241,6Dec2013
+institutioncode:lacm class:aves,114674,6Dec2013
+institutioncode:lacm class:mammalia,96493,6Dec2013
+institutioncode:msb,268557,6Dec2013
+class:reptilia institutioncode:KU,149764,5Dec2013
+institutioncode:nysm,14169,9Dec2013
+institutioncode:pmns OR institutioncode:NYSM,21603,6Dec2013
+institutioncode:tcwc,217561,6Dec2013
+institutioncode:uta,62792,6Dec2013
+institutioncode:utep,53758,6Dec2013
+class:amphibia institutioncode:KU,179080,5Dec2013
