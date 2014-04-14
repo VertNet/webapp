@@ -91,7 +91,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -120,7 +120,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -149,7 +149,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -178,8 +178,8 @@
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
-              <% if (replaceURLWithHTMLLinks(val)) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+              <% if (val.startsWith('http')) { %>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -209,7 +209,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -240,7 +240,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -270,7 +270,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -300,7 +300,7 @@
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
-                <a target='_blank' href="<%= val %>"><%= val %></a>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
@@ -323,19 +323,25 @@
             <% } else { %>
               Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
             <% } %></dd>
+        <br>
         <dt>Citation</dt>
         <dd><%= this.model.get('citation') %></dd>
+        <br>
         <dt>Institution</dt>
         <dd><%= this.model.get('orgname') %></dd>
+        <br>
         <dt>Resource</dt>
         <dd><%= this.model.get('title') %></dd>
+        <br>
         <dt>Contact</dt>
         <dd>
         <%= this.model.get('contact') %> <<a href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
         </dd>
+        <br>
         <dt>Published</dt>
         <dd><%= this.model.get('pubdate') %></dd>
-        <dt>URL</dt>
+        <br>
+        <dt>Source URL</dt>
         <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
       </dl>
     </div>

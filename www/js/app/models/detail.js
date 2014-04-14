@@ -87,7 +87,7 @@ define([
 
     replaceURLWithHTMLLinks: function(text) {
       var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      var parts = test.split(/[;,|]/);
+      var parts = text.split(/[;,|]/);
       var newtext = "";
       for (var i = 0; i < parts.length; i++)
       {
@@ -99,7 +99,6 @@ define([
           }
       }
       return newtext;
-//      return text.replace(exp,"<a href='$1'>$1</a>"); 
     },
 
     getRights: function() {
