@@ -66,7 +66,7 @@ get_rowcnts_maxrows = -1#10000
 # counted after get_rowcnts_maxqueries have been processed.  Note that if
 # get_rowcnts_maxrows (above) is also > 0, then queries must still meet the maximum
 # size requirement.
-get_rowcnts_maxqueries = 23
+get_rowcnts_maxqueries = 100
 
 # If "limit_rowcnts" == True, then record counting will stop if the total number of
 # records counted exceeds get_rowcnts_maxrows * 2.  If get_rowcnts_maxrows == -1
@@ -274,9 +274,9 @@ for testcase in csvf:
                 # Calculate the percent error.  Check if we got back a string or integer
                 # for the total record count and handle it accordingly.
                 if str(obscnt)[0] == '>':
-                    csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / robj['count'])
+                    csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / int(obscnt[1:]))
                 else:
-                    csvrow['error'] = float(abs(obscnt - int(robj['count']))) / robj['count']
+                    csvrow['error'] = float(abs(obscnt - int(robj['count']))) / obscnt
                     qerror_cnt += 1
                     qerror_total += csvrow['error']
 
