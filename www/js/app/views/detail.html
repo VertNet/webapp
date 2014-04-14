@@ -21,7 +21,10 @@
 <div id="occ-detail-content" class="container">
 
   <div class="page-header">
+<!--
     <h1><%= this.model.get('institutioncode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> <small><%= this.model.getSciName() %> </small></h1>
+-->
+    <h1><% var occid = this.model.getOccIdentifier() %> <%= occid %> <small><%= this.model.getSciName() %> </small></h1>
   </div>
 
   <!--   <div class="row">

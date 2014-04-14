@@ -23,6 +23,7 @@
   <div class="page-header">
     <h1>Search <small>VertNet Beta</small></h1>
   </div>
+    <p class="lead">Help us create a plan for VertNet's future. Take our <a href="http://www.vertnet.org/feedback/sustainabilitysurvey.html" target="_blank" title="VertNet Sustainability Survey">Sustainability Survey</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>.</p>
   <div id="whoops" class="alert fade in">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <strong>Whoops!</strong> Search is a little slow right now. Automatically retrying now...
@@ -33,21 +34,21 @@
       <div id="search-keywords-div">
         <input id="search-keywords-box" type="text" placeholder="full text record search...">
         <a id="show-search-options" href="#">
-          <span id="search-carat" class="caretAdvanced"><h7 class="small">Expand Search Options</h7></span>
+          <span id="search-carat" class="caretAdvanced"><h7 class="small">More search options</h7></span>
         </a>
       </input>
     </div>            
     <div id="advanced-search-form">
       <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
-      <legend>Advanced search</legend>
+      <legend>Search options</legend>
       Find occurrences with...<p>
 
       <form class="form-horizontal" role="form">
         <div id="filters">
 
           <div class="form-group">
-            <label class="col-md-2 control-label">These filters</label>
-            <div class="checkbox">
+            <label class="col-lg-2 control-label">These filters</label>
+            <div class="vncheckbox">
               <label class="col-md-2">
                 <input id="tissue" type="checkbox"> Has tissues
               </label>
@@ -55,13 +56,13 @@
                 <input id="media" type="checkbox"> Has media
               </label>
               <label class="col-md-2">
-                <input id="hastypestatus" type="checkbox"> Is type specimen
+                <input id="hastypestatus" type="checkbox"> Has type status
               </label>
               <label class="col-md-2">
                 <input id="mappable" type="checkbox"> Is mappable
               </label>
               <label class="col-md-2">
-                <input id="spatialfilter" type="checkbox"> Within circle on map...
+                <input id="spatialfilter" type="checkbox"> In circle on map
               </label>                                          
             </div>
           </div>
@@ -111,20 +112,6 @@
         </div>
         
         <div class="form-group">
-          <label class="col-md-2 control-label">Years ranging from</label>
-          <div class="col-md-2">
-            <input class="form-control" type="text" id="datestart" placeholder='1888'>
-          </div>
-          <div id="dateto" class="col-md-1">
-                 to
-          </div>
-          <div class="col-md-2">
-            <input class="form-control" type="text" id="dateend" placeholder='1922'>
-          </div>
-        </div>
-        <!-- </div> -->
-
-        <div class="form-group">
           <label class="col-lg-2 control-label">Record type</label>
           <div class="col-lg-10">
             <select class="form-control" id="recordtype">
@@ -146,9 +133,6 @@
                 <input id="catalognumber" class="form-control" type="text" placeholder="CatalogNumber">
               </div>
               <div class="col-md-2">
-                <input id="year" class="form-control" type="text" placeholder="Year">
-                </div>
-              <div class="col-md-2">
                 <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
               </div>                        
             </div>
@@ -157,9 +141,6 @@
               <label class="col-md-2 control-label"></label>
               <div class="col-md-2">
                 <input id="class" class="form-control" type="text" placeholder="Class">
-              </div>
-              <div class="col-md-2">
-                <input id="family" class="form-control" type="text" placeholder="Family">
               </div>
               <div class="col-md-2">
                 <input id="genus" class="form-control" type="text" placeholder="Genus">
@@ -183,6 +164,20 @@
             </div>
             
           </div> 
+
+        <div class="form-group">
+          <label class="col-md-2 control-label">Years ranging from</label>
+          <div class="col-md-2">
+            <input class="form-control" type="text" id="datestart" placeholder='1888'>
+          </div>
+          <div id="dateto" class="col-md-0">
+                 to
+          </div>
+          <div class="col-md-2">
+            <input class="form-control" type="text" id="dateend" placeholder='1922'>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="col-lg-2 control-label">Sorted by</label>
           <div class="col-lg-10">
