@@ -684,15 +684,8 @@ define([
         this.count = response.count;
       }
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      displayCount = null;
-      if (response.count < 100) {
-        displayCount = 'dozens';
-      } else if (response.count < 1000) {
-        displayCount = 'hundreds';
-      } else if (response.count < 1000000) {
-        displayCount = 'thousands';
-      } else {
-        displayCount = 'millions';
+      if (response.count > 10000) {
+        displayCount = '>10k';
       }
       this.countLoaded = items.length + this.occList.length;
 
