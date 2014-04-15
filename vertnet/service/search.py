@@ -54,6 +54,9 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             sort_options=sort_options)
             #returned_fields=['record', 'location'])        
     else:
+        # Always use 10,000 as the value for number_found_accuracy. Based on
+        # extensive testing, using this maximum-allowed value results in the best
+        # count accuracy and incurs only a minor performance penalty.
         options = search.QueryOptions(
             limit=limit,
             # See Stucky research, Mar 2014.
