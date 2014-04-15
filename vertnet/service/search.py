@@ -56,7 +56,9 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
     else:
         options = search.QueryOptions(
             limit=limit,
-            number_found_accuracy=limit+1,
+            # See Stucky research, Mar 2014.
+            number_found_accuracy=10000,
+#            number_found_accuracy=limit+1,
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
 
