@@ -68,9 +68,9 @@ class SearchApi(webapp2.RequestHandler):
                 cursor = cursor.web_safe_string
 
             # If count > 10,000, do not return the actual value of count
-            # because it will be unreliable (extensive testing revealed that
-            # even for relatively small queries, it can be in error by one
-            # or more orders of magnitude).
+            # because it will be unreliable.  Extensive testing revealed that
+            # even for relatively small queries (>10,000 but <30,000 records),
+            # it can be in error by one or more orders of magnitude.
             if count > 10000:
                 count = '>10000'
 
