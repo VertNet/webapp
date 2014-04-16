@@ -66,6 +66,14 @@ class SearchApi(webapp2.RequestHandler):
                 query_count = limit
             if cursor:
                 cursor = cursor.web_safe_string
+
+            # If count > 10,000, do not return the actual value of count
+            # because it will be unreliable.  Extensive testing revealed that
+            # even for relatively small queries (>10,000 but <30,000 records),
+            # it can be in error by one or more orders of magnitude.
+            if count > 10000:
+                count = '>10000'
+
             response = json.dumps(dict(recs=recs, cursor=cursor, count=count))
             params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong)
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
