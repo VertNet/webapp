@@ -41,6 +41,7 @@ define([
 
     initialize: function (options, app) {
       this.app = app;
+      this.NUMBER_FOUND_ACCURACY = 10000;
       this.DOWNLOAD_THRES = 1000;
       this.PAGE_SIZE = 100;
       this.keywords = []; // Search query keywords
@@ -337,7 +338,13 @@ define([
         } 
         this.$('#queue').show();
         this.$('#submit-download-btn').show();
-        this.$('#myModalLabel').show();
+        if (this.count <= this.NUMBER_FOUND_ACCURACY) {
+          this.$('#bigModalLabel').hide();
+          this.$('#smallModalLabel').show();
+        } else {
+          this.$('#bigModalLabel').show();
+          this.$('#smallModalLabel').hide();
+        }
         if (this.count <= this.DOWNLOAD_THRES) {
           this.$('#instant-msg').show();
           this.$('#queue-msg').hide();
@@ -796,7 +803,8 @@ define([
           this.$('#myModal').modal('hide');
         } else {
           $.get('/service/download', request);
-          this.$('#myModalLabel').hide();
+          this.$('#bigModalLabel').hide();
+          this.$('#smallModalLabel').hide();
           this.$('#confirmation').show();
           this.$('#queue').hide();
           this.$('#submit-download-btn').hide();
