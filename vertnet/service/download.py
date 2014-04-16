@@ -56,7 +56,7 @@ class WriteHandler(webapp2.RequestHandler):
                     if not curs:
                         params = dict(query=q, type='download', count=count, downloader=email, download=filename, latlon=latlon)
                         taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
-                    chunk = _get_tsv_chunk(records)
+                    chunk = '%s\n' % _get_tsv_chunk(records)
                     f.write(chunk) 
                     f.close(finalize=False)     
                     success = True
