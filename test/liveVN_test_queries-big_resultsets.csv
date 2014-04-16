@@ -1,18 +1,18 @@
 query,observed,date
-genus:rana class:amphibia institutioncode:KU,12764,5Dec2013
-institutioncode:cm class:amphibia OR class:reptilia,138837,5Dec2013
-institutioncode:crcm,29458,03/23/14
-institutioncode:dmnh,81931,6Dec2013
-institutioncode:dmns class:aves,41655,5Dec2013
-institutioncode:lacm class:Actinopterygii,160860,6Dec2013
-institutioncode:lacm class:amphibia,73241,6Dec2013
+genus:rana class:amphibia institutioncode:KU,12851,14Apr14 18:40:29
+institutioncode:cm class:amphibia OR class:reptilia,140240,14Apr14 18:41:56
+institutioncode:crcm,29455,14Apr14 19:02:25
+institutioncode:dmnh,82954,14Apr14 19:06:10
+institutioncode:dmns class:aves,42305,14Apr14 19:18:19
+institutioncode:lacm class:Actinopterygii,163372,14Apr14 19:24:02
+institutioncode:lacm class:amphibia,74169,14Apr14 19:53:53
 institutioncode:lacm class:aves,114674,6Dec2013
-institutioncode:lacm class:mammalia,96493,6Dec2013
-institutioncode:msb,268557,6Dec2013
-class:reptilia institutioncode:KU,149764,5Dec2013
-institutioncode:nysm,14169,9Dec2013
-institutioncode:pmns OR institutioncode:NYSM,21603,6Dec2013
-institutioncode:tcwc,217561,6Dec2013
-institutioncode:uta,62792,6Dec2013
-institutioncode:utep,53758,6Dec2013
-class:amphibia institutioncode:KU,179080,5Dec2013
+institutioncode:lacm class:mammalia,97467,14Apr14 20:21:15
+institutioncode:msb,278484,14Apr14 20:35:22
+class:reptilia institutioncode:KU,151522,14Apr14 21:22:57
+institutioncode:nysm,28133,14Apr14 21:47:24
+institutioncode:pmns OR institutioncode:NYSM,35642,14Apr14 21:51:08
+institutioncode:tcwc,219584,14Apr14 21:55:42
+institutioncode:uta,103129,14Apr14 22:36:36
+institutioncode:utep,54097,14Apr14 22:51:59
+class:amphibia institutioncode:KU,181014,14Apr14 22:58:15
