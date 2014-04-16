@@ -26,7 +26,7 @@
     <p class="lead">Help us create a plan for VertNet's future. Take our <a href="http://www.vertnet.org/feedback/sustainabilitysurvey.html" target="_blank" title="VertNet Sustainability Survey">Sustainability Survey</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>.</p>
   <div id="whoops" class="alert fade in">
     <button type="button" class="close" data-dismiss="alert">×</button>
-    <strong>Whoops!</strong> Search is a little slow right now. Automatically retrying now...
+    Search is a little slow right now. Automatically retrying ...
   </div>
   <div id="search-form">
     <div class="row">
@@ -299,12 +299,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h1 id="myModalLabel">Download ~<span id="reccount"></span> records</h1>
+        <h1 id="bigModalLabel">Download >10k records</h1>
+        <h1 id="smallModalLabel">Download <span id="reccount"></span> records</h1>
       </div>
-      <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> when it's ready.</div>
+      <div id="confirmation" class="alert alert-success">Thanks! Your download request was received! We'll email <span id="dl-email"></span> as soon as it's ready.</div>
       <div id="queue" class="modal-body">
-        <p id="queue-msg" class="lead">You're search results are pretty big so it's going to take us a few minutes to prepare them for download. Name your result set, give us your email, and we'll send you a download link to a tab-separated text file containing all your search results as soon as it's ready. Simple as that!</p>
-        <p id="instant-msg" class="lead">Your results are ready for download right now. Just enter a filename and click the download button for a tab-separated text file containing all your search results.</p>
+        <p id="queue-msg" class="lead">Your search results are big enough that we'll have to prepare them for download. Name your result set, give us your email, and we'll send you a download link to the file containing your search results as soon as it's ready.</p>
+        <p id="instant-msg" class="lead">Your search results are ready for download right now. Just enter a filename and click the download button.</p>
         <form class="form-horizontal" role="form">
           <div id="name" class="form-group">
             <label class="col-lg-2 control-label">Filename</label>
@@ -326,4 +327,3 @@
     </div>
   </div>
 </div>
-
