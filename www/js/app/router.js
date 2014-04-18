@@ -35,12 +35,13 @@ define([
   'models/publisher',
   'models/resource',
   'models/resources',
+  'views/stats',
   'spin',
   'util',
   'map'
 ], function ($, _, Backbone, bqp, rpc, mps, HomeView, HeaderView, FooterView, 
       SearchView, OccDetail, OccModel, AboutView, PublishersView, PubView, PubModel, 
-      ResourceModel, ResourceList, Spin, util, map) {
+      ResourceModel, ResourceList, StatsView, Spin, util, map) {
   
   var Router = Backbone.Router.extend({
 
@@ -52,6 +53,7 @@ define([
       this.route('publishers', 'publishers', _.bind(this.publishers, this));
       this.route('o/:publisher/:resource', 'occurrece', _.bind(this.occurrence, this));
       this.route('p/:publisher', 'publisher', _.bind(this.publisher, this));
+      this.route('stats', 'stats', _.bind(this.stats, this));
       mps.subscribe('navigate', _.bind(function (place) {
         var path = place.path;
         delete place['path'];
@@ -136,7 +138,20 @@ define([
         this.aboutView.setup();
       }    
     },
-        
+    
+    stats: function() {
+      this.detachCurrentView();
+      this.initHeaderFooter();
+      if (!this.statsView) {
+        this.statsView = new StatsView({}, this.app);
+        $('#content').append(this.statsView.render().el);
+        this.statsView.setup();
+      } else {
+        $('#content').append(this.statsView.el);
+        this.statsView.setup();
+      }
+    },
+    
     occurrence: function(publisher, resource, params) {
       var model = this.app.occDetailModel;
       var request = {};
