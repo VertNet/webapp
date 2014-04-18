@@ -3,6 +3,7 @@ import webapp2
 import urllib
 import logging
 import os
+import json
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -25,6 +26,7 @@ def apikey():
 class TrackerHandler(webapp2.RequestHandler):
     def post(self):  
         query, error, type, count, downloader, download, latlon = map(self.request.get, ['query', 'error', 'type', 'count', 'downloader', 'download', 'latlon'])
+
         try:
             count = int(count)
         except:
@@ -34,11 +36,14 @@ class TrackerHandler(webapp2.RequestHandler):
         except:
             lat, lon = -99999, -99999
         try:
-            res_counts = self.request.get('res_counts')
+            res_counts = json.loads(self.request.get('res_counts'))
         except:
             res_counts = {}
+        
+        logging.info(len(res_counts))
+        
         log_sql = """INSERT INTO query_log(client,query,error,type,count,downloader,download,lat,lon, results_by_resource) VALUES ('%s','%s','%s','%s',%s,'%s','%s',%s,%s,'%s');update query_log set the_geom = CDB_LatLng(lat,lon)"""
-        log_sql = log_sql % (CLIENT, query, error, type, count, downloader,download,lat,lon,res_counts)
+        log_sql = log_sql % (CLIENT, query, error, type, count, downloader,download,lat,lon,json.dumps(res_counts))
         
         rpc = urlfetch.create_rpc()
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
@@ -47,7 +52,27 @@ class TrackerHandler(webapp2.RequestHandler):
         try:
             rpc.get_result()
         except urlfetch.DownloadError:
-            logging.error("Error logging API - %s" % (query))            
+            logging.error("Error logging API - %s" % (query))   
+        # res_counts is too long
+        except urlfetch.InvalidURLError:
+            logging.info('Too many resources for a single CartoDB call. Inserting each resource with its own call')
+            initial = True
+            for res in res_counts:
+                if initial is True:
+                    initial = False
+                else:
+                    type = 'query-continued'
+                log_sql = """INSERT INTO query_log(client,query,error,type,count,downloader,download,lat,lon, results_by_resource) VALUES ('%s','%s','%s','%s',%s,'%s','%s',%s,%s,'%s');update query_log set the_geom = CDB_LatLng(lat,lon)"""
+                log_sql = log_sql % (CLIENT, query, error, type, count, downloader,download,lat,lon,json.dumps({res: res_counts[res]}))
+            
+                rpc = urlfetch.create_rpc()
+                log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
+                logging.info(log_url)
+                urlfetch.make_fetch_call(rpc, log_url)
+                try:
+                    rpc.get_result()
+                except urlfetch.DownloadError as e:
+                    logging.error("Error logging API - %s: %s" % (query, e))
             
 api = webapp2.WSGIApplication(
     [('/apitracker', TrackerHandler)],

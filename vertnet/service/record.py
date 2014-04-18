@@ -32,6 +32,10 @@ class RecordService(remote.Service):
     def get(self, message):
         """Return a RecordList."""
         recs, cursor, count = vnsearch.query('id:%s' % message.id, 1)
+        res_counts = {recs[0]['url']: recs[0]['id']}
+        params = dict(query='id:%s' % message.id, type='record-detail', count=1, latlon=self.cityLatLong, res_counts=json.dumps(res_counts))
+        taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+        
         return RecordPayload(id=message.id, json=json.dumps(recs[0]))
 
     @remote.method(RecordList, RecordList)
