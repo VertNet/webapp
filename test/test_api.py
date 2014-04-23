@@ -5,24 +5,24 @@ the number of rows returned in the result.  Accepts a CSV file containing
 test queries and the number of rows previously observed for each query.
 The results are written to a CSV file.  The input file should be a CSV
 file with at least 2 columns:
-  'query' -- contains the search queries to run; and
+  'query' -- contains the search queries to run;
   'observed' -- indicates how many rows were returned for the previous test.
 
-Results are written to an output CSV file with 5 columns:
+Results are written to an output CSV file with 6 columns:
   'query' -- the search queries that were run;
   'prev_rowcnt' -- corresponds with 'observed' in the input CSV file;
   'time' -- the date and time at which the query was started;
-  'expcnt' -- the number of results according to the "count" result property;
-  'obscnt' -- the actual number of records returned.
-  'error' -- the absolute percent error of expcnt compared to obscnt
+  'expcnt' -- the number of records according to the "count" result property;
+  'obscnt' -- the actual number of records returned;
+  'error' -- the absolute percent error of expcnt compared to obscnt.
 
 Summary statistics are written to a 2nd CSV file with 5 columns:
-  'limit' -- the number of results returned per API query
-  'ae_accuracy' -- the value of 'ae_cnt_accuracy' for this run
-  'time_total' -- the total time (in seconds) to complete all test queries
-  'time_finish' -- the date/time at which the tests were completed
-  'error' -- the mean error for all queries for which error was calculated
-  'error_n' -- the total number of queries for which error was calculated
+  'limit' -- the number of results returned per API query;
+  'ae_accuracy' -- the value of 'ae_cnt_accuracy' for this run;
+  'time_total' -- the total time (in seconds) to complete all test queries;
+  'time_finish' -- the date/time at which the tests were completed;
+  'error' -- the mean error for all queries for which error was calculated;
+  'error_n' -- the total number of queries for which error was calculated.
 
 The names of the input and output CSV files should be specified as
 command-line arguments.  An example follows.
