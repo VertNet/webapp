@@ -1,26 +1,26 @@
-query,observed,date,expct
-catalognumber:29049 class:Aves,19,03/23/14,
-cyanocitta stelleri state:colorado,36,03/23/14,
-institutioncode:crcm,29458,03/23/14,
-institutioncode:crcm Gaviidae,44,03/23/14,
-institutioncode:crcm Podicipedidae,152,03/23/14,
-institutioncode:crcm Procellariidae,96,03/23/14,
-institutioncode:crcm woodby,21,03/23/14,
-institutioncode:dmns class:mammalia,13633,03/23/14,
-institutioncode:gsu class:reptilia,9062,03/23/14,
-institutioncode:GSU pipiens,1,03/23/14,
-institutioncode:hsu class:aves preparations:skin,7104,03/23/14,
-institutioncode:hsu class:mammalia,2833,03/23/14,
-institutioncode:hsu collectioncode:WildlifeEggsNest county:del norte,177,03/23/14,
-institutioncode:hsu family:Phalacrocoracidae,97,03/23/14,
-institutioncode:hsu genus:uria,167,03/23/14,
-institutioncode:hsu order:carnivora,556,03/23/14,
-institutioncode:hsu order:rodentia,1215,03/23/14,
-institutioncode:isu,4410,03/23/14,
-institutioncode:isu class:aves,3200,03/23/14,
-institutioncode:isu class:mammalia,1130,03/23/14,
-institutioncode:mpm mounted,27,03/23/14,
-institutioncode:pmns,7509,03/23/14,
-perisoreus canadensis state:colorado,51,03/23/14,
-specificepithet:pipiens genus:Rana class:amphibia institutioncode:KU,2136,03/23/14,
-Sus scrofa,932,03/23/14,
+query,observed,date
+catalognumber:29049 class:Aves,20,04/23/14
+cyanocitta stelleri state:colorado,36,04/23/14
+institutioncode:crcm,29455,04/23/14
+institutioncode:crcm Gaviidae,44,04/23/14
+institutioncode:crcm Podicipedidae,152,04/23/14
+institutioncode:crcm Procellariidae,96,04/23/14
+institutioncode:crcm woodby,21,04/23/14
+institutioncode:dmns class:mammalia,13973,04/23/14
+institutioncode:gsu class:reptilia,9062,04/23/14
+institutioncode:GSU pipiens,1,04/23/14
+institutioncode:hsu class:aves preparations:skin,7104,04/23/14
+institutioncode:hsu class:mammalia,2833,04/23/14
+institutioncode:hsu collectioncode:WildlifeEggsNest county:del norte,177,04/23/14
+institutioncode:hsu family:Phalacrocoracidae,97,04/23/14
+institutioncode:hsu genus:uria,167,04/23/14
+institutioncode:hsu order:carnivora,556,04/23/14
+institutioncode:hsu order:rodentia,1215,04/23/14
+institutioncode:isu,4410,04/23/14
+institutioncode:isu class:aves,3200,04/23/14
+institutioncode:isu class:mammalia,1130,04/23/14
+institutioncode:mpm mounted,27,04/23/14
+institutioncode:pmns,7509,04/23/14
+perisoreus canadensis state:colorado,52,04/23/14
+specificepithet:pipiens genus:Rana class:amphibia institutioncode:KU,2137,04/23/14
+Sus scrofa,1515,04/23/14
