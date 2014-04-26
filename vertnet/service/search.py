@@ -307,7 +307,7 @@ def _get_rec(doc):
 def delete_entity(entity):
     yield op.db.Delete(entity)
 
-def query(q, limit, cnt_accuracy, sort=None, curs=search.Cursor()):
+def query(q, limit, cnt_accuracy=10000, sort=None, curs=search.Cursor()):
     if IS_DEV:
         index_name = 'dwc_search'
         # Set the index name to 'dwc' so that we can work with the test data generated
