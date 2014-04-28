@@ -261,7 +261,7 @@ for testcase in csvf:
         csvrow['query'] = testcase['query']
         csvrow['time'] = time.strftime('%d%b%y %H:%M:%S')
         csvrow['obscnt'] = ''
-        csvrow['error'] = ''
+        csvrow['error'] = 'n/a'
 
         try:
             # Attempt to query the VertNet search API with the test query.
@@ -272,13 +272,15 @@ for testcase in csvf:
                 csvrow['obscnt'] = obscnt
 
                 # Calculate the percent error.  Check if we got back a string or integer
-                # for the total record count and handle it accordingly.
-                if str(obscnt)[0] == '>':
-                    csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / int(obscnt[1:]))
-                else:
-                    csvrow['error'] = float(abs(obscnt - int(robj['count']))) / obscnt
-                    qerror_cnt += 1
-                    qerror_total += csvrow['error']
+                # for the total record count and handle it accordingly.  If the returned
+                # count value begins with '>', do nothing.
+                if robj['count'][0] != '>':
+                    if str(obscnt)[0] == '>':
+                        csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / int(obscnt[1:]))
+                    else:
+                        csvrow['error'] = float(abs(obscnt - int(robj['count']))) / obscnt
+                        qerror_cnt += 1
+                        qerror_total += csvrow['error']
 
             csvrow['expcnt'] = robj['count']
             print 'expected count:', csvrow['expcnt'], '; actual count:', csvrow['obscnt']
