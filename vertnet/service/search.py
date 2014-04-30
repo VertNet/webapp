@@ -84,7 +84,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
                 logging.info('No search results for: %s' % q)
                 return [], None, 0
         except Exception, e:
-            logging.exception('Search failed: %s' % e)   
+            logging.exception('Search failed.\nQUERY:\n %s\nERROR:\n%s' % (q,e) )   
             error = e
             retry_count += 1
 
