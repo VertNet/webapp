@@ -61,7 +61,7 @@ class WriteHandler(webapp2.RequestHandler):
                     f.close(finalize=False)     
                     success = True
             except Exception as e:
-                logging.error("I/O error %s" % e)
+                logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s" % (filename,q) )
                 retry_count += 1
                 raise e
 
