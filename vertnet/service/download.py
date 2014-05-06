@@ -51,7 +51,7 @@ class WriteHandler(webapp2.RequestHandler):
         while not success and retry_count < max_retries:
             try:
                 with files.open(writable_file_name, 'a') as f:
-                    records, next_cursor, count = vnsearch.query(q, 1000, curs=curs)
+                    records, next_cursor, count = vnsearch.query(q, 400, curs=curs)
                     if not curs:
                         params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
                         taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
