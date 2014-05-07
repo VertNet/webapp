@@ -84,6 +84,10 @@ using_test_API = False
 default_ae_limit = 800
 default_ae_cnt_accuracy = 10000
 
+# Set to True to dump the HTML message bodies of HTTP error responses to the output
+# file.  If False, then only the HTTP status code will be saved.
+dump_HTTP_errmsg = True
+
 
 # Get the HTTP response code messages.
 HTTPresponses = BaseHTTPRequestHandler.responses
@@ -114,13 +118,17 @@ def queryVN(querystr, cursor=''):
     geturl = searchurl + '?' + urllib.urlencode(data)
     #print geturl
 
-    # The number of times to retry the request in case of connection failure.
+    # The number of times to retry the request in case of TCP connection failure
+    # or an HTTP error.
     maxretries = 10
+
+    # The delay between retry attempts.
+    retrydelay = 30
     
     success = False
     retries = 0
     # Try the request until we get a result back or the maximum number of
-    # retries has been exceeded due to TCP errors.
+    # retries has been exceeded due to TCP or HTTP errors.
     while not(success):
         try:
             res = urllib2.urlopen(geturl)
@@ -130,10 +138,20 @@ def queryVN(querystr, cursor=''):
             # We got a TCP connection error, so increment the retries counter
             # and initiate the request again next time through the loop.
             print 'Uh oh, got a TCP socket error:', err
-            print 'Retrying request.'
+            print 'Retrying request in ' + str(retrydelay) + ' seconds.'
             retries += 1
             if retries > maxretries:
                 sys.exit('TCP connection failed; maximum retries exceeded.')
+            time.sleep(retrydelay)
+        except urllib2.HTTPError as err:
+            print 'Uh oh, got HTTP error ' + str(err.code) + ': ' + HTTPresponses[err.code][0] + '.'
+            print 'Retrying request in ' + str(retrydelay) + ' seconds.'
+            retries += 1
+            if retries > maxretries:
+                # Maximum number of retries exceeded, so pass the exception on
+                # to the caller.
+                raise
+            time.sleep(retrydelay)
 
     return rjson
 
@@ -286,7 +304,9 @@ for testcase in csvf:
             print 'expected count:', csvrow['expcnt'], '; actual count:', csvrow['obscnt']
         except urllib2.HTTPError as err:
             csvrow['expcnt'] = 'HTTP error ' + str(err.code) + ': ' + HTTPresponses[err.code][0]
-            print 'Uh oh.  Got', csvrow['expcnt'] + '.'
+            if dump_HTTP_errmsg:
+                csvrow['obscnt'] = err.read()
+            print 'Request failed after exceeding the maximum retries.  Got', csvrow['expcnt'] + '.'
 
         query_cnt += 1
         csvwriter.writerow(csvrow)
