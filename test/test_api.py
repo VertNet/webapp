@@ -274,7 +274,7 @@ for testcase in csvf:
                 # Calculate the percent error.  Check if we got back a string or integer
                 # for the total record count and handle it accordingly.  If the returned
                 # count value begins with '>', do nothing.
-                if robj['count'][0] != '>':
+                if str(robj['count'])[0] != '>':
                     if str(obscnt)[0] == '>':
                         csvrow['error'] = '>' + str(float(abs(int(obscnt[1:]) - int(robj['count']))) / int(obscnt[1:]))
                     else:
@@ -290,6 +290,8 @@ for testcase in csvf:
 
         query_cnt += 1
         csvwriter.writerow(csvrow)
+        # Write the file buffer to disk so we don't lose everything in case of power failure.
+        fout.flush()
 
 if qerror_cnt > 0:
     meanerror = qerror_total / qerror_cnt
