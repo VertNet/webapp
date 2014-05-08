@@ -84,7 +84,69 @@ define([
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
     },
+    
+    QUALITY: ['noCoords', 'noCountry', 'isZero', 'isOutOfWorld', 'isLowPrecision',
+      'isOutOfCountry', 'isTransposed', 'isNegatedLatitude', 'isNegatedLongitude',
+      'distanceToCountry', 'distanceToRangemap'],
 
+    // TODO: PUT FLAGS IN QUALITY ELEMENTS AND FIND THE WAY TO RETRIEVE THOSE FROM DETAIL.HTML
+    getQualityFlags: function() {
+      var lat = this.get('decimallatitude');
+      var lon = this.get('decimallongitude');
+      var country = this.get('country');
+      if (country == 'Not specified') {
+        country = null;
+      }
+      var binomial = this.get('scientificname');
+      var issues_final = {};
+      if (lat && lon) {
+          url = 'https://jot-mol-qualityapi.appspot.com/_ah/api/qualityapi/v1/geospatial/'
+          lat = lat.trim()
+          lon = lon.trim()
+          url = url.concat(lat,'/',lon,'/',country,'/',binomial)
+          console.log(url);
+          var issues = null;
+          $.ajax({
+              url: url,
+              type: 'get',
+              dataType: 'json',
+              async: false,
+              success: function(data) {
+                  issues = data;
+              }
+          });
+        } else {
+            issues = {"noCoordinates":true}
+        }
+
+      if (issues) {
+        for (var key in issues) {
+            if (issues[key].toString() == "false") {
+              issues_final[key] = 'No';
+            } else if (issues[key].toString() == "true") {
+              issues_final[key] = 'YES';
+              issues_final["showWarning"] = true;
+            } else if (issues[key].toString() == "") {
+              issues_final[key] = "";
+            } else {
+              issues_final[key] = issues[key]
+            }
+        }
+      }
+
+      return issues_final;
+    },
+    
+    checkIssues: function(issues) {
+        var res = false;
+        for (var key in issues) {
+            if (issues[key] = 'YES') {
+                res = true;
+            }
+        }
+        return res
+    },
+    
     getOccIdentifier: function() {
       var occid = this.get('institutioncode');
       if (this.get('collectioncode')) {
