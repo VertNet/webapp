@@ -50,6 +50,9 @@
     <li>
       <a class="" href="#datasource" data-toggle="tab">Data Rights</a>
     </li>   
+    <li>
+        <a class="" id="quality-tab" href="#quality" data-toggle="tab">Quality Report</a>
+    </li>
     <li class="dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
       <ul class="dropdown-menu">
@@ -62,6 +65,7 @@
         <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
       </ul>
     </li>
+
   </ul>
 
   <div id="myTabContent" class="tab-content">
@@ -348,15 +352,46 @@
         <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
       </dl>
     </div>
+    
+    <!-- Quality tab -->
+    <div id="quality" class="tab-pane fade">
+    <p>
+    <!-- <p class="lead">Quality Report</p> -->
+    <blockquote id="quality-warning">
+    </blockquote>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Issue</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr><td>Are coordinates absent?</td><td id="noCoordinates"></td></tr> 
+            <tr><td>Is the country value absent?</td><td id="noCountry"></td></tr> 
+            <tr><td>Are both coordinates 0 (zero)?</td><td id="isZero"></td></tr> 
+            <tr><td>Is latitude greater than 90?</td><td id="isOutOfWorld"></td></tr> 
+            <tr><td>Has only two or less decimal figures?</td><td id="isLowPrecision"></td></tr> 
+            <tr><td>Is out of the specified country?</td><td id="isOutOfCountry"></td></tr> 
+            <tr><td>Are coordinates transposed?</td><td id="isTransposed"></td></tr> 
+            <tr><td>Is latitude negated (changed sign)?</td><td id="isNegatedLatitude"></td></tr> 
+            <tr><td>Is longitude negated (changed sign)?</td><td id="isNegatedLongitude"></td></tr> 
+            <tr><td>Distance to country (in degrees)</td><td id="distanceToCountry"></td></tr> 
+            <tr><td>Distance to species' range map (in degrees)</td><td id="distanceToRangemap"></td></tr> 
+        </tbody>
+      </table> 
+    </div>
 
      <!-- Feedback tab -->
     <div id="feedback" class="tab-pane fade"> 
       <p>
       GitHub
+      </p>
       <ul>
         <li class="github-btn">
           <a href="/auth/github" class="btn btn-default"><img src="/img/github.png"></a>
         </li>  
+      </ul>
     </div>
 </div>
 
@@ -410,7 +445,7 @@
   </div>
 </div>
 
-
+</div>
 
 
 <!-- <form class='form-horizontal' role='form'>   <div class='form-group'>
