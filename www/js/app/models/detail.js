@@ -128,6 +128,8 @@ define([
               issues_final["showWarning"] = true;
             } else if (issues[key].toString() == "") {
               issues_final[key] = "";
+            } else if (issues[key] == 0) {
+              issues_final[key] = "0";
             } else {
               issues_final[key] = issues[key]
             }
