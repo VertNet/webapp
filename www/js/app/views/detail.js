@@ -117,7 +117,6 @@ define([
         this.$('#quality-tab').click(_.bind(function(e) {
           var issues = this.model.getQualityFlags();
           console.log(issues);
-
           if (issues.noCoordinates) { this.$('#noCoordinates').text(issues.noCoordinates.toString()); }
           if (issues.noCountry) { this.$('#noCountry').text(issues.noCountry.toString()); }
           if (issues.isZero) { this.$('#isZero').text(issues.isZero.toString()); }
@@ -127,8 +126,8 @@ define([
           if (issues.isTransposed) { this.$('#isTransposed').text(issues.isTransposed.toString()); }
           if (issues.isNegatedLatitude) { this.$('#isNegatedLatitude').text(issues.isTransposed.toString()); }
           if (issues.isNegatedLongitude) { this.$('#isNegatedLongitude').text(issues.isNegatedLongitude.toString()); }
-          if (issues.distanceToCountry) { this.$('#distanceToCountry').text(issues.distanceToCountry); }
-          if (issues.distanceToRangemap) { this.$('#distanceToRangemap').text(issues.distanceToRangemap); }
+          if (issues.distanceToCountry) { this.$('#distanceToCountry').text(issues.distanceToCountry.toString()); }
+          if (issues.distanceToRangemap) { this.$('#distanceToRangemap').text(issues.distanceToRangemap.toString()); }
           
           // Display warning
           this.$('#quality-warning').hide();
