@@ -10,6 +10,7 @@ import webapp2
 import json
 import logging
 import uuid
+import time
 
 def _write_record(f, record):
     f.write('%s\n' % record.csv)
@@ -44,25 +45,34 @@ class WriteHandler(webapp2.RequestHandler):
             curs = None
         logging.info('CURSOR %s' % curs)
 
-        # Write chunk.
-        max_retries = 10
+        # Retrieve the next chunk of records and write it to the output file.
+        max_retries = 4
         retry_count = 0
         success = False
         while not success and retry_count < max_retries:
-            try:
-                with files.open(writable_file_name, 'a') as f:
-                    records, next_cursor, count = vnsearch.query(q, 400, curs=curs)
-                    if not curs:
-                        params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
-                        taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
-                    chunk = '%s\n' % _get_tsv_chunk(records)
-                    f.write(chunk) 
-                    f.close(finalize=False)     
-                    success = True
-            except Exception as e:
-                logging.error("I/O error %s" % e)
+            # First, try retrieving the data from App Engine.
+            result = vnsearch.query(q, 400, curs=curs)
+            if len(result) == 3:
+                # The query succeeded, so proceed with trying to write the results
+                # to the output file.
+                records, next_cursor, count = result
+                try:
+                    with files.open(writable_file_name, 'a') as f:
+                        if not curs:
+                            params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
+                            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
+                        chunk = '%s\n' % _get_tsv_chunk(records)
+                        f.write(chunk) 
+                        f.close(finalize=False)     
+                        success = True
+                except Exception as e:
+                    logging.error("I/O error %s" % e)
+                    retry_count += 1
+                    raise e
+            else:
+                # The query failed.  Wait 1 second, then try the query again.
                 retry_count += 1
-                raise e
+                time.sleep(1)
 
         # Queue up next chunk or current chunk if failed to write
         if not success:    
