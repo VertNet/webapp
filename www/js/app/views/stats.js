@@ -98,17 +98,17 @@ define([
             
             map.init(_.bind(function() {
                 var explInstPieData = google.visualization.arrayToDataTable(explInstArray);
-                var explInstPieOptions = {title: "Number times somebody searched for a particular institution using the \"institutioncode\" label"};
+                var explInstPieOptions = {title: "Number times somebody searched for a particular institution using the \"institutioncode\" label", backgroundColor: { fill:'transparent' }};
                 var explInstPieChart = new google.visualization.PieChart(document.getElementById("explInstPie_chart_div"));
                 explInstPieChart.draw(explInstPieData, explInstPieOptions);
                 
                 var explClassPieData = google.visualization.arrayToDataTable(explClassArray);
-                var explClassPieOptions = {title: "Number times somebody searched for a particular class using the \"class\" label"};
+                var explClassPieOptions = {title: "Number times somebody searched for a particular class using the \"class\" label", backgroundColor: { fill:'transparent' }};
                 var explClassPieChart = new google.visualization.PieChart(document.getElementById("explClassPie_chart_div"));
                 explClassPieChart.draw(explClassPieData, explClassPieOptions);
                 
                 var downloadData = google.visualization.arrayToDataTable(downloadsArray);
-                var downloadOptions = {title: "Number of Downloads, per month", legend: "none"};
+                var downloadOptions = {title: "Number of Downloads, per month", legend: "none", backgroundColor: { fill:'transparent' }};
                 var downloadChart = new google.visualization.LineChart(document.getElementById("download_chart_div"));
                 downloadChart.draw(downloadData, downloadOptions);
                 

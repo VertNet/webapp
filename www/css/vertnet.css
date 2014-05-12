@@ -1,3 +1,10 @@
+.stat-panel {
+        background-color: rgba(70,169,65, 0.3);
+        border-radius: 20px;
+        -moz-border-radius: 20px;
+        padding: 20px;
+}
+
 .vncheckbox {
        position: relative;
        min-height: 20px;
