@@ -24,3 +24,5 @@ queue:
   rate: 35/s
 - name: downloadwrite
   rate: 35/s
+  retry_parameters:
+    task_age_limit: 6d
