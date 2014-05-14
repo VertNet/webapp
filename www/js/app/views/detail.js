@@ -111,6 +111,33 @@ define([
         }, this));
 
         this.$('#confirmation').hide();
+        
+        // Handler for quality tab
+
+        this.$('#quality-tab').click(_.bind(function(e) {
+          var issues = this.model.getQualityFlags();
+          console.log(issues);
+          if (issues.noCoordinates) { this.$('#noCoordinates').text(issues.noCoordinates.toString()); }
+          if (issues.noCountry) { this.$('#noCountry').text(issues.noCountry.toString()); }
+          if (issues.isZero) { this.$('#isZero').text(issues.isZero.toString()); }
+          if (issues.isOutOfWorld) { this.$('#isOutOfWorld').text(issues.isOutOfWorld.toString()); }
+          if (issues.isLowPrecision) { this.$('#isLowPrecision').text(issues.isLowPrecision.toString()); }
+          if (issues.isOutOfCountry) { this.$('#isOutOfCountry').text(issues.isOutOfCountry.toString()); }
+          if (issues.isTransposed) { this.$('#isTransposed').text(issues.isTransposed.toString()); }
+          if (issues.isNegatedLatitude) { this.$('#isNegatedLatitude').text(issues.isTransposed.toString()); }
+          if (issues.isNegatedLongitude) { this.$('#isNegatedLongitude').text(issues.isNegatedLongitude.toString()); }
+          if (issues.distanceToCountry) { this.$('#distanceToCountry').text(issues.distanceToCountry.toString()); }
+          if (issues.distanceToRangemap) { this.$('#distanceToRangemap').text(issues.distanceToRangemap.toString()); }
+          
+          // Display warning
+          this.$('#quality-warning').hide();
+          if (issues["showWarning"] == true) {
+            this.$('#quality-warning').html("<p class=\"text-danger\">Warning: There is something wrong with this record. Check below.</p>");
+          } else {
+            this.$('#quality-warning').html("<p class=\"text-success\">Everything looks good here.</p>");
+          }
+          this.$('#quality-warning').show();
+        }, this));
 
         // Handler for click.
         this.$('#submit-issue-btn').click(_.bind(function(e) {
