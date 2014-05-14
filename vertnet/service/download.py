@@ -27,8 +27,12 @@ def _tsv(json):
     return u'\t'.join(values).encode('utf-8')
 
 def _get_tsv_chunk(records):
-    tsv_lines = map(_tsv, records)
-    chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
+    if len(records) > 0:
+        tsv_lines = map(_tsv, records)
+        chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
+    else:
+        chunk = ''
+
     return chunk
 
 # TODO: Make idempotent.
@@ -63,7 +67,7 @@ class WriteHandler(webapp2.RequestHandler):
                             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
                         chunk = '%s\n' % _get_tsv_chunk(records)
                         f.write(chunk) 
-                        f.close(finalize=False)     
+                        f.close(finalize=False)
                         success = True
                 except Exception as e:
                     logging.error("I/O error %s" % e)
@@ -88,14 +92,17 @@ class WriteHandler(webapp2.RequestHandler):
                     writable_file_name=writable_file_name, name=name, 
                     cursor=curs), queue_name="downloadwrite")
         
-        # Finalize and email.
-        else:
-            files.finalize(writable_file_name)
-            mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
-                to=email, subject="Your VertNet download from the testing instance is ready!",
-                body="""
+        # Finalize and email.  Only try to do so if the query actually succeeded.
+        elif success:
+            try:
+                files.finalize(writable_file_name)
+                mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
+                    to=email, subject="Your VertNet download from the testing instance is ready!",
+                    body="""
 You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads/%s
 """ % (name, filename.split('/')[-1]))
+            except:
+                logging.error('Error when finalizing file.  <FILENAME>' + writable_file_name + '</ENDFILENAME>')
 
 class DownloadHandler(webapp2.RequestHandler):
 
