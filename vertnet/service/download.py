@@ -90,7 +90,7 @@ You can download "%s" here within the next 24 hours: https://storage.cloud.googl
 class DownloadHandler(webapp2.RequestHandler):
 
     def _queue(self, q, email, name, latlon):
-        filename = '/gs/vn-downloads/%s-%s.txt' % (name, uuid.uuid4().hex)
+        filename = '/gs/vn-downloads2/%s-%s.txt' % (name, uuid.uuid4().hex)
         writable_file_name = files.gs.create(filename, 
             mime_type='text/tab-separated-values', acl='public-read')
         
