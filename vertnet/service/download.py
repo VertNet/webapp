@@ -84,7 +84,7 @@ class WriteHandler(webapp2.RequestHandler):
             mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads/%s
+You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads2/%s
 """ % (name, filename.split('/')[-1]))
 
 class DownloadHandler(webapp2.RequestHandler):
