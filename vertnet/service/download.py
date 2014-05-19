@@ -94,15 +94,12 @@ class WriteHandler(webapp2.RequestHandler):
         
         # Finalize and email.  Only try to do so if the query actually succeeded.
         elif success:
-            try:
-                files.finalize(writable_file_name)
-                mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
-                    to=email, subject="Your VertNet download from the testing instance is ready!",
-                    body="""
+            files.finalize(writable_file_name)
+            mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
+                to=email, subject="Your VertNet download from the testing instance is ready!",
+                body="""
 You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads2/%s
 """ % (name, filename.split('/')[-1]))
-            except:
-                logging.error('Error when finalizing file.  <FILENAME>' + writable_file_name + '</ENDFILENAME>')
 
 class DownloadHandler(webapp2.RequestHandler):
 
