@@ -99,7 +99,7 @@ class WriteHandler(webapp2.RequestHandler):
                 mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                     to=email, subject="Your VertNet download from the testing instance is ready!",
                     body="""
-You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads/%s
+You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads2/%s
 """ % (name, filename.split('/')[-1]))
             except:
                 logging.error('Error when finalizing file.  <FILENAME>' + writable_file_name + '</ENDFILENAME>')
@@ -107,7 +107,7 @@ You can download "%s" here within the next 24 hours: https://storage.cloud.googl
 class DownloadHandler(webapp2.RequestHandler):
 
     def _queue(self, q, email, name, latlon):
-        filename = '/gs/vn-downloads/%s-%s.txt' % (name, uuid.uuid4().hex)
+        filename = '/gs/vn-downloads2/%s-%s.txt' % (name, uuid.uuid4().hex)
         writable_file_name = files.gs.create(filename, 
             mime_type='text/tab-separated-values', acl='public-read')
         
