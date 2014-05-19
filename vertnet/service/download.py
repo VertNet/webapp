@@ -78,7 +78,7 @@ class WriteHandler(webapp2.RequestHandler):
                 retry_count += 1
                 time.sleep(1)
 
-        # Queue up next chunk or current chunk if failed to write
+        # Set the appropriate cursor value for the next request.
         if not success:    
             next_cursor = curs
         if next_cursor:
@@ -86,20 +86,23 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = ''
         
-        if curs:
-            taskqueue.add(url='/service/download/write', 
-                params=dict(q=self.request.get('q'), email=email, filename=filename, 
-                    writable_file_name=writable_file_name, name=name, 
-                    cursor=curs), queue_name="downloadwrite")
-        
-        # Finalize and email.  Only try to do so if the query actually succeeded.
-        elif success:
+        if success and curs == '':
+            # The query succeeded and there are no more results, so finalize and email.
             files.finalize(writable_file_name)
             mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                 to=email, subject="Your VertNet download from the testing instance is ready!",
                 body="""
 You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads2/%s
 """ % (name, filename.split('/')[-1]))
+
+        else:
+            # Either the query/file write failed, or there are more results to retrieve.
+            # Queue up another request to retrieve the next set of records.
+            taskqueue.add(url='/service/download/write', 
+                params=dict(q=self.request.get('q'), email=email, filename=filename, 
+                    writable_file_name=writable_file_name, name=name, 
+                    cursor=curs), queue_name="downloadwrite")
+        
 
 class DownloadHandler(webapp2.RequestHandler):
 
