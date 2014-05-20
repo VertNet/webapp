@@ -40,6 +40,12 @@ class WriteHandler(webapp2.RequestHandler):
     def post(self):
         q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
         q = json.loads(q)
+
+        # The variable requeuecnt keeps track of how many times a query for a single "chunk" of records
+        # has been requeued due to query or file write failure.
+        requeuecnt = int(self.request.get('requeuecnt'))
+        max_requeues = 3
+
         writable_file_name = self.request.get('writable_file_name')
         filename = self.request.get('filename')
         cursor = self.request.get('cursor')
@@ -49,13 +55,26 @@ class WriteHandler(webapp2.RequestHandler):
             curs = None
         logging.info('CURSOR %s' % curs)
 
-        # Retrieve the next chunk of records and write it to the output file.
+        # Set variables for tracking query retries, retry times, and record retrieval and output
+        # success or failure.
         max_retries = 4
         retry_count = 0
+        retry_time = 1
         success = False
-        while not success and retry_count < max_retries:
-            # First, try retrieving the data from App Engine.
+
+        # Retrieve the next chunk of records and write it to the output file.
+        while not success and retry_count <= max_retries:
+            # Check if this is a retry attempt and if so, wait before running the query.
+            if retry_count > 0:
+                logging.warning("The previous query attempt failed.  Waiting " + str(retry_time) +
+                        " seconds before retry " + str(retry_count) + ".")
+                time.sleep(retry_time)
+                # Increase successive retry times multiplicatively.
+                retry_time *= 2
+
+            # Try running the query.
             result = vnsearch.query(q, 400, curs=curs)
+
             if len(result) == 3:
                 # The query succeeded, so proceed with trying to write the results
                 # to the output file.
@@ -70,13 +89,13 @@ class WriteHandler(webapp2.RequestHandler):
                         f.close(finalize=False)
                         success = True
                 except Exception as e:
+                    # Writing the chunk to the file failed.  Retry on the next loop iteration.
                     logging.error("I/O error %s" % e)
                     retry_count += 1
                     raise e
             else:
-                # The query failed.  Wait 1 second, then try the query again.
+                # The query failed.  Retry on the next loop iteration.
                 retry_count += 1
-                time.sleep(1)
 
         # Set the appropriate cursor value for the next request.
         if not success:    
@@ -86,22 +105,43 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = ''
         
-        if success and curs == '':
-            # The query succeeded and there are no more results, so finalize and email.
-            files.finalize(writable_file_name)
-            mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
-                to=email, subject="Your VertNet download from the testing instance is ready!",
-                body="""
+        if success:
+            if curs == '':
+                # The query succeeded and there are no more results, so finalize and email.
+                files.finalize(writable_file_name)
+                mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
+                    to=email, subject="Your VertNet download from the testing instance is ready!",
+                    body="""
 You can download "%s" here within the next 24 hours: https://storage.cloud.google.com/vn-downloads2/%s
 """ % (name, filename.split('/')[-1]))
-
+            else:
+                # The query succeeded and there are more results to retrieve, so queue up
+                # a request to retrieve the next set of records.
+                taskqueue.add(url='/service/download/write', 
+                    params=dict(q=self.request.get('q'), requeuecnt=0, email=email,
+                        filename=filename, writable_file_name=writable_file_name, name=name, 
+                        cursor=curs),
+                    queue_name="downloadwrite")
         else:
-            # Either the query/file write failed, or there are more results to retrieve.
-            # Queue up another request to retrieve the next set of records.
-            taskqueue.add(url='/service/download/write', 
-                params=dict(q=self.request.get('q'), email=email, filename=filename, 
-                    writable_file_name=writable_file_name, name=name, 
-                    cursor=curs), queue_name="downloadwrite")
+            # The query or attempt to write to the output file failed.
+            if requeuecnt < max_requeues:
+                # Re-enqueue the same request.
+                taskqueue.add(url='/service/download/write',
+                    params=dict(q=self.request.get('q'), requeuecnt=(requeuecnt + 1),
+                        email=email, filename=filename, writable_file_name=writable_file_name,
+                        name=name, cursor=curs),
+                    queue_name="downloadwrite")
+            else:
+                # The maximum number of repeat enqueues was exceeded.  Send an email to the user
+                # indicating that the query failed, and give up.
+                logging.error('The maximum number of re-enqueues (' + str(max_requeues) +
+                    ') for this download file writing task was exceeded.')
+                files.finalize(writable_file_name)
+                mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
+                    to=email, subject="VertNet query failure",
+                    body="""
+Unfortunately, VertNet was unable to complete your request for the results of the query "%s".  Please try again at a later time.
+""" % (q))
         
 
 class DownloadHandler(webapp2.RequestHandler):
@@ -117,7 +157,7 @@ class DownloadHandler(webapp2.RequestHandler):
             f.close(finalize=False) 
         
         # Queue up downloads
-        taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q), 
+        taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q), requeuecnt=0,
             email=email, name=name, filename=filename, writable_file_name=writable_file_name, latlon=latlon), 
             queue_name="downloadwrite")
 
