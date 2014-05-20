@@ -183,7 +183,10 @@ We are sorry to report that VertNet was unable to complete your request for the 
                 mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                     to=email, subject="VertNet query failure",
                     body=msg)
-                files.finalize(writable_file_name)
+                try:
+                    files.finalize(writable_file_name)
+                except Exception as e:
+                    logging.error("I/O error during last attempt at finalize() before terminating: %s" % e)
         
 
 class DownloadHandler(webapp2.RequestHandler):
