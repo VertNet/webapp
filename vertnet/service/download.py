@@ -44,7 +44,7 @@ class WriteHandler(webapp2.RequestHandler):
         # The variable requeuecnt keeps track of how many times a query for a single "chunk" of records
         # has been requeued due to query or file write failure.
         requeuecnt = int(self.request.get('requeuecnt'))
-        max_requeues = 3
+        max_requeues = 4
 
         writable_file_name = self.request.get('writable_file_name')
         filename = self.request.get('filename')
@@ -55,15 +55,26 @@ class WriteHandler(webapp2.RequestHandler):
             curs = None
         logging.info('CURSOR %s' % curs)
 
-        # Set variables for tracking query retries, retry times, and record retrieval and output
+        # Set maximum retries and a variable for tracking overall record retrieval and output
         # success or failure.
         max_retries = 4
-        retry_count = 0
-        retry_time = 1
         success = False
 
-        # Retrieve the next chunk of records and write it to the output file.
-        while not success and retry_count <= max_retries:
+        # Keep track of whether the query succeeded.  If the query succeeds but the file I/O fails,
+        # then we have to give up because we can no longer guarantee that the results will be
+        # correct (and because something is not working!).
+        query_success = False
+
+        # Keep track of file writing success separately.
+        # That way, we can prevent writing the same chunk to the file more than once
+        # if the file write succeeds but the close operation fails.
+        fwrite_success = False
+
+        # Attempt to retrieve the next chunk of records.
+        result = None
+        retry_count = 0
+        retry_time = 1
+        while not query_success and retry_count <= max_retries:
             # Check if this is a retry attempt and if so, wait before running the query.
             if retry_count > 0:
                 logging.warning("The previous query attempt failed.  Waiting " + str(retry_time) +
@@ -76,26 +87,45 @@ class WriteHandler(webapp2.RequestHandler):
             result = vnsearch.query(q, 400, curs=curs)
 
             if len(result) == 3:
-                # The query succeeded, so proceed with trying to write the results
-                # to the output file.
-                records, next_cursor, count = result
+                # The query succeeded.
+                query_success = True
+            else:
+                # The query failed.  Retry on the next loop iteration.
+                retry_count += 1
+
+        # If the query succeeded, try to write the next chunk of records to the output file.
+        retry_count = 0
+        retry_time = 1
+        if query_success:
+            records, next_cursor, count = result
+            chunk = '%s\n' % _get_tsv_chunk(records)
+
+            while not success and retry_count <= max_retries:
+                # Check if this is a retry attempt and if so, wait before running the query.
+                if retry_count > 0:
+                    logging.warning("The previous file I/O attempt failed.  Waiting " + str(retry_time) +
+                            " second(s) before retry " + str(retry_count) + ".")
+                    time.sleep(retry_time)
+                    # Increase successive retry times multiplicatively.
+                    retry_time *= 2
+
+                # Try to write the results to the output file.
                 try:
                     with files.open(writable_file_name, 'a') as f:
                         if not curs:
                             params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
-                            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
-                        chunk = '%s\n' % _get_tsv_chunk(records)
-                        f.write(chunk) 
+                            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+                        if not fwrite_success:
+                            f.write(chunk)
+                            fwrite_success = True
                         f.close(finalize=False)
                         success = True
                 except Exception as e:
-                    # Writing the chunk to the file failed.  Retry on the next loop iteration.
-                    logging.error("I/O error %s" % e)
+                    # Writing the chunk to or closing the file failed.
+                    # Retry on the next loop iteration.
+                    logging.error("I/O error: %s" % e)
                     retry_count += 1
-                    raise e
-            else:
-                # The query failed.  Retry on the next loop iteration.
-                retry_count += 1
+                    #raise e
 
         # Set the appropriate cursor value for the next request.
         if not success:    
@@ -124,24 +154,36 @@ You can download "%s" here within the next 24 hours: https://storage.cloud.googl
                     queue_name="downloadwrite")
         else:
             # The query or attempt to write to the output file failed.
-            if requeuecnt < max_requeues:
-                # Re-enqueue the same request.
+            if (requeuecnt < max_requeues) and not query_success:
+                # The query failed, so re-enqueue the same request to try again.
                 taskqueue.add(url='/service/download/write',
                     params=dict(q=self.request.get('q'), requeuecnt=(requeuecnt + 1),
                         email=email, filename=filename, writable_file_name=writable_file_name,
                         name=name, cursor=curs),
                     queue_name="downloadwrite")
             else:
-                # The maximum number of repeat enqueues was exceeded.  Send an email to the user
-                # indicating that the query failed, and give up.
-                logging.error('The maximum number of re-enqueues (' + str(max_requeues) +
-                    ') for this download file writing task was exceeded.')
-                files.finalize(writable_file_name)
+                # The maximum number of repeat enqueues was exceeded, or data retrieval succeeded
+                # but file I/O failed.  In the latter case, we have to give up because we can no
+                # longer guarantee that the results will be correct (e.g., if the chunk was written
+                # but the close() operation failed).  Send an email to the user indicating that
+                # the query failed, and give up.
+                if query_success and not fwrite_success:
+                    logging.error('Download file I/O failed after the maximum number (' +
+                            str(max_retries) + ') of retries.')
+                    msg = """
+We are sorry to report that VertNet was unable to complete your request for the results of the query "%s" because of a failure while writing the results file.  Please try again at a later time.
+""" % (q)
+                else:
+                    logging.error('The maximum number of re-enqueues (' + str(max_requeues) +
+                        ') for this download file writing task was exceeded.')
+                    msg = """
+We are sorry to report that VertNet was unable to complete your request for the results of the query "%s" because of a failure while trying to retrieve the data records.  Please try again at a later time.
+""" % (q)
+                # Send the email and make a last attempt to finalize the file.
                 mail.send_mail(sender="VertNet Downloads <eightysteele@gmail.com>", 
                     to=email, subject="VertNet query failure",
-                    body="""
-Unfortunately, VertNet was unable to complete your request for the results of the query "%s".  Please try again at a later time.
-""" % (q))
+                    body=msg)
+                files.finalize(writable_file_name)
         
 
 class DownloadHandler(webapp2.RequestHandler):
