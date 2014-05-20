@@ -67,7 +67,7 @@ class WriteHandler(webapp2.RequestHandler):
             # Check if this is a retry attempt and if so, wait before running the query.
             if retry_count > 0:
                 logging.warning("The previous query attempt failed.  Waiting " + str(retry_time) +
-                        " seconds before retry " + str(retry_count) + ".")
+                        " second(s) before retry " + str(retry_count) + ".")
                 time.sleep(retry_time)
                 # Increase successive retry times multiplicatively.
                 retry_time *= 2
