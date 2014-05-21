@@ -57,7 +57,7 @@ class WriteHandler(webapp2.RequestHandler):
 
         # Set maximum retries and a variable for tracking overall record retrieval and output
         # success or failure.
-        max_retries = 4
+        max_retries = 6
         success = False
 
         # Keep track of whether the query succeeded.  If the query succeeds but the file I/O fails,
