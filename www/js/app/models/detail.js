@@ -130,6 +130,9 @@ define([
               issues_final[key] = "";
             } else if (issues[key] == 0) {
               issues_final[key] = "0";
+            } else if (issues[key] > 1) {
+              issues_final[key] = issues[key]
+              issues_final["showWarning"] = true;
             } else {
               issues_final[key] = issues[key]
             }
