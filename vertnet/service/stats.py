@@ -6,9 +6,8 @@ from datetime import datetime
 import json
 import logging
 
-threshold_date = datetime(2014, 02, 10)
+threshold_date = datetime(2014, 04, 01)
 
-query_date_limit = '%20where%20created_at%3E=date%20%27{0}%27'.format(format(threshold_date, '%Y-%m-%d'))
 query_date_limit = format(threshold_date, '%Y-%m-%d')
 
 def getExplicitStuff(tag):
@@ -67,6 +66,13 @@ def getMetadata():
         metadata[t] = {'searches':searches, 'records':records}
     return metadata
 
+def getRecordsQueried():
+    url = 'https://vertnet.cartodb.com/api/v2/sql?q=select%20results_by_resource%20from%20query_log%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%27'.format(query_date_limit)
+    logging.info('QUERY URL: %s' % url)
+    d = json.loads(urlopen(url).read())['rows']
+    records_queried = sum([sum(json.loads(d[x]['results_by_resource']).values()) for x in list(range(len(d)))])
+    return records_queried
+
 def getMaxDate():
     url = 'https://vertnet.cartodb.com/api/v2/sql?q=select%20max%28created_at%29%20from%20query_log'
     logging.info('QUERY URL: %s' % url)
@@ -95,23 +101,15 @@ def main(environ, start_response):
     logging.info("Getting Metadata")
     metadata = getMetadata()
     logging.info("Got Metadata")
+    logging.info("Getting Records Queried")
+    records_queried = getRecordsQueried()
+    logging.info("Got Records Queried")
     logging.info("Getting Explicit Institutioncodes")
     explicitInstitutionsGood = getExplicitStuff('institutioncode')
     logging.info("Got icodes")
     logging.info("Getting explicit class")
     explicitClassGood = getExplicitStuff('class')
     logging.info("Got Explicit class")
-    
-    template_values = {
-        'mindate': mindate,
-        'maxdate': maxdate,
-        'queries': metadata['query']['searches'],
-        'qrecords': metadata['query']['records'],
-        'downloads': metadata['download']['searches'],
-        'drecords': metadata['download']['records'],
-        'explicitInstitutionsGood': explicitInstitutionsGood,
-        'explicitClassGood': explicitClassGood,
-        'downloadsdata': downloadsdata
-    }
+
     logging.info("FINISHED PROCESSING")
-    return [str(mindate), "|", str(maxdate), "|", str(metadata['query']['searches']), "|", str(metadata['query']['records']), "|", str(metadata['download']['searches']), "|", str(metadata['download']['records']), "|", str(explicitInstitutionsGood)[1:-1], "|", str(explicitClassGood)[1:-1], "|", str(downloadsdata)[1:-1]]
+    return [str(mindate), "|", str(maxdate), "|", str(metadata['query']['searches']), "|", str(records_queried), "|", str(metadata['download']['searches']), "|", str(metadata['download']['records']), "|", str(explicitInstitutionsGood)[1:-1], "|", str(explicitClassGood)[1:-1], "|", str(downloadsdata)[1:-1]]
