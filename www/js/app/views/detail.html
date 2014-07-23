@@ -42,21 +42,15 @@
 
   <ul id="detailTabs" class="nav nav-tabs">
     <button id="subissue" type="button" class="btn btn-success">
-        <span class="glyphicon glyphicon-flag icon-white"></span>
-      </button>
+      <span class="glyphicon glyphicon-flag icon-white"></span>
+    </button>
     <li class="active">
-      <a href="#summary" data-toggle="tab">Summary</a>
-    </li>     
-    <li>
-      <a class="" href="#datasource" data-toggle="tab">Data Rights</a>
-    </li>   
-    <li>
-        <a class="" id="quality-tab" href="#quality" data-toggle="tab">Quality Report</a>
+      <a href="#summary" data-toggle="tab">Detail</a>
     </li>
     <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core <b class="caret"></b></a>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core<b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="#allterms" data-toggle="tab">All Terms</a></li>
+<!--        <li><a href="#allterms" data-toggle="tab">All Terms</a></li> -->
         <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
         <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
         <li><a href="#event" data-toggle="tab">Event</a></li>
@@ -65,10 +59,46 @@
         <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
       </ul>
     </li>
-
+    <li>
+      <a class="" href="#datasource" data-toggle="tab">Rights</a>
+    </li>
+    <li>
+        <a class="" id="quality-tab" href="#quality" data-toggle="tab">Quality</a>
+    </li>
+    <li>
+        <a class="" id="index-tab" href="#indextab" data-toggle="tab">Index</a>
+    </li>
   </ul>
 
   <div id="myTabContent" class="tab-content">
+
+  <div class="tab-pane fade in" id="indextab">
+    <p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr><td>Rank</td><td id="rank"></td></tr> 
+            <tr><td>HarvestID</td><td id="harvestid"></td></tr> 
+            <tr><td>Networks</td><td id="networks"></td></tr> 
+            <tr><td>Keyname</td><td id="keyname"></td></tr> 
+            <tr><td>Icode</td><td id="icode"></td></tr> 
+<!--
+            <tr><td>Fossil</td><td id="fossil"></td></tr> 
+            <tr><td>Tissue</td><td id="tissue"></td></tr> 
+            <tr><td>Media</td><td id="media"></td></tr> 
+            <tr><td>HasTypeStatus</td><td id="hastypestatus"></td></tr> 
+            <tr><td>Mappable</td><td id="mappable"></td></tr> 
+            <tr><td>Resource</td><td id="resource"></td></tr> 
+            <tr><td>Type</td><td id="type"></td></tr> 
+-->
+      </tbody>
+    </table> 
+  </div>
 
   <div class="tab-pane fade active in" id="summary">
     <p>
@@ -84,15 +114,15 @@
       <div id="detailmap"></div>
     </div>
     <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Term</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-        <% _.each(this.model.DWC_SUMMARY, _.bind(function(key) { 
-          var val = this.model.summary()[key]; 
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(this.model.DWC_ALL(), _.bind(function(key) { 
+          var val = this.model.all()[key]; 
           if (val) { %>
           <tr>
             <td><%= key %></td>
@@ -106,20 +136,20 @@
           </tr>
           <% } %>
         <% }, this)); %>
-        </tbody>
-      </table> 
-    </div>
+      </tbody>
+    </table> 
+  </div>
 
   <div class="tab-pane fade" id="location">
-       <p>
-       <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Location Term</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
+    <p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Location Term</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
         <% _.each(this.model.DWC_LOCATION, _.bind(function(key) { 
           var val = this.model.loc()[key]; 
           if (val) { %>
@@ -135,9 +165,9 @@
           </tr>
           <% } %>
         <% }, this)); %>
-        </tbody>
-      </table> 
-    </div>
+      </tbody>
+    </table> 
+  </div>
 
     <div class="tab-pane" id="reclevel">
       <p>
@@ -290,6 +320,7 @@
     </div>
 
     <!-- All tab.  -->
+<!--
     <div class="tab-pane" id="allterms">
       <p>
        <table id="alltable" class="table table-striped">
@@ -318,40 +349,41 @@
         </tbody>
       </table> 
     </div>    
+-->
     
-    <!-- Data source tab -->
-    <div id="datasource" class="tab-pane fade"> 
-      <p>
-      <!-- <p class="lead">Data rights</p> -->
-      <dl class="">
-        <dt>Rights</dt>
-        <dd><% if (this.model.get('emlrights')) { %>
+  <!-- Data source tab -->
+  <div id="datasource" class="tab-pane fade"> 
+    <p>
+    <!-- <p class="lead">Data rights</p> -->
+    <dl class="">
+      <dt>Rights</dt>
+      <dd><% if (this.model.get('emlrights')) { %>
               <%= this.model.getRights() %>
             <% } else { %>
               Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
             <% } %></dd>
-        <br>
-        <dt>Citation</dt>
-        <dd><%= this.model.get('citation') %></dd>
-        <br>
-        <dt>Institution</dt>
-        <dd><%= this.model.get('orgname') %></dd>
-        <br>
-        <dt>Resource</dt>
-        <dd><%= this.model.get('title') %></dd>
-        <br>
-        <dt>Contact</dt>
-        <dd>
+      <br>
+      <dt>Citation</dt>
+      <dd><%= this.model.get('citation') %></dd>
+      <br>
+      <dt>Institution</dt>
+      <dd><%= this.model.get('orgname') %></dd>
+      <br>
+      <dt>Resource</dt>
+      <dd><%= this.model.get('title') %></dd>
+      <br>
+      <dt>Contact</dt>
+      <dd>
         <%= this.model.get('contact') %> <<a href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
-        </dd>
-        <br>
-        <dt>Published</dt>
-        <dd><%= this.model.get('pubdate') %></dd>
-        <br>
-        <dt>Source URL</dt>
-        <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
-      </dl>
-    </div>
+      </dd>
+      <br>
+      <dt>Published</dt>
+      <dd><%= this.model.get('pubdate') %></dd>
+      <br>
+      <dt>Source URL</dt>
+      <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
+    </dl>
+  </div>
     
     <!-- Quality tab -->
     <div id="quality" class="tab-pane fade">
@@ -394,9 +426,6 @@
       </ul>
     </div>
 </div>
-
-
-
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog">
