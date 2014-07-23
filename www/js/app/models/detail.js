@@ -80,6 +80,9 @@ define([
       'Preparations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
+    VN_INDEX: ['Rank', 'Harvestid', 'Networks', 'Keyname', 'ICode', 'Fossil', 'Tissue', 
+      'Media', 'HasTypeStatus', 'Mappable', 'Resource', 'Type'],
+
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
@@ -88,6 +91,29 @@ define([
     QUALITY: ['noCoords', 'noCountry', 'isZero', 'isOutOfWorld', 'isLowPrecision',
       'isOutOfCountry', 'isTransposed', 'isNegatedLatitude', 'isNegatedLongitude',
       'distanceToCountry', 'distanceToRangemap'],
+
+    getIndexFields: function() {
+      var indexfields = {};
+//      var indexkeys = this.vnindex();
+//      for (var key in indexkeys) {
+//        if (this.key){
+//          indexfields[key]=this.get(key);
+//        }
+//      }  
+      if (rank) indexfields['rank']=this.get('rank');
+      if (harvestid) indexfields['harvestid']=this.get('harvestid');
+      if (networks) indexfields['networks']=this.get('networks');
+      if (keyname) indexfields['keyname']=this.get('keyname');
+      if (icode) indexfields['icode']=this.get('icode');
+//      if (fossil) indexfields['fossil']=this.get('fossil');
+//      if (tissue) indexfields['tissue']=this.get('tissue');
+//      if (media) indexfields['media']=this.get('media');
+//      if (hastypestatus) indexfields['hastypestatus']=this.get('hastypestatus');
+//      if (mappable) indexfields['mappable']=this.get('mappable');
+//      if (resource) indexfields['resource']=this.get('resource');
+//      if (type) indexfields['type']=this.get('type');
+      return indexfields;
+    },
 
     // TODO: PUT FLAGS IN QUALITY ELEMENTS AND FIND THE WAY TO RETRIEVE THOSE FROM DETAIL.HTML
     getQualityFlags: function() {
@@ -283,7 +309,11 @@ define([
     },
 
     summary: function() {
-      return this._terms(this.DWC_SUMMARY);      
+      return this._terms(this.DWC_ALL);      
+    },
+
+    vnindex: function() {
+      return this._terms(this.VN_INDEX);
     },
 
     _terms: function(terms) {

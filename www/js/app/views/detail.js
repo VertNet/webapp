@@ -112,8 +112,25 @@ define([
 
         this.$('#confirmation').hide();
         
-        // Handler for quality tab
+        // Handler for index tab
+        this.$('#index-tab').click(_.bind(function(e) {
+          var issues = this.model.getIndexFields();
+          console.log(issues);
+          if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
+          if (issues.harvestid) { this.$('#harvestid').text(issues.harvestid.toString()); }
+          if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
+          if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
+          if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
+          // if (issues.fossil) { this.$('#fossil').text(issues.fossil.toString()); }
+          // if (issues.tissue) { this.$('#tissue').text(issues.tissue.toString()); }
+          // if (issues.media) { this.$('#media').text(issues.media.toString()); }
+          // if (issues.hastypestatus) { this.$('#hastypestatus').text(issues.hastypestatus.toString()); }
+          // if (issues.mappable) { this.$('#mappable').text(issues.mappable.toString()); }
+          // if (issues.resource) { this.$('#resource').text(issues.resource.toString()); }
+          // if (issues.type) { this.$('#type').text(issues.type.toString()); }
+        }, this));
 
+        // Handler for quality tab
         this.$('#quality-tab').click(_.bind(function(e) {
           var issues = this.model.getQualityFlags();
           console.log(issues);
