@@ -29,7 +29,7 @@ define([
     nameSlug: function() {
       return util.slugify(this.get('title'));
     },
-
+	
     descriptionSnip: function() {
       var des = this.get('description');
       if (des.length > 70) {
