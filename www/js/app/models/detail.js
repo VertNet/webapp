@@ -204,7 +204,7 @@ define([
           issues_final['isGoodPrecision'] = 'NO';
           issues_final['showWarning'] = true;
         }
-      } else { // TODO: bullshit, if not in quality tab, do it here
+      } else {
           issues_final['isGoodPrecision'] = 'Could not be assessed';
           issues_final['showMissing'] = true;
       }
