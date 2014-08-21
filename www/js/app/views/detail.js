@@ -173,8 +173,12 @@ define([
           $('.issueRow').each(function(i, obj){
             var value = $(this).children('td').eq(1).text();
             if (value != '0') {
-              if (value == 'Could not be assessed' || value == 'YES' || value == 'NO') {
-                $(this).addClass('text-danger');
+              if (value == 'Could not be assessed') {
+                $(this).addClass('warning');
+              } else if (value == 'Yes' || value == 'No') {
+                $(this).addClass('');
+              } else {
+                $(this).addClass('danger');
               }
             }
           });
