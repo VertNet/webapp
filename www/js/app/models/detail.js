@@ -185,18 +185,6 @@ define([
         issues_final['showError'] = true;
       }
       
-      if (lat && lon) {
-          if (lat == 0 && lon == 0) {
-            issues_final['isZero'] = 'YES';
-            issues_final['showWarning'] = true;
-          } else {
-            issues_final['isZero'] = 'No';
-          }
-      } else {
-          issues_final['isZero'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-      
       if (issues && 'isLowPrecision' in issues) {
         if (issues['isLowPrecision'].toString() == "false") {
            issues_final['isGoodPrecision'] = 'Yes';
@@ -205,10 +193,35 @@ define([
           issues_final['showWarning'] = true;
         }
       } else {
+        if (lat && lon && typeof lat == 'number' && typeof lon == 'number') {
+          if (lat.toString().split('.').length == 1 || lon.toString().split('.') == 1) {
+            issues_final['isGoodPrecision'] = 'NO';
+            issues_final['showWarning'] = true;
+          } else if (lat.toString().split('.')[1].length <= 2 && lon.toString().split('.')[1].length <= 2) {
+            issues_final['isGoodPrecision'] = 'NO';
+            issues_final['showWarning'] = true;
+          } else {
+            issues_final['isGoodPrecision'] = 'Yes';
+          }
+        } else {
           issues_final['isGoodPrecision'] = 'Could not be assessed';
           issues_final['showMissing'] = true;
+        }
       }
-      
+
+      if (lat && lon) {
+          if (lat == 0 && lon == 0) {
+            issues_final['isZero'] = 'YES';
+            issues_final['isGoodPrecision'] = 'NO';
+            issues_final['showWarning'] = true;
+          } else {
+            issues_final['isZero'] = 'No';
+          }
+      } else {
+          issues_final['isZero'] = 'Could not be assessed';
+          issues_final['showMissing'] = true;
+      }
+
       if (datum) {
         issues_final['hasDatum'] = 'Yes';
       } else {
