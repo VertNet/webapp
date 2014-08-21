@@ -134,26 +134,51 @@ define([
         this.$('#quality-tab').click(_.bind(function(e) {
           var issues = this.model.getQualityFlags();
           console.log(issues);
-          if (issues.noCoordinates) { this.$('#noCoordinates').text(issues.noCoordinates.toString()); }
-          if (issues.noCountry) { this.$('#noCountry').text(issues.noCountry.toString()); }
+          
+          // Completeness
+          if (issues.hasCoordinates) { this.$('#hasCoordinates').text(issues.hasCoordinates.toString()); }
+          if (issues.hasCountry) { this.$('#hasCountry').text(issues.hasCountry.toString()); }
           if (issues.isZero) { this.$('#isZero').text(issues.isZero.toString()); }
-          if (issues.isOutOfWorld) { this.$('#isOutOfWorld').text(issues.isOutOfWorld.toString()); }
-          if (issues.isLowPrecision) { this.$('#isLowPrecision').text(issues.isLowPrecision.toString()); }
-          if (issues.isOutOfCountry) { this.$('#isOutOfCountry').text(issues.isOutOfCountry.toString()); }
-          if (issues.isTransposed) { this.$('#isTransposed').text(issues.isTransposed.toString()); }
-          if (issues.isNegatedLatitude) { this.$('#isNegatedLatitude').text(issues.isTransposed.toString()); }
-          if (issues.isNegatedLongitude) { this.$('#isNegatedLongitude').text(issues.isNegatedLongitude.toString()); }
+          if (issues.isGoodPrecision) { this.$('#isGoodPrecision').text(issues.isGoodPrecision.toString()); }
+          if (issues.hasDatum) { this.$('#hasDatum').text(issues.hasDatum.toString()); }
+          
+          // Inconsistencies
+          if (issues.isInsideCountry) { this.$('#isInsideCountry').text(issues.isInsideCountry.toString()); }
           if (issues.distanceToCountry) { this.$('#distanceToCountry').text(issues.distanceToCountry.toString()); }
           if (issues.distanceToRangemap) { this.$('#distanceToRangemap').text(issues.distanceToRangemap.toString()); }
           
+          // Errors
+          if (issues.isValidLatitude) { this.$('#isValidLatitude').text(issues.isValidLatitude.toString()); }          
+          if (issues.isValidLongitude) { this.$('#isValidLongitude').text(issues.isValidLongitude.toString()); }          
+          if (issues.isTransposed) { this.$('#isTransposed').text(issues.isTransposed.toString()); }
+          if (issues.isGoodSignLatitude) { this.$('#isGoodSignLatitude').text(issues.isGoodSignLatitude.toString()); }
+          if (issues.isGoodSignLongitude) { this.$('#isGoodSignLongitude').text(issues.isGoodSignLongitude.toString()); }
+
+
           // Display warning
           this.$('#quality-warning').hide();
-          if (issues["showWarning"] == true) {
-            this.$('#quality-warning').html("<p class=\"text-danger\">Warning: There is something wrong with this record. Check below.</p>");
+          
+          if (issues["showError"] == true) {
+            this.$('#quality-warning').html('<p class="text-danger">Warning: There is something wrong with this record. Check below.</p>');
+          } else if (issues["showWarning"] == true) {
+            this.$('#quality-warning').html('<p class="text-warning">Warning: This record might not be as good as it looks like. Check below.</p>');
+          } else if (issues["showMissing"] == true) {
+            this.$('#quality-warning').html('<p class="text-warning">Warning: Some validations could not be performed. Check below.</p>');
           } else {
-            this.$('#quality-warning').html("<p class=\"text-success\">Everything looks good here.</p>");
+            this.$('#quality-warning').html('<p class="text-success">Everything looks good here.</p>');
           }
           this.$('#quality-warning').show();
+          
+          // Highlight errors or warnings
+          $('.issueRow').each(function(i, obj){
+            var value = $(this).children('td').eq(1).text();
+            if (value != '0') {
+              if (value == 'Could not be assessed' || value == 'YES' || value == 'NO') {
+                $(this).addClass('text-danger');
+              }
+            }
+          });
+          
         }, this));
 
         // Handler for click.

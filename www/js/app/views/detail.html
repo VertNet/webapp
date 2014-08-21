@@ -404,22 +404,44 @@
     <table class="table table-striped">
         <thead>
           <tr>
-            <th>Issue</th>
-            <th>Result</th>
+            <th>Data completeness</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-            <tr><td>Are coordinates absent?</td><td id="noCoordinates"></td></tr> 
-            <tr><td>Is the country value absent?</td><td id="noCountry"></td></tr> 
-            <tr><td>Are both coordinates 0 (zero)?</td><td id="isZero"></td></tr> 
-            <tr><td>Is latitude greater than 90?</td><td id="isOutOfWorld"></td></tr> 
-            <tr><td>Has only two or less decimal figures?</td><td id="isLowPrecision"></td></tr> 
-            <tr><td>Is out of the specified country?</td><td id="isOutOfCountry"></td></tr> 
-            <tr><td>Are coordinates transposed?</td><td id="isTransposed"></td></tr> 
-            <tr><td>Is latitude negated (changed sign)?</td><td id="isNegatedLatitude"></td></tr> 
-            <tr><td>Is longitude negated (changed sign)?</td><td id="isNegatedLongitude"></td></tr> 
-            <tr><td>Distance to country (in degrees)</td><td id="distanceToCountry"></td></tr> 
-            <tr><td>Distance to species' range map (in degrees)</td><td id="distanceToRangemap"></td></tr> 
+            <tr class="issueRow"><td>Are coordinates present?</td><td id="hasCoordinates"></td></tr>
+            <tr class="issueRow"><td>Is the country value present?</td><td id="hasCountry"></td></tr>
+            <tr class="issueRow"><td>Are both coordinates 0 (zero)?</td><td id="isZero"></td></tr>
+            <tr class="issueRow"><td>Do coordinates have three or more decimal figures?</td><td id="isGoodPrecision"></td></tr>
+            <tr class="issueRow"><td>Do coordinates have datum?</td><td id="hasDatum"></td></tr>
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Data inconsistencies</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr class="issueRow"><td>Are coordinates within specified country?</td><td id="isInsideCountry"></td></tr>
+            <tr class="issueRow"><td>Distance outside of specified country (in degrees)</td><td id="distanceToCountry"></td></tr>
+            <tr class="issueRow"><td>Distance outside of species range map (in degrees)</td><td id="distanceToRangemap"></td></tr>
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Data Errors</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr class="issueRow"><td>Is latitude between 90 and -90?</td><td id="isValidLatitude"></td></tr>
+            <tr class="issueRow"><td>Is longitude between 180 and -180?</td><td id="isValidLongitude"></td></tr>
+            <tr class="issueRow"><td>Are coordinates transposed?</td><td id="isTransposed"></td></tr>
+            <tr class="issueRow"><td>Is latitude hemisphere correct?</td><td id="isGoodSignLatitude"></td></tr>
+            <tr class="issueRow"><td>Is longitude hemisphere correct?</td><td id="isGoodSignLongitude"></td></tr> 
         </tbody>
       </table> 
     </div>
