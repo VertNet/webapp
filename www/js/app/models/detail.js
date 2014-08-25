@@ -120,9 +120,13 @@ define([
       var lat = this.get('decimallatitude');
       var lon = this.get('decimallongitude');
       var country = this.get('country');
+      console.log('country');
       var datum = this.get('geodeticdatum');
-      if (country == 'Not specified') {
+      if (country == 'Not specified' || country == 'N/A') {
         country = null;
+      // PATCH: Convert 'USA' and 'U.S.A.' into 'US' for the quality api
+      } else if (country == 'USA' || country == 'U.S.A.') {
+        country = 'US';
       }
       var binomial = this.get('scientificname');
       

@@ -169,17 +169,19 @@ define([
           }
           this.$('#quality-warning').show();
           
-          // Highlight errors or warnings
+          // Highlight success, errors and warnings
           $('.issueRow').each(function(i, obj){
             var value = $(this).children('td').eq(1).text();
-            if (value != '0') {
+            if (value != '0' && value != 0) {
               if (value == 'Could not be assessed') {
                 $(this).addClass('warning');
               } else if (value == 'Yes' || value == 'No') {
-                $(this).addClass('');
+                $(this).addClass('success');
               } else {
                 $(this).addClass('danger');
               }
+            } else {
+              $(this).addClass('success');
             }
           });
           
