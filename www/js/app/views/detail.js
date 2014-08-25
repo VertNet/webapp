@@ -159,9 +159,9 @@ define([
           this.$('#quality-warning').hide();
           
           if (issues["showError"] == true) {
-            this.$('#quality-warning').html('<p class="text-danger">Warning: There is something wrong with this record. Check below.</p>');
+            this.$('#quality-warning').html('<p class="text-danger">Warning: There is potentially something wrong with this record. Check below.</p>');
           } else if (issues["showWarning"] == true) {
-            this.$('#quality-warning').html('<p class="text-warning">Warning: This record might not be as good as it looks like. Check below.</p>');
+            this.$('#quality-warning').html('<p class="text-warning">Warning: This record might not be as good as it appears. Check below.</p>');
           } else if (issues["showMissing"] == true) {
             this.$('#quality-warning').html('<p class="text-warning">Warning: Some validations could not be performed. Check below.</p>');
           } else {
