@@ -171,17 +171,21 @@ define([
           
           // Highlight success, errors and warnings
           $('.issueRow').each(function(i, obj){
-            var value = $(this).children('td').eq(1).text();
+            var value = $(this).children('td').eq(2).text();
             if (value != '0' && value != 0) {
               if (value == 'Could not be assessed') {
                 $(this).addClass('warning');
+                $(this).children('td').eq(1).children('span').addClass('glyphicon-ban-circle')
               } else if (value == 'Yes' || value == 'No') {
                 $(this).addClass('success');
+                $(this).children('td').eq(1).children('span').addClass('glyphicon-ok')
               } else {
                 $(this).addClass('danger');
+                $(this).children('td').eq(1).children('span').addClass('glyphicon-remove')
               }
             } else {
               $(this).addClass('success');
+              $(this).children('td').eq(1).children('span').addClass('glyphicon-ok')
             }
           });
           
