@@ -190,6 +190,45 @@ define([
           });
           
         }, this));
+		
+		//Tooltips
+		  this.$('#show-completeness-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Data completeness assesses the presence and absence of certain fields within a record. The assessments simply reveal if a given field is present or not, or, in some cases, if the field contains a potentially correct value or not. Read more...',
+			  container: '#completeness-tip'
+			});
+		  this.$('#completeness-tip').mouseover(_.bind(function(e) {
+			this.$('#show-completeness-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-completeness-tip').tooltip('hide');
+		  }, this));
+		  
+		  this.$('#show-inconsistencies-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'The tests in this section seek to identify mismatches between different sources of data. All of the assessments are performed with the Map Of Life quality validation tool.  It is important to note that an inconsistency does not necessarily equate with a mistake.  The tool is only designed to flag potential issues for the user of the data to review. Read more...',
+			  container: '#inconsistencies-tip'
+			});
+		  this.$('#inconsistencies-tip').mouseover(_.bind(function(e) {
+			this.$('#show-inconsistencies-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-inconsistencies-tip').tooltip('hide');
+		  }, this));		
+
+		  this.$('#show-error-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'The tests in this section seek to identify data errors within specific fields of a record.  Three of these assessments are performed with the Map Of Life quality validation tool. Read more...',
+			  container: '#error-tip'
+			});
+		  this.$('#error-tip').mouseover(_.bind(function(e) {
+			this.$('#show-error-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-error-tip').tooltip('hide');
+		  }, this));		
+		  	
+		
 
         // Handler for click.
         this.$('#submit-issue-btn').click(_.bind(function(e) {
