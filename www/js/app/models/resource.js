@@ -44,7 +44,9 @@ define([
 
     getDate: function() {
       var splits = this.get('pubdate').split(' ');
-      return splits[1] + ' ' + splits[2] + ', ' + splits[5];
+     // return splits[1] + ' ' + splits[2] + ', ' + splits[5];
+	 return splits[5] + '-' + splits[1] + '-' + splits[2];
+	 return splits;
     }
   });
 });
