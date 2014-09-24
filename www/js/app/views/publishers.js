@@ -58,7 +58,9 @@ define([
         if (this.pubList.isEmpty()) {
           map.init(_.bind(function() {
             var sql = new cartodb.SQL({ user: 'vertnet' });
-            var query = "SELECT orgname,icode,sum(count) AS records,sum(collectioncount) AS collections,count(title) AS resources FROM resource WHERE ipt=True and networks LIKE '%VertNet%' GROUP BY orgname, icode ORDER BY orgname";
+
+            var query = "SELECT orgname,icode,concat(orgcountry, ' ', orgstateprovince, ' ', orgcity) AS location,sum(count) AS records,sum(collectioncount) AS collections,count(title) AS resources FROM resource WHERE ipt=True and networks LIKE '%VertNet%' GROUP BY orgname, icode, location ORDER BY orgname";
+
             sql.execute(query, {})
               .done(_.bind(function(data) {
                 _.each(data.rows, _.bind(function (i) {
