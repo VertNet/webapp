@@ -8,10 +8,10 @@
 .vncheckbox {
        position: relative;
        min-height: 20px;
-       padding-left: 15px;
-       margin-top: 10px;
-       margin-bottom: 10px;
-       vertical-align: middle
+       padding-left: 20px;
+       margin-top: 7px;
+       margin-bottom: 0px;
+       vertical-align: top
 }
 
 .col-md-0 {
@@ -20,6 +20,15 @@
        margin-top: 10px;
        padding-right: -30px;
        padding-left: -25px;
+       float: left;
+}
+
+.vn-col-md-2 {
+       position: relative;
+       min-height: 1px;
+       padding-right: 15px;
+       padding-left: 15px;
+	   /*width: 16.666666666666664%;*/
        float: left;
 }
 
@@ -517,5 +526,16 @@ h7 small, .h7 small {
 	font-weight: normal;
 	line-height: 1;
 	color: #999
+}
+VNlegend {
+	display: block;
+	width: 100%;
+	padding: 0;
+	margin-bottom: 5px;
+	font-size: 20px;
+	/*line-height: inherit;*/
+	color: #333;
+	border: 0;
+	border-bottom: 1px solid #e5e5e5
 }
 
