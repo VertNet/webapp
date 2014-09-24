@@ -46,6 +46,16 @@ define([
             return memo;
           }
         }, 0);
+      },
+	  
+      collectionCount: function() {
+        return this.reduce(function(memo, model) {
+          if (model.get('collections') > 0) {
+            return model.get('collections') + memo;
+          } else {
+            return memo;
+          }
+        }, 0);
       }
     });
 });

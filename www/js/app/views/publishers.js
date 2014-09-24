@@ -58,7 +58,7 @@ define([
         if (this.pubList.isEmpty()) {
           map.init(_.bind(function() {
             var sql = new cartodb.SQL({ user: 'vertnet' });
-            var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources FROM resource WHERE ipt=True and networks LIKE '%VertNet%' GROUP BY orgname, icode ORDER BY orgname";
+            var query = "SELECT orgname,icode,sum(count) AS records,sum(collectioncount) AS collections,count(title) AS resources FROM resource WHERE ipt=True and networks LIKE '%VertNet%' GROUP BY orgname, icode ORDER BY orgname";
             sql.execute(query, {})
               .done(_.bind(function(data) {
                 _.each(data.rows, _.bind(function (i) {
@@ -84,6 +84,7 @@ define([
         this.$('#reccount').text(util.addCommas(this.pubList.recordCount().toString()) + ' records');
         this.$('#rescount').text(util.addCommas(this.pubList.resourceCount().toString()) + ' data resources');
         this.$('#pubcount').text(util.addCommas(this.pubList.publisherCount().toString()) + ' publishers');
+        this.$('#colcount').text(util.addCommas(this.pubList.collectionCount().toString()) + ' collections');
       },
 
       _clickHandler: function(e) {

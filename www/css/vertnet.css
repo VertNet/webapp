@@ -539,3 +539,20 @@ VNlegend {
 	border-bottom: 1px solid #e5e5e5
 }
 
+.infotip {
+	color:#0088cc;
+}
+
+.infotipDisplay {
+	text-align:left !important;
+	font-weight:lighter !important;
+	width: 0;
+	height: 0;
+	margin-top: -50px;
+	border-top: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 0 dotted;
+	border-left: 4px solid transparent;
+	content: ""
+}
+
