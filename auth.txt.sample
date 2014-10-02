@@ -1,0 +1,14 @@
+{
+"dev":
+{
+    "client_id": "cf7a23281644715323e2",
+    "client_secret": "ffffffffffffffffffffffffffffffffffffffff",
+    "scope": "user,user:email,repo"
+},
+"prod":
+{
+    "client_id": "7d8ea7c70e29925779d7",
+    "client_secret": "ffffffffffffffffffffffffffffffffffffffff",
+    "scope": "user,user:email,repo"
+}
+}
