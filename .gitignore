@@ -9,6 +9,7 @@ deploy.sh
 node_modules
 # IDE
 *.sublime-*
+*.DS_Store
 
 bulkloader-*
 bulk.log
