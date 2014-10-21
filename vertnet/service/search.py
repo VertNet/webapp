@@ -385,16 +385,17 @@ def _get_rec(doc):
     
     # Translate field names to be explicit in the api results    
     for changeme in TRANSLATE_HEADER:
-      value = rec.get(changeme)
-      rec.pop(changeme)
-      rec[TRANSLATE_HEADER.get(changeme)]=value  
+      if rec.get(changeme) is not None:
+        value = rec.get(changeme)
+        rec.pop(changeme)
+        rec[TRANSLATE_HEADER.get(changeme)]=value  
     return rec
 
 def delete_entity(entity):
     yield op.db.Delete(entity)
 
 def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
-    VERSION='search.query:2014-10-21T16:03'
+    VERSION='search.query:2014-10-21T20:26'
     if not curs:
         curs = search.Cursor()
     
