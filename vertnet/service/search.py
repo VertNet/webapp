@@ -15,23 +15,19 @@ from mapreduce import context
 
 IS_DEV = 'Development' in os.environ['SERVER_SOFTWARE']
 
-# TODO: Pool search api puts?
-
 DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid', 
-'nameaccordingtoid', 'month', 'decimallongitude', 'fieldnotes', 
-'georeferenceddate', 'references', 'startdayofyear', 'minimumelevationinmeters', 
-'taxonrank', 'identificationreferences', 'footprintspatialfit', 
-'highergeographyid', 'accessrights', 'locationid', 'maximumelevationinmeters', 
-'maximumdistanceabovesurfaceinmeters', 'type', 'taxonconceptid', 'eventid', 
-'eventtime', 'identificationid', 'verbatimeventdate', 'verbatimdepth', 
-'footprintwkt', 'verbatimcoordinatesystem', 'verbatimsrs', 'parentnameusageid', 
-'scientificnameauthorship', 'minimumdepthinmeters', 'georeferenceremarks', 
-'nameaccordingto', 'day', 'identificationverificationstatus', 'occurrenceid', 
-'rights', 'footprintsrs', 'georeferenceverificationstatus', 'modified', 
-'verbatimlatitude', 'associatedmedia', 'originalnameusageid', 
-'datageneralizations', 'taxonomicstatus', 'taxonremarks', 
-'coordinateuncertaintyinmeters', 'eventdate', 'namepublishedinyear', 
-'individualcount', 'verbatimelevation', 'bibliographiccitation', 
+'nameaccordingtoid', 'month', 'decimallongitude', 'fieldnotes', 'georeferenceddate', 
+'references', 'startdayofyear', 'minimumelevationinmeters', 'taxonrank', 
+'identificationreferences', 'footprintspatialfit', 'highergeographyid', 'accessrights', 
+'locationid', 'maximumelevationinmeters', 'maximumdistanceabovesurfaceinmeters', 'type', 
+'taxonconceptid', 'eventid', 'eventtime', 'identificationid', 'verbatimeventdate', 
+'verbatimdepth', 'footprintwkt', 'verbatimcoordinatesystem', 'verbatimsrs', 
+'parentnameusageid', 'scientificnameauthorship', 'minimumdepthinmeters', 
+'georeferenceremarks', 'nameaccordingto', 'day', 'identificationverificationstatus', 
+'occurrenceid', 'rights', 'footprintsrs', 'georeferenceverificationstatus', 'modified', 
+'verbatimlatitude', 'associatedmedia', 'originalnameusageid', 'datageneralizations', 
+'taxonomicstatus', 'taxonremarks', 'coordinateuncertaintyinmeters', 'eventdate', 
+'namepublishedinyear', 'individualcount', 'verbatimelevation', 'bibliographiccitation', 
 'namepublishedinid', 'namepublishedin', 'dateidentified', 'verbatimtaxonrank', 
 'locationaccordingto', 'acceptednameusage', 'minimumdistanceabovesurfaceinmeters', 
 'informationwithheld', 'parentnameusage', 'occurrencedetails', 'description', 
@@ -43,7 +39,71 @@ DO_NOT_FULL_TEXT = ['eventremarks', 'geologicalcontextid', 'scientificnameid',
 'enddayofyear', 'url', 'emlrights', 'keyname', 'datasource_and_rights', 'citation',
 'url']
 
-HEADER = ['pubdate', 'url', 'eml', 'dwca', 'title', 'icode', 'description', 'contact', 'orgname', 'email', 'emlrights', 'count', 'citation', 'networks', 'harvestid', 'id', 'associatedmedia', 'associatedoccurrences', 'associatedreferences', 'associatedsequences', 'associatedtaxa', 'basisofrecord', 'bed', 'behavior', 'catalognumber', 'collectioncode', 'collectionid', 'continent', 'coordinateprecision', 'coordinateuncertaintyinmeters', 'country', 'countrycode', 'county', 'datageneralizations', 'dateidentified', 'day', 'decimallatitude', 'decimallongitude', 'disposition', 'earliestageorloweststage', 'earliesteonorlowesteonothem', 'earliestepochorlowestseries', 'earliesteraorlowesterathem', 'earliestperiodorlowestsystem', 'enddayofyear', 'establishmentmeans', 'eventattributes', 'eventdate', 'eventid', 'eventremarks', 'eventtime', 'fieldnotes', 'fieldnumber', 'footprintspatialfit', 'footprintwkt', 'formation', 'geodeticdatum', 'geologicalcontextid', 'georeferenceprotocol', 'georeferenceremarks', 'georeferencesources', 'georeferenceverificationstatus', 'georeferencedby', 'group', 'habitat', 'highergeography', 'highergeographyid', 'highestbiostratigraphiczone', 'identificationattributes', 'identificationid', 'identificationqualifier', 'identificationreferences', 'identificationremarks', 'identifiedby', 'individualcount', 'individualid', 'informationwithheld', 'institutioncode', 'island', 'islandgroup', 'latestageorhigheststage', 'latesteonorhighesteonothem', 'latestepochorhighestseries', 'latesteraorhighesterathem', 'latestperiodorhighestsystem', 'lifestage', 'lithostratigraphicterms', 'locality', 'locationattributes', 'locationid', 'locationremarks', 'lowestbiostratigraphiczone', 'maximumdepthinmeters', 'maximumdistanceabovesurfaceinmeters', 'maximumelevationinmeters', 'measurementaccuracy', 'measurementdeterminedby', 'measurementdetermineddate', 'measurementid', 'measurementmethod', 'measurementremarks', 'measurementtype', 'measurementunit', 'measurementvalue', 'member', 'minimumdepthinmeters', 'minimumdistanceabovesurfaceinmeters', 'minimumelevationinmeters', 'month', 'occurrenceattributes', 'occurrencedetails', 'occurrenceid', 'occurrenceremarks', 'othercatalognumbers', 'pointradiusspatialfit', 'preparations', 'previousidentifications', 'recordnumber', 'recordedby', 'relatedresourceid', 'relationshipaccordingto', 'relationshipestablisheddate', 'relationshipofresource', 'relationshipremarks', 'reproductivecondition', 'resourceid', 'resourcerelationshipid', 'samplingprotocol', 'sex', 'startdayofyear', 'stateprovince', 'taxonattributes', 'typestatus', 'verbatimcoordinatesystem', 'verbatimcoordinates', 'verbatimdepth', 'verbatimelevation', 'verbatimeventdate', 'verbatimlatitude', 'verbatimlocality', 'verbatimlongitude', 'waterbody', 'year', 'footprintsrs', 'georeferenceddate', 'identificationverificationstatus', 'institutionid', 'locationaccordingto', 'municipality', 'occurrencestatus', 'ownerinstitutioncode', 'samplingeffort', 'verbatimsrs', 'locationaccordingto7', 'taxonid', 'taxonconceptid', 'datasetid', 'datasetname', 'source', 'modified', 'accessrights', 'rights', 'rightsholder', 'language', 'higherclassification', 'kingdom', 'phylum', 'classs', 'order', 'family', 'genus', 'subgenus', 'specificepithet', 'infraspecificepithet', 'scientificname', 'scientificnameid', 'vernacularname', 'taxonrank', 'verbatimtaxonrank', 'infraspecificmarker', 'scientificnameauthorship', 'nomenclaturalcode', 'namepublishedin', 'namepublishedinid', 'taxonomicstatus', 'nomenclaturalstatus', 'nameaccordingto', 'nameaccordingtoid', 'parentnameusageid', 'parentnameusage', 'originalnameusageid', 'originalnameusage', 'acceptednameusageid', 'acceptednameusage', 'taxonremarks', 'dynamicproperties', 'namepublishedinyear', 'season', 'dummy']
+HEADER = ['pubdate', 'url', 'eml', 'dwca', 'title', 'icode', 'description', 'contact', 
+          'orgname', 'email', 'emlrights', 'count', 'citation', 'networks', 'harvestid', 
+          'id', 'associatedmedia', 'associatedoccurrences', 'associatedreferences', 
+          'associatedsequences', 'associatedtaxa', 'basisofrecord', 'bed', 'behavior', 
+          'catalognumber', 'collectioncode', 'collectionid', 'continent', 
+          'coordinateprecision', 'coordinateuncertaintyinmeters', 'country', 
+          'countrycode', 'county', 'datageneralizations', 'dateidentified', 'day', 
+          'decimallatitude', 'decimallongitude', 'disposition', 
+          'earliestageorloweststage', 'earliesteonorlowesteonothem', 
+          'earliestepochorlowestseries', 'earliesteraorlowesterathem', 
+          'earliestperiodorlowestsystem', 'enddayofyear', 'establishmentmeans', 
+          'eventattributes', 'eventdate', 'eventid', 'eventremarks', 'eventtime', 
+          'fieldnotes', 'fieldnumber', 'footprintspatialfit', 'footprintwkt', 
+          'formation', 'geodeticdatum', 'geologicalcontextid', 'georeferenceprotocol', 
+          'georeferenceremarks', 'georeferencesources', 
+          'georeferenceverificationstatus', 'georeferencedby', 'group', 'habitat', 
+          'highergeography', 'highergeographyid', 'highestbiostratigraphiczone', 
+          'identificationattributes', 'identificationid', 'identificationqualifier', 
+          'identificationreferences', 'identificationremarks', 'identifiedby', 
+          'individualcount', 'individualid', 'informationwithheld', 'institutioncode', 
+          'island', 'islandgroup', 'latestageorhigheststage', 
+          'latesteonorhighesteonothem', 'latestepochorhighestseries', 
+          'latesteraorhighesterathem', 'latestperiodorhighestsystem', 'lifestage', 
+          'lithostratigraphicterms', 'locality', 'locationattributes', 'locationid', 
+          'locationremarks', 'lowestbiostratigraphiczone', 'maximumdepthinmeters', 
+          'maximumdistanceabovesurfaceinmeters', 'maximumelevationinmeters', 
+          'measurementaccuracy', 'measurementdeterminedby', 'measurementdetermineddate', 
+          'measurementid', 'measurementmethod', 'measurementremarks', 'measurementtype', 
+          'measurementunit', 'measurementvalue', 'member', 'minimumdepthinmeters', 
+          'minimumdistanceabovesurfaceinmeters', 'minimumelevationinmeters', 'month', 
+          'occurrenceattributes', 'occurrencedetails', 'occurrenceid', 
+          'occurrenceremarks', 'othercatalognumbers', 'pointradiusspatialfit', 
+          'preparations', 'previousidentifications', 'recordnumber', 'recordedby', 
+          'relatedresourceid', 'relationshipaccordingto', 'relationshipestablisheddate', 
+          'relationshipofresource', 'relationshipremarks', 'reproductivecondition', 
+          'resourceid', 'resourcerelationshipid', 'samplingprotocol', 'sex', 
+          'startdayofyear', 'stateprovince', 'taxonattributes', 'typestatus', 
+          'verbatimcoordinatesystem', 'verbatimcoordinates', 'verbatimdepth', 
+          'verbatimelevation', 'verbatimeventdate', 'verbatimlatitude', 
+          'verbatimlocality', 'verbatimlongitude', 'waterbody', 'year', 'footprintsrs', 
+          'georeferenceddate', 'identificationverificationstatus', 'institutionid', 
+          'locationaccordingto', 'municipality', 'occurrencestatus', 
+          'ownerinstitutioncode', 'samplingeffort', 'verbatimsrs', 
+          'locationaccordingto7', 'taxonid', 'taxonconceptid', 'datasetid', 
+          'datasetname', 'source', 'modified', 'accessrights', 'rights', 'rightsholder', 
+          'language', 'higherclassification', 'kingdom', 'phylum', 'classs', 'order', 
+          'family', 'genus', 'subgenus', 'specificepithet', 'infraspecificepithet', 
+          'scientificname', 'scientificnameid', 'vernacularname', 'taxonrank', 
+          'verbatimtaxonrank', 'infraspecificmarker', 'scientificnameauthorship', 
+          'nomenclaturalcode', 'namepublishedin', 'namepublishedinid', 
+          'taxonomicstatus', 'nomenclaturalstatus', 'nameaccordingto', 
+          'nameaccordingtoid', 'parentnameusageid', 'parentnameusage', 
+          'originalnameusageid', 'originalnameusage', 'acceptednameusageid', 
+          'acceptednameusage', 'taxonremarks', 'dynamicproperties', 
+          'namepublishedinyear', 'season', 'dummy']
+
+OMIT_FROM_API_RESULTS = ['location', 'record', 'verbatim_record', 'count', 'icode',
+                         'keyname', 'harvestid']
+
+TRANSLATE_HEADER = {'pubdate':'dataset_pubdate', 'url':'dataset_url', 
+                    'eml':'dataset_eml', 'dwca':'dataset_dwca', 'title':'dataset_title',
+                    'description':'dataset_description', 'contact':'dataset_contact',
+                    'orgname':'dataset_orgname', 'email':'dataset_contact_email',
+                    'emlrights':'dataset_rights', 'citation':'dataset_citation', 
+                    'networks':'dataset_networks'}
 
 def is_number(s):
     try:
@@ -298,23 +358,42 @@ def build_search_index(entity):
     index_record(data)
 
 def _get_rec(doc):
+#    logging.info('Doc.fields: %s' % (doc.fields))
+    # Look through all the fields in the doc
     for field in doc.fields:
-        if field.name == 'record':
-            rec = json.loads(field.value)
-            rec['rank'] = doc._rank
-            return rec
+      # Ignore all fields except verbatim_record for now
+      if field.name == 'verbatim_record':
+        # Load the verbatim_record as the basis for the response for this rec
+        rec = json.loads(field.value)
+#    logging.info('Rec from verbatim_record: %s' % (rec))
+    # Look through all the fields in the doc again
+    for field in doc.fields:
+      # If the field name isn't already in the response for this rec
+      if rec.get(field.name) is None:
+        # Add the field.name:field.value pair to the response for this rec
+        rec[field.name] = field.value
+#    rec['rec_version'] = '2014-10-21T10:15'
+#    rec['doc_rank'] = doc._rank
+#    rec['doc_id'] = doc.doc_id
+#    rec['doc_language'] = doc.language
+
+    # Remove unwanted fields from the api results    
+    for popme in OMIT_FROM_API_RESULTS:
+      if rec.get(popme) is not None:
+#        logging.info('Omitting field: %s from rec' % (popme))
+        rec.pop(popme)
+    
+    # Translate field names to be explicit in the api results    
+    for changeme in TRANSLATE_HEADER:
+      value = rec.get(changeme)
+      rec.pop(changeme)
+      rec[TRANSLATE_HEADER.get(changeme)]=value  
+    return rec
 
 def delete_entity(entity):
     yield op.db.Delete(entity)
 
-def query(q, limit, sort=None, curs=search.Cursor()):
-    if IS_DEV:
-        # Set the index name to 'dwc' so that we can work with the test data generated
-        # by dwc-indexer.
-        #index_name = 'dwc_search'
-        index_name = 'dwc'
-    else:
-        index_name = 'dwc'
+def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
 
     if not curs:
         curs = search.Cursor()
@@ -325,10 +404,12 @@ def query(q, limit, sort=None, curs=search.Cursor()):
         results = search.Index(name=index_name, namespace=namespace).get_range(start_id=did, limit=1)
         if results:
             recs = map(_get_rec, results)
-            logging.info('SUCCESS recs=%s' % recs)
+            logging.info('One result from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
+            if log==1:
+              logging.info('Results:\n%s' % (results))          
             return recs, None, 1
         else:
-            logging.info('No search results for: %s' % q)
+            logging.info('No results from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
             return [], None, 0
 
     expressions = []
@@ -343,7 +424,8 @@ def query(q, limit, sort=None, curs=search.Cursor()):
     
         options = search.QueryOptions(
             limit=limit,
-            # number_found_accuracy=limit+1,
+            # See Stucky research, Mar 2014.
+            number_found_accuracy=10000,
             cursor=curs,
             sort_options=sort_options)
             #returned_fields=['record', 'location'])        
@@ -353,11 +435,10 @@ def query(q, limit, sort=None, curs=search.Cursor()):
         # count accuracy and incurs only a minor performance penalty.
         options = search.QueryOptions(
             limit=limit,
+            # See Stucky research, Mar 2014.
             number_found_accuracy=10000,
             cursor=curs) #,
             #returned_fields=['record', 'location'])        
-
-    logging.info('QUERY %s' % q)
 
     max_retries = 2
     retry_count = 0
@@ -369,23 +450,16 @@ def query(q, limit, sort=None, curs=search.Cursor()):
             results = search.Index(name=index_name, namespace=namespace).search(query)
             if results:
                 recs = map(_get_rec, results)
+                logging.info('%s results from search.Index() for namespace=%s index_name=%s query=%s' % (results.number_found, namespace, index_name, q))
+                if log==1:
+                  logging.info('Results:\n%s' % (results))          
                 return recs, results.cursor, results.number_found
             else:
-                logging.info('No search results for: %s' % q)
+                logging.info('No results from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
                 return [], None, 0
         except Exception, e:
-            logging.exception('Search failed: %s' % e)   
+            logging.exception('Search failed.\nQUERY:\n %s\nERROR:\n%s' % (q,e) )
             error = e
             retry_count += 1
 
     return [error]
-
-
-
-
-
-
-
-
-
-
