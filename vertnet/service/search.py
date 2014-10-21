@@ -394,7 +394,7 @@ def delete_entity(entity):
     yield op.db.Delete(entity)
 
 def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
-
+    VERSION='search.query:2014-10-21T16:03'
     if not curs:
         curs = search.Cursor()
     
@@ -407,10 +407,10 @@ def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
             logging.info('One result from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
             if log==1:
               logging.info('Results:\n%s' % (results))          
-            return recs, None, 1
+            return recs, None, 1, VERSION
         else:
             logging.info('No results from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
-            return [], None, 0
+            return [], None, 0, VERSION
 
     expressions = []
     # [SortExpression(expression='rank', default_value=0,
@@ -453,10 +453,10 @@ def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
                 logging.info('%s results from search.Index() for namespace=%s index_name=%s query=%s' % (results.number_found, namespace, index_name, q))
                 if log==1:
                   logging.info('Results:\n%s' % (results))          
-                return recs, results.cursor, results.number_found
+                return recs, results.cursor, results.number_found, VERSION
             else:
                 logging.info('No results from search.Index() for namespace=%s index_name=%s query=%s' % (namespace, index_name, q))
-                return [], None, 0
+                return [], None, 0, VERSION
         except Exception, e:
             logging.exception('Search failed.\nQUERY:\n %s\nERROR:\n%s' % (q,e) )
             error = e

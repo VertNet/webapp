@@ -24,7 +24,7 @@ import webapp2
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
-        self.VERSION='SearchAPI:2014-10-21T14:23'
+        self.VERSION='SearchAPI:2014-10-21T15:44'
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
         self.initialize(request, response)
 
@@ -32,7 +32,7 @@ class SearchApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        logging.info('Request: %s' % (self.request) )
+#        logging.info('api.py: VERSION %s request: %s' % (self.VERSION, self.request) )
         request = json.loads(self.request.get('q'))
         q, c, limit, log = map(request.get, ['q', 'c', 'l', 'log'])
 
@@ -61,8 +61,8 @@ class SearchApi(webapp2.RequestHandler):
         result = vnsearch.query(q, limit, 'dwc', log, sort=None, curs=curs)
         response = None
 
-        if len(result) == 3:
-            recs, cursor, count = result
+        if len(result) == 4:
+            recs, cursor, count, query_version = result
             if not c:
                 type = 'query'
                 query_count = count
@@ -84,9 +84,10 @@ class SearchApi(webapp2.RequestHandler):
                                        limit=limit,
                                        response_records=len(recs),
                                        api_version=self.VERSION, 
+                                       query_version=query_version,
                                        request_date=d.isoformat(),
                                        request_origin=self.cityLatLong))
-            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, api_version=self.VERSION, matching_records=count, response_records=len(recs), request_source='SearchAPI')
+            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, api_version=self.VERSION, matching_records=count, response_records=len(recs), request_source='SearchAPI', query_version=query_version)
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
