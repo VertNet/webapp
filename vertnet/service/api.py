@@ -15,6 +15,7 @@
 
 from google.appengine.api import search, taskqueue
 from vertnet.service import search as vnsearch
+from datetime import datetime, date, time
 
 import json
 import logging
@@ -23,6 +24,7 @@ import webapp2
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
+        self.VERSION='SearchAPI:2014-10-21T14:23'
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
         self.initialize(request, response)
 
@@ -30,10 +32,9 @@ class SearchApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        logging.info('HI')
-        
+        logging.info('Request: %s' % (self.request) )
         request = json.loads(self.request.get('q'))
-        q, c, limit = map(request.get, ['q', 'c', 'l'])
+        q, c, limit, log = map(request.get, ['q', 'c', 'l', 'log'])
 
         # Set the limit to 400 by default.  This value is based on the results
         # of substantial performance testing.
@@ -45,15 +46,19 @@ class SearchApi(webapp2.RequestHandler):
         if limit < 0:
             limit = 1
 
+        if not log:
+            log=0
+        else:
+            log=1
         curs = None
         if c:
             curs = search.Cursor(web_safe_string=c)
         else:
             curs = search.Cursor()
 
-        logging.info('q=%s, l=%s, c=%s' % (q, limit, curs))
+#        logging.info('q=%s, l=%s, c=%s' % (q, limit, curs))
 
-        result = vnsearch.query(q, limit, curs=curs)
+        result = vnsearch.query(q, limit, 'dwc', log, sort=None, curs=curs)
         response = None
 
         if len(result) == 3:
@@ -74,8 +79,14 @@ class SearchApi(webapp2.RequestHandler):
             if count > 10000:
                 count = '>10000'
 
-            response = json.dumps(dict(recs=recs, cursor=cursor, count=count))
-            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong)
+            d=datetime.utcnow()
+            response = json.dumps(dict(recs=recs, cursor=cursor, matching_records=count,
+                                       limit=limit,
+                                       response_records=len(recs),
+                                       api_version=self.VERSION, 
+                                       request_date=d.isoformat(),
+                                       request_origin=self.cityLatLong))
+            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, api_version=self.VERSION, matching_records=count, response_records=len(recs), request_source='SearchAPI')
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
