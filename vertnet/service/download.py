@@ -33,6 +33,7 @@ def _get_tsv_chunk(records):
 # TODO: Make idempotent.
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
+        self.VERSION='feature/api:WriteHandler:2015-01-08T19:56'
         q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
         q = json.loads(q)
         writable_file_name = self.request.get('writable_file_name')
@@ -51,7 +52,7 @@ class WriteHandler(webapp2.RequestHandler):
         while not success and retry_count < max_retries:
             try:
                 with files.open(writable_file_name, 'a') as f:
-                    records, next_cursor, count = vnsearch.query(q, 100, curs=curs)
+                    records, next_cursor, count, version = vnsearch.query(q, 100, curs=curs)
                     if not curs:
                         params = dict(query=q, type='download', count=count, downloader=email, latlon=latlon)
                         taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
@@ -60,6 +61,7 @@ class WriteHandler(webapp2.RequestHandler):
                     f.close(finalize=False)     
                     success = True
             except Exception as e:
+                logging.error("download.py VERSION: %s vnsearch.query: %s\n" % (self.VERSION, vnsearch.query(q, 100, curs=curs)))            
                 logging.error("I/O error %s" % e)
                 retry_count += 1
                 raise e
