@@ -24,7 +24,7 @@ import webapp2
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
-        self.VERSION='SearchAPI:2014-10-21T15:44'
+        self.VERSION='SearchAPI:2015-01-26T11:29'
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
         self.initialize(request, response)
 

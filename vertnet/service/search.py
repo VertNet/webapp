@@ -395,7 +395,7 @@ def delete_entity(entity):
     yield op.db.Delete(entity)
 
 def query(q, limit, index_name='dwc', log=0, sort=None, curs=search.Cursor()):
-    VERSION='feature/api:search.query():2015-01-08T19:56'
+    VERSION='feature/api:search.query():2015-01-26T11:29'
     if not curs:
         curs = search.Cursor()
     
