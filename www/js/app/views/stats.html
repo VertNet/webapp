@@ -1,21 +1,162 @@
 <div class="container">
 
-<div>
-    <br><i><div id="timespan"></div></i>
-    <table><tr><td style="width: 50%;">
-    <div id="numeric-stats" class="stat-panel" style="width: 500px; height: 300px; display:table-cell; vertical-align:middle"><table>
-    <tr><td>Number of queries: </td><td> <div id="queries"></div> </td></tr>
-    <tr><td>Number of records pulled to the screen: &nbsp &nbsp</td><td><div id="qrecords"></td></tr>
-    <tr><td>Number of downloads: </td><td><div id="downloads"></td></tr>
-    <tr><td>Number of records downloaded: </td><td><div id="drecords"></td></tr>
-    </table></div>
-    </td><td>
-    <div class="stat-panel" id="download_chart_div" style="width: 500px; height: 300px;"></div>
-    </td></tr><tr><td>
-    <div class="stat-panel" id="explInstPie_chart_div" style="width: 500px; height: 300px;"></div>
-    </td><td>
-    <div class="stat-panel" id="explClassPie_chart_div" style="width: 500px; height: 300px;"></div>
-    </td></tr></table>
-</div>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<style>
+    .huge {
+        font-size: 50px;
+    }
+</style>
 
-</div>
+    <div class="row">
+
+        <div class="col-sm-3 col-md-2 sidebar" role="navigation">
+            <h3>Portal Stats</h3>
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview</a></li>
+                <li><a href="#download_chart_div">Download Trends</a></li>
+                <li><a href="#explInstPie_chart_div">Queried Institutions</a></li>
+                <li><a href="#explClassPie_chart_div">Queried Classes</a></li>
+            </ul>
+        </div>
+        
+        <div class="col-sm-9 col-md-10">
+            
+            <div class="row">&nbsp</div> <!--Empty row for proper padding-->
+            
+            <div class="row"> <!--Queries row-->
+            
+                <!--QUERIES-->
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-search fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" id="queries">...</div>
+                                    <div>Queries</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--RECORDS QUERIED-->
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-9 text-left">
+                                    <div class="huge" id="qrecords">...</div>
+                                    <div>Records queried</div>
+                                </div>
+                                <div class="col-xs-3">
+                                    <i class="fa fa-search fa-5x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row"> <!--Downloads row-->
+                
+                <!--DOWNLOADS-->
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-download fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" id="downloads">...</div>
+                                    <div>Downloads</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--RECORDS DOWNLOADED-->
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-9 text-left">
+                                    <div class="huge" id="drecords">...</div>
+                                    <div>Records downloaded</div>
+                                </div>
+                                <div class="col-xs-3">
+                                    <i class="fa fa-download fa-5x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            
+            <!--Distribution of downloads panel-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-line-chart fa-fw"></i> Trends in download events
+                        </div>
+                        
+                        <div class="panel-body">
+                            <div class="">
+                                <div id="download_chart_div" style="height: 300px">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!--Distribution of downloads panel-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-pie-chart fa-fw"></i> Explicitly called Institutions
+                        </div>
+                        
+                        <div class="panel-body">
+                            <div class="">
+                                <div id="explInstPie_chart_div" style="height: 300px">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!--Distribution of downloads panel-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-pie-chart fa-fw"></i> Explicitly called Classes
+                        </div>
+                        
+                        <div class="panel-body">
+                            <div class="">
+                                <div id="explClassPie_chart_div" style="height: 300px">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    
+    </div> <!--Row-->
+
+
+</div> <!--Container-->
+
+
