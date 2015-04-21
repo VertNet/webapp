@@ -88,7 +88,7 @@ define([
                 downloadsArray.push(vals2);
             }
             
-            var timespan = 'From '+mindate+' to '+maxdate;
+            var timespan = mindate+' to '+maxdate;
             
             this.$('#timespan').text(timespan);
             this.$('#queries').text(queries);
