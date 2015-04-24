@@ -28,4 +28,4 @@ def main(environ, start_response):
     logging.info(d.keys())
 
 #    return [str(d)]
-    return [str(d['mindate']), "|", str(d['created_at']), "|", str(d['searches']), "|", str(d['records_viewed']), "|", str(d['downloads']), "|", str(d['records_downloaded']), "|", str(d['institution_data'])[1:-1], "|", str(d['class_data'])[1:-1], "|", str(d['download_data'])[1:-1]]
+    return [str(d['mindate'].split('T')[0]), "|", str(d['created_at'].split('T')[0]), "|", str(d['searches']), "|", str(d['records_viewed']), "|", str(d['downloads']), "|", str(d['records_downloaded']), "|", str(d['institution_data'])[1:-1], "|", str(d['class_data'])[1:-1], "|", str(d['download_data'])[1:-1]]
