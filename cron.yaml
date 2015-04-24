@@ -1,0 +1,5 @@
+cron:
+- description: daily portal stats extractor
+  schedule: every day 00:00
+  url: /tasks/daily_portal_stats
+  target: stats
