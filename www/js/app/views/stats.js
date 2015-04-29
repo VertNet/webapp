@@ -88,7 +88,7 @@ define([
                 downloadsArray.push(vals2);
             }
             
-            var timespan = 'From '+mindate+' to '+maxdate;
+            var timespan = mindate+' to '+maxdate;
             
             this.$('#timespan').text(timespan);
             this.$('#queries').text(queries);
@@ -99,18 +99,29 @@ define([
             map.init(_.bind(function() {
                 var explInstPieData = google.visualization.arrayToDataTable(explInstArray);
                 var explInstPieOptions = {title: "Number times somebody searched for a particular institution using the \"institutioncode\" label", backgroundColor: { fill:'transparent' }};
-                var explInstPieChart = new google.visualization.PieChart(document.getElementById("explInstPie_chart_div"));
-                explInstPieChart.draw(explInstPieData, explInstPieOptions);
+                
+                
                 
                 var explClassPieData = google.visualization.arrayToDataTable(explClassArray);
                 var explClassPieOptions = {title: "Number times somebody searched for a particular class using the \"class\" label", backgroundColor: { fill:'transparent' }};
-                var explClassPieChart = new google.visualization.PieChart(document.getElementById("explClassPie_chart_div"));
-                explClassPieChart.draw(explClassPieData, explClassPieOptions);
+                
+                
                 
                 var downloadData = google.visualization.arrayToDataTable(downloadsArray);
                 var downloadOptions = {title: "Number of Downloads, per month", legend: "none", backgroundColor: { fill:'transparent' }};
-                var downloadChart = new google.visualization.LineChart(document.getElementById("download_chart_div"));
-                downloadChart.draw(downloadData, downloadOptions);
+                
+                function resize() {
+                    var explInstPieChart = new google.visualization.PieChart(document.getElementById("explInstPie_chart_div"));
+                    var explClassPieChart = new google.visualization.PieChart(document.getElementById("explClassPie_chart_div"));
+                    var downloadChart = new google.visualization.LineChart(document.getElementById("download_chart_div"));
+                    
+                    explInstPieChart.draw(explInstPieData, explInstPieOptions);
+                    explClassPieChart.draw(explClassPieData, explClassPieOptions);
+                    downloadChart.draw(downloadData, downloadOptions);
+                }
+                
+                window.onload = resize();
+                window.onresize = resize;
                 
             }, this));
             
