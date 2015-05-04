@@ -28,7 +28,7 @@ headers = {
 
 def get_all_repos():
     """Extract a list of all github_orgnames and github_reponames from CartoDB."""
-    query = "select github_orgname, github_reponame from resource_staging where ipt is true and networks like '%VertNet%' limit 5;"
+    query = "select github_orgname, github_reponame from resource_staging where ipt is true and networks like '%VertNet%';"
     vals = {
         'api_key': cdb_key,
         'q': query
