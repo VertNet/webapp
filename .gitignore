@@ -2,6 +2,7 @@ storage/
 www-built/
 data/
 cdbkey.txt
+ghkey.txt
 *.pyc
 *.sublime-*
 *.*~
