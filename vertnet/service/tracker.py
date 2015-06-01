@@ -33,7 +33,7 @@ class TrackerHandler(webapp2.RequestHandler):
             lat, lon = map(float, latlon.split(','))
         except:
             lat, lon = -99999, -99999
-        log_sql = """INSERT INTO query_log_master(client,query,error,type,count,downloader,lat,lon,api_version,matching_records,response_records,request_source, query_version) VALUES ('%s','%s','%s','%s',%s,'%s',%s, %s, '%s', %s, %s, '%s', '%s'); update query_log set the_geom = CDB_LatLng(lat,lon)""" 
+        log_sql = """INSERT INTO query_log_master(client,query,error,type,count,downloader,lat,lon,api_version,matching_records,response_records,request_source, query_version) VALUES ('%s','%s','%s','%s',%s,'%s',%s, %s, '%s', '%s', %s, '%s', '%s'); update query_log set the_geom = CDB_LatLng(lat,lon)""" 
         log_sql = log_sql % (CLIENT, query, error, type, count, downloader, lat, lon, api_version, matching_records, response_records, request_source, query_version)
         rpc = urlfetch.create_rpc()
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
