@@ -79,5 +79,15 @@ handlers:
 - url: /service/stats.*
   script: vertnet.service.stats.main
 
+- url: /service/repochecker.*
+  script: vertnet.service.repochecker.main
+
+# CRON tasks
+
+- url: /tasks/daily_portal_stats.*
+  script: vertnet.service.tasks.daily_portal_stats.main
+
+# Main handler
+
 - url: /.*
   script: app.handler

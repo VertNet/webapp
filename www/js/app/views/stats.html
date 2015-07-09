@@ -1,21 +1,222 @@
 <div class="container">
 
-<div>
-    <br><i><div id="timespan"></div></i>
-    <table><tr><td style="width: 50%;">
-    <div id="numeric-stats" class="stat-panel" style="width: 500px; height: 300px; display:table-cell; vertical-align:middle"><table>
-    <tr><td>Number of queries: </td><td> <div id="queries"></div> </td></tr>
-    <tr><td>Number of records pulled to the screen: &nbsp &nbsp</td><td><div id="qrecords"></td></tr>
-    <tr><td>Number of downloads: </td><td><div id="downloads"></td></tr>
-    <tr><td>Number of records downloaded: </td><td><div id="drecords"></td></tr>
-    </table></div>
-    </td><td>
-    <div class="stat-panel" id="download_chart_div" style="width: 500px; height: 300px;"></div>
-    </td></tr><tr><td>
-    <div class="stat-panel" id="explInstPie_chart_div" style="width: 500px; height: 300px;"></div>
-    </td><td>
-    <div class="stat-panel" id="explClassPie_chart_div" style="width: 500px; height: 300px;"></div>
-    </td></tr></table>
-</div>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<style>
+    .huge {
+        font-size: 50px;
+    }
 
-</div>
+    #wrapper {
+      padding-left: 250px;
+      transition: all 0.4s ease 0s;
+    }
+
+    #sidebar-wrapper {
+      margin-left: -250px;
+      left: 250px;
+      width: 250px;
+      position: fixed;
+      height: 100%;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: all 0.4s ease 0s;
+    }
+
+    #page-content-wrapper {
+      width: 100%;
+    }
+
+    .sidebar-nav {
+      position: absolute;
+      top: 0;
+      width: 250px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    @media (max-width:767px) {
+
+        #wrapper {
+          padding-left: 0;
+        }
+
+        #sidebar-wrapper {
+          left: 0;
+        }
+
+        #wrapper.active {
+          position: relative;
+          left: 250px;
+        }
+
+        #wrapper.active #sidebar-wrapper {
+          left: 250px;
+          width: 250px;
+          transition: all 0.4s ease 0s;
+        }
+
+    }
+
+</style>
+
+    <div id="wrapper">
+
+        <div id="sidebar-wrapper" class="col-sm-3 col-md-2 sidebar" role="navigation">
+            <ul class="nav nav-sidebar sidebar-nav">
+                <li>&nbsp</li>
+                <li class="sidebar-brand active"><a href="#">Overview</a></li>
+                <li><a href="#download_chart">Download Trends</a></li>
+                <li><a href="#explInstPie_chart">Queried Institutions</a></li>
+                <li><a href="#explClassPie_chart">Queried Classes</a></li>
+            </ul>
+        </div>
+        
+        <div id="page-content-wrapper" class="col-sm-9 col-md-10">
+            
+            <div class="page-content">
+                <div class="row">&nbsp</div> <!--Empty row for proper padding-->
+                
+                <div class="row"> <!--Queries row-->
+                    <div class="col-xs-12">
+                        <h1>Portal Stats</h1>
+                        <small id="timespan">(Generating statistics, one moment please...)</small>
+                    </div>
+                    
+                    <!--QUERIES-->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-search fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge" id="queries">...</div>
+                                        <div>Queries</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--RECORDS QUERIED-->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-9 text-left">
+                                        <div class="huge" id="qrecords">...</div>
+                                        <div>Records viewed</div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-search fa-5x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row"> <!--Downloads row-->
+                    
+                    <!--DOWNLOADS-->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-download fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge" id="downloads">...</div>
+                                        <div>Downloads</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--RECORDS DOWNLOADED-->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-9 text-left">
+                                        <div class="huge" id="drecords">...</div>
+                                        <div>Records downloaded</div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-download fa-5x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                
+                <!--Distribution of downloads panel-->
+                <div class="row" id="download_chart">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="">
+                                    <div>&nbsp</div>
+                                    <div id="download_chart_div" style="height: 300px">Loading...</div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <i class="fa fa-line-chart fa-fw"></i> Trends in download events
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!--Distribution of downloads panel-->
+                <div class="row" id="explInstPie_chart">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="">
+                                    <div>&nbsp</div>
+                                    <div id="explInstPie_chart_div" style="height: 300px">Loading...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-footer">
+                                <i class="fa fa-pie-chart fa-fw"></i> Explicitly called Institutions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!--Distribution of downloads panel-->
+                <div class="row" id="explClassPie_chart">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="">
+                                    <div>&nbsp</div>
+                                    <div id="explClassPie_chart_div" style="height: 300px">Loading...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-footer">
+                                <i class="fa fa-pie-chart fa-fw"></i> Explicitly called Classes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div> <!--wrapper-->
+
+
+</div> <!--Container-->
+
+
