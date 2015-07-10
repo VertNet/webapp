@@ -37,7 +37,10 @@ def namespace_manager_default_namespace_for_request():
     if IS_DEV:
     	return 'dwcns'
     else:
-    	return 'index-2014-03-12'
+# DwC2013-style index
+#    	return 'index-2014-03-12'
+# DwC2015-style index
+    	return 'index-2014-02-11a'
 
 engineauth = {
     # Login uri. The user will be returned here if an error occures.
