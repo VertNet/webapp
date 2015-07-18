@@ -24,10 +24,13 @@
 <td><% var occid = this.model.getOccIdentifier() %> <%= occid %></td>
 <td><%= this.model.get('class') + ': ' +  this.model.get('scientificname')%></td>
 <td><% var loc = this.model.getLocation() %> <%= loc %></td>
-<td><% var year = this.model.getYear() %> <%= year %></td>
-<td><% if (this.model.isMappable()) { %>
+<td><%= this.model.get('recordedby')%></td>
+<td><%= this.model.get('sex')%></td>
+<!--<td><% var year = this.model.getYear() %> <%= year %></td>-->
+<td><%= this.model.get('eventdate')%></td>
+<td style="text-align:center"><% if (this.model.isMappable()) { %>
 		<span class="glyphicon glyphicon-map-marker"></span>
 	<% } %></td>	
-<td><% if (this.model.get('associatedmedia')) { %>
+<td style="text-align:center"><% if (this.model.get('associatedmedia')) { %>
 		<span class="glyphicon glyphicon-facetime-video"></span>
 	<% } %></td>	

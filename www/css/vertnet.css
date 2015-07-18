@@ -18,8 +18,8 @@
        position: relative;
        min-height: 1px;
        margin-top: 10px;
-       padding-right: -30px;
-       padding-left: -25px;
+       padding-right: -15px;
+       padding-left: -10px;
        float: left;
 }
 
@@ -31,9 +31,18 @@
 .vn-col-md-2 {
        position: relative;
        min-height: 1px;
-       padding-right: 20px;
-       padding-left: 20px;
-	   /*width: 16.666666666666664%;*/
+       padding-right: 15px;
+       padding-left: 15px;
+	   width: 15.75%;
+/*	   width: 16.666666666666664%;*/
+       float: left;
+}
+.vn-col-md-2-ckbx {
+       position: relative;
+       min-height: 1px;
+       padding-right: 15px;
+       padding-left: 15px;
+/*	   width: 16.666666666666664%;*/
        float: left;
 }
 
@@ -580,3 +589,12 @@ VNlegend {
 	border-radius: 4px
 }
 
+.btn-pub {
+	padding: 10px 16px;
+	font-size: 16px;
+	border-radius: 6px;
+}
+
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after { 
+    content: " \25B4\25BE" 
+}
