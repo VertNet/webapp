@@ -393,13 +393,16 @@ define([
 		  }, this));
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
-	
-	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY orgname, icode", function(institutions) {
-    $.each(institutions.rows, function(key, val) {
-        $('#instcode').text(util.addCommas(val.icode).toString());
-        $('#instorg').text(util.addCommas(val.orgname).toString());
-   	  });
-    });	
+	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,': ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY orgname, icode",function(institutions) {
+         var listItems = '<option value="">Select institution</option>';
+
+		$.each(institutions.rows, function(key, val) {
+ 
+             listItems += "<option value='" + val.icode + "'>" + val.orgname + "</option>";
+ 
+         $("#inst-dropdown").html(listItems);
+     });
+	 });	
 	  	
 	//end institution list	  		  		  
  		  		  
@@ -557,7 +560,11 @@ define([
       var none = this.$('#nonewords').val();
       var start = this.$('#datestart').val();
       var end = this.$('#dateend').val();
-	  var inst = this.$('#codeinstitution :selected').val();
+      var mstart = this.$('#monthstart').val();
+      var mend = this.$('#monthend').val();
+      var dstart = this.$('#daystart').val();
+      var dend = this.$('#dayend').val();
+	  var inst = this.$('#inst-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
 
       if (type === 'Specimen or Observation') {
@@ -600,6 +607,35 @@ define([
         end = Number(end);
         query += [ ' year >= ', start, ' year <= ', end].join('');      
       }
+
+      if (mstart && !mend) {
+        mstart = Number(mstart);
+        query += [ ' month >= ', mstart].join('');      
+      }
+      if (!mstart && mend) {
+        mend = Number(mend);
+        query += [' month <= ', mend].join('');
+      }
+      if (mstart && mend) {
+        mstart = Number(mstart);
+        mend = Number(mend);
+        query += [ ' month >= ', mstart, ' month <= ', mend].join('');      
+      }
+
+      if (dstart && !dend) {
+        dstart = Number(dstart);
+        query += [ ' day >= ', dstart].join('');      
+      }
+      if (!dstart && dend) {
+        dend = Number(dend);
+        query += [' day <= ', dend].join('');
+      }
+      if (dstart && dend) {
+        dstart = Number(dstart);
+        dend = Number(dend);
+        query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
+      }
+	  	  
 	  if (inst !== '') {
 		  query += [' institutioncode:', inst].join('');
 	  }
