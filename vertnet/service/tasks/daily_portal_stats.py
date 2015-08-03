@@ -78,10 +78,17 @@ def getMetadata():
     return metadata
 
 def getRecordsQueried():
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20results_by_resource%20from%20query_log_master%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%27".format(query_date_limit, api_key)
+    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20results_by_resource%20from%20query_log_master%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%7B%7D%27".format(query_date_limit, api_key)
     logging.info('QUERY URL: %s' % url)
     d = json.loads(urllib2.urlopen(url).read())['rows']
-    records_queried = sum([sum(json.loads(d[x]['results_by_resource']).values()) for x in list(range(len(d)))])
+    records_queried = 0
+    for x in list(range(len(d))):
+        try:
+            records_queried += sum(json.loads(d[x]['results_by_resource']).values())
+        except:
+            pass
+    #records_queried = sum([sum(json.loads(d[x]['results_by_resource']).values()) for x in list(range(len(d)))])
+    logging.info("{0} records queried".format(records_queried))
     return records_queried
 
 def getMaxDate():
