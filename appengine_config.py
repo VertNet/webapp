@@ -37,6 +37,9 @@ def namespace_manager_default_namespace_for_request():
     if IS_DEV:
     	return 'dwcns'
     else:
+        # DwC2013-style index
+#    	return 'index-2014-03-12'
+        # DwC2015-style index:
         # index-2014-02-11a is an index with the dwc2015 schema indexing from 
         # gulo with [org.gbif/dwca-reader "1.20-SNAPSHOT"] and 
         # [dwca-reader-clj "0.10.1-SNAPSHOT"]
