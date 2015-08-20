@@ -47,7 +47,7 @@ class TrackerHandler(webapp2.RequestHandler):
         try:
             rpc.get_result()
         except urlfetch.DownloadError:
-            logging.error("Error logging API - %s" % (query))            
+            logging.error("Error logging API - %s. log_url: %s" % (query, log_url))            
             
 api = webapp2.WSGIApplication(
     [('/apitracker', TrackerHandler)],

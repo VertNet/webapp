@@ -1,4 +1,16 @@
 # Copyright 2013 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
 
 """Util functions and classes for cloudstorage_api."""
 
@@ -15,22 +27,38 @@ import math
 import os
 import threading
 import time
+import urllib
 
 
 try:
+  from google.appengine.api import app_identity
   from google.appengine.api import urlfetch
+  from google.appengine.api import urlfetch_errors
   from google.appengine.datastore import datastore_rpc
+  from google.appengine.ext import ndb
+  from google.appengine.ext.ndb import eventloop
+  from google.appengine.ext.ndb import tasklets
+  from google.appengine.ext.ndb import utils
   from google.appengine import runtime
   from google.appengine.runtime import apiproxy_errors
 except ImportError:
+  from google.appengine.api import app_identity
   from google.appengine.api import urlfetch
+  from google.appengine.api import urlfetch_errors
   from google.appengine.datastore import datastore_rpc
   from google.appengine import runtime
   from google.appengine.runtime import apiproxy_errors
+  from google.appengine.ext import ndb
+  from google.appengine.ext.ndb import eventloop
+  from google.appengine.ext.ndb import tasklets
+  from google.appengine.ext.ndb import utils
 
 
 _RETRIABLE_EXCEPTIONS = (urlfetch.DownloadError,
-                         apiproxy_errors.Error)
+                         urlfetch_errors.InternalTransientError,
+                         apiproxy_errors.Error,
+                         app_identity.InternalError,
+                         app_identity.BackendDeadlineExceeded)
 
 _thread_local_settings = threading.local()
 _thread_local_settings.default_retry_params = None
@@ -54,6 +82,32 @@ def _get_default_retry_params():
     return copy.copy(default)
 
 
+def _quote_filename(filename):
+  """Quotes filename to use as a valid URI path.
+
+  Args:
+    filename: user provided filename. /bucket/filename.
+
+  Returns:
+    The filename properly quoted to use as URI's path component.
+  """
+  return urllib.quote(filename)
+
+
+def _unquote_filename(filename):
+  """Unquotes a valid URI path back to its filename.
+
+  This is the opposite of _quote_filename.
+
+  Args:
+    filename: a quoted filename. /bucket/some%20filename.
+
+  Returns:
+    The filename unquoted.
+  """
+  return urllib.unquote(filename)
+
+
 def _should_retry(resp):
   """Given a urlfetch response, decide whether to retry that request."""
   return (resp.status_code == httplib.REQUEST_TIMEOUT or
@@ -61,18 +115,107 @@ def _should_retry(resp):
            resp.status_code < 600))
 
 
+class _RetryWrapper(object):
+  """A wrapper that wraps retry logic around any tasklet."""
+
+  def __init__(self,
+               retry_params,
+               retriable_exceptions=_RETRIABLE_EXCEPTIONS,
+               should_retry=lambda r: False):
+    """Init.
+
+    Args:
+      retry_params: an RetryParams instance.
+      retriable_exceptions: a list of exception classes that are retriable.
+      should_retry: a function that takes a result from the tasklet and returns
+        a boolean. True if the result should be retried.
+    """
+    self.retry_params = retry_params
+    self.retriable_exceptions = retriable_exceptions
+    self.should_retry = should_retry
+
+  @ndb.tasklet
+  def run(self, tasklet, **kwds):
+    """Run a tasklet with retry.
+
+    The retry should be transparent to the caller: if no results
+    are successful, the exception or result from the last retry is returned
+    to the caller.
+
+    Args:
+      tasklet: the tasklet to run.
+      **kwds: keywords arguments to run the tasklet.
+
+    Raises:
+      The exception from running the tasklet.
+
+    Returns:
+      The result from running the tasklet.
+    """
+    start_time = time.time()
+    n = 1
+
+    while True:
+      e = None
+      result = None
+      got_result = False
+
+      try:
+        result = yield tasklet(**kwds)
+        got_result = True
+        if not self.should_retry(result):
+          raise ndb.Return(result)
+      except runtime.DeadlineExceededError:
+        logging.debug(
+            'Tasklet has exceeded request deadline after %s seconds total',
+            time.time() - start_time)
+        raise
+      except self.retriable_exceptions, e:
+        pass
+
+      if n == 1:
+        logging.debug('Tasklet is %r', tasklet)
+
+      delay = self.retry_params.delay(n, start_time)
+
+      if delay <= 0:
+        logging.debug(
+            'Tasklet failed after %s attempts and %s seconds in total',
+            n, time.time() - start_time)
+        if got_result:
+          raise ndb.Return(result)
+        elif e is not None:
+          raise e
+        else:
+          assert False, 'Should never reach here.'
+
+      if got_result:
+        logging.debug(
+            'Got result %r from tasklet.', result)
+      else:
+        logging.debug(
+            'Got exception "%r" from tasklet.', e)
+      logging.debug('Retry in %s seconds.', delay)
+      n += 1
+      yield tasklets.sleep(delay)
+
+
 class RetryParams(object):
   """Retry configuration parameters."""
+
+  _DEFAULT_USER_AGENT = 'App Engine Python GCS Client'
 
   @datastore_rpc._positional(1)
   def __init__(self,
                backoff_factor=2.0,
                initial_delay=0.1,
                max_delay=10.0,
-               min_retries=2,
-               max_retries=5,
+               min_retries=3,
+               max_retries=6,
                max_retry_period=30.0,
-               urlfetch_timeout=None):
+               urlfetch_timeout=None,
+               save_access_token=False,
+               _user_agent=None):
     """Init.
 
     This object is unique per request per thread.
@@ -89,8 +232,14 @@ class RetryParams(object):
         capped by max_retries.
       max_retries: max number of times to retry. Set this to 0 for no retry.
       max_retry_period: max total seconds spent on retry. Retry stops when
-       this period passed AND min_retries has been attempted.
-      urlfetch_timeout: timeout for urlfetch in seconds. Could be None.
+        this period passed AND min_retries has been attempted.
+      urlfetch_timeout: timeout for urlfetch in seconds. Could be None,
+        in which case the value will be chosen by urlfetch module.
+      save_access_token: persist access token to datastore to avoid
+        excessive usage of GetAccessToken API. Usually the token is cached
+        in process and in memcache. In some cases, memcache isn't very
+        reliable.
+      _user_agent: The user agent string that you want to use in your requests.
     """
     self.backoff_factor = self._check('backoff_factor', backoff_factor)
     self.initial_delay = self._check('initial_delay', initial_delay)
@@ -104,6 +253,9 @@ class RetryParams(object):
     self.urlfetch_timeout = None
     if urlfetch_timeout is not None:
       self.urlfetch_timeout = self._check('urlfetch_timeout', urlfetch_timeout)
+    self.save_access_token = self._check('save_access_token', save_access_token,
+                                         True, bool)
+    self._user_agent = _user_agent or self._DEFAULT_USER_AGENT
 
     self._request_id = os.getenv('REQUEST_LOG_ID')
 
@@ -169,68 +321,36 @@ class RetryParams(object):
         self.max_delay)
 
 
-def _retry_fetch(url, retry_params, **kwds):
-  """A blocking fetch function similar to urlfetch.fetch.
+def _run_until_rpc():
+  """Eagerly evaluate tasklets until it is blocking on some RPC.
 
-  This function should be used when a urlfetch has timed out or the response
-  shows http request timeout. This function will put current thread to
-  sleep between retry backoffs.
+  Usually ndb eventloop el isn't run until some code calls future.get_result().
 
-  Args:
-    url: url to fetch.
-    retry_params: an instance of RetryParams.
-    **kwds: keyword arguments for urlfetch. If deadline is specified in kwds,
-      it precedes the one in RetryParams. If none is specified, it's up to
-      urlfetch to use its own default.
+  When an async tasklet is called, the tasklet wrapper evaluates the tasklet
+  code into a generator, enqueues a callback _help_tasklet_along onto
+  the el.current queue, and returns a future.
 
-  Returns:
-    A urlfetch response from the last retry. None if no retry was attempted.
-
-  Raises:
-    Whatever exception encountered during the last retry.
+  _help_tasklet_along, when called by the el, will
+  get one yielded value from the generator. If the value if another future,
+  set up a callback _on_future_complete to invoke _help_tasklet_along
+  when the dependent future fulfills. If the value if a RPC, set up a
+  callback _on_rpc_complete to invoke _help_tasklet_along when the RPC fulfills.
+  Thus _help_tasklet_along drills down
+  the chain of futures until some future is blocked by RPC. El runs
+  all callbacks and constantly check pending RPC status.
   """
-  n = 1
-  start_time = time.time()
-  delay = retry_params.delay(n, start_time)
-  if delay <= 0:
-    return
+  el = eventloop.get_event_loop()
+  while el.current:
+    el.run0()
 
-  deadline = kwds.get('deadline', None)
-  if deadline is None:
-    kwds['deadline'] = retry_params.urlfetch_timeout
 
-  while delay > 0:
-    resp = None
-    try:
-      time.sleep(delay)
-      resp = urlfetch.fetch(url, **kwds)
-    except runtime.DeadlineExceededError:
-      logging.info(
-          'Urlfetch retry %s will exceed request deadline '
-          'after %s seconds total', n, time.time() - start_time)
-      raise
-    except _RETRIABLE_EXCEPTIONS, e:
-      pass
+def _eager_tasklet(tasklet):
+  """Decorator to turn tasklet to run eagerly."""
 
-    n += 1
-    delay = retry_params.delay(n, start_time)
-    if resp and not _should_retry(resp):
-      break
-    elif resp:
-      logging.info(
-          'Got status %s from GCS. Will retry in %s seconds.',
-          resp.status_code, delay)
-    else:
-      logging.info(
-          'Got exception while contacting GCS. Will retry in %s seconds.',
-          delay)
-      logging.info(e)
-    logging.debug('Tried to reach url %s', url)
+  @utils.wrapping(tasklet)
+  def eager_wrapper(*args, **kwds):
+    fut = tasklet(*args, **kwds)
+    _run_until_rpc()
+    return fut
 
-  if resp:
-    return resp
-
-  logging.info('Urlfetch retry %s failed after %s seconds total',
-               n - 1, time.time() - start_time)
-  raise
-
+  return eager_wrapper
