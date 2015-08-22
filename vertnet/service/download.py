@@ -16,6 +16,13 @@ import json
 import logging
 import uuid
 
+SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
+COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
+COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
+TEMP_BUCKET='vn-dltest' # bucket for temp compositions
+DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
+FILE_EXTENSION='tsv'
+
 def _write_record(f, record):
     f.write('%s\n' % record.csv)
 
@@ -54,14 +61,18 @@ def _get_tsv_chunk(records):
 #     }
 #     return c
 
-def compose_request(bucketname, filepattern, filecount):
-    """Construct a API Compose dictionary from a bucketname, filepattern and 
-    number of files."""
+def compose_request(bucketname, filepattern, begin, end):
+    """Construct a API Compose dictionary from a bucketname and filepattern.
+    bucketname - the GCS bucket in which the files will be composed. Ex. 'vn-downloads2'
+    filepattern - the naming pattern for the composed files. Ex. 'MyResult-UUID'
+    begin - the index of the first file in the composition used to grab a range of files.
+    end - begin plus the number of files to put in the composition (i.e., end index + 1)
+    """
     
     objectlist=[]
-    for i in range(filecount+1):
+    for i in range(begin,end):
         objectdict={}
-        filename='%s-%s.tsv' % (filepattern,i)
+        filename='%s-%s.%s' % (filepattern,i,FILE_EXTENSION)
         objectdict['name']=filename
         objectlist.append(objectdict)
 
@@ -73,19 +84,54 @@ def compose_request(bucketname, filepattern, filecount):
     composedict['destination']=dest
     composedict['kind']='storage#composeRequest'
     return composedict
-    # Do not turn this into JSON
-#    return json.dumps(composedict)
+
+class DownloadHandler(webapp2.RequestHandler):
+    def _queue(self, q, email, name, latlon, large_file):
+        # Google Cloud Storage bucket for downloads to be stored in
+
+        # Create a base filename for all chunks to be composed for this download
+        filepattern = '%s-%s' % (name, uuid.uuid4().hex)
+
+        # Start the download process with the first file having fileindex 0
+        # Start the record count at 0
+        taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q),
+            email=email, name=name, filepattern=filepattern, bucketname=TEMP_BUCKET,
+                latlon=latlon, large_file=large_file, fileindex=0, reccount=0),
+                queue_name="downloadwrite")
+
+    def post(self):
+        self.get()
+    
+    def get(self):
+        count, keywords, email, name, download = map(self.request.get, 
+            ['count', 'keywords', 'email', 'name', 'filepattern'])
+        logging.info(' . '.join([count, keywords, email, name, download]))
+        q = ' '.join(json.loads(keywords))
+        count = int(count)
+        latlon = self.request.headers.get('X-AppEngine-CityLatLong')
+        if count <= SEARCH_CHUNK_SIZE:
+            self._queue(q, email, name, latlon, 'False')
+            filename = str('%s.txt' % name)
+            self.response.headers['Content-Type'] = "text/tab-separated-values"
+            self.response.headers['Content-Disposition'] = "attachment; filename=%s" % filename
+            records, cursor, count = vnsearch.query(q, count)
+            params = dict(query=q, type='download', count=count, downloader=email, 
+                download=download, latlon=latlon)
+            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
+            data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
+            self.response.out.write(data)
+        else:
+            self._queue(q, email, name, latlon, 'True')
 
 # TODO: Make idempotent.
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
-        SEARCH_CHUNK_SIZE=1000
         q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
         q = json.loads(q)
-        bucketname  = self.request.get('bucketname')
         filepattern = self.request.get('filepattern')
         fileindex = int(self.request.get('fileindex'))
-        filename = '/%s/%s-%s.tsv' % (bucketname, filepattern, fileindex)
+        reccount = int(self.request.get('reccount'))
+        filename = '/%s/%s-%s.%s' % (TEMP_BUCKET, filepattern, fileindex, FILE_EXTENSION)
         cursor = self.request.get('cursor')
         large_file = True if self.request.get('large_file')=='True' else False
         if cursor:
@@ -111,9 +157,10 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % util.DWC_HEADER)
                     f.write(chunk)
                     success = True
-#                    logging.info('Download chunk saved to  %s' % filename)
+                    reccount = reccount+len(records)
+                    logging.info('download.py post(): Download chunk of %s records saved to  %s: total %s records.' % (len(records), filename, reccount) )
             except Exception, e:
-                logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s" 
+                logging.error("download.py post(): I/O error writing chunk to FILE: %s for\nQUERY: %s" 
                     % (filename,q) )
                 retry_count += 1
                 raise e
@@ -129,46 +176,38 @@ class WriteHandler(webapp2.RequestHandler):
         if curs:
             fileindex = fileindex + 1
             params=dict(q=self.request.get('q'), email=email, name=name, 
-                        filepattern=filepattern, bucketname=bucketname, 
+                        filepattern=filepattern, bucketname=TEMP_BUCKET, 
                         latlon=latlon, cursor=curs, large_file=large_file, 
-                        fileindex=fileindex)
-            taskqueue.add(url='/service/download/write', params=params,
-                         queue_name="downloadwrite")
+                        fileindex=fileindex, reccount=reccount)
+            if fileindex>COMPOSE_OBJECT_LIMIT:
+                # Opt not to support downloads of more than 
+                # COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE records
+                # Stop composing results at this limit.
+                taskqueue.add(url='/service/download/compose', params=params,
+                        queue_name="compose")
+            else:
+                # Keep writing search chunks to files
+                taskqueue.add(url='/service/download/write', params=params,
+                             queue_name="downloadwrite")
         
         # Finalize and email.
         else:
             params=dict(q=self.request.get('q'), email=email, name=name, 
-                        filepattern=filepattern, bucketname=bucketname, 
+                        filepattern=filepattern, bucketname=TEMP_BUCKET, 
                         latlon=latlon, cursor=curs, large_file=large_file, 
-                        fileindex=fileindex)
+                        fileindex=fileindex, reccount=reccount)
             taskqueue.add(url='/service/download/compose', params=params,
-                         queue_name="compose")
+                        queue_name="compose")
 
 class ComposeHandler(webapp2.RequestHandler):
     def post(self):
         q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
         q = json.loads(q)
-        bucketname  = self.request.get('bucketname')
         filepattern = self.request.get('filepattern')
-        files_to_compose = int(self.request.get('fileindex'))
-        filename = '/%s/%s-%s.tsv' % (bucketname, filepattern, files_to_compose)
-        large_file = True if self.request.get('large_file')=='True' else False
-
-        # Finalize and email.
-        # Compose chunks into composite objects until there is one composite object
-        # Then remove all the chunks and return a URL to the composite
-        # Only 32 objects can be composed at once, limit 1024 in a composition of 
-        # compositions. 
-        # See https://cloud.google.com/storage/docs/composite-objects#_Compose
-#        if files_to_compose>32:
-            # Going to need to do this in multiple passes
-#                 # Compose in sets of 32 or less until there are no more than
-#                 logging.info('There are >32 (%s) files to compose into the result set.' % files_to_compose)
-#                 if files_to_compose>1024:
-#                     # Houston, we have a problem
-#                     logging.warning('There are too many files (%s) to compose into the result set.' % files_to_compose)
-        composed_filename='%s.tsv' % filepattern            
-        mbody=compose_request(bucketname, filepattern, files_to_compose)
+        composed_filepattern='%s-cl' % filepattern
+        reccount = self.request.get('reccount')
+        total_files_to_compose = int(self.request.get('fileindex'))+1
+        compositions=total_files_to_compose
 
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
@@ -176,78 +215,102 @@ class ComposeHandler(webapp2.RequestHandler):
         # Construct the service object for interacting with the Cloud Storage API.
         service = discovery.build('storage', 'v1', credentials=credentials)
 
-        # Getting bucket info in GCS
-        # Make a request to buckets.get to retrieve information about the given bucket.
-#            req = service.buckets().get(bucket=bucketname)
-#            resp = req.execute()
-#            logging.info('Bucket Info: %s' % json.dumps(resp, indent=2) )
-
         # Composing objects in GCS
         # See https://cloud.google.com/storage/docs/json_api/v1/objects/compose#examples
         
-        req = service.objects().compose(
-            destinationBucket=bucketname,
-            destinationObject=composed_filename,
-            destinationPredefinedAcl='publicRead',
-            body=mbody)
-#            logging.info('Composed file name: %s\nMessage body: %s' % (composed_filename, mbody))
-        resp = req.execute()
-#            logging.info('Compose response: %s' % (resp) )
+        # Finalize and email.
+        # Compose chunks into composite objects until there is one composite object
+        # Then remove all the chunks and return a URL to the composite
+        # Only 32 objects can be composed at once, limit 1024 in a composition of 
+        # compositions. Thus, a composition of compositions is sufficient for the worst
+        # case scenario.
+        # See https://cloud.google.com/storage/docs/composite-objects#_Compose
 
-        # Remove all chunk files
-        for i in range(files_to_compose+1):
-            filename='%s-%s.tsv' % (filepattern,i)
-            req = service.objects().delete(bucket=bucketname, object=filename)
-            resp=req.execute()
-
-        # Now, can we zip it?
+        if total_files_to_compose>COMPOSE_FILE_LIMIT:
+            # Need to do a composition of compositions
+            # Compose first round as sets of COMPOSE_FILE_LIMIT or fewer files
             
-        logging.info("Finalized writing %s/%s" % (bucketname,composed_filename) )
-        if large_file is True:
+            compositions=0
+            begin=0
+
+            while begin<total_files_to_compose:
+                end=total_files_to_compose
+                if end-begin>COMPOSE_FILE_LIMIT:
+                    end=begin+COMPOSE_FILE_LIMIT
+
+                composed_filename='%s-%s.%s' % (composed_filepattern, compositions, FILE_EXTENSION)
+                logging.info('download.py post(): Prelim composing files into %s. Begin index: %s End index: %s' % (composed_filename, begin, end) )
+                mbody=compose_request(TEMP_BUCKET, filepattern, begin, end)
+                req = service.objects().compose(
+                    destinationBucket=TEMP_BUCKET,
+                    destinationObject=composed_filename,
+                    destinationPredefinedAcl='publicRead',
+                    body=mbody)
+                resp = req.execute()
+                begin=begin+COMPOSE_FILE_LIMIT
+                compositions=compositions+1
+
+        if compositions==1:
+            logging.info('download.py post(): %s.%s requires no composition.' % (filepattern,FILE_EXTENSION) )
+        else:
+            # Compose remaining files
+            composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
+            fp = filepattern
+            if total_files_to_compose>COMPOSE_FILE_LIMIT:
+                # If files were composed, compose them further
+                fp = composed_filepattern
+            mbody=compose_request(TEMP_BUCKET, fp, 0, compositions)
+            logging.info('download.py post(): Composing %s files into %s\nmbody:\n%s' % (compositions,composed_filename, mbody) )
+            req = service.objects().compose(
+                destinationBucket=TEMP_BUCKET,
+                destinationObject=composed_filename,
+                destinationPredefinedAcl='publicRead',
+                body=mbody)
+            resp = req.execute()
+
+            # Remove all of the chunk files used in the composition.
+            for j in range(total_files_to_compose):
+                filename='%s-%s.%s' % (filepattern, j, FILE_EXTENSION)
+                req = service.objects().delete(bucket=TEMP_BUCKET, object=filename)
+                resp=req.execute()
+
+            if total_files_to_compose>COMPOSE_FILE_LIMIT:
+                # Remove the temporary compositions
+                for j in range(compositions):
+                    filename='%s-%s.%s' % (composed_filepattern, j, FILE_EXTENSION)
+                    req = service.objects().delete(bucket=TEMP_BUCKET, object=filename)
+                    resp=req.execute()
+
+        # Now, can we zip the final result?
+        # Not directly with GCS. It would have to be done using gsutil in Google 
+        # Compute Engine
+        
+        # Copy the file from temporary storage bucket to the download bucket
+        src = '/%s/%s' % (TEMP_BUCKET, composed_filename)
+        dest = '/%s/%s' % (DOWNLOAD_BUCKET, composed_filename)
+        gcs.copy2(src, dest)
+
+        if total_files_to_compose>COMPOSE_OBJECT_LIMIT:
+            mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
+                to=email, subject="Your truncated VertNet download is ready!",
+                body="""
+The number of records in the results of your query exceeded the limit. Only the first 
+"%s" matching results were saved. You can download "%s" here within the next 24 hours: 
+https://storage.googleapis.com/%s/%s
+""" % (COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE, name, DOWNLOAD_BUCKET, composed_filename))
+        else:
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-You can download "%s" here within the next 24 hours: https://storage.googleapis.com/%s/%s
-""" % (name, bucketname, composed_filename))
+You can download %s records in the file "%s" within the next 24 hours from https://storage.googleapis.com/%s/%s
+""" % (reccount, name, DOWNLOAD_BUCKET, composed_filename))
+        logging.info("download.py post(): Finalized writing %s/%s" % (DOWNLOAD_BUCKET,composed_filename) )
 
-class DownloadHandler(webapp2.RequestHandler):
-    def _queue(self, q, email, name, latlon, large_file):
-        # Google Cloud Storage bucket for downloads to be stored in
-#        bucketname='/vn-downloads2'
-        bucketname='vn-dltest'
-
-        # Create a base filename for all chunks to be composed for this download
-        filepattern = '%s-%s' % (name, uuid.uuid4().hex)
-
-        # Start the download process with the first file having fileindex 0
-        taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q),
-            email=email, name=name, filepattern=filepattern, bucketname=bucketname,
-                latlon=latlon, large_file=large_file, fileindex=0),
-                queue_name="downloadwrite")
-
-    def post(self):
-        self.get()
-    
-    def get(self):
-        count, keywords, email, name, download, bucketname = map(self.request.get, 
-            ['count', 'keywords', 'email', 'name', 'filepattern', 'bucketname'])
-        logging.info(' . '.join([count, keywords, email, name, download]))
-        q = ' '.join(json.loads(keywords))
-        count = int(count)
-        latlon = self.request.headers.get('X-AppEngine-CityLatLong')
-        if count <= 1000:
-            self._queue(q, email, name, latlon, 'False')
-            filename = str('%s.txt' % name)
-            self.response.headers['Content-Type'] = "text/tab-separated-values"
-            self.response.headers['Content-Disposition'] = "attachment; filename=%s" % filename
-            records, cursor, count = vnsearch.query(q, count)
-            params = dict(query=q, type='download', count=count, downloader=email, 
-                download=download, latlon=latlon)
-            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
-            data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
-            self.response.out.write(data)
-        else:
-            self._queue(q, email, name, latlon, 'True')
+        # Getting bucket info in GCS
+        # Make a request to buckets.get to retrieve information about the given bucket.
+#            req = service.buckets().get(bucket=DOWNLOAD_BUCKET)
+#            resp = req.execute()
+#            logging.info('download.py post() Bucket Info: %s' % json.dumps(resp, indent=2) )
 
 api = webapp2.WSGIApplication([
     webapp2.Route(r'/service/download', handler=DownloadHandler),
