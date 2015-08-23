@@ -85,8 +85,22 @@ def compose_request(bucketname, filepattern, begin, end):
     composedict['kind']='storage#composeRequest'
     return composedict
 
+def acl_update_request():
+    mbody={}
+    # An acl property cannot be included in the request body  
+    # if the predefinedAcl parameter is given in the update request
+    # the request body is required, and the contentType is required in the request body
+#     acl=[]
+#     entity_role={}
+#     entity_role['entity']='allUsers'
+#     entity_role['role']='READER'
+#     acl.append(entity_role)
+#     mbody['acl']=acl
+    mbody['contentType']='text/tab-separated-values'
+    return mbody
+
 class DownloadHandler(webapp2.RequestHandler):
-    def _queue(self, q, email, name, latlon, large_file):
+    def _queue(self, q, email, name, latlon):
         # Google Cloud Storage bucket for downloads to be stored in
 
         # Create a base filename for all chunks to be composed for this download
@@ -96,7 +110,7 @@ class DownloadHandler(webapp2.RequestHandler):
         # Start the record count at 0
         taskqueue.add(url='/service/download/write', params=dict(q=json.dumps(q),
             email=email, name=name, filepattern=filepattern, bucketname=TEMP_BUCKET,
-                latlon=latlon, large_file=large_file, fileindex=0, reccount=0),
+                latlon=latlon, fileindex=0, reccount=0),
                 queue_name="downloadwrite")
 
     def post(self):
@@ -109,8 +123,12 @@ class DownloadHandler(webapp2.RequestHandler):
         q = ' '.join(json.loads(keywords))
         count = int(count)
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
-        if count <= SEARCH_CHUNK_SIZE:
-            self._queue(q, email, name, latlon, 'False')
+        if count > SEARCH_CHUNK_SIZE:
+            # The results are larger than SEARCH_CHUNK_SIZE, compose a file for download
+            self._queue(q, email, name, latlon)
+        else:
+            # The results are smaller than SEARCH_CHUNK_SIZE, download directly and make
+            # a copy of the file in the download bucket
             filename = str('%s.txt' % name)
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" % filename
@@ -120,10 +138,28 @@ class DownloadHandler(webapp2.RequestHandler):
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
             data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
             self.response.out.write(data)
-        else:
-            self._queue(q, email, name, latlon, 'True')
+            
+            # Write single chunk to file in DOWNLOAD_BUCKET
+            max_retries = 10
+            retry_count = 0
+            success = False
+            while not success and retry_count < max_retries:
+                try:
+                    filepattern = '%s-%s' % (name, uuid.uuid4().hex)
+                    filename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, FILE_EXTENSION)
+                    logging.info('download.py post(): Writing copy of %s records to  %s.' % (len(records), filename) )
+                    with gcs.open(filename, 'w', content_type='text/tab-separated-values',
+                            options={'x-goog-acl': 'public-read'}) as f:
+                        records, cursor, count = vnsearch.query(q, count)
+                        chunk = '%s\n' % _get_tsv_chunk(records)
+                        f.write('%s\n' % util.DWC_HEADER)
+                        f.write(chunk)
+                        success = True
+                except Exception, e:
+                    logging.error("download.py get(): I/O error writing small results to %s." % (filename) )
+                    retry_count += 1
+                    raise e
 
-# TODO: Make idempotent.
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
         q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
@@ -133,7 +169,7 @@ class WriteHandler(webapp2.RequestHandler):
         reccount = int(self.request.get('reccount'))
         filename = '/%s/%s-%s.%s' % (TEMP_BUCKET, filepattern, fileindex, FILE_EXTENSION)
         cursor = self.request.get('cursor')
-        large_file = True if self.request.get('large_file')=='True' else False
+
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
         else:
@@ -158,7 +194,7 @@ class WriteHandler(webapp2.RequestHandler):
                     f.write(chunk)
                     success = True
                     reccount = reccount+len(records)
-                    logging.info('download.py post(): Download chunk of %s records saved to  %s: total %s records.' % (len(records), filename, reccount) )
+#                    logging.info('download.py post(): Download chunk of %s records saved to  %s: total %s records.' % (len(records), filename, reccount) )
             except Exception, e:
                 logging.error("download.py post(): I/O error writing chunk to FILE: %s for\nQUERY: %s" 
                     % (filename,q) )
@@ -177,8 +213,8 @@ class WriteHandler(webapp2.RequestHandler):
             fileindex = fileindex + 1
             params=dict(q=self.request.get('q'), email=email, name=name, 
                         filepattern=filepattern, bucketname=TEMP_BUCKET, 
-                        latlon=latlon, cursor=curs, large_file=large_file, 
-                        fileindex=fileindex, reccount=reccount)
+                        latlon=latlon, cursor=curs, fileindex=fileindex, 
+                        reccount=reccount)
             if fileindex>COMPOSE_OBJECT_LIMIT:
                 # Opt not to support downloads of more than 
                 # COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE records
@@ -194,8 +230,8 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             params=dict(q=self.request.get('q'), email=email, name=name, 
                         filepattern=filepattern, bucketname=TEMP_BUCKET, 
-                        latlon=latlon, cursor=curs, large_file=large_file, 
-                        fileindex=fileindex, reccount=reccount)
+                        latlon=latlon, cursor=curs, fileindex=fileindex, 
+                        reccount=reccount)
             taskqueue.add(url='/service/download/compose', params=params,
                         queue_name="compose")
 
@@ -215,16 +251,13 @@ class ComposeHandler(webapp2.RequestHandler):
         # Construct the service object for interacting with the Cloud Storage API.
         service = discovery.build('storage', 'v1', credentials=credentials)
 
-        # Composing objects in GCS
-        # See https://cloud.google.com/storage/docs/json_api/v1/objects/compose#examples
-        
-        # Finalize and email.
         # Compose chunks into composite objects until there is one composite object
         # Then remove all the chunks and return a URL to the composite
         # Only 32 objects can be composed at once, limit 1024 in a composition of 
         # compositions. Thus, a composition of compositions is sufficient for the worst
         # case scenario.
         # See https://cloud.google.com/storage/docs/composite-objects#_Compose
+        # See https://cloud.google.com/storage/docs/json_api/v1/objects/compose#examples
 
         if total_files_to_compose>COMPOSE_FILE_LIMIT:
             # Need to do a composition of compositions
@@ -239,7 +272,7 @@ class ComposeHandler(webapp2.RequestHandler):
                     end=begin+COMPOSE_FILE_LIMIT
 
                 composed_filename='%s-%s.%s' % (composed_filepattern, compositions, FILE_EXTENSION)
-                logging.info('download.py post(): Prelim composing files into %s. Begin index: %s End index: %s' % (composed_filename, begin, end) )
+#                logging.info('download.py post(): Prelim composing files into %s. Begin index: %s End index: %s' % (composed_filename, begin, end) )
                 mbody=compose_request(TEMP_BUCKET, filepattern, begin, end)
                 req = service.objects().compose(
                     destinationBucket=TEMP_BUCKET,
@@ -250,17 +283,18 @@ class ComposeHandler(webapp2.RequestHandler):
                 begin=begin+COMPOSE_FILE_LIMIT
                 compositions=compositions+1
 
+        composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         if compositions==1:
-            logging.info('download.py post(): %s.%s requires no composition.' % (filepattern,FILE_EXTENSION) )
+            logging.info('download.py post(): %s requires no composition.' % (composed_filename) )
         else:
             # Compose remaining files
-            composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
+#            composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
             fp = filepattern
             if total_files_to_compose>COMPOSE_FILE_LIMIT:
                 # If files were composed, compose them further
                 fp = composed_filepattern
             mbody=compose_request(TEMP_BUCKET, fp, 0, compositions)
-            logging.info('download.py post(): Composing %s files into %s\nmbody:\n%s' % (compositions,composed_filename, mbody) )
+#            logging.info('download.py post(): Composing %s files into %s\nmbody:\n%s' % (compositions,composed_filename, mbody) )
             req = service.objects().compose(
                 destinationBucket=TEMP_BUCKET,
                 destinationObject=composed_filename,
@@ -290,6 +324,26 @@ class ComposeHandler(webapp2.RequestHandler):
         dest = '/%s/%s' % (DOWNLOAD_BUCKET, composed_filename)
         gcs.copy2(src, dest)
 
+        mbody=acl_update_request()
+        # Change the ACL so that the download file is publicly readable.
+#        logging.info('download.py post(): Requesting update for /%s/%s\nmbody%s' % (DOWNLOAD_BUCKET,composed_filename, mbody) )
+        req = service.objects().update(
+                bucket=DOWNLOAD_BUCKET,
+                object=composed_filename,
+                predefinedAcl='publicRead',
+                body=mbody)
+        resp=req.execute()
+
+        # Delete the temporary composed file from the TEMP_BUCKET
+        req = service.objects().delete(bucket=TEMP_BUCKET, object=composed_filename)
+        resp=req.execute()
+        
+        # Getting bucket info from GCS
+        # Make a request to buckets.get to retrieve information about the given bucket.
+#            req = service.buckets().get(bucket=DOWNLOAD_BUCKET)
+#            resp = req.execute()
+#            logging.info('download.py post() Bucket Info: %s' % json.dumps(resp, indent=2) )
+
         if total_files_to_compose>COMPOSE_OBJECT_LIMIT:
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your truncated VertNet download is ready!",
@@ -304,13 +358,7 @@ https://storage.googleapis.com/%s/%s
                 body="""
 You can download %s records in the file "%s" within the next 24 hours from https://storage.googleapis.com/%s/%s
 """ % (reccount, name, DOWNLOAD_BUCKET, composed_filename))
-        logging.info("download.py post(): Finalized writing %s/%s" % (DOWNLOAD_BUCKET,composed_filename) )
-
-        # Getting bucket info in GCS
-        # Make a request to buckets.get to retrieve information about the given bucket.
-#            req = service.buckets().get(bucket=DOWNLOAD_BUCKET)
-#            resp = req.execute()
-#            logging.info('download.py post() Bucket Info: %s' % json.dumps(resp, indent=2) )
+        logging.info('download.py post(): Finalized writing /%s/%s' % (DOWNLOAD_BUCKET,composed_filename) )
 
 api = webapp2.WSGIApplication([
     webapp2.Route(r'/service/download', handler=DownloadHandler),
