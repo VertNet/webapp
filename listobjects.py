@@ -55,14 +55,14 @@ def main(argv):
 #     print json.dumps(resp, indent=2)
     
 # Make a request to buckets.get to retrieve information about the given bucket_name
-    req = service.buckets().get(bucket=args.bucket)
-    resp = req.execute()
-    print json.dumps(resp, indent=2)
+#     req = service.buckets().get(bucket=args.bucket)
+#     resp = req.execute()
+#     print json.dumps(resp, indent=2)
 # 
 # Create a request to objects.list to retrieve a list of objects.
-#     fields_to_return = \
-#         'nextPageToken,items(name,size,contentType,metadata(my-key))'
-#     req = service.objects().list(bucket=args.bucket, fields=fields_to_return)
+    fields_to_return = \
+        'nextPageToken,items(name,size,contentType,metadata(my-key))'
+    req = service.objects().list(bucket=args.bucket, fields=fields_to_return)
 # 
 # If you have too many items to list in one request, list_next() will
 # automatically handle paging with the pageToken.
