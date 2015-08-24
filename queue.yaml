@@ -19,16 +19,8 @@
 # /dwc-indexer/queue.yaml
 
 # Queue configuration for the app:
-total_storage_limit: 500M
+total_storage_limit: 900M
 queue:
-- name: index-delete-resource
-  rate: 35/s
-  retry_parameters:
-    task_retry_limit: 7
-    task_age_limit: 60m
-    min_backoff_seconds: 30
-    max_backoff_seconds: 960
-    max_doublings: 7
 - name: apitracker
   rate: 35/s
   retry_parameters:
@@ -41,12 +33,13 @@ queue:
   rate: 35/s
 - name: downloadwrite
   rate: 35/s
+- name: compose
+  rate: 35/s
+- name: cleanup
+  rate: 35/s
   retry_parameters:
-    task_retry_limit: 7
-    task_age_limit: 32m
-    min_backoff_seconds: 30
-    max_backoff_seconds: 500
+    task_retry_limit: 5
+    task_age_limit: 8m
+    min_backoff_seconds: 10
+    max_backoff_seconds: 160
     max_doublings: 5
-# index-clean is dangerous - turn it on only if you really need to
-#- name: index-clean
-#  rate: 35/s
