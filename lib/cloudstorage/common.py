@@ -1,4 +1,16 @@
 # Copyright 2012 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
 
 """Helpers shared by cloudstorage_stub and cloudstorage_api."""
 
@@ -9,9 +21,11 @@
 __all__ = ['CS_XML_NS',
            'CSFileStat',
            'dt_str_to_posix',
-           'LOCAL_API_HOST',
+           'local_api_url',
+           'LOCAL_GCS_ENDPOINT',
            'local_run',
            'get_access_token',
+           'get_stored_content_length',
            'get_metadata',
            'GCSFileStat',
            'http_time_to_posix',
@@ -42,12 +56,19 @@ except ImportError:
 _GCS_BUCKET_REGEX_BASE = r'[a-z0-9\.\-_]{3,63}'
 _GCS_BUCKET_REGEX = re.compile(_GCS_BUCKET_REGEX_BASE + r'$')
 _GCS_BUCKET_PATH_REGEX = re.compile(r'/' + _GCS_BUCKET_REGEX_BASE + r'$')
+_GCS_PATH_PREFIX_REGEX = re.compile(r'/' + _GCS_BUCKET_REGEX_BASE + r'.*')
 _GCS_FULLPATH_REGEX = re.compile(r'/' + _GCS_BUCKET_REGEX_BASE + r'/.*')
-_GCS_OPTIONS = ('x-goog-acl',
-                'x-goog-meta-')
+_GCS_METADATA = ['x-goog-meta-',
+                 'content-disposition',
+                 'cache-control',
+                 'content-encoding']
+_GCS_OPTIONS = _GCS_METADATA + ['x-goog-acl']
 CS_XML_NS = 'http://doc.s3.amazonaws.com/2006-03-01'
-LOCAL_API_HOST = 'gcs-magicstring.appspot.com'
+LOCAL_GCS_ENDPOINT = '/_ah/gcs'
 _access_token = ''
+
+
+_MAX_GET_BUCKET_RESULT = 1000
 
 
 def set_access_token(access_token):
@@ -83,8 +104,12 @@ class GCSFileStat(object):
                etag,
                st_ctime,
                content_type=None,
-               metadata=None):
+               metadata=None,
+               is_dir=False):
     """Initialize.
+
+    For files, the non optional arguments are always set.
+    For directories, only filename and is_dir is set.
 
     Args:
       filename: a Google Cloud Storage filename of form '/bucket/filename'.
@@ -92,19 +117,30 @@ class GCSFileStat(object):
       etag: hex digest of the md5 hash of the file's content. str.
       st_ctime: posix file creation time. float compatible.
       content_type: content type. str.
-      metadata: a str->str dict of user specified metadata from the
-        x-goog-meta header, e.g. {'x-goog-meta-foo': 'foo'}.
+      metadata: a str->str dict of user specified options when creating
+        the file. Possible keys are x-goog-meta-, content-disposition,
+        content-encoding, and cache-control.
+      is_dir: True if this represents a directory. False if this is a real file.
     """
     self.filename = filename
-    self.st_size = long(st_size)
-    self.st_ctime = float(st_ctime)
-    if etag[0] == '"' and etag[-1] == '"':
-      etag = etag[1:-1]
-    self.etag = etag
+    self.is_dir = is_dir
+    self.st_size = None
+    self.st_ctime = None
+    self.etag = None
     self.content_type = content_type
     self.metadata = metadata
 
+    if not is_dir:
+      self.st_size = long(st_size)
+      self.st_ctime = float(st_ctime)
+      if etag[0] == '"' and etag[-1] == '"':
+        etag = etag[1:-1]
+      self.etag = etag
+
   def __repr__(self):
+    if self.is_dir:
+      return '(directory: %s)' % self.filename
+
     return (
         '(filename: %(filename)s, st_size: %(st_size)s, '
         'st_ctime: %(st_ctime)s, etag: %(etag)s, '
@@ -117,14 +153,49 @@ class GCSFileStat(object):
              content_type=self.content_type,
              metadata=self.metadata))
 
+  def __cmp__(self, other):
+    if not isinstance(other, self.__class__):
+      raise ValueError('Argument to cmp must have the same type. '
+                       'Expect %s, got %s', self.__class__.__name__,
+                       other.__class__.__name__)
+    if self.filename > other.filename:
+      return 1
+    elif self.filename < other.filename:
+      return -1
+    return 0
+
+  def __hash__(self):
+    if self.etag:
+      return hash(self.etag)
+    return hash(self.filename)
+
 
 CSFileStat = GCSFileStat
 
 
+def get_stored_content_length(headers):
+  """Return the content length (in bytes) of the object as stored in GCS.
+
+  x-goog-stored-content-length should always be present except when called via
+  the local dev_appserver. Therefore if it is not present we default to the
+  standard content-length header.
+
+  Args:
+    headers: a dict of headers from the http response.
+
+  Returns:
+    the stored content length.
+  """
+  length = headers.get('x-goog-stored-content-length')
+  if length is None:
+    length = headers.get('content-length')
+  return length
+
+
 def get_metadata(headers):
-  """Get user defined metadata from HTTP response headers."""
+  """Get user defined options from HTTP response headers."""
   return dict((k, v) for k, v in headers.iteritems()
-              if k.startswith('x-goog-meta-'))
+              if any(k.lower().startswith(valid) for valid in _GCS_METADATA))
 
 
 def validate_bucket_name(name):
@@ -172,6 +243,32 @@ def validate_file_path(path):
                      'but got %s' % path)
 
 
+def _process_path_prefix(path_prefix):
+  """Validate and process a Google Cloud Stoarge path prefix.
+
+  Args:
+    path_prefix: a Google Cloud Storage path prefix of format '/bucket/prefix'
+      or '/bucket/' or '/bucket'.
+
+  Raises:
+    ValueError: if path is invalid.
+
+  Returns:
+    a tuple of /bucket and prefix. prefix can be None.
+  """
+  _validate_path(path_prefix)
+  if not _GCS_PATH_PREFIX_REGEX.match(path_prefix):
+    raise ValueError('Path prefix should have format /bucket, /bucket/, '
+                     'or /bucket/prefix but got %s.' % path_prefix)
+  bucket_name_end = path_prefix.find('/', 1)
+  bucket = path_prefix
+  prefix = None
+  if bucket_name_end != -1:
+    bucket = path_prefix[:bucket_name_end]
+    prefix = path_prefix[bucket_name_end + 1:] or None
+  return bucket, prefix
+
+
 def _validate_path(path):
   """Basic validation of Google Storage paths.
 
@@ -207,11 +304,11 @@ def validate_options(options):
   for k, v in options.iteritems():
     if not isinstance(k, str):
       raise TypeError('option %r should be a str.' % k)
-    if not any(k.startswith(valid) for valid in _GCS_OPTIONS):
+    if not any(k.lower().startswith(valid) for valid in _GCS_OPTIONS):
       raise ValueError('option %s is not supported.' % k)
     if not isinstance(v, basestring):
       raise TypeError('value %r for option %s should be of type basestring.' %
-                      v, k)
+                      (v, k))
 
 
 def http_time_to_posix(http_time):
@@ -288,9 +385,20 @@ def posix_to_dt_str(posix):
 
 
 def local_run():
-  """Whether running in dev appserver."""
-  return ('SERVER_SOFTWARE' not in os.environ or
-          os.environ['SERVER_SOFTWARE'].startswith('Development'))
+  """Whether we should hit GCS dev appserver stub."""
+  server_software = os.environ.get('SERVER_SOFTWARE')
+  if server_software is None:
+    return True
+  if 'remote_api' in server_software:
+    return False
+  if server_software.startswith(('Development', 'testutil')):
+    return True
+  return False
+
+
+def local_api_url():
+  """Return URL for GCS emulation on dev appserver."""
+  return 'http://%s%s' % (os.environ.get('HTTP_HOST'), LOCAL_GCS_ENDPOINT)
 
 
 def memory_usage(method):
@@ -303,3 +411,19 @@ def memory_usage(method):
                  method.__name__, runtime.memory_usage().current())
     return result
   return wrapper
+
+
+def _add_ns(tagname):
+  return '{%(ns)s}%(tag)s' % {'ns': CS_XML_NS,
+                              'tag': tagname}
+
+
+_T_CONTENTS = _add_ns('Contents')
+_T_LAST_MODIFIED = _add_ns('LastModified')
+_T_ETAG = _add_ns('ETag')
+_T_KEY = _add_ns('Key')
+_T_SIZE = _add_ns('Size')
+_T_PREFIX = _add_ns('Prefix')
+_T_COMMON_PREFIXES = _add_ns('CommonPrefixes')
+_T_NEXT_MARKER = _add_ns('NextMarker')
+_T_IS_TRUNCATED = _add_ns('IsTruncated')

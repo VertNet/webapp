@@ -20,7 +20,9 @@ import webapp2
 
 from vertnet.service.model import IndexJob
 
-from google.appengine.api import files, namespace_manager
+# Removing Files API dependency due to its deprecation by Google
+#from google.appengine.api import files
+from google.appengine.api import namespace_manager
 from google.appengine.ext.webapp.util import run_wsgi_app
 from mapreduce import control as mrc
 from mapreduce import input_readers
@@ -35,51 +37,55 @@ routes = [
 ]
 
 class AppHandler(webapp2.RequestHandler):
-    def mapreduce_finalize(self):
-        """Finalizes indexing MR job by finalizing files on GCS."""
-        mrid = self.request.headers.get('Mapreduce-Id')
-        namespace = namespace_manager.get_namespace()
-        job = IndexJob.get_by_id(mrid, namespace=namespace)
-        if not job:
-            return
-        logging.info('Finalizing index job for resource %s' % job.resource)
-        files.finalize(job.write_path)
-        job.done = True
-        job.put()
-        logging.info('Index job finalized for resource %s' % job.resource)
+      # The following appears to be vestigial indexing code that was moved to 
+      # https://github.com/VertNet/dwc-indexer
+#     def mapreduce_finalize(self):
+#         """Finalizes indexing MR job by finalizing files on GCS."""
+#         mrid = self.request.headers.get('Mapreduce-Id')
+#         namespace = namespace_manager.get_namespace()
+#         job = IndexJob.get_by_id(mrid, namespace=namespace)
+#         if not job:
+#             return
+#         logging.info('Finalizing index job for resource %s' % job.resource)
+#         files.finalize(job.write_path)
+#         job.done = True
+#         job.put()
+#         logging.info('Index job finalized for resource %s' % job.resource)
 
-    def index(self):
-        """Fires off an indexing MR job over files in GCS at supplied path."""
-        input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
-        path = self.request.get('path')
-        shard_count = self.request.get_range('shard_count', default=8)
-        processing_rate = self.request.get_range('processing_rate', default=100)
-        files_pattern = '/gs/%s' % path
-
-        # Create file on GCS to log any failed index puts:
-        namespace = namespace_manager.get_namespace()
-        filename = '/gs/vn-staging/errors/failures-%s-all.csv' % namespace
-        write_path = files.gs.create(filename, mime_type='text/tab-separated-values', 
-            acl='public-read')
-
-        mrid = mrc.start_map(
-            path,
-            "vertnet.service.search.build_search_index",
-            input_class,
-            {
-                "input_reader": dict(
-                    files=[files_pattern], 
-                    format='lines'),
-                "resource": path,
-                "write_path": write_path,
-                "processing_rate": processing_rate,
-                "shard_count": shard_count
-            },
-            mapreduce_parameters={'done_callback': '/mr/finalize'},
-            shard_count=shard_count)
-
-        IndexJob(id=mrid, namespace=namespace, resource=path, write_path=write_path, 
-            failed_logs=['NONE']).put()
+      # The following is vestigial indexing code that was moved to 
+      # https://github.com/VertNet/dwc-indexer
+#     def index(self):
+#         """Fires off an indexing MR job over files in GCS at supplied path."""
+#         input_class = (input_readers.__name__ + "." + input_readers.FileInputReader.__name__)
+#         path = self.request.get('path')
+#         shard_count = self.request.get_range('shard_count', default=8)
+#         processing_rate = self.request.get_range('processing_rate', default=100)
+#         files_pattern = '/gs/%s' % path
+# 
+#         # Create file on GCS to log any failed index puts:
+#         namespace = namespace_manager.get_namespace()
+#         filename = '/gs/vn-staging/errors/failures-%s-all.csv' % namespace
+#         write_path = files.gs.create(filename, mime_type='text/tab-separated-values', 
+#             acl='public-read')
+# 
+#         mrid = mrc.start_map(
+#             path,
+#             "vertnet.service.search.build_search_index",
+#             input_class,
+#             {
+#                 "input_reader": dict(
+#                     files=[files_pattern], 
+#                     format='lines'),
+#                 "resource": path,
+#                 "write_path": write_path,
+#                 "processing_rate": processing_rate,
+#                 "shard_count": shard_count
+#             },
+#             mapreduce_parameters={'done_callback': '/mr/finalize'},
+#             shard_count=shard_count)
+# 
+#         IndexJob(id=mrid, namespace=namespace, resource=path, write_path=write_path, 
+#             failed_logs=['NONE']).put()
 
 handler = webapp2.WSGIApplication(routes, debug=IS_DEV)
          

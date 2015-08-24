@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc.
+# Copyright 2014 Google Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,23 +31,35 @@ class CredentialsField(models.Field):
 
   __metaclass__ = models.SubfieldBase
 
+  def __init__(self, *args, **kwargs):
+    if 'null' not in kwargs:
+      kwargs['null'] = True
+    super(CredentialsField, self).__init__(*args, **kwargs)
+
   def get_internal_type(self):
     return "TextField"
 
   def to_python(self, value):
-    if not value:
+    if value is None:
       return None
     if isinstance(value, oauth2client.client.Credentials):
       return value
     return pickle.loads(base64.b64decode(value))
 
   def get_db_prep_value(self, value, connection, prepared=False):
+    if value is None:
+      return None
     return base64.b64encode(pickle.dumps(value))
 
 
 class FlowField(models.Field):
 
   __metaclass__ = models.SubfieldBase
+
+  def __init__(self, *args, **kwargs):
+    if 'null' not in kwargs:
+      kwargs['null'] = True
+    super(FlowField, self).__init__(*args, **kwargs)
 
   def get_internal_type(self):
     return "TextField"
@@ -60,6 +72,8 @@ class FlowField(models.Field):
     return pickle.loads(base64.b64decode(value))
 
   def get_db_prep_value(self, value, connection, prepared=False):
+    if value is None:
+      return None
     return base64.b64encode(pickle.dumps(value))
 
 
@@ -102,13 +116,26 @@ class Storage(BaseStorage):
         credential.set_store(self)
     return credential
 
-  def locked_put(self, credentials):
+  def locked_put(self, credentials, overwrite=False):
     """Write a Credentials to the datastore.
 
     Args:
       credentials: Credentials, the credentials to store.
+      overwrite: Boolean, indicates whether you would like these credentials to
+                          overwrite any existing stored credentials.
     """
     args = {self.key_name: self.key_value}
-    entity = self.model_class(**args)
+
+    if overwrite:
+      entity, unused_is_new = self.model_class.objects.get_or_create(**args)
+    else:
+      entity = self.model_class(**args)
+
     setattr(entity, self.property_name, credentials)
     entity.save()
+
+  def locked_delete(self):
+    """Delete Credentials from the datastore."""
+
+    query = {self.key_name: self.key_value}
+    entities = self.model_class.objects.filter(**query).delete()
