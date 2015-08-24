@@ -18,12 +18,13 @@ cdb_url = "http://vertnet.cartodb.com/api/v2/sql?%s"
 def apikey():
     """Return credentials file as a JSON object."""
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
-    key = open(path, "r").read().rstrip()
-    logging.info("CARTODB KEY %s" % key)
+    key = open(path, "r").read()
+#    logging.info("CARTODB KEY %s" % key)
     return key
 
 class TrackerHandler(webapp2.RequestHandler):
     def post(self):  
+        self.VERSION='merge/api:TrackerHandler:2015-08-24T17:00'
         query, error, type, count, downloader, download, latlon = map(self.request.get, ['query', 'error', 'type', 'count', 'downloader', 'download', 'latlon'])
         try:
             count = int(count)
@@ -44,10 +45,14 @@ class TrackerHandler(webapp2.RequestHandler):
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
         logging.info(log_url)
         urlfetch.make_fetch_call(rpc, log_url)
+        logging.info("tracker.py VERSION: %s SQL: %s\nURL: %s" % (self.VERSION, log_sql, log_url))            
         try:
             rpc.get_result()
-        except urlfetch.DownloadError:
-            logging.error("Error logging API - %s. log_url: %s" % (query, log_url))            
+        except urlfetch.DownloadError, e:
+            # Even though INSERT to CartoDB is successful, an error 'Deadline exceeded while waiting for response' is returned
+            errorstr = ("%s" % e)
+            if e is not None and errorstr.find('Deadline exceeded while waiting') == -1:
+              logging.error("Version: %s Error logging API - %s\nError:\n%s" % (self.VERSION, query, e))            
             
 api = webapp2.WSGIApplication(
     [('/apitracker', TrackerHandler)],
