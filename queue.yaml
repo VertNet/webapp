@@ -19,7 +19,7 @@
 # /dwc-indexer/queue.yaml
 
 # Queue configuration for the app:
-total_storage_limit: 500M
+total_storage_limit: 900M
 queue:
 - name: apitracker
   rate: 35/s
@@ -35,3 +35,11 @@ queue:
   rate: 35/s
 - name: compose
   rate: 35/s
+- name: cleanup
+  rate: 35/s
+  retry_parameters:
+    task_retry_limit: 5
+    task_age_limit: 8m
+    min_backoff_seconds: 10
+    max_backoff_seconds: 160
+    max_doublings: 5
