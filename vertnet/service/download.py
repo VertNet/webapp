@@ -16,6 +16,8 @@ import json
 import logging
 import uuid
 
+DOWNLOAD_VERSION='download.py 2015-08-24T18:50:15+02:00'
+
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
 COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
@@ -104,7 +106,7 @@ class DownloadHandler(webapp2.RequestHandler):
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
-            records, cursor, count = vnsearch.query(q, count)
+            records, cursor, count, version = vnsearch.query(q, count)
             params = dict(query=q, type='download', count=count, downloader=email, 
                 download=download, latlon=latlon)
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
@@ -120,18 +122,18 @@ class DownloadHandler(webapp2.RequestHandler):
                     filepattern = '%s-%s' % (name, uuid.uuid4().hex)
                     filename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
                         FILE_EXTENSION)
-                    logging.info('download.py: Writing copy of %s records to  %s.' 
-                        % (len(records), filename) )
+                    logging.info('Writing copy of %s records to  %s.\nVersion: %s' 
+                        % (len(records), filename, DOWNLOAD_VERSION) )
                     with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                             options={'x-goog-acl': 'public-read'}) as f:
-                        records, cursor, count = vnsearch.query(q, count)
+                        records, cursor, count, version = vnsearch.query(q, count)
                         chunk = '%s\n' % _get_tsv_chunk(records)
                         f.write('%s\n' % util.DWC_HEADER)
                         f.write(chunk)
                         success = True
                 except Exception, e:
-                    logging.error("download.py: I/O error writing small results to %s." 
-                        % (filename) )
+                    logging.error("I/O error writing small results to \
+                        %s.\nError: %s\nVersion: %s" % (filename,e,DOWNLOAD_VERSION) )
                     retry_count += 1
 #                    raise e
 
@@ -159,7 +161,7 @@ class WriteHandler(webapp2.RequestHandler):
             try:
                 with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                              options={'x-goog-acl': 'public-read'}) as f:
-                    records, next_cursor, count = \
+                    records, next_cursor, count, version = \
                         vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
                     if not curs:
                         params = dict(query=q, type='download', count=count, 
@@ -172,11 +174,11 @@ class WriteHandler(webapp2.RequestHandler):
                     f.write(chunk)
                     success = True
                     reccount = reccount+len(records)
-                    logging.info('download.py: Download chunk saved to  %s: total %s \
-                        records.' % (filename, reccount) )
+                    logging.info('Download chunk saved to  %s: total %s \
+                        records.\nVersion: %s' % (filename, reccount, DOWNLOAD_VERSION) )
             except Exception, e:
-                logging.error("download.py: I/O error writing chunk to FILE: %s \
-                    for\nQUERY: %s" % (filename,q) )
+                logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s \
+                    \nError: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
                 retry_count += 1
 #                raise e
 
@@ -248,8 +250,9 @@ class ComposeHandler(webapp2.RequestHandler):
 
                 composed_filename='%s-%s.%s' % (composed_filepattern, compositions, 
                     FILE_EXTENSION)
-#                logging.info('download.py: Prelim composing files into %s. Begin \
-#                     index: %s End index: %s' % (composed_filename, begin, end) )
+#                logging.info('Prelim composing files into %s. Begin \
+#                     index: %s End index: %s\nVersion: %s' % (composed_filename, \
+#                     begin, end, DOWNLOAD_VERSION) )
                 mbody=compose_request(TEMP_BUCKET, filepattern, begin, end)
                 req = service.objects().compose(
                     destinationBucket=TEMP_BUCKET,
@@ -262,8 +265,8 @@ class ComposeHandler(webapp2.RequestHandler):
 
         composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         if compositions==1:
-            logging.info('download.py: %s requires no composition.' 
-                % (composed_filename) )
+            logging.info('%s requires no composition.\nVersion: %s' 
+                % (composed_filename, DOWNLOAD_VERSION) )
         else:
             # Compose remaining files
             fp = filepattern
@@ -271,8 +274,9 @@ class ComposeHandler(webapp2.RequestHandler):
                 # If files were composed, compose them further
                 fp = composed_filepattern
             mbody=compose_request(TEMP_BUCKET, fp, 0, compositions)
-#            logging.info('download.py: Composing %s files into %s\nmbody:\n%s' 
-#                % (compositions,composed_filename, mbody) )
+#            logging.info('Composing %s files into %s\nmbody:\n%s 
+#                \nVersion: %s' % (compositions,composed_filename, mbody, \
+#                DOWNLOAD_VERSION) )
             req = service.objects().compose(
                 destinationBucket=TEMP_BUCKET,
                 destinationObject=composed_filename,
@@ -291,8 +295,9 @@ class ComposeHandler(webapp2.RequestHandler):
 
         mbody=acl_update_request()
         # Change the ACL so that the download file is publicly readable.
-#        logging.info('download.py: Requesting update for /%s/%s\nmbody%s' 
-#            % (DOWNLOAD_BUCKET,composed_filename, mbody) )
+#        logging.info('Requesting update for /%s/%s\nmbody%s \
+#            \nVersion: %s' % (DOWNLOAD_BUCKET,composed_filename, mbody, 
+#            DOWNLOAD_VERSION) )
         req = service.objects().update(
                 bucket=DOWNLOAD_BUCKET,
                 object=composed_filename,
@@ -318,8 +323,8 @@ You can download %s records in the file "%s" within the next 24 hours from
 https://storage.googleapis.com/%s/%s.\nRequest generated: %s\nRequest fulfilled: %s
 """ % (reccount, name, DOWNLOAD_BUCKET, composed_filename, requesttime, resulttime))
 
-        logging.info('download.py: Finalized writing /%s/%s' 
-            % (DOWNLOAD_BUCKET,composed_filename) )
+        logging.info('Finalized writing /%s/%s\nVersion: %s' 
+            % (DOWNLOAD_BUCKET, composed_filename, DOWNLOAD_VERSION) )
 
         params = dict(filepattern=filepattern, fileindex=total_files_to_compose, 
             compositions=compositions)
@@ -354,8 +359,9 @@ class CleanupHandler(webapp2.RequestHandler):
                     resp = req.execute()
                     success=True
                 except Exception, e:
-                    logging.error("download.py: Error deleting chunk file %s \
-                        attempt %s" % (filename, retry_count+1) )
+                    logging.error("Error deleting chunk file %s attempt %s\nError: \
+                        %s\nVersion: %s" % (filename, retry_count+1, e, 
+                        DOWNLOAD_VERSION) )
                     retry_count += 1
 #                    raise e
 
@@ -374,8 +380,9 @@ class CleanupHandler(webapp2.RequestHandler):
                         resp = req.execute()
                         success=True
                     except Exception, e:
-                        logging.error("download.py: Error deleting composed file \
-                            %s attempt %s" % (filename, retry_count+1) )
+                        logging.error("Error deleting composed file %s \
+                            attempt %s\nError: %s\nVersion: %s" % (filename, 
+                            retry_count+1, e, DOWNLOAD_VERSION) )
                         retry_count += 1
 #                            raise e
 
@@ -383,8 +390,8 @@ class CleanupHandler(webapp2.RequestHandler):
         req = service.objects().delete(bucket=TEMP_BUCKET, object=composed_filename)
         resp=req.execute()
 
-        logging.info('download.py: Finalized cleaning temporary files from /%s' 
-            % (TEMP_BUCKET) )
+        logging.info('Finalized cleaning temporary files from /%s\nVersion: %s' 
+            % (TEMP_BUCKET, DOWNLOAD_VERSION) )
 
 api = webapp2.WSGIApplication([
     webapp2.Route(r'/service/download', handler=DownloadHandler),

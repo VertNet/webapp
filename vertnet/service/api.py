@@ -22,9 +22,10 @@ import logging
 import urllib
 import webapp2
 
+API_VERSION='api.py 2015-08-24T21:18:38+02:00'
+
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
-        self.VERSION='SearchAPI:2015-01-26T11:29'
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
         self.initialize(request, response)
 
@@ -32,7 +33,7 @@ class SearchApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-#        logging.info('api.py: VERSION %s request: %s' % (self.VERSION, self.request) )
+        logging.info('Request: %s\nVersion: %s' % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
         q, c, limit, log = map(request.get, ['q', 'c', 'l', 'log'])
 
@@ -58,7 +59,7 @@ class SearchApi(webapp2.RequestHandler):
 
 #        logging.info('q=%s, l=%s, c=%s' % (q, limit, curs))
 
-        result = vnsearch.query(q, limit, 'dwc', log, sort=None, curs=curs)
+        result = vnsearch.api_query(q, limit, 'dwc', log, sort=None, curs=curs)
         response = None
 
         if len(result) == 4:
@@ -83,11 +84,14 @@ class SearchApi(webapp2.RequestHandler):
             response = json.dumps(dict(recs=recs, cursor=cursor, matching_records=count,
                                        limit=limit,
                                        response_records=len(recs),
-                                       api_version=self.VERSION, 
+                                       api_version=API_VERSION, 
                                        query_version=query_version,
                                        request_date=d.isoformat(),
                                        request_origin=self.cityLatLong))
-            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, api_version=self.VERSION, matching_records=count, response_records=len(recs), request_source='SearchAPI', query_version=query_version)
+            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, 
+                api_version=API_VERSION, matching_records=count, 
+                response_records=len(recs), request_source='SearchAPI', 
+                query_version=query_version)
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
