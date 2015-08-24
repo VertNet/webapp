@@ -23,9 +23,6 @@ TEMP_BUCKET='vn-dltest' # bucket for temp compositions
 DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
 FILE_EXTENSION='tsv'
 
-# def _write_record(f, record):
-#     f.write('%s\n' % record.csv)
-
 def _tsv(json):
     json['datasource_and_rights'] = json.get('url')
     header = util.DWC_HEADER_LIST
@@ -49,7 +46,7 @@ def compose_request(bucketname, filepattern, begin, end):
     begin - the index of the first file in the composition used to grab a range of files.
     end - begin plus the number of files to put in the composition (i.e., end index + 1)
     """
-    
+
     objectlist=[]
     for i in range(begin,end):
         objectdict={}
@@ -89,7 +86,7 @@ class DownloadHandler(webapp2.RequestHandler):
 
     def post(self):
         self.get()
-    
+
     def get(self):
         count, keywords, email, name, download = map(self.request.get, 
             ['count', 'keywords', 'email', 'name', 'filepattern'])
@@ -113,7 +110,7 @@ class DownloadHandler(webapp2.RequestHandler):
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
             data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
             self.response.out.write(data)
-            
+
             # Write single chunk to file in DOWNLOAD_BUCKET
             max_retries = 10
             retry_count = 0
@@ -190,7 +187,7 @@ class WriteHandler(webapp2.RequestHandler):
             curs = next_cursor.web_safe_string
         else:
             curs = ''
-        
+
         if curs:
             fileindex = fileindex + 1
             params=dict(q=self.request.get('q'), email=email, name=name, 
@@ -206,7 +203,7 @@ class WriteHandler(webapp2.RequestHandler):
                 # Keep writing search chunks to files
                 taskqueue.add(url='/service/download/write', params=params,
                     queue_name="downloadwrite")
-        
+
         # Finalize and email.
         else:
             params=dict(email=email, name=name, filepattern=filepattern, 
@@ -240,7 +237,7 @@ class ComposeHandler(webapp2.RequestHandler):
         if total_files_to_compose>COMPOSE_FILE_LIMIT:
             # Need to do a composition of compositions
             # Compose first round as sets of COMPOSE_FILE_LIMIT or fewer files
-            
+
             compositions=0
             begin=0
 
@@ -286,7 +283,7 @@ class ComposeHandler(webapp2.RequestHandler):
         # Now, can we zip the final result?
         # Not directly with GCS. It would have to be done using gsutil in Google 
         # Compute Engine
-        
+
         # Copy the file from temporary storage bucket to the download bucket
         src = '/%s/%s' % (TEMP_BUCKET, composed_filename)
         dest = '/%s/%s' % (DOWNLOAD_BUCKET, composed_filename)
@@ -385,7 +382,7 @@ class CleanupHandler(webapp2.RequestHandler):
         # Delete the temporary composed file from the TEMP_BUCKET
         req = service.objects().delete(bucket=TEMP_BUCKET, object=composed_filename)
         resp=req.execute()
-        
+
         logging.info('download.py: Finalized cleaning temporary files from /%s' 
             % (TEMP_BUCKET) )
 
