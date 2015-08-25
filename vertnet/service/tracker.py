@@ -4,7 +4,7 @@ import urllib
 import logging
 import os
 
-TRACKER_VERSION='tracker.py 2015-08-24T20:08:30+02:00'
+TRACKER_VERSION='tracker.py 2015-08-25T13:48:11+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -28,6 +28,7 @@ class TrackerHandler(webapp2.RequestHandler):
         query, error, type, count, downloader, download, latlon = \
             map(self.request.get, ['query', 'error', 'type', 'count', 'downloader', \
             'download', 'latlon'])
+
         try:
             count = int(count)
         except:
@@ -53,7 +54,7 @@ class TrackerHandler(webapp2.RequestHandler):
         logging.info("SQL: %s\nURL: %s\nVersion:%s" % (log_sql, log_url, TRACKER_VERSION))            
         try:
             resp = rpc.get_result()
-            logging.info("Response: %s\nVersion:%s" % (resp, TRACKER_VERSION))            
+#            logging.info("Response: %s\nVersion:%s" % (resp, TRACKER_VERSION))            
         except urlfetch.DownloadError, e:
             # Even though INSERT to CartoDB is successful, an error 'Deadline exceeded 
             # while waiting for response' is usually returned

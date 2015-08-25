@@ -22,7 +22,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-24T21:18:38+02:00'
+API_VERSION='api.py 2015-08-25T14:05:01+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -33,9 +33,9 @@ class SearchApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        logging.info('Request: %s\nVersion: %s' % (self.request, API_VERSION) )
+        logging.info('API search request: %s\nVersion: %s' % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
-        q, c, limit, log = map(request.get, ['q', 'c', 'l', 'log'])
+        q, c, limit = map(request.get, ['q', 'c', 'l'])
 
         # Set the limit to 400 by default.  This value is based on the results
         # of substantial performance testing.
@@ -47,19 +47,13 @@ class SearchApi(webapp2.RequestHandler):
         if limit < 0:
             limit = 1
 
-        if not log:
-            log=0
-        else:
-            log=1
         curs = None
         if c:
             curs = search.Cursor(web_safe_string=c)
         else:
             curs = search.Cursor()
 
-#        logging.info('q=%s, l=%s, c=%s' % (q, limit, curs))
-
-        result = vnsearch.api_query(q, limit, 'dwc', log, sort=None, curs=curs)
+        result = vnsearch.query(q, limit, 'dwc', sort=None, curs=curs, api=API_VERSION)
         response = None
 
         if len(result) == 4:
@@ -107,15 +101,27 @@ class SearchApi(webapp2.RequestHandler):
         self.response.out.write(response)
 
 class DownloadApi(webapp2.RequestHandler):
+    """Example download request:
+        http://api.vertnet-portal.appspot.com/api/download?q= \
+        {"q":"mappable:1 institutioncode:kstc","n":"kstctestresults.txt", \
+        "e":"you@gmail.com"}
+    """
+    # What does this do?
+    def __init__(self, request, response):
+        self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
+        self.initialize(request, response)
+
     def post(self):
         self.get()
 
     def get(self):
+        logging.info('API download request: %s\nVersion: %s' 
+            % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
         q, e, n = map(request.get, ['q', 'e', 'n'])
         keywords = q.split()
-        params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=1001, email=e, 
-            name=n))
+        params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, email=e, 
+            name=n, api=API_VERSION))
         url = '/service/download?%s' % params
         self.redirect(url)
 
@@ -124,13 +130,16 @@ class FeedbackApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
+        logging.info('API feedback request: %s\nVersion: %s' 
+            % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
         url = '/api/github/issue/create?q=%s' % request
         self.redirect(url)
 
-handlers = webapp2.WSGIApplication([
+routes = [
     webapp2.Route(r'/api/search', handler=SearchApi),
     webapp2.Route(r'/api/download', handler=DownloadApi),
-    webapp2.Route(r'/api/feedback', handler=FeedbackApi),],
-    debug=True)
-        
+    webapp2.Route(r'/api/feedback', handler=FeedbackApi)
+    ]
+
+handlers = webapp2.WSGIApplication(routes, debug=True)
