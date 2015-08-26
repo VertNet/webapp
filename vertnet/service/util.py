@@ -1,3 +1,5 @@
+import json
+
 DWC_RECLEVEL = ['Type', 'Modified', 'Language', 'Rights', 'RightsHolder', 
 'AccessRights', 'BibliographicCitation', 'References', 'InstitutionID', 
 'CollectionID', 'DatasetID', 'InstitutionCode', 'CollectionCode', 
@@ -91,3 +93,14 @@ def classify(record):
 			result['taxon'][term] = record[term.lower()]
 
 	return result
+
+def search_resource_counts(recs):	
+    # Build json for search counts
+    res_counts = {}
+    for rec in recs:
+        dwca = rec['url']
+        if dwca not in res_counts:
+            res_counts[dwca] = 1
+        else:
+            res_counts[dwca] += 1
+    return json.dumps(res_counts)

@@ -9,14 +9,14 @@ from datetime import datetime
 from google.appengine.api import mail
 from google.appengine.api import taskqueue
 from google.appengine.api import search
-from vertnet.service import util
+from vertnet.service import util as vnutil
 from vertnet.service import search as vnsearch
 import webapp2
 import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-25T13:09:36+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-26T18:47:12+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
@@ -27,7 +27,7 @@ FILE_EXTENSION='tsv'
 
 def _tsv(json):
     json['datasource_and_rights'] = json.get('url')
-    header = util.DWC_HEADER_LIST
+    header = vnutil.DWC_HEADER_LIST
     values = []
     for x in header:
         if json.has_key(x):
@@ -74,7 +74,7 @@ def acl_update_request():
     return mbody
 
 class DownloadHandler(webapp2.RequestHandler):
-    def _queue(self, q, email, name, latlon):
+    def _queue(self, q, email, name, latlon, fromapi, source):
         # Create a base filename for all chunks to be composed for this download
         filepattern = '%s-%s' % (name, uuid.uuid4().hex)
         requesttime = datetime.utcnow().isoformat()
@@ -83,7 +83,8 @@ class DownloadHandler(webapp2.RequestHandler):
         # Start the record count at 0
         taskqueue.add(url='/service/download/write', 
             params=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
-            latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime), 
+            latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
+            source=source), 
             queue_name="downloadwrite")
 
     def post(self):
@@ -93,35 +94,45 @@ class DownloadHandler(webapp2.RequestHandler):
         count, keywords, email, name = map(self.request.get, 
             ['count', 'keywords', 'email', 'name'])
         q = ' '.join(json.loads(keywords))
-        # count is a limit on the number of records to download
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
         fromapi = self.request.get('api')
+        # Force count to be an integer
+        # count is a limit on the number of records to download
+        count=int(str(count))
         
-        if fromapi is not None:
+        source='DownloadPortal'
+        if fromapi is not None and len(fromapi)>0:
+            source='DownloadAPI'
             # Try to send an indicator to the browser if it came from one.
             body = 'Downloading results:<br>'
             body += 'File name: %s<br>' % name
             body += 'Email: %s<br>' % email
             body += 'Keywords: %s<br>' % keywords
+            body += 'Source: %s<br>' % source
             body += 'API: %s<br>' % fromapi
+            body += 'len(API): %s<br>' % len(fromapi)
             logging.info(body)
             self.response.out.write(body)
 
-        logging.info('API: %s Count: %s Keywords: %s Email: %s Name: %s LatLon: \
-            %s\nVersion: %s' % (fromapi, count, keywords, email, name, latlon, 
-            DOWNLOAD_VERSION) )
+        logging.info('API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s\
+            LatLon: %s\nVersion: %s' % (fromapi, source, count, keywords, email, name, \
+            latlon, DOWNLOAD_VERSION) )
         if count==0 or count > SEARCH_CHUNK_SIZE:
             # The results are larger than SEARCH_CHUNK_SIZE, compose a file for download
-            self._queue(q, email, name, latlon)
+#            logging.info('Queuing. Email: %s' % email)
+            self._queue(q, email, name, latlon, fromapi, source)
         else:
             # The results are smaller than SEARCH_CHUNK_SIZE, download directly and make
             # a copy of the file in the download bucket
+#            logging.info('Not queuing. Count:  %s' % count)
             filename = str('%s.txt' % name)
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
-            records, cursor, count, version = vnsearch.query(q, count)
-            data = '%s\n%s' % (util.DWC_HEADER, _get_tsv_chunk(records))
+            records, cursor, count, query_version = vnsearch.query(q, count)
+            # Build json for search counts
+            res_counts = vnutil.search_resource_counts(records)
+            data = '%s\n%s' % (vnutil.DWC_HEADER, _get_tsv_chunk(records))
             self.response.out.write(data)
 
             # Write single chunk to file in DOWNLOAD_BUCKET
@@ -131,20 +142,24 @@ class DownloadHandler(webapp2.RequestHandler):
             filepattern = '%s-%s' % (name, uuid.uuid4().hex)
             filename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
                 FILE_EXTENSION)
+
+            # Parameters for the coming apitracker taskqueue
+            apitracker_params = dict(
+                api_version=fromapi, count=len(records), download=filename, downloader=email, 
+                error=None, latlon=latlon, matching_records=len(records), query=q, 
+                query_version=query_version, request_source=source, 
+                response_records=len(records), res_counts=res_counts, type='download')
+
             logging.info('Writing copy of %s records to  %s.\nVersion: %s' 
                 % (len(records), filename, DOWNLOAD_VERSION) )
             while not success and retry_count < max_retries:
                 try:
                     with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                             options={'x-goog-acl': 'public-read'}) as f:
-                        records, cursor, count, version = vnsearch.query(q, count)
-                        chunk = '%s\n' % _get_tsv_chunk(records)
-                        f.write('%s\n' % util.DWC_HEADER)
-                        f.write(chunk)
+                        f.write(data)
                         success = True
-                        params = dict(query=q, type='download', count=count, 
-                            downloader=email, download=filename, latlon=latlon)
-                        taskqueue.add(url='/apitracker', params=params, 
+
+                        taskqueue.add(url='/apitracker', params=apitracker_params, 
                             queue_name="apitracker") 
                 except Exception, e:
                     logging.error("I/O error writing small results to \
@@ -160,6 +175,8 @@ class WriteHandler(webapp2.RequestHandler):
         filepattern = self.request.get('filepattern')
         fileindex = int(self.request.get('fileindex'))
         reccount = int(self.request.get('reccount'))
+        fromapi=self.request.get('fromapi')
+        source=self.request.get('source')
         filename = '/%s/%s-%s.%s' % (TEMP_BUCKET, filepattern, fileindex, FILE_EXTENSION)
         cursor = self.request.get('cursor')
 
@@ -173,9 +190,17 @@ class WriteHandler(webapp2.RequestHandler):
         retry_count = 0
         success = False
 
-        records, next_cursor, count, version = \
+        records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
+        # Build json for search counts
+        res_counts = vnutil.search_resource_counts(records)
+
+        # Update the total number of records retrieved
+        reccount = reccount+len(records)
+
+        # Make a chunk to write to a file
         chunk = '%s\n' % _get_tsv_chunk(records)
+        
         if fileindex==0 and not next_cursor:
             # This is a query with fewer than SEARCH_CHUNK_SIZE results
             filename = '/%s/%s.%s' % (TEMP_BUCKET, filepattern, FILE_EXTENSION)
@@ -185,11 +210,10 @@ class WriteHandler(webapp2.RequestHandler):
                 with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                              options={'x-goog-acl': 'public-read'}) as f:
                     if fileindex==0:
-                        f.write('%s\n' % util.DWC_HEADER)
+                        f.write('%s\n' % vnutil.DWC_HEADER)
                     f.write(chunk)
                     success = True
-                    reccount = reccount+len(records)
-                    logging.info('Download chunk saved to  %s: total %s \
+                    logging.info('Download chunk saved to %s: total %s \
                         records.\nVersion: %s' % (filename, reccount, DOWNLOAD_VERSION) )
             except Exception, e:
                 logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s \
@@ -205,15 +229,32 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = ''
 
+        # Parameters for the coming apitracker taskqueue
+        finalfilename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
+            FILE_EXTENSION)
+
+        apitracker_params = dict(
+            api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
+            error=None, latlon=latlon, matching_records=reccount, query=q, 
+            query_version=query_version, request_source=source, 
+            response_records=len(records), res_counts=res_counts, type='download'
+            )
+
         if curs:
             fileindex = fileindex + 1
             params=dict(q=self.request.get('q'), email=email, name=name, 
                         filepattern=filepattern, latlon=latlon, cursor=curs, 
                         fileindex=fileindex, reccount=reccount, requesttime=requesttime)
+
             if fileindex>COMPOSE_OBJECT_LIMIT:
                 # Opt not to support downloads of more than 
                 # COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE records
                 # Stop composing results at this limit.
+
+                # Log the download
+                taskqueue.add(url='/apitracker', params=apitracker_params, 
+                    queue_name="apitracker") 
+
                 taskqueue.add(url='/service/download/compose', params=params,
                     queue_name="compose")
             else:
@@ -221,10 +262,15 @@ class WriteHandler(webapp2.RequestHandler):
                 taskqueue.add(url='/service/download/write', params=params,
                     queue_name="downloadwrite")
 
-        # Finalize and email.
         else:
+            # Log the download
+            taskqueue.add(url='/apitracker', params=apitracker_params, 
+                queue_name="apitracker") 
+
             params=dict(email=email, name=name, filepattern=filepattern, 
                 fileindex=fileindex, reccount=reccount, requesttime=requesttime)
+
+            # Finalize and email.
             taskqueue.add(url='/service/download/compose', params=params,
                 queue_name="compose")
 
@@ -343,9 +389,6 @@ You can download %s records in the file "%s" within the next 24 hours from
 https://storage.googleapis.com/%s/%s.\nRequest generated: %s\nRequest fulfilled: %s
 """ % (reccount, name, DOWNLOAD_BUCKET, composed_filename, requesttime, resulttime))
 
-        params = dict(query=q, type='download', count=reccount, downloader=email, 
-            download=dest, latlon=latlon)
-        taskqueue.add(url='/apitracker', params=params, queue_name="apitracker") 
         logging.info('Finalized writing /%s/%s\nVersion: %s' 
             % (DOWNLOAD_BUCKET, composed_filename, DOWNLOAD_VERSION) )
 
