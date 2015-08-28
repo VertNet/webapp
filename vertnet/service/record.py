@@ -2,15 +2,16 @@
 
 from vertnet.service.model import RecordIndex, Record, RecordList, RecordPayload
 from vertnet.service import search as vnsearch
+from vertnet.service import util as vnutil
 from protorpc import remote
 from protorpc.wsgi import service
 from google.appengine.datastore.datastore_query import Cursor
-import json
 from google.appengine.api import taskqueue
-import logging
 from google.appengine.api import search
+import logging
+import json
 
-RECORD_VERSION='record.py 2015-08-25T13:30:49+02:00'
+RECORD_VERSION='record.py 2015-08-28T23:42:06+02:00'
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -49,7 +50,7 @@ class RecordService(remote.Service):
 
     def initialize_request_state(self, state):
         self.cityLatLong = state.headers.get('X-AppEngine-CityLatLong')
-#        logging.info('CITY_LAT_LONG %s' % self.cityLatLong)
+#        logging.info('CITY_LAT_LONG %s\nVersion: %s' % (state.headers, RECORD_VERSION))
 
     @remote.method(RecordList, RecordList)
     def search(self, message):
@@ -65,38 +66,42 @@ class RecordService(remote.Service):
         if 'distance' in keywords:
             sort = None
         limit = message.limit
-        logging.info('keywords=%s, limit=%s, sort=%s, curs=%s\nVersion: %s' 
-            % (keywords, limit, sort, curs, RECORD_VERSION))
+#        logging.info('Portal Search keywords=%s\nVersion: %s' 
+#            % (keywords, RECORD_VERSION))
 #        logging.info('REQUEST LATLON %s\nVersion: %s' 
 #            % (self.cityLatLong, RECORD_VERSION) )
         result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
         if len(result) == 4:
-            recs, cursor, count, version = result
+            recs, cursor, count, query_version = result
             # Build json for search counts
-            res_counts = {}
-            for i in recs:
-                dwca = i['url']
-                if dwca not in res_counts:
-                    res_counts[dwca] = 1
-                else:
-                    res_counts[dwca] += 1
-#            logging.info("RESOURCE COUNTS: %s\nVersion: %s" 
-#                % (res_counts, RECORD_VERSION) )
+            res_counts = vnutil.search_resource_counts(recs)
             
             if not message.cursor:
                 type = 'query'
-                query_count = count
             else:
                 type = 'query-view'
-                query_count = limit
-            params = dict(query=keywords, type=type, count=query_count, 
-                latlon=self.cityLatLong, res_counts=json.dumps(res_counts))
-            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+
+            apitracker_params = dict(
+                api_version=None, count=len(recs), download=None, downloader=None, 
+                error=None, latlon=self.cityLatLong, matching_records=count, 
+                query=keywords, query_version=query_version, 
+                request_source='SearchPortal', response_records=len(recs), 
+                res_counts=json.dumps(res_counts), type=type)
+            
+            taskqueue.add(url='/apitracker', params=apitracker_params, 
+                queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
-            params = dict(error=error, query=keywords, type='query', 
-                latlon=self.cityLatLong)
-            taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
+
+            apitracker_params = dict(
+                api_version=None, count=0, download=None, downloader=None, 
+                error=error, latlon=self.cityLatLong, matching_records=0, 
+                query=keywords, query_version=query_version, 
+                request_source='SearchPortal', response_records=0, 
+                res_counts=json.dumps({}), type='query')
+
+            taskqueue.add(url='/apitracker', params=apitracker_params, 
+                queue_name="apitracker")
             response = RecordList(error=unicode(error))
             return response
 
