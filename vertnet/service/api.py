@@ -15,6 +15,7 @@
 
 from google.appengine.api import search, taskqueue
 from vertnet.service import search as vnsearch
+from vertnet.service import util as vnutil
 from datetime import datetime, date, time
 
 import json
@@ -22,18 +23,20 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-25T14:05:01+02:00'
+API_VERSION='api.py 2015-08-28T23:33:33+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
+#        logging.info('Init Request headers: %s\nVersion: %s' 
+#            % (request.headers, API_VERSION) )
         self.initialize(request, response)
 
     def post(self):
         self.get()
 
     def get(self):
-        logging.info('API search request: %s\nVersion: %s' % (self.request, API_VERSION) )
+#        logging.info('API search request: %s\nVersion: %s' % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
         q, c, limit = map(request.get, ['q', 'c', 'l'])
 
@@ -53,7 +56,7 @@ class SearchApi(webapp2.RequestHandler):
         else:
             curs = search.Cursor()
 
-        result = vnsearch.query(q, limit, 'dwc', sort=None, curs=curs, api=API_VERSION)
+        result = vnsearch.query(q, limit, 'dwc', sort=None, curs=curs)
         response = None
 
         if len(result) == 4:
@@ -76,16 +79,19 @@ class SearchApi(webapp2.RequestHandler):
 
             d=datetime.utcnow()
             response = json.dumps(dict(recs=recs, cursor=cursor, matching_records=count,
-                                       limit=limit,
-                                       response_records=len(recs),
-                                       api_version=API_VERSION, 
-                                       query_version=query_version,
-                                       request_date=d.isoformat(),
-                                       request_origin=self.cityLatLong))
-            params = dict(query=q, type=type, count=query_count, latlon=self.cityLatLong, 
-                api_version=API_VERSION, matching_records=count, 
-                response_records=len(recs), request_source='SearchAPI', 
-                query_version=query_version)
+                limit=limit, response_records=len(recs), api_version=API_VERSION, 
+                query_version=query_version, request_date=d.isoformat(),
+                request_origin=self.cityLatLong))
+
+#            logging.info('API search recs: %s\nVersion: %s' % (recs, API_VERSION) )
+            res_counts = vnutil.search_resource_counts(recs)
+
+            params = dict(api_version=API_VERSION, count=query_count, 
+                latlon=self.cityLatLong, matching_records=count, query=q, 
+                query_version=query_version, request_source='SearchAPI', 
+                response_records=len(recs), res_counts=json.dumps(res_counts), 
+                type=type
+                )
             taskqueue.add(url='/apitracker', params=params, queue_name="apitracker")
         else:
             error = result[0].__class__.__name__
@@ -106,7 +112,6 @@ class DownloadApi(webapp2.RequestHandler):
         {"q":"mappable:1 institutioncode:kstc","n":"kstctestresults.txt", \
         "e":"you@gmail.com"}
     """
-    # What does this do?
     def __init__(self, request, response):
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
         self.initialize(request, response)
@@ -115,8 +120,9 @@ class DownloadApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        logging.info('API download request: %s\nVersion: %s' 
-            % (self.request, API_VERSION) )
+        # Receive the download request and redirect it to the download service URL
+#        logging.info('Version: %s\nAPI download request: %s' 
+#            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
         q, e, n = map(request.get, ['q', 'e', 'n'])
         keywords = q.split()
@@ -130,8 +136,8 @@ class FeedbackApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-        logging.info('API feedback request: %s\nVersion: %s' 
-            % (self.request, API_VERSION) )
+#        logging.info('API feedback request: %s\nVersion: %s' 
+#            % (self.request, API_VERSION) )
         request = json.loads(self.request.get('q'))
         url = '/api/github/issue/create?q=%s' % request
         self.redirect(url)

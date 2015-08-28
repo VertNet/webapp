@@ -11,7 +11,7 @@ from google.appengine.api import search
 import logging
 import json
 
-RECORD_VERSION='record.py 2015-08-26T17:27:35+02:00'
+RECORD_VERSION='record.py 2015-08-28T23:42:06+02:00'
 
 def record_list(limit, cursor, q, message=False):
     """Return CommentList or triple (comments, next_cursor, more)."""
@@ -50,7 +50,7 @@ class RecordService(remote.Service):
 
     def initialize_request_state(self, state):
         self.cityLatLong = state.headers.get('X-AppEngine-CityLatLong')
-#        logging.info('CITY_LAT_LONG %s' % self.cityLatLong)
+#        logging.info('CITY_LAT_LONG %s\nVersion: %s' % (state.headers, RECORD_VERSION))
 
     @remote.method(RecordList, RecordList)
     def search(self, message):
@@ -66,8 +66,8 @@ class RecordService(remote.Service):
         if 'distance' in keywords:
             sort = None
         limit = message.limit
-        logging.info('keywords=%s, limit=%s, sort=%s, curs=%s\nVersion: %s' 
-            % (keywords, limit, sort, curs, RECORD_VERSION))
+#        logging.info('Portal Search keywords=%s\nVersion: %s' 
+#            % (keywords, RECORD_VERSION))
 #        logging.info('REQUEST LATLON %s\nVersion: %s' 
 #            % (self.cityLatLong, RECORD_VERSION) )
         result = vnsearch.query(keywords, limit, sort=sort, curs=curs)
@@ -86,7 +86,7 @@ class RecordService(remote.Service):
                 error=None, latlon=self.cityLatLong, matching_records=count, 
                 query=keywords, query_version=query_version, 
                 request_source='SearchPortal', response_records=len(recs), 
-                res_counts=res_counts, type=type)
+                res_counts=json.dumps(res_counts), type=type)
             
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker")
@@ -94,11 +94,11 @@ class RecordService(remote.Service):
             error = result[0].__class__.__name__
 
             apitracker_params = dict(
-                api_version=None, count=len(recs), download=None, downloader=None, 
-                error=error, latlon=self.cityLatLong, matching_records=count, 
+                api_version=None, count=0, download=None, downloader=None, 
+                error=error, latlon=self.cityLatLong, matching_records=0, 
                 query=keywords, query_version=query_version, 
-                request_source='SearchPortal', response_records=len(recs), 
-                res_counts=res_counts, type='query')
+                request_source='SearchPortal', response_records=0, 
+                res_counts=json.dumps({}), type='query')
 
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker")
