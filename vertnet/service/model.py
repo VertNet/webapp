@@ -18,10 +18,12 @@ from engineauth import models
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import tasklets
 from protorpc import messages
-from vertnet.service import util
+from vertnet.service import util as vnutil
 
 import json
 import logging
+
+MODEL_VERSION='model.py 2015-08-28T23:11:32+02:00'
 
 class VertNetUser(models.User):
     @classmethod
@@ -39,7 +41,7 @@ class IndexJob(ndb.Model):
     done = ndb.BooleanProperty(default=False)
     failures = ndb.ComputedProperty(lambda self: len(self.failed_logs) > 1)
 
-# Dummpy stats for testing.
+# Dummy stats for testing.
 DUMMY_STATS = dict(
     record_count=1606374, 
     publisher_count=20,
@@ -151,16 +153,18 @@ class Record(ndb.Model):
 
     @property
     def tsv(self):
+        # Note similar functionality in download.py _tsv(json)
         json = self.json
-        json['datasource_and_rights'] = json.get('url')
-        header = util.DWC_HEADER_LIST
+#        json['datasource_and_rights'] = json.get('url')
+#        download_fields = vnutil.DWC_HEADER_LIST
+        download_fields = vnutil.download_field_list()
         values = []
-        for x in header:
+        for x in download_fields:
             if json.has_key(x):
-                values.append(unicode(json[x]))
+                values.append(unicode(json[x]).rstrip())
             else:
-                values.append('')
-        return '\t'.join(values) #.encode('utf-8')
+                values.append(u'')
+        return u'\t'.join(values).encode('utf-8')
 
 class RecordIndex(ndb.Model):
     year = ndb.StringProperty()

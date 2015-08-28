@@ -16,7 +16,7 @@ import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-26T18:47:12+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-28T23:41:22+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
@@ -26,10 +26,12 @@ DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
 FILE_EXTENSION='tsv'
 
 def _tsv(json):
-    json['datasource_and_rights'] = json.get('url')
-    header = vnutil.DWC_HEADER_LIST
+#    json['datasource_and_rights'] = json.get('url')
+#    header = vnutil.DWC_HEADER_LIST
+    # These should be the names of the original fields in the index document.
+    download_fields = vnutil.download_field_list()
     values = []
-    for x in header:
+    for x in download_fields:
         if json.has_key(x):
             values.append(unicode(json[x]).rstrip())
         else:
@@ -37,6 +39,8 @@ def _tsv(json):
     return u'\t'.join(values).encode('utf-8')
 
 def _get_tsv_chunk(records):
+    if records is None or len(records)==0:
+        return '\n'
     tsv_lines = map(_tsv, records)
     chunk = reduce(lambda x,y: '%s\n%s' % (x,y), tsv_lines)
     return chunk
@@ -48,7 +52,6 @@ def compose_request(bucketname, filepattern, begin, end):
     begin - the index of the first file in the composition used to grab a range of files.
     end - begin plus the number of files to put in the composition (i.e., end index + 1)
     """
-
     objectlist=[]
     for i in range(begin,end):
         objectdict={}
@@ -81,10 +84,11 @@ class DownloadHandler(webapp2.RequestHandler):
 
         # Start the download process with the first file having fileindex 0
         # Start the record count at 0
-        taskqueue.add(url='/service/download/write', 
-            params=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
+        writeparams=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
-            source=source), 
+            source=source, fromapi=fromapi)
+            
+        taskqueue.add(url='/service/download/write', params=writeparams, 
             queue_name="downloadwrite")
 
     def post(self):
@@ -99,7 +103,7 @@ class DownloadHandler(webapp2.RequestHandler):
         # Force count to be an integer
         # count is a limit on the number of records to download
         count=int(str(count))
-        
+
         source='DownloadPortal'
         if fromapi is not None and len(fromapi)>0:
             source='DownloadAPI'
@@ -108,31 +112,40 @@ class DownloadHandler(webapp2.RequestHandler):
             body += 'File name: %s<br>' % name
             body += 'Email: %s<br>' % email
             body += 'Keywords: %s<br>' % keywords
+            body += 'X-AppEngine-CityLatLong: %s<br>' % latlon
             body += 'Source: %s<br>' % source
             body += 'API: %s<br>' % fromapi
             body += 'len(API): %s<br>' % len(fromapi)
-            logging.info(body)
+            body += 'Request headers: %s<br>' % self.request.headers
             self.response.out.write(body)
+            logging.info('API download request. API: %s Source: %s Count: %s \
+                Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+                % (fromapi, source, count, keywords, email, name, latlon, 
+                DOWNLOAD_VERSION) )
+        else:
+            logging.info('Portal download request. API: %s Source: %s Count: %s \
+                Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+                % (fromapi, source, count, keywords, email, name, latlon, 
+                DOWNLOAD_VERSION) )
 
-        logging.info('API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s\
-            LatLon: %s\nVersion: %s' % (fromapi, source, count, keywords, email, name, \
-            latlon, DOWNLOAD_VERSION) )
         if count==0 or count > SEARCH_CHUNK_SIZE:
             # The results are larger than SEARCH_CHUNK_SIZE, compose a file for download
-#            logging.info('Queuing. Email: %s' % email)
             self._queue(q, email, name, latlon, fromapi, source)
         else:
             # The results are smaller than SEARCH_CHUNK_SIZE, download directly and make
             # a copy of the file in the download bucket
-#            logging.info('Not queuing. Count:  %s' % count)
             filename = str('%s.txt' % name)
             self.response.headers['Content-Type'] = "text/tab-separated-values"
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
             records, cursor, count, query_version = vnsearch.query(q, count)
-            # Build json for search counts
+
+            # Build dictionary for search counts
             res_counts = vnutil.search_resource_counts(records)
-            data = '%s\n%s' % (vnutil.DWC_HEADER, _get_tsv_chunk(records))
+
+            # Write the header for the output file 
+#            data = '%s\n%s' % (vnutil.DWC_HEADER, _get_tsv_chunk(records))
+            data = '%s\n%s' % (vnutil.download_header(), _get_tsv_chunk(records))
             self.response.out.write(data)
 
             # Write single chunk to file in DOWNLOAD_BUCKET
@@ -145,13 +158,14 @@ class DownloadHandler(webapp2.RequestHandler):
 
             # Parameters for the coming apitracker taskqueue
             apitracker_params = dict(
-                api_version=fromapi, count=len(records), download=filename, downloader=email, 
-                error=None, latlon=latlon, matching_records=len(records), query=q, 
-                query_version=query_version, request_source=source, 
-                response_records=len(records), res_counts=res_counts, type='download')
+                api_version=fromapi, count=len(records), download=filename, 
+                downloader=email, error=None, latlon=latlon, 
+                matching_records=len(records), query=q, query_version=query_version, 
+                request_source=source, response_records=len(records), 
+                res_counts=json.dumps(res_counts), type='download')
 
-            logging.info('Writing copy of %s records to  %s.\nVersion: %s' 
-                % (len(records), filename, DOWNLOAD_VERSION) )
+#            logging.info('Writing copy of %s records to  %s.\nVersion: %s' 
+#                % (len(records), filename, DOWNLOAD_VERSION) )
             while not success and retry_count < max_retries:
                 try:
                     with gcs.open(filename, 'w', content_type='text/tab-separated-values',
@@ -159,6 +173,8 @@ class DownloadHandler(webapp2.RequestHandler):
                         f.write(data)
                         success = True
 
+#                        logging.info('Sending small res_counts to apitracker: %s' 
+#                            % res_counts ) 
                         taskqueue.add(url='/apitracker', params=apitracker_params, 
                             queue_name="apitracker") 
                 except Exception, e:
@@ -166,6 +182,12 @@ class DownloadHandler(webapp2.RequestHandler):
                         %s.\nError: %s\nVersion: %s" % (filename,e,DOWNLOAD_VERSION) )
                     retry_count += 1
 #                    raise e
+
+class TestHandler(webapp2.RequestHandler):
+    def post(self):
+        logging.info('Made it to TestHandler with request: %s' % self.request ) 
+        q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
+        logging.info('Mapped request: %s' % self.request ) 
 
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
@@ -180,6 +202,11 @@ class WriteHandler(webapp2.RequestHandler):
         filename = '/%s/%s-%s.%s' % (TEMP_BUCKET, filepattern, fileindex, FILE_EXTENSION)
         cursor = self.request.get('cursor')
 
+        try:
+            total_res_counts = json.loads(self.request.get('res_counts'))
+        except:
+            total_res_counts = {}
+
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
         else:
@@ -192,8 +219,19 @@ class WriteHandler(webapp2.RequestHandler):
 
         records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
-        # Build json for search counts
-        res_counts = vnutil.search_resource_counts(records)
+        # Build dict for search counts
+        res_counts = vnutil.search_resource_counts(records, total_res_counts)
+
+        # Now merge the two dictionaries, summing counts
+        if total_res_counts is None or len(total_res_counts)==0:
+            total_res_counts=res_counts
+        else:
+            for r in res_counts:
+                try:
+                    count = total_res_counts[r]
+                    total_res_counts[r]=count+res_counts[r]
+                except:
+                    total_res_counts[r]=res_counts[r]
 
         # Update the total number of records retrieved
         reccount = reccount+len(records)
@@ -210,11 +248,12 @@ class WriteHandler(webapp2.RequestHandler):
                 with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                              options={'x-goog-acl': 'public-read'}) as f:
                     if fileindex==0:
-                        f.write('%s\n' % vnutil.DWC_HEADER)
+#                        f.write('%s\n' % vnutil.DWC_HEADER)
+                        f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-                    logging.info('Download chunk saved to %s: total %s \
-                        records.\nVersion: %s' % (filename, reccount, DOWNLOAD_VERSION) )
+#                    logging.info('Download chunk saved to %s: total %s \
+#                        records.\nVersion: %s' % (filename, reccount, DOWNLOAD_VERSION) )
             except Exception, e:
                 logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s \
                     \nError: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
@@ -237,14 +276,15 @@ class WriteHandler(webapp2.RequestHandler):
             api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
             error=None, latlon=latlon, matching_records=reccount, query=q, 
             query_version=query_version, request_source=source, 
-            response_records=len(records), res_counts=res_counts, type='download'
+            response_records=len(records), res_counts=json.dumps(total_res_counts), 
+            type='download'
             )
+
+        composeparams=dict(email=email, name=name, filepattern=filepattern, 
+            fileindex=fileindex, reccount=reccount, requesttime=requesttime)
 
         if curs:
             fileindex = fileindex + 1
-            params=dict(q=self.request.get('q'), email=email, name=name, 
-                        filepattern=filepattern, latlon=latlon, cursor=curs, 
-                        fileindex=fileindex, reccount=reccount, requesttime=requesttime)
 
             if fileindex>COMPOSE_OBJECT_LIMIT:
                 # Opt not to support downloads of more than 
@@ -255,23 +295,30 @@ class WriteHandler(webapp2.RequestHandler):
                 taskqueue.add(url='/apitracker', params=apitracker_params, 
                     queue_name="apitracker") 
 
-                taskqueue.add(url='/service/download/compose', params=params,
+                taskqueue.add(url='/service/download/compose', params=composeparams,
                     queue_name="compose")
             else:
+                writeparams=dict(q=self.request.get('q'), email=email, name=name, 
+                    filepattern=filepattern, latlon=latlon, cursor=curs, 
+                    fileindex=fileindex, res_counts=json.dumps(total_res_counts), 
+                    reccount=reccount, requesttime=requesttime, fromapi=fromapi,
+                    source=source)
+
+#                logging.info('Sending total_res_counts to write again: %s' 
+#                    % total_res_counts ) 
                 # Keep writing search chunks to files
-                taskqueue.add(url='/service/download/write', params=params,
+                taskqueue.add(url='/service/download/write', params=writeparams,
                     queue_name="downloadwrite")
 
         else:
+#            logging.info('Sending total_res_counts to apitracker: %s' % total_res_counts ) 
             # Log the download
+#            logging.info('apitracker params: %s' % apitracker_params)
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker") 
 
-            params=dict(email=email, name=name, filepattern=filepattern, 
-                fileindex=fileindex, reccount=reccount, requesttime=requesttime)
-
             # Finalize and email.
-            taskqueue.add(url='/service/download/compose', params=params,
+            taskqueue.add(url='/service/download/compose', params=composeparams,
                 queue_name="compose")
 
 class ComposeHandler(webapp2.RequestHandler):
@@ -392,9 +439,9 @@ https://storage.googleapis.com/%s/%s.\nRequest generated: %s\nRequest fulfilled:
         logging.info('Finalized writing /%s/%s\nVersion: %s' 
             % (DOWNLOAD_BUCKET, composed_filename, DOWNLOAD_VERSION) )
 
-        params = dict(filepattern=filepattern, fileindex=total_files_to_compose, 
+        cleanupparams = dict(filepattern=filepattern, fileindex=total_files_to_compose, 
             compositions=compositions)
-        taskqueue.add(url='/service/download/cleanup', params=params, 
+        taskqueue.add(url='/service/download/cleanup', params=cleanupparams, 
             queue_name="cleanup")
 
 class CleanupHandler(webapp2.RequestHandler):
@@ -441,7 +488,7 @@ class CleanupHandler(webapp2.RequestHandler):
                 max_retries = 2
                 retry_count = 0
                 success = False
-                # Execute the delete request until successful or until our patience runs out
+                # Execute the delete request until successful or patience runs out
                 while not success and retry_count < max_retries:
                     try:
                         resp = req.execute()
@@ -468,6 +515,7 @@ routes = [
     webapp2.Route(r'/service/download', handler=DownloadHandler),
     webapp2.Route(r'/service/download/write', handler=WriteHandler),
     webapp2.Route(r'/service/download/compose', handler=ComposeHandler),
+    webapp2.Route(r'/service/download/test', handler=TestHandler),
     webapp2.Route(r'/service/download/cleanup', handler=CleanupHandler)
     ]
     

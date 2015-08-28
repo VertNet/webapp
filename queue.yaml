@@ -35,6 +35,8 @@ queue:
   rate: 35/s
 - name: compose
   rate: 35/s
+- name: test
+  rate: 35/s
 - name: cleanup
   rate: 35/s
   retry_parameters:
