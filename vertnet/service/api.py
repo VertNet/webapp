@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-28T23:33:33+02:00'
+API_VERSION='api.py 2015-08-29T13:22:58+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -131,6 +131,28 @@ class DownloadApi(webapp2.RequestHandler):
         url = '/service/download?%s' % params
         self.redirect(url)
 
+class CountApi(webapp2.RequestHandler):
+    """Example count request:
+http://api.vertnet-portal.appspot.com/api/download?q={"q":"mappable:1 institutioncode:kstc"}
+    """
+    def __init__(self, request, response):
+        self.initialize(request, response)
+
+    def post(self):
+        self.get()
+
+    def get(self):
+        # Receive the count request and redirect it to the count service URL
+#        logging.info('Version: %s\nAPI count request: %s' 
+#            % (API_VERSION, self.request) )
+        request = json.loads(self.request.get('q'))
+        q = request.get('q')
+        keywords = q.split()
+        countparams = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
+            countonly=True, api=API_VERSION))
+        url = '/service/download?%s' % countparams
+        self.redirect(url)
+
 class FeedbackApi(webapp2.RequestHandler):
     def post(self):
         self.get()
@@ -145,6 +167,7 @@ class FeedbackApi(webapp2.RequestHandler):
 routes = [
     webapp2.Route(r'/api/search', handler=SearchApi),
     webapp2.Route(r'/api/download', handler=DownloadApi),
+    webapp2.Route(r'/api/count', handler=CountApi),
     webapp2.Route(r'/api/feedback', handler=FeedbackApi)
     ]
 
