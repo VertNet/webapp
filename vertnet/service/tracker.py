@@ -4,7 +4,7 @@ import urllib
 import logging
 import os
 
-TRACKER_VERSION='tracker.py 2015-08-26T15:28:06+02:00'
+TRACKER_VERSION='tracker.py 2015-08-26T21:45:05+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -70,16 +70,17 @@ class TrackerHandler(webapp2.RequestHandler):
         rpc = urlfetch.create_rpc()
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
         urlfetch.make_fetch_call(rpc, log_url)
-        logging.info("SQL: %s\nURL: %s\nVersion:%s" % (log_sql, log_url, TRACKER_VERSION))            
         try:
+            logging.info("Trying SQL: %s\nURL: %s\nVersion:%s" 
+                % (log_sql, log_url, TRACKER_VERSION))            
             resp = rpc.get_result()
-#            logging.info("Response: %s\nVersion:%s" % (resp, TRACKER_VERSION))            
+            logging.info("Tracked successfully.\nVersion:%s" % (TRACKER_VERSION))            
         except urlfetch.DownloadError, e:
             # Even though INSERT to CartoDB is successful, an error 'Deadline exceeded 
             # while waiting for response' is usually returned
             errorstr = ("%s" % e)
-            if e is not None and errorstr.find('Deadline exceeded while waiting') == -1:
-                logging.error('RPC error: %s\nVersion: %s' % (errorstr,TRACKER_VERSION))
+#            if e is not None and errorstr.find('Deadline exceeded while waiting') == -1:
+            logging.error('RPC error: %s\nVersion: %s' % (errorstr,TRACKER_VERSION))
             
 api = webapp2.WSGIApplication(
     [('/apitracker', TrackerHandler)],

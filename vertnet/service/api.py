@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-29T13:22:58+02:00'
+API_VERSION='api.py 2015-08-30T21:57:25+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -78,6 +78,12 @@ class SearchApi(webapp2.RequestHandler):
                 count = '>10000'
 
             d=datetime.utcnow()
+            
+            # Process dynamicProperties JSON formatting
+            for r in recs:
+                if r.has_key('dynamicproperties'):
+                    r['dynamicproperties']=vnutil.format_json(r['dynamicproperties'])
+
             response = json.dumps(dict(recs=recs, cursor=cursor, matching_records=count,
                 limit=limit, response_records=len(recs), api_version=API_VERSION, 
                 query_version=query_version, request_date=d.isoformat(),
@@ -86,7 +92,7 @@ class SearchApi(webapp2.RequestHandler):
 #            logging.info('API search recs: %s\nVersion: %s' % (recs, API_VERSION) )
             res_counts = vnutil.search_resource_counts(recs)
 
-            params = dict(api_version=API_VERSION, count=query_count, 
+            params = dict(api_version=API_VERSION, count=len(recs), 
                 latlon=self.cityLatLong, matching_records=count, query=q, 
                 query_version=query_version, request_source='SearchAPI', 
                 response_records=len(recs), res_counts=json.dumps(res_counts), 

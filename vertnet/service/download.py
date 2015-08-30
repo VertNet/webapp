@@ -16,7 +16,7 @@ import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-30T16:52:47+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-30T18:29:55+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -35,7 +35,10 @@ def _tsv(json):
     for x in download_fields:
         if json.has_key(x):
             if x=='dynamicproperties':
-                values.append(unicode(x.rstrip()))
+#                logging.info('dynamicproperties before: %s' % json[x] )
+                dp = vnutil.format_json(json[x])
+#                logging.info('dynamicproperties after: %s' % dp)
+                values.append(unicode(dp.rstrip()))
             else:
                 values.append(unicode(json[x]).rstrip())        
         else:
@@ -448,7 +451,7 @@ class ComposeHandler(webapp2.RequestHandler):
                         resp = req.execute()
                     except Exception, e:
                         logging.error("Error composing file: %s Error: %s\nVersion: %s" 
-                            % (filename, e, DOWNLOAD_VERSION) )
+                            % (composed_filename, e, DOWNLOAD_VERSION) )
                         retry_count += 1
                         
                 begin=begin+COMPOSE_FILE_LIMIT
