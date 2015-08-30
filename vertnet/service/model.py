@@ -23,7 +23,7 @@ from vertnet.service import util as vnutil
 import json
 import logging
 
-MODEL_VERSION='model.py 2015-08-30T17:46:29+02:00'
+MODEL_VERSION='model.py 2015-08-30T17:30:11+02:00'
 
 class VertNetUser(models.User):
     @classmethod
@@ -162,9 +162,9 @@ class Record(ndb.Model):
         for x in download_fields:
             if json.has_key(x):
                 if x=='dynamicproperties':
-                    logging.info('dynamicproperties before: %s' % json[x] )
+#                    logging.info('dynamicproperties before: %s' % json[x] )
                     dp = vnutil.format_json(json[x])
-                    logging.info('dynamicproperties after: %s' % dp)
+#                    logging.info('dynamicproperties after: %s' % dp)
                     values.append(unicode(dp.rstrip()))
                 else:
                     values.append(unicode(json[x]).rstrip())        

@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-30T18:05:17+02:00'
+API_VERSION='api.py 2015-08-30T21:57:25+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -92,7 +92,7 @@ class SearchApi(webapp2.RequestHandler):
 #            logging.info('API search recs: %s\nVersion: %s' % (recs, API_VERSION) )
             res_counts = vnutil.search_resource_counts(recs)
 
-            params = dict(api_version=API_VERSION, count=query_count, 
+            params = dict(api_version=API_VERSION, count=len(recs), 
                 latlon=self.cityLatLong, matching_records=count, query=q, 
                 query_version=query_version, request_source='SearchAPI', 
                 response_records=len(recs), res_counts=json.dumps(res_counts), 
