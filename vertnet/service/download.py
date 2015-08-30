@@ -16,9 +16,10 @@ import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-29T15:25:25+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-30T14:40:56+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
+OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
 COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
 TEMP_BUCKET='vn-dltest' # bucket for temp compositions
@@ -33,7 +34,10 @@ def _tsv(json):
     values = []
     for x in download_fields:
         if json.has_key(x):
-            values.append(unicode(json[x]).rstrip())
+            if x=='dynamicproperties':
+                values.append(unicode(x.rstrip()))
+            else:
+                values.append(unicode(json[x]).rstrip())        
         else:
             values.append(u'')
     return u'\t'.join(values).encode('utf-8')
@@ -209,7 +213,7 @@ class CountHandler(webapp2.RequestHandler):
             curs = None
 
         records, next_cursor, query_version = \
-            vnsearch.query_rec_counter(q, SEARCH_CHUNK_SIZE, curs=curs)
+            vnsearch.query_rec_counter(q, OPTIMUM_CHUNK_SIZE, curs=curs)
 
         # Update the total number of records retrieved
         reccount = reccount+records
@@ -223,16 +227,17 @@ class CountHandler(webapp2.RequestHandler):
             countparams=dict(q=self.request.get('q'), cursor=curs, reccount=reccount, 
                 requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon)
 
-            logging.info('Record counter. Count: %s Query: %s\nVersion: %s' 
-                % (reccount, q, DOWNLOAD_VERSION) )
+            logging.info('Record counter. Count: %s Query: %s Cursor: %s\nVersion: %s' 
+                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
             # Keep counting
             taskqueue.add(url='/service/download/count', params=countparams,
                 queue_name="count")
 
         else:
             # Finished counting. Log the results
-            logging.info('Finished counting. Record total: %s Query %s\nVersion: %s' 
-                % (reccount, q, DOWNLOAD_VERSION) )
+            logging.info('Finished counting. Record total: %s Query %s \
+                Cursor: %s\nVersion: %s' 
+                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
 
             apitracker_params = dict(
                 api_version=fromapi, count=reccount, query=q, latlon=latlon,
@@ -241,8 +246,6 @@ class CountHandler(webapp2.RequestHandler):
 
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker") 
-
-# End CountHandler
 
 class WriteHandler(webapp2.RequestHandler):
     def post(self):

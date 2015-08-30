@@ -9,7 +9,7 @@ import os
 import json
 import logging
 
-SEARCH_VERSION='search.py 2015-08-29T14:45:44+02:00'
+SEARCH_VERSION='search.py 2015-08-29T21:04:44+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -56,7 +56,6 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             number_found_accuracy=10000,
             cursor=curs,
             sort_options=sort_options)
-            #returned_fields=['record', 'location'])        
     else:
         # Always use 10,000 as the value for number_found_accuracy.  Based on
         # extensive testing, using this maximum allowed value results in the best
@@ -65,8 +64,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             limit=limit,
             # See Stucky research, Mar 2014.
             number_found_accuracy=10000,
-            cursor=curs) #,
-            #returned_fields=['record', 'location'])        
+            cursor=curs)
 
     max_retries = 2
     retry_count = 0
@@ -122,7 +120,8 @@ def query_rec_counter(q, limit, index_name='dwc', sort=None, curs=search.Cursor(
         limit=limit,
         # See Stucky research, Mar 2014.
         number_found_accuracy=10000,
-        cursor=curs) #,
+        cursor=curs,
+        ids_only=True)
 
     max_retries = 2
     retry_count = 0

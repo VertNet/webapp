@@ -43,7 +43,8 @@ define([
       this.app = app;
       this.NUMBER_FOUND_ACCURACY = 10000;
       this.DOWNLOAD_THRES = 1000;
-      this.PAGE_SIZE = 100;
+      this.PAGE_SIZE = 100; // For optimal browser performance
+//      this.PAGE_SIZE = 400; // For optimal query performance
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
