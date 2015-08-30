@@ -16,7 +16,7 @@ import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-30T14:40:56+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-30T16:52:47+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -439,7 +439,18 @@ class ComposeHandler(webapp2.RequestHandler):
                     destinationObject=composed_filename,
                     destinationPredefinedAcl='publicRead',
                     body=mbody)
-                resp = req.execute()
+
+                success=False
+                retry_count=0
+                max_retries=5
+                while not success and retry_count < max_retries:
+                    try:
+                        resp = req.execute()
+                    except Exception, e:
+                        logging.error("Error composing file: %s Error: %s\nVersion: %s" 
+                            % (filename, e, DOWNLOAD_VERSION) )
+                        retry_count += 1
+                        
                 begin=begin+COMPOSE_FILE_LIMIT
                 compositions=compositions+1
 
