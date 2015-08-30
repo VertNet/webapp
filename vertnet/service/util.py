@@ -1,6 +1,6 @@
 import json
 
-UTIL_VERSION='util.py 2015-08-28T23:43:30+02:00'
+UTIL_VERSION='util.py 2015-08-30T17:48:59+02:00'
 
 ADD_TO_DOWNLOAD_RESULTS = ['url', 'gbifdatasetid', 'gbifpublisherid', 'email', 
     'contact', 'migrator', 'pubdate', 'lastindexed', 'iptlicense']
@@ -82,6 +82,9 @@ DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
 DWC_HEADER_LIST = DWC_ALL_LOWER + ADD_TO_DOWNLOAD_RESULTS
 DWC_HEADER = '\t'.join(DWC_HEADER_LIST)
 
+def format_json(json):
+    return json.replace('""{','{').replace('}""','}').replace('""','"')
+
 def download_field_list():
     """Create a list of the fields in a download. These are the original field names."""
     field_list=DWC_HEADER_LIST
@@ -144,18 +147,32 @@ def classify(record):
 
     return result
 
-
 def search_resource_counts(recs, old_res_counts=None):
     # Build dictionary of resources with their record counts
     res_counts = {}
-    url = None
+    gbifdatasetid = None
     for rec in recs:
-        if 'url' in rec:
-            url=rec['url']
+        if 'gbifdatasetid' in rec:
+            gbifdatasetid=rec['gbifdatasetid']
         else:
-            url=rec[TRANSLATE_HEADER['url']]
-        if url not in res_counts:
-            res_counts[url] = 1
+            gbifdatasetid=rec[TRANSLATE_HEADER['gbifdatasetid']]
+        if gbifdatasetid not in res_counts:
+            res_counts[gbifdatasetid] = 1
         else:
-            res_counts[url] += 1
+            res_counts[gbifdatasetid] += 1
     return res_counts
+
+# def search_resource_counts(recs, old_res_counts=None):
+#     # Build dictionary of resources with their record counts
+#     res_counts = {}
+#     url = None
+#     for rec in recs:
+#         if 'url' in rec:
+#             url=rec['url']
+#         else:
+#             url=rec[TRANSLATE_HEADER['url']]
+#         if url not in res_counts:
+#             res_counts[url] = 1
+#         else:
+#             res_counts[url] += 1
+#     return res_counts
