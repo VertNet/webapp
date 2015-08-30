@@ -9,7 +9,7 @@ import os
 import json
 import logging
 
-SEARCH_VERSION='search.py 2015-08-28T23:43:00+02:00'
+SEARCH_VERSION='search.py 2015-08-29T21:04:44+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -56,7 +56,6 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             number_found_accuracy=10000,
             cursor=curs,
             sort_options=sort_options)
-            #returned_fields=['record', 'location'])        
     else:
         # Always use 10,000 as the value for number_found_accuracy.  Based on
         # extensive testing, using this maximum allowed value results in the best
@@ -65,8 +64,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             limit=limit,
             # See Stucky research, Mar 2014.
             number_found_accuracy=10000,
-            cursor=curs) #,
-            #returned_fields=['record', 'location'])        
+            cursor=curs)
 
     max_retries = 2
     retry_count = 0
@@ -96,3 +94,57 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
         index_name=%s\nVersion: %s' % (q, namespace, index_name, 
         SEARCH_VERSION))
     return [], None, 0, SEARCH_VERSION
+
+def query_rec_counter(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
+    """ Makes a search from curs. Returns count of records in search, new cursor """
+    if not curs:
+        curs = search.Cursor()
+    
+    if q.startswith('id:'):
+        did = q.split(':')[1].strip()
+        namespace = namespace_manager.get_namespace()
+        results = search.Index(name=index_name, namespace=namespace).get_range(
+            start_id=did, limit=1)
+        if results:
+            recs = len(results.results)
+            return recs, None, SEARCH_VERSION
+        else:
+#            logging.info('No results from search.Index() for namespace=%s index_name=%s \
+#                query=%s\nVersion: %s' % (namespace, index_name, q, SEARCH_VERSION))
+            return 0, None, SEARCH_VERSION
+
+    # Always use 10,000 as the value for number_found_accuracy.  Based on
+    # extensive testing, using this maximum allowed value results in the best
+    # count accuracy and incurs only a minor performance penalty.
+    options = search.QueryOptions(
+        limit=limit,
+        # See Stucky research, Mar 2014.
+        number_found_accuracy=10000,
+        cursor=curs,
+        ids_only=True)
+
+    max_retries = 2
+    retry_count = 0
+    error = None
+    while retry_count < max_retries:
+        try:
+            query = search.Query(query_string=q, options=options)
+            namespace = namespace_manager.get_namespace()
+            results = search.Index(name=index_name, namespace=namespace).search(query)
+            if results:
+                recs = len(results.results)
+                return recs, results.cursor, SEARCH_VERSION
+            else:
+                logging.info('No results from query %s for namespace=%s \
+                    index_name=%s\nVersion: %s' % (q, namespace, index_name, 
+                    SEARCH_VERSION))
+                return 0, None, SEARCH_VERSION
+        except Exception, e:
+            logging.error('Search failed.\nQUERY:\n %s\nERROR:\n%s\nVersion: %s' 
+                % (q,e,SEARCH_VERSION) )
+            error = e
+            retry_count += 1
+    logging.info('Finally no results from query %s for namespace=%s \
+        index_name=%s\nVersion: %s' % (q, namespace, index_name, 
+        SEARCH_VERSION))
+    return 0, None, SEARCH_VERSION
