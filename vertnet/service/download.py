@@ -16,9 +16,10 @@ import json
 import logging
 import uuid
 
-DOWNLOAD_VERSION='download.py 2015-08-28T23:41:22+02:00'
+DOWNLOAD_VERSION='download.py 2015-08-30T14:40:56+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
+OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
 COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
 TEMP_BUCKET='vn-dltest' # bucket for temp compositions
@@ -33,7 +34,10 @@ def _tsv(json):
     values = []
     for x in download_fields:
         if json.has_key(x):
-            values.append(unicode(json[x]).rstrip())
+            if x=='dynamicproperties':
+                values.append(unicode(x.rstrip()))
+            else:
+                values.append(unicode(json[x]).rstrip())        
         else:
             values.append(u'')
     return u'\t'.join(values).encode('utf-8')
@@ -77,7 +81,7 @@ def acl_update_request():
     return mbody
 
 class DownloadHandler(webapp2.RequestHandler):
-    def _queue(self, q, email, name, latlon, fromapi, source):
+    def _queue(self, q, email, name, latlon, fromapi, source, countonly):
         # Create a base filename for all chunks to be composed for this download
         filepattern = '%s-%s' % (name, uuid.uuid4().hex)
         requesttime = datetime.utcnow().isoformat()
@@ -87,9 +91,13 @@ class DownloadHandler(webapp2.RequestHandler):
         writeparams=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
             source=source, fromapi=fromapi)
-            
-        taskqueue.add(url='/service/download/write', params=writeparams, 
-            queue_name="downloadwrite")
+
+        if countonly is not None and len(countonly)>0:
+            taskqueue.add(url='/service/download/count', params=writeparams, 
+                queue_name="count")
+        else:
+            taskqueue.add(url='/service/download/write', params=writeparams, 
+                queue_name="downloadwrite")
 
     def post(self):
         self.get()
@@ -100,6 +108,7 @@ class DownloadHandler(webapp2.RequestHandler):
         q = ' '.join(json.loads(keywords))
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
         fromapi = self.request.get('api')
+        countonly = self.request.get('countonly')
         # Force count to be an integer
         # count is a limit on the number of records to download
         count=int(str(count))
@@ -108,7 +117,12 @@ class DownloadHandler(webapp2.RequestHandler):
         if fromapi is not None and len(fromapi)>0:
             source='DownloadAPI'
             # Try to send an indicator to the browser if it came from one.
-            body = 'Downloading results:<br>'
+            body = ''
+            if countonly is not None and len(countonly)>0:
+                body = 'Counting results:<br>'
+                source = 'CountAPI'
+            else:
+                body = 'Downloading results:<br>'
             body += 'File name: %s<br>' % name
             body += 'Email: %s<br>' % email
             body += 'Keywords: %s<br>' % keywords
@@ -130,7 +144,7 @@ class DownloadHandler(webapp2.RequestHandler):
 
         if count==0 or count > SEARCH_CHUNK_SIZE:
             # The results are larger than SEARCH_CHUNK_SIZE, compose a file for download
-            self._queue(q, email, name, latlon, fromapi, source)
+            self._queue(q, email, name, latlon, fromapi, source, countonly)
         else:
             # The results are smaller than SEARCH_CHUNK_SIZE, download directly and make
             # a copy of the file in the download bucket
@@ -183,11 +197,55 @@ class DownloadHandler(webapp2.RequestHandler):
                     retry_count += 1
 #                    raise e
 
-class TestHandler(webapp2.RequestHandler):
+class CountHandler(webapp2.RequestHandler):
     def post(self):
-        logging.info('Made it to TestHandler with request: %s' % self.request ) 
-        q, email, name, latlon = map(self.request.get, ['q', 'email', 'name', 'latlon'])
-        logging.info('Mapped request: %s' % self.request ) 
+        q = json.loads(self.request.get('q'))
+        latlon = self.request.get('latlon')
+        requesttime = self.request.get('requesttime')
+        reccount = int(self.request.get('reccount'))
+        fromapi=self.request.get('fromapi')
+        source=self.request.get('source')
+        cursor = self.request.get('cursor')
+
+        if cursor:
+            curs = search.Cursor(web_safe_string=cursor)
+        else:
+            curs = None
+
+        records, next_cursor, query_version = \
+            vnsearch.query_rec_counter(q, OPTIMUM_CHUNK_SIZE, curs=curs)
+
+        # Update the total number of records retrieved
+        reccount = reccount+records
+
+        if next_cursor:
+            curs = next_cursor.web_safe_string
+        else:
+            curs = ''
+
+        if curs:
+            countparams=dict(q=self.request.get('q'), cursor=curs, reccount=reccount, 
+                requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon)
+
+            logging.info('Record counter. Count: %s Query: %s Cursor: %s\nVersion: %s' 
+                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
+            # Keep counting
+            taskqueue.add(url='/service/download/count', params=countparams,
+                queue_name="count")
+
+        else:
+            # Finished counting. Log the results
+            logging.info('Finished counting. Record total: %s Query %s \
+                Cursor: %s\nVersion: %s' 
+                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
+
+            apitracker_params = dict(
+                api_version=fromapi, count=reccount, query=q, latlon=latlon,
+                query_version=query_version, request_source=source, type='count'
+                )
+
+            taskqueue.add(url='/apitracker', params=apitracker_params, 
+                queue_name="apitracker") 
 
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
@@ -252,8 +310,9 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-#                    logging.info('Download chunk saved to %s: total %s \
-#                        records.\nVersion: %s' % (filename, reccount, DOWNLOAD_VERSION) )
+                    logging.info('Download chunk saved to %s: total %s \
+                        records. Has next cursor: %s \nVersion: %s' 
+                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION) )
             except Exception, e:
                 logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s \
                     \nError: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
@@ -272,17 +331,6 @@ class WriteHandler(webapp2.RequestHandler):
         finalfilename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
             FILE_EXTENSION)
 
-        apitracker_params = dict(
-            api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
-            error=None, latlon=latlon, matching_records=reccount, query=q, 
-            query_version=query_version, request_source=source, 
-            response_records=len(records), res_counts=json.dumps(total_res_counts), 
-            type='download'
-            )
-
-        composeparams=dict(email=email, name=name, filepattern=filepattern, 
-            fileindex=fileindex, reccount=reccount, requesttime=requesttime)
-
         if curs:
             fileindex = fileindex + 1
 
@@ -290,6 +338,17 @@ class WriteHandler(webapp2.RequestHandler):
                 # Opt not to support downloads of more than 
                 # COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE records
                 # Stop composing results at this limit.
+
+                apitracker_params = dict(
+                    api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
+                    error=None, latlon=latlon, matching_records=reccount, query=q, 
+                    query_version=query_version, request_source=source, 
+                    response_records=len(records), res_counts=json.dumps(total_res_counts), 
+                    type='download'
+                    )
+
+                composeparams=dict(email=email, name=name, filepattern=filepattern, 
+                    fileindex=fileindex, reccount=reccount, requesttime=requesttime)
 
                 # Log the download
                 taskqueue.add(url='/apitracker', params=apitracker_params, 
@@ -314,6 +373,18 @@ class WriteHandler(webapp2.RequestHandler):
 #            logging.info('Sending total_res_counts to apitracker: %s' % total_res_counts ) 
             # Log the download
 #            logging.info('apitracker params: %s' % apitracker_params)
+
+            apitracker_params = dict(
+                api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
+                error=None, latlon=latlon, matching_records=reccount, query=q, 
+                query_version=query_version, request_source=source, 
+                response_records=len(records), res_counts=json.dumps(total_res_counts), 
+                type='download'
+                )
+
+            composeparams=dict(email=email, name=name, filepattern=filepattern, 
+                fileindex=fileindex, reccount=reccount, requesttime=requesttime)
+
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker") 
 
@@ -515,7 +586,7 @@ routes = [
     webapp2.Route(r'/service/download', handler=DownloadHandler),
     webapp2.Route(r'/service/download/write', handler=WriteHandler),
     webapp2.Route(r'/service/download/compose', handler=ComposeHandler),
-    webapp2.Route(r'/service/download/test', handler=TestHandler),
+    webapp2.Route(r'/service/download/count', handler=CountHandler),
     webapp2.Route(r'/service/download/cleanup', handler=CleanupHandler)
     ]
     
