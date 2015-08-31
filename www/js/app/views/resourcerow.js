@@ -51,12 +51,12 @@ define([
       },
 
       // Open the occurrence detail page.
-      _clickHandler: function(e) {
-        e.preventDefault();
-        var sel = getSelection().toString();
-        if (!sel) {
-          window.open(this.model.get('url'), '_self');
-        }
-      }
+      //_clickHandler: function(e) {
+        //e.preventDefault();
+        //var sel = getSelection().toString();
+        //if (!sel) {
+          //window.open(this.model.get('source_url'), '_self');
+        //}
+      //}
     });
 });
