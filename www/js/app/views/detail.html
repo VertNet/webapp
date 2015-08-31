@@ -370,7 +370,7 @@
       <dd><% if (this.model.get('emlrights')) { %>
               <%= this.model.getRights() %>
             <% } else { %>
-              Please contact the <a href="<%= this.model.get('url') %>">data publisher</a> for details concerning the use of these data.
+              Please contact the <a href="<%= this.model.get('source_url') %>">data publisher</a> for details concerning the use of these data.
             <% } %></dd>
       <br>
       <dt>Citation</dt>
@@ -391,7 +391,7 @@
       <dd><%= this.model.get('pubdate') %></dd>
       <br>
       <dt>Source URL</dt>
-      <dd><a href="<%= this.model.get('url') %>"><%= this.model.get('url') %></a></dd>
+      <dd><a href="<%= this.model.get('source_url') %>"><%= this.model.get('source_url') %></a></dd>
     </dl>
   </div>
     
