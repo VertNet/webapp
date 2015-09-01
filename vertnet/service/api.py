@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-09-01T18:37:07+02:00'
+API_VERSION='api.py 2015-09-01T21:35:49+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -117,6 +117,10 @@ class DownloadApi(webapp2.RequestHandler):
         http://api.vertnet-portal.appspot.com/api/download?q= \
         {"q":"mappable:1 institutioncode:kstc","n":"kstctestresults.txt", \
         "e":"you@gmail.com"}
+        Example count request:
+        http://api.vertnet-portal.appspot.com/api/download?q= \
+        {"q":"mappable:1 institutioncode:kstc","n":"kstctestresults.txt", \
+        "e":"you@gmail.com", "c"="True"}
     """
     def __init__(self, request, response):
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
@@ -130,33 +134,15 @@ class DownloadApi(webapp2.RequestHandler):
 #        logging.info('Version: %s\nAPI download request: %s' 
 #            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
-        q, e, n = map(request.get, ['q', 'e', 'n'])
+        q, e, n, countonly = map(request.get, ['q', 'e', 'n', 'c'])
         keywords = q.split()
-        params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, email=e, 
-            name=n, api=API_VERSION))
+        if countonly is not None:
+            params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
+                email=e, countonly=True, api=API_VERSION))
+        else:
+            params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, email=e, 
+                name=n, api=API_VERSION))
         url = '/service/download?%s' % params
-        self.redirect(url)
-
-class CountApi(webapp2.RequestHandler):
-    """Example count request:
-http://api.vertnet-portal.appspot.com/api/download?q={"q":"mappable:1 institutioncode:kstc"}
-    """
-    def __init__(self, request, response):
-        self.initialize(request, response)
-
-    def post(self):
-        self.get()
-
-    def get(self):
-        # Receive the count request and redirect it to the count service URL
-#        logging.info('Version: %s\nAPI count request: %s' 
-#            % (API_VERSION, self.request) )
-        request = json.loads(self.request.get('q'))
-        q, e = map(request.get, ['q', 'e'])
-        keywords = q.split()
-        countparams = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
-            email=e, countonly=True, api=API_VERSION))
-        url = '/service/download?%s' % countparams
         self.redirect(url)
 
 class FeedbackApi(webapp2.RequestHandler):
@@ -173,7 +159,6 @@ class FeedbackApi(webapp2.RequestHandler):
 routes = [
     webapp2.Route(r'/api/search', handler=SearchApi),
     webapp2.Route(r'/api/download', handler=DownloadApi),
-    webapp2.Route(r'/api/count', handler=CountApi),
     webapp2.Route(r'/api/feedback', handler=FeedbackApi)
     ]
 
