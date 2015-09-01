@@ -17,7 +17,7 @@ import logging
 import uuid
 import sys
 
-DOWNLOAD_VERSION='download.py 2015-09-01T18:28:53+02:00'
+DOWNLOAD_VERSION='download.py 2015-09-01T20:18:39+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -248,8 +248,8 @@ class CountHandler(webapp2.RequestHandler):
             resulttime=datetime.utcnow().isoformat()
             mail.send_mail(sender="VertNet Counts <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your VertNet count is ready!",
-                body="""Your query found %s matching records.\nQuery: %s\nRequest 
-submitted: %s\nRequest fulfilled: %s""" % (reccount, q, requesttime, resulttime) )
+                body="""Your query found %s matching records.\nQuery: %s
+Request submitted: %s\nRequest fulfilled: %s""" % (reccount, q, requesttime, resulttime) )
 
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
