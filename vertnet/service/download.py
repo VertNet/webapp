@@ -17,7 +17,7 @@ import logging
 import uuid
 import sys
 
-DOWNLOAD_VERSION='download.py 2015-09-01T14:34:11+02:00'
+DOWNLOAD_VERSION='download.py 2015-09-01T18:28:53+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -202,6 +202,7 @@ class CountHandler(webapp2.RequestHandler):
         fromapi=self.request.get('fromapi')
         source=self.request.get('source')
         cursor = self.request.get('cursor')
+        email = self.request.get('email')
 
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
@@ -221,7 +222,8 @@ class CountHandler(webapp2.RequestHandler):
 
         if curs:
             countparams=dict(q=self.request.get('q'), cursor=curs, reccount=reccount, 
-                requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon)
+                requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon,
+                email=email)
 
             logging.info('Record counter. Count: %s Query: %s Cursor: %s\nVersion: %s' 
                 % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
