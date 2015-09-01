@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-08-30T21:57:25+02:00'
+API_VERSION='api.py 2015-09-01T18:37:07+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -152,10 +152,10 @@ http://api.vertnet-portal.appspot.com/api/download?q={"q":"mappable:1 institutio
 #        logging.info('Version: %s\nAPI count request: %s' 
 #            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
-        q = request.get('q')
+        q, e = map(request.get, ['q', 'e'])
         keywords = q.split()
         countparams = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
-            countonly=True, api=API_VERSION))
+            email=e, countonly=True, api=API_VERSION))
         url = '/service/download?%s' % countparams
         self.redirect(url)
 
