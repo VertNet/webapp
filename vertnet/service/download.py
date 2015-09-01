@@ -15,8 +15,9 @@ import webapp2
 import json
 import logging
 import uuid
+import sys
 
-DOWNLOAD_VERSION='download.py 2015-08-30T18:29:55+02:00'
+DOWNLOAD_VERSION='download.py 2015-09-01T14:34:11+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -27,17 +28,13 @@ DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
 FILE_EXTENSION='tsv'
 
 def _tsv(json):
-#    json['datasource_and_rights'] = json.get('url')
-#    header = vnutil.DWC_HEADER_LIST
     # These should be the names of the original fields in the index document.
     download_fields = vnutil.download_field_list()
     values = []
     for x in download_fields:
         if json.has_key(x):
             if x=='dynamicproperties':
-#                logging.info('dynamicproperties before: %s' % json[x] )
                 dp = vnutil.format_json(json[x])
-#                logging.info('dynamicproperties after: %s' % dp)
                 values.append(unicode(dp.rstrip()))
             else:
                 values.append(unicode(json[x]).rstrip())        
@@ -136,12 +133,12 @@ class DownloadHandler(webapp2.RequestHandler):
             body += 'Request headers: %s<br>' % self.request.headers
             self.response.out.write(body)
             logging.info('API download request. API: %s Source: %s Count: %s \
-                Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
                 % (fromapi, source, count, keywords, email, name, latlon, 
                 DOWNLOAD_VERSION) )
         else:
             logging.info('Portal download request. API: %s Source: %s Count: %s \
-                Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
                 % (fromapi, source, count, keywords, email, name, latlon, 
                 DOWNLOAD_VERSION) )
 
@@ -161,14 +158,10 @@ class DownloadHandler(webapp2.RequestHandler):
             res_counts = vnutil.search_resource_counts(records)
 
             # Write the header for the output file 
-#            data = '%s\n%s' % (vnutil.DWC_HEADER, _get_tsv_chunk(records))
             data = '%s\n%s' % (vnutil.download_header(), _get_tsv_chunk(records))
             self.response.out.write(data)
 
             # Write single chunk to file in DOWNLOAD_BUCKET
-            max_retries = 2
-            retry_count = 0
-            success = False
             filepattern = '%s-%s' % (name, uuid.uuid4().hex)
             filename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
                 FILE_EXTENSION)
@@ -181,21 +174,21 @@ class DownloadHandler(webapp2.RequestHandler):
                 request_source=source, response_records=len(records), 
                 res_counts=json.dumps(res_counts), type='download')
 
-#            logging.info('Writing copy of %s records to  %s.\nVersion: %s' 
-#                % (len(records), filename, DOWNLOAD_VERSION) )
+            max_retries = 2
+            retry_count = 0
+            success = False
             while not success and retry_count < max_retries:
                 try:
                     with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                             options={'x-goog-acl': 'public-read'}) as f:
                         f.write(data)
                         success = True
-
 #                        logging.info('Sending small res_counts to apitracker: %s' 
 #                            % res_counts ) 
                         taskqueue.add(url='/apitracker', params=apitracker_params, 
                             queue_name="apitracker") 
                 except Exception, e:
-                    logging.error("I/O error writing small results to \
+                    logging.error("Error writing small result set to \
                         %s.\nError: %s\nVersion: %s" % (filename,e,DOWNLOAD_VERSION) )
                     retry_count += 1
 #                    raise e
@@ -237,7 +230,7 @@ class CountHandler(webapp2.RequestHandler):
                 queue_name="count")
 
         else:
-            # Finished counting. Log the results
+            # Finished counting. Log the results and send email.
             logging.info('Finished counting. Record total: %s Query %s \
                 Cursor: %s\nVersion: %s' 
                 % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
@@ -248,7 +241,13 @@ class CountHandler(webapp2.RequestHandler):
                 )
 
             taskqueue.add(url='/apitracker', params=apitracker_params, 
-                queue_name="apitracker") 
+                queue_name="apitracker")
+
+            resulttime=datetime.utcnow().isoformat()
+            mail.send_mail(sender="VertNet Counts <vertnetinfo@vertnet.org>", 
+                to=email, subject="Your VertNet count is ready!",
+                body="""Your query found %s matching records.\nQuery: %s\nRequest 
+submitted: %s\nRequest fulfilled: %s""" % (reccount, q, requesttime, resulttime) )
 
 class WriteHandler(webapp2.RequestHandler):
     def post(self):
@@ -274,10 +273,6 @@ class WriteHandler(webapp2.RequestHandler):
             curs = None
 
         # Write single chunk to file, GCS does not support append
-        max_retries = 2
-        retry_count = 0
-        success = False
-
         records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
         # Build dict for search counts
@@ -304,20 +299,22 @@ class WriteHandler(webapp2.RequestHandler):
             # This is a query with fewer than SEARCH_CHUNK_SIZE results
             filename = '/%s/%s.%s' % (TEMP_BUCKET, filepattern, FILE_EXTENSION)
 
+        max_retries = 2
+        retry_count = 0
+        success = False
         while not success and retry_count < max_retries:
             try:
                 with gcs.open(filename, 'w', content_type='text/tab-separated-values',
                              options={'x-goog-acl': 'public-read'}) as f:
                     if fileindex==0:
-#                        f.write('%s\n' % vnutil.DWC_HEADER)
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-                    logging.info('Download chunk saved to %s: total %s \
+                    logging.info('Download chunk saved to %s: Total %s \
                         records. Has next cursor: %s \nVersion: %s' 
-                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION) )
+                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
             except Exception, e:
-                logging.error("I/O error writing chunk to FILE: %s for\nQUERY: %s \
+                logging.error("Error writing chunk to FILE: %s for\nQUERY: %s \
                     \nError: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
                 retry_count += 1
 #                raise e
@@ -343,14 +340,13 @@ class WriteHandler(webapp2.RequestHandler):
                 # Stop composing results at this limit.
 
                 apitracker_params = dict(
-                    api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
-                    error=None, latlon=latlon, matching_records=reccount, query=q, 
-                    query_version=query_version, request_source=source, 
-                    response_records=len(records), res_counts=json.dumps(total_res_counts), 
-                    type='download'
-                    )
+                    api_version=fromapi, count=reccount, download=finalfilename, 
+                    downloader=email, error=None, latlon=latlon, 
+                    matching_records=reccount, query=q, query_version=query_version, 
+                    request_source=source, response_records=len(records), 
+                    res_counts=json.dumps(total_res_counts), type='download')
 
-                composeparams=dict(email=email, name=name, filepattern=filepattern, 
+                composeparams=dict(email=email, name=name, filepattern=filepattern, q=q,
                     fileindex=fileindex, reccount=reccount, requesttime=requesttime)
 
                 # Log the download
@@ -373,19 +369,15 @@ class WriteHandler(webapp2.RequestHandler):
                     queue_name="downloadwrite")
 
         else:
-#            logging.info('Sending total_res_counts to apitracker: %s' % total_res_counts ) 
             # Log the download
-#            logging.info('apitracker params: %s' % apitracker_params)
-
             apitracker_params = dict(
-                api_version=fromapi, count=reccount, download=finalfilename, downloader=email, 
-                error=None, latlon=latlon, matching_records=reccount, query=q, 
-                query_version=query_version, request_source=source, 
+                api_version=fromapi, count=reccount, download=finalfilename, 
+                downloader=email, error=None, latlon=latlon, matching_records=reccount, 
+                query=q, query_version=query_version, request_source=source, 
                 response_records=len(records), res_counts=json.dumps(total_res_counts), 
-                type='download'
-                )
+                type='download')
 
-            composeparams=dict(email=email, name=name, filepattern=filepattern, 
+            composeparams=dict(email=email, name=name, filepattern=filepattern, q=q,
                 fileindex=fileindex, reccount=reccount, requesttime=requesttime)
 
             taskqueue.add(url='/apitracker', params=apitracker_params, 
@@ -427,15 +419,14 @@ class ComposeHandler(webapp2.RequestHandler):
             begin=0
 
             while begin<total_files_to_compose:
+                # As long as there are files to compose, compose them in sets of up to
+                # COMPOSE_FILE_LIMIT files.
                 end=total_files_to_compose
                 if end-begin>COMPOSE_FILE_LIMIT:
                     end=begin+COMPOSE_FILE_LIMIT
 
                 composed_filename='%s-%s.%s' % (composed_filepattern, compositions, 
                     FILE_EXTENSION)
-#                logging.info('Prelim composing files into %s. Begin \
-#                     index: %s End index: %s\nVersion: %s' % (composed_filename, \
-#                     begin, end, DOWNLOAD_VERSION) )
                 mbody=compose_request(TEMP_BUCKET, filepattern, begin, end)
                 req = service.objects().compose(
                     destinationBucket=TEMP_BUCKET,
@@ -443,16 +434,17 @@ class ComposeHandler(webapp2.RequestHandler):
                     destinationPredefinedAcl='publicRead',
                     body=mbody)
 
-                success=False
-                retry_count=0
-                max_retries=5
-                while not success and retry_count < max_retries:
-                    try:
-                        resp = req.execute()
-                    except Exception, e:
-                        logging.error("Error composing file: %s Error: %s\nVersion: %s" 
-                            % (composed_filename, e, DOWNLOAD_VERSION) )
-                        retry_count += 1
+                try:
+#                        resp = req.execute()
+                        # Don't worry about getting the response. Just execute the request.
+                    req.execute()
+                except Exception, e:
+                    # There is a timeout fetching the url for the response. This
+                    # tends to happen in compose requests for LARGE downloads.
+                    logging.warning("Deadline exceeded error (not to worry) \
+composing file: %s Error: %s\nVersion: %s" 
+                        % (composed_filename, e, DOWNLOAD_VERSION) )
+                    pass
                         
                 begin=begin+COMPOSE_FILE_LIMIT
                 compositions=compositions+1
@@ -476,8 +468,20 @@ class ComposeHandler(webapp2.RequestHandler):
                 destinationObject=composed_filename,
                 destinationPredefinedAcl='publicRead',
                 body=mbody)
-            resp = req.execute()
-
+            try:
+                # Don't worry about getting the response. Just execute the request.
+                req.execute()
+            except Exception, e:
+                # There is a timeout fetching the url for the response. This
+                # tends to happen in compose requests for LARGE downloads when composing
+                # already composed files. Just log it and hope for the best.
+                logging.warning("Deadline exceeded error (not to worry) composing \
+file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
+                pass
+#                    logging.error("Error composing file: %s Error: %s\nVersion: %s" 
+#                        % (composed_filename, e, DOWNLOAD_VERSION) )
+#                retry_count += 1
+                
         # Now, can we zip the final result?
         # Not directly with GCS. It would have to be done using gsutil in Google 
         # Compute Engine
@@ -491,8 +495,8 @@ class ComposeHandler(webapp2.RequestHandler):
             logging.error("Error copying %s to %s \
                 \nError: %s\nVersion: %s" % (src, dest, e, DOWNLOAD_VERSION) )
 
-        mbody=acl_update_request()
         # Change the ACL so that the download file is publicly readable.
+        mbody=acl_update_request()
 #        logging.info('Requesting update for /%s/%s\nmbody%s \
 #            \nVersion: %s' % (DOWNLOAD_BUCKET,composed_filename, mbody, 
 #            DOWNLOAD_VERSION) )
@@ -508,18 +512,29 @@ class ComposeHandler(webapp2.RequestHandler):
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your truncated VertNet download is ready!",
                 body="""
-The number of records in the results of your query exceeded the limit. Only the first 
-"%s" matching results were saved. You can download "%s" here within the next 24 hours: 
-https://storage.googleapis.com/%s/%s. Request generated: %s\nRequest fulfilled: %s
-""" % (COMPOSE_OBJECT_LIMIT*SEARCH_CHUNK_SIZE, name, DOWNLOAD_BUCKET,
-    composed_filename, requesttime, resulttime))
+Your VertNet download file is now available for a limited time at 
+https://storage.googleapis.com/%s/%s.\n
+The results in this file are not complete based on your query\n
+%s\n
+The number of records in the results of your query exceeded the limit. This is a limit 
+based on the VertNet architecture. If you need more results than what you received, 
+consider making multiple queries with distinct criteria, such as before and after a 
+given year.
+If you need very large data sets, such as all Mammals, these are pre-packaged 
+periodically and accessible for download. Please contact vertnetinfo@vertnet.org for 
+more information.\n
+Matching records: %s\nRequest submitted: %s\nRequest fulfilled: %s""" 
+                    % (DOWNLOAD_BUCKET, composed_filename, q, reccount, requesttime, 
+                    resulttime))
         else:
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-You can download %s records in the file "%s" within the next 24 hours from 
-https://storage.googleapis.com/%s/%s.\nRequest generated: %s\nRequest fulfilled: %s
-""" % (reccount, name, DOWNLOAD_BUCKET, composed_filename, requesttime, resulttime))
+Your VertNet download file is now available for a limited time at 
+https://storage.googleapis.com/%s/%s.\n
+Query: %s\nMatching records: %s\nRequest submitted: %s\nRequest fulfilled: %s""" 
+                    % (DOWNLOAD_BUCKET, composed_filename, q, reccount, requesttime, 
+                    resulttime))
 
         logging.info('Finalized writing /%s/%s\nVersion: %s' 
             % (DOWNLOAD_BUCKET, composed_filename, DOWNLOAD_VERSION) )
@@ -559,8 +574,7 @@ class CleanupHandler(webapp2.RequestHandler):
                         success=True
                     except Exception, e:
                         logging.error("Error deleting composed file %s \
-                            attempt %s\nError: %s\nVersion: %s" % (filename, 
-                            retry_count+1, e, DOWNLOAD_VERSION) )
+attempt %s\nError: %s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERSION) )
                         retry_count += 1
 #                            raise e
 
@@ -580,21 +594,21 @@ class CleanupHandler(webapp2.RequestHandler):
                         success=True
                     except Exception, e:
                         logging.error("Error deleting chunk file %s attempt %s\nError: \
-                            %s\nVersion: %s" % (filename, retry_count+1, e, 
-                            DOWNLOAD_VERSION) )
+%s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERSION) )
                         retry_count += 1
 #                        raise e
 
-            # Delete the temporary composed file from the TEMP_BUCKET
-            req = service.objects().delete(bucket=TEMP_BUCKET, object=composed_filename)
-            try:
-                resp=req.execute()
-            except Exception, e:
-                logging.error("Error deleting temporary composed file %s \
-                    \nError: %s\nVersion: %s" % (filename, e, DOWNLOAD_VERSION) )
+        # After all else...
+        # Delete the temporary composed file from the TEMP_BUCKET
+        req = service.objects().delete(bucket=TEMP_BUCKET, object=composed_filename)
+        try:
+            resp=req.execute()
+        except Exception, e:
+            logging.error("Error deleting temporary composed file %s \
+\nError: %s\nVersion: %s" % (filename, e, DOWNLOAD_VERSION) )
 
-            logging.info('Finalized cleaning temporary files from /%s\nVersion: %s' 
-                % (TEMP_BUCKET, DOWNLOAD_VERSION) )
+        logging.info('Finalized cleaning temporary files from /%s\nVersion: %s' 
+            % (TEMP_BUCKET, DOWNLOAD_VERSION) )
 
 routes = [
     webapp2.Route(r'/service/download', handler=DownloadHandler),
