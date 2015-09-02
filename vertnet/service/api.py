@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-09-01T21:35:49+02:00'
+API_VERSION='api.py 2015-09-02T11:09:38+02:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -140,8 +140,8 @@ class DownloadApi(webapp2.RequestHandler):
             params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
                 email=e, countonly=True, api=API_VERSION))
         else:
-            params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, email=e, 
-                name=n, api=API_VERSION))
+            params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, 
+                email=e, name=n, api=API_VERSION))
         url = '/service/download?%s' % params
         self.redirect(url)
 

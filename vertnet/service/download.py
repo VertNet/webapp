@@ -17,7 +17,7 @@ import logging
 import uuid
 import sys
 
-DOWNLOAD_VERSION='download.py 2015-09-01T20:18:39+02:00'
+DOWNLOAD_VERSION='download.py 2015-09-02T11:30:03+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -88,15 +88,15 @@ class DownloadHandler(webapp2.RequestHandler):
 
         # Start the download process with the first file having fileindex 0
         # Start the record count at 0
-        writeparams=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
+        params=dict(q=json.dumps(q), email=email, name=name, filepattern=filepattern, 
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
             source=source, fromapi=fromapi)
 
         if countonly is not None and len(countonly)>0:
-            taskqueue.add(url='/service/download/count', params=writeparams, 
+            taskqueue.add(url='/service/download/count', params=params, 
                 queue_name="count")
         else:
-            taskqueue.add(url='/service/download/write', params=writeparams, 
+            taskqueue.add(url='/service/download/write', params=params, 
                 queue_name="downloadwrite")
 
     def post(self):
@@ -123,19 +123,25 @@ class DownloadHandler(webapp2.RequestHandler):
                 source = 'CountAPI'
             else:
                 body = 'Downloading results:<br>'
-            body += 'File name: %s<br>' % name
-            body += 'Email: %s<br>' % email
-            body += 'Keywords: %s<br>' % keywords
-            body += 'X-AppEngine-CityLatLong: %s<br>' % latlon
-            body += 'Source: %s<br>' % source
-            body += 'API: %s<br>' % fromapi
-            body += 'len(API): %s<br>' % len(fromapi)
-            body += 'Request headers: %s<br>' % self.request.headers
+            if email is None or len(email)==0 or email=='None':
+                body += 'ERROR: You must provide an email address.'
+            else:
+                body += 'File name: %s<br>' % name
+                body += 'Email: %s<br>' % email
+                body += 'Keywords: %s<br>' % keywords
+                body += 'X-AppEngine-CityLatLong: %s<br>' % latlon
+                body += 'Source: %s<br>' % source
+                body += 'API: %s<br>' % fromapi
+                body += 'len(API): %s<br>' % len(fromapi)
+                body += 'Request headers: %s<br>' % self.request.headers
+            
             self.response.out.write(body)
             logging.info('API download request. API: %s Source: %s Count: %s \
 Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
                 % (fromapi, source, count, keywords, email, name, latlon, 
                 DOWNLOAD_VERSION) )
+            if email is None or len(email)==0:
+                return
         else:
             logging.info('Portal download request. API: %s Source: %s Count: %s \
 Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
@@ -188,8 +194,8 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
                         taskqueue.add(url='/apitracker', params=apitracker_params, 
                             queue_name="apitracker") 
                 except Exception, e:
-                    logging.error("Error writing small result set to \
-                        %s.\nError: %s\nVersion: %s" % (filename,e,DOWNLOAD_VERSION) )
+                    logging.error("Error writing small result set to %s.\nError: %s \n\
+Version: %s" % (filename,e,DOWNLOAD_VERSION) )
                     retry_count += 1
 #                    raise e
 
@@ -225,22 +231,21 @@ class CountHandler(webapp2.RequestHandler):
                 requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon,
                 email=email)
 
-            logging.info('Record counter. Count: %s Query: %s Cursor: %s\nVersion: %s' 
-                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
+            logging.info('Record counter. Count: %s Email: %s Query: %s Cursor: %s\
+Version: %s' % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
             # Keep counting
             taskqueue.add(url='/service/download/count', params=countparams,
                 queue_name="count")
 
         else:
             # Finished counting. Log the results and send email.
-            logging.info('Finished counting. Record total: %s Query %s \
-                Cursor: %s\nVersion: %s' 
-                % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
+            logging.info('Finished counting. Record total: %s Email: %s Query %s \
+Cursor: %s\nVersion: %s' % (reccount, email, q, next_cursor, DOWNLOAD_VERSION) )
 
             apitracker_params = dict(
                 api_version=fromapi, count=reccount, query=q, latlon=latlon,
-                query_version=query_version, request_source=source, type='count'
-                )
+                query_version=query_version, request_source=source, type='count',
+                downloader=email)
 
             taskqueue.add(url='/apitracker', params=apitracker_params, 
                 queue_name="apitracker")
@@ -312,12 +317,12 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-                    logging.info('Download chunk saved to %s: Total %s \
-                        records. Has next cursor: %s \nVersion: %s' 
+                    logging.info('Download chunk saved to %s: Total %s records. Has next \
+cursor: %s \nVersion: %s' 
                         % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
             except Exception, e:
                 logging.error("Error writing chunk to FILE: %s for\nQUERY: %s \
-                    \nError: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
+Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
                 retry_count += 1
 #                raise e
 
@@ -494,8 +499,8 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
         try:
             gcs.copy2(src, dest)
         except Exception, e:
-            logging.error("Error copying %s to %s \
-                \nError: %s\nVersion: %s" % (src, dest, e, DOWNLOAD_VERSION) )
+            logging.error("Error copying %s to %s \nError: %s\
+Version: %s" % (src, dest, e, DOWNLOAD_VERSION) )
 
         # Change the ACL so that the download file is publicly readable.
         mbody=acl_update_request()
@@ -606,8 +611,8 @@ attempt %s\nError: %s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERS
         try:
             resp=req.execute()
         except Exception, e:
-            logging.error("Error deleting temporary composed file %s \
-\nError: %s\nVersion: %s" % (filename, e, DOWNLOAD_VERSION) )
+            logging.error("Error deleting temporary composed file %s \nError: %s\n\
+Version: %s" % (filename, e, DOWNLOAD_VERSION) )
 
         logging.info('Finalized cleaning temporary files from /%s\nVersion: %s' 
             % (TEMP_BUCKET, DOWNLOAD_VERSION) )
