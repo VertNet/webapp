@@ -17,7 +17,7 @@ import logging
 import uuid
 import sys
 
-DOWNLOAD_VERSION='download.py 2015-09-02T11:30:03+02:00'
+DOWNLOAD_VERSION='download.py 2015-09-03T10:52:50+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -449,8 +449,8 @@ class ComposeHandler(webapp2.RequestHandler):
                     # There is a timeout fetching the url for the response. This
                     # tends to happen in compose requests for LARGE downloads.
                     logging.warning("Deadline exceeded error (not to worry) \
-composing file: %s Error: %s\nVersion: %s" 
-                        % (composed_filename, e, DOWNLOAD_VERSION) )
+composing file: %s Query: %s Email: %s Error: %s\nVersion: %s" 
+                        % (composed_filename, q, email, e, DOWNLOAD_VERSION) )
                     pass
                         
                 begin=begin+COMPOSE_FILE_LIMIT
