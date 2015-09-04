@@ -114,17 +114,47 @@
 
   <div class="tab-pane fade active in" id="summary">
     <p>
+    
     <!-- <p class="lead">Overview</p> -->
     <%if (this.model.get('associatedmedia')) { 
         var link = this.model.get('associatedmedia'); %>
         <div id="hasmedia">
           <a target='_blank' href="<%= link %>">View media</a>
           <span id="has-media-icon" class="glyphicon glyphicon-facetime-video"></span> 
+                
         </div>
+
      <% } %>
+     
+<!--            <div>
+              <label>
+                Show Map <input id="occ-detail-map-toggle" type="checkbox"> 
+              </label> 
+              </div>         
+ -->
+     
+            
     <div id="occ-detail-map" class="occ-detail-map">
       <div id="detailmap"></div>
-    </div>
+      </div>
+  
+<!--         <div id="occ-detail-map-toggle">
+          <div>
+            <div>
+              <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+              </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                      <div id="occ-detail-map" class="occ-detail-map">
+
+                      <div id="detailmap"></div>
+                      </div>              
+                </div>
+            </div>
+          </div> 
+      </div>
+ -->
     <table class="table table-striped">
       <thead>
         <tr>
