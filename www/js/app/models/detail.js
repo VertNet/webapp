@@ -350,9 +350,9 @@ define([
       {
           if (newtext.length == 0)
           {
-              newtext = parts[i].replace(exp,"<a href='$1'>$1</a>");
+              newtext = parts[i].replace(exp,"<a target='_blank' href='$1'>$1</a>");
           } else {
-              newtext = newtext + ", " + parts[i].replace(exp,"<a href='$1'>$1</a>");
+              newtext = newtext + ", " + parts[i].replace(exp,"<a target='_blank' href='$1'>$1</a>");
           }
       }
       return newtext;
