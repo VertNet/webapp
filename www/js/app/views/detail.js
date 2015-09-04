@@ -228,7 +228,15 @@ define([
 			this.$('#show-error-tip').tooltip('hide');
 		  }, this));		
 		  	
+		//Show-hide detail map
 		
+		//this.$("#occ-detail-map-toggle").click(_.bind(function(e) {
+       // if (this.$('#occ-detail-map-toggle').is(':checked')) {
+       //   $("#collapseOne").collapse('show');
+       // } else {
+       //   $("#collapseOne").collapse('hide');
+       // }
+      //}, this));
 
         // Handler for click.
         this.$('#submit-issue-btn').click(_.bind(function(e) {

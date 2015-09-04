@@ -369,6 +369,18 @@ define([
 			this.$('#show-recordType-tip').tooltip('hide');
 		  }, this));		  		  
 
+		  this.$('#show-instCode-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records with the exact terms contained within the specified Darwin Core field(s).<br><br>Read more...',
+			  container: '#instCode-tip'
+			});
+		  this.$('#instCode-tip').mouseover(_.bind(function(e) {
+			this.$('#show-instCode-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-instCode-tip').tooltip('hide');
+		  }, this));
+
 		  this.$('#show-dcTerms-tip').tooltip({
 			  placement: 'top',
 			  html: 'true',
@@ -393,13 +405,25 @@ define([
 			this.$('#show-years-tip').tooltip('hide');
 		  }, this));
 		  
+		  this.$('#show-months-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records contained within the range of months submitted.<br><br>Read more...',
+			  container: '#months-tip'
+			});
+		  this.$('#months-tip').mouseover(_.bind(function(e) {
+			this.$('#show-months-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-months-tip').tooltip('hide');
+		  }, this));		  
+		  
 	//Get List of institutions and institutionCodes for institutionCode select
-	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,': ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY orgname, icode",function(institutions) {
+	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
          var listItems = '<option value="">Select institution</option>';
 
 		$.each(institutions.rows, function(key, val) {
  
-             listItems += "<option value='" + val.icode + "'>" + val.orgname + "</option>";
+             listItems += "<option value='" + val.icode + "'>" + val.instcombo + "</option>";
  
          $("#inst-dropdown").html(listItems);
      });
