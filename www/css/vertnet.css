@@ -33,7 +33,7 @@
        min-height: 1px;
        padding-right: 15px;
        padding-left: 15px;
-	   width: 15.75%;
+	   width: 15.7%;
 /*	   width: 16.666666666666664%;*/
        float: left;
 }
@@ -290,7 +290,7 @@ input.span2.search {
 
 #occ-detail-map {
   border: 1px solid grey;
-  height: 200px;
+  height: 300px;
   width: 100%;
   margin-bottom: 30px;
   margin-top: 20px;

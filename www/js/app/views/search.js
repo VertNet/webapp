@@ -396,7 +396,7 @@ define([
 		  this.$('#show-years-tip').tooltip({
 			  placement: 'top',
 			  html: 'true',
-			  title: 'Search will identify all records contained within the range of years submitted.<br><br>Read more...',
+			  title: 'Search will identify all records contained within the range of years submitted. Use four-digit format.',
 			  container: '#years-tip'
 			});
 		  this.$('#years-tip').mouseover(_.bind(function(e) {
@@ -408,7 +408,7 @@ define([
 		  this.$('#show-months-tip').tooltip({
 			  placement: 'top',
 			  html: 'true',
-			  title: 'Search will identify all records contained within the range of months submitted.<br><br>Read more...',
+			  title: 'Search will identify all records contained within the range of months submitted. Use numerical values 1 through 12.',
 			  container: '#months-tip'
 			});
 		  this.$('#months-tip').mouseover(_.bind(function(e) {
@@ -419,7 +419,7 @@ define([
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
 	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
-         var listItems = '<option value="">Select institution</option>';
+         var listItems = '<option value="">Select institution code</option>';
 
 		$.each(institutions.rows, function(key, val) {
  
@@ -540,7 +540,7 @@ define([
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
-          this.$('#search-carat').popover({placement: 'top', content: 'More search options'});
+          this.$('#search-carat').popover({placement: 'top', content: ''});
           this.$('#search-carat').popover('show');
         } 
       }, this), 2000);
@@ -928,6 +928,9 @@ define([
           this.$('#click-row-tip').show();       
         } 
         table.show();
+		$('html, body').animate({
+    		scrollTop: $('#resultTabs').offset().top
+	}, 1000);
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();
