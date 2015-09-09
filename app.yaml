@@ -81,6 +81,15 @@ handlers:
 
 # CRON tasks
 
+- url: /tasks/get_downloads.*
+  script: vertnet.service.tasks.getdownloads.main
+
+- url: /tasks/get_metadata.*
+  script: vertnet.service.tasks.getmetadata.main
+
+- url: /tasks/get_records.*
+  script: vertnet.service.tasks.getrecords.main
+
 - url: /tasks/daily_portal_stats.*
   script: vertnet.service.tasks.daily_portal_stats.main
 

@@ -6,111 +6,58 @@ import urllib2
 from datetime import datetime
 import json
 import logging
+from google.appengine.api import urlfetch, modules
 
-# Date when logging started
-threshold_date = datetime(2014, 04, 01)
-query_date_limit = format(threshold_date, '%Y-%m-%d')
+from util import *
 
-# Get API key from file
-def apikey():
-    """Return credentials file as a JSON object."""
-    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
-    key = open(path, "r").read().rstrip()
-    logging.info("CARTODB KEY %s" % key)
-    return key
-api_key=apikey()
+# def getDownloadsData():
+#     # Monthly
+#     query = "select concat(year,'-',month) as date, queries, records from ( select extract(month from date(created_at)) as month, extract(year from date(created_at)) as year, count(*) as queries, sum(count) as records from query_log_master where type='download' and created_at>=date '{0}' group by extract(month from date(created_at)), extract(year from date(created_at)) order by extract(year from date(created_at)), extract(month from date(created_at))) as foo".format(query_date_limit)
+#     # Daily
+#     #url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}q=select%20date%28created_at%29,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20date%28created_at%29%20order%20by%20date%28created_at%29".format(query_date_limit, api_key)
+#     d = cartodb(query)
+#     downloadsdata = []
+#     for i in d:
+#         date = str(i['date'])
+#         queries = i['queries']
+#         downloadsdata.append([date, queries])
+#     return downloadsdata
 
-# CartoDB requests
-def cartodb(query):
-    """Launch a query to CartoDB."""
-    urlbase = "https://vertnet.cartodb.com/api/v2/sql"
-    params = {
-        'api_key': api_key,
-        'q': query
-    }
-    url = '?'.join([urlbase, urllib.urlencode(params)])
-    logging.info('QUERY URL: {}'.format(url))
-    d = json.loads(urllib2.urlopen(url).read())['rows']
-    return d
+# def getMetadata():
+#     query = "select type, count(*) as searches, sum(count) as records from query_log_master where created_at>=date '{0}' group by type".format(query_date_limit)
+#     d = cartodb(query)
+#     metadata = {}
+#     for i in d:
+#         t = i['type']
+#         searches = i['searches']
+#         records = i['records']
+#         metadata[t] = {'searches':searches, 'records':records}
+#     return metadata
 
-# Get actual stats from query_log_master
-def getExplicitStuff(tag):
-    query = "select query, sum(count) from query_log_master where query like '%{0}:%' and created_at>=date '{1}' group by query".format(tag, query_date_limit)
-    d = cartodb(query)
-    stuffQ = {}
-    stuffR = {}
-    stuffSgood = []
-    for i in d:
-        records = i['sum']
-        l = i['query'].split()
-        indexes = [i for i,term in enumerate(l) if term.startswith('{0}:'.format(tag))]
-        for j in indexes:
-            if j>0 and l[j-1] == "(NOT":
-                continue
-            stuff0 = str(l[j].split(':')[1]).upper()
-            if stuff0 not in stuffQ.keys():
-                stuffQ[stuff0] = 1
-                stuffR[stuff0] = records
-            else:
-                stuffQ[stuff0] += 1
-                stuffR[stuff0] += records
-    stuffLQ = sorted(stuffQ, key=stuffQ.__getitem__, reverse=True)
-    stuffLR = sorted(stuffR, key=stuffR.__getitem__, reverse=True)
+# def getRecordsQueried():
+#     records_queried = 0
+#     query = "select count(*) from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}'" % (query_date_limit)
+#     count = cartodb(query)[0]['count']
     
-    for i in stuffLQ:
-        if stuffR[i] > 0:
-            stuffSgood.append([i, stuffQ[i]])
-    
-    return stuffSgood
+#     for r in [1, 2, 3]:
+#         if r == 1:
+#             limit_string = "limit {0}".format(count/3)
+#         elif r == 2:
+#             limit_string = "limit {0} offset {0}".format(count/3)
+#         elif r == 3:
+#             limit_string = "offset {0}".format(count/3*2)
 
-def getDownloadsData():
-    # Monthly
-    query = "select concat(year,'-',month) as date, queries, records from ( select extract(month from date(created_at)) as month, extract(year from date(created_at)) as year, count(*) as queries, sum(count) as records from query_log_master where type='download' and created_at>=date '{0}' group by extract(month from date(created_at)), extract(year from date(created_at)) order by extract(year from date(created_at)), extract(month from date(created_at))) as foo".format(query_date_limit)
-    # Daily
-    #url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}q=select%20date%28created_at%29,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20date%28created_at%29%20order%20by%20date%28created_at%29".format(query_date_limit, api_key)
-    d = cartodb(query)
-    downloadsdata = []
-    for i in d:
-        date = str(i['date'])
-        queries = i['queries']
-        downloadsdata.append([date, queries])
-    return downloadsdata
+#         logging.info("ROUND {0}".format(r))
+#         query = "select results_by_resource from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}' %s" % (query_date_limit, limit_string)
+#         d = cartodb(query)
+#         for x in list(range(len(d))):
+#             try:
+#                 records_queried += sum(json.loads(d[x]['results_by_resource']).values())
+#             except:
+#                 pass
 
-def getMetadata():
-    query = "select type, count(*) as searches, sum(count) as records from query_log_master where created_at>=date '{0}' group by type".format(query_date_limit)
-    d = cartodb(query)
-    metadata = {}
-    for i in d:
-        t = i['type']
-        searches = i['searches']
-        records = i['records']
-        metadata[t] = {'searches':searches, 'records':records}
-    return metadata
-
-def getRecordsQueried():
-    records_queried = 0
-    query = "select count(*) from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}'" % (query_date_limit)
-    count = cartodb(query)[0]['count']
-    
-    for r in [1, 2, 3]:
-        if r == 1:
-            limit_string = "limit {0}".format(count/3)
-        elif r == 2:
-            limit_string = "limit {0} offset {0}".format(count/3)
-        elif r == 3:
-            limit_string = "offset {0}".format(count/3*2)
-
-        logging.info("ROUND {0}".format(r))
-        query = "select results_by_resource from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}' %s" % (query_date_limit, limit_string)
-        d = cartodb(query)
-        for x in list(range(len(d))):
-            try:
-                records_queried += sum(json.loads(d[x]['results_by_resource']).values())
-            except:
-                pass
-
-    logging.info("{0} records queried".format(records_queried))
-    return records_queried
+#     logging.info("{0} records queried".format(records_queried))
+#     return records_queried
 
 def getMaxDate():
     query = "select max(created_at) as d from query_log_master"
@@ -147,25 +94,40 @@ def main(environ, start_response):
     start_response(status, headers)
     logging.info("Response started")
     mindate = format(threshold_date, '%b %d, %Y')
+    
     logging.info("Getting Max Date")
     maxdate = getMaxDate()
     logging.info("Got Max Date")
+    
+    # Launching RPCs    
     logging.info("Getting Downloads data")
-    downloadsdata = getDownloadsData()
-    logging.info("Got downloads data")
+    downloads_url = 'http://'+modules.get_hostname()+'/tasks/get_downloads'
+    downloads_rpc = urlfetch.create_rpc()
+    downloads_call = urlfetch.make_fetch_call(downloads_rpc, downloads_url)
+
     logging.info("Getting Metadata")
-    metadata = getMetadata()
-    logging.info("Got Metadata")
+    metadata_url = 'http://'+modules.get_hostname()+'/tasks/get_metadata'
+    metadata_rpc = urlfetch.create_rpc()
+    metadata_call = urlfetch.make_fetch_call(metadata_rpc, metadata_url)
+
     logging.info("Getting Records Queried")
-    records_queried = getRecordsQueried()
-    logging.info("Got Records Queried")
+    records_url = 'http://'+modules.get_hostname()+'/tasks/get_records'
+    records_rpc = urlfetch.create_rpc()
+    records_call = urlfetch.make_fetch_call(records_rpc, records_url)
+    
     logging.info("Getting Explicit Institutioncodes")
     explicitInstitutionsGood = getExplicitStuff('institutioncode')
     logging.info("Got icodes")
+    
     logging.info("Getting explicit class")
     explicitClassGood = getExplicitStuff('class')
     logging.info("Got Explicit class")
-    
+
+    # Retrieving RPC objects
+    downloadsdata = downloads_call.get_result().content
+    metadata = metadata_call.get_result().content
+    records_queried = records_call.get_result().content
+
     logging.info("Inserting data into CartoDB")
     res = insertDataCartoDB(str(mindate),
         str(metadata['query']['searches']), str(records_queried),

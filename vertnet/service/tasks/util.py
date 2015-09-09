@@ -1,0 +1,63 @@
+from datetime import datetime
+import os
+import urllib
+import urllib2
+import logging
+import json
+
+
+# Date when logging started
+threshold_date = datetime(2014, 04, 01)
+query_date_limit = format(threshold_date, '%Y-%m-%d')
+
+# Get API key from file
+def apikey():
+    """Return credentials file as a JSON object."""
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
+    key = open(path, "r").read().rstrip()
+    logging.info("CARTODB KEY %s" % key)
+    return key
+api_key=apikey()
+
+# CartoDB requests
+def cartodb(query):
+    """Launch a query to CartoDB."""
+    urlbase = "https://vertnet.cartodb.com/api/v2/sql"
+    params = {
+        'api_key': api_key,
+        'q': query
+    }
+    url = '?'.join([urlbase, urllib.urlencode(params)])
+    logging.info('QUERY URL: {}'.format(url))
+    d = json.loads(urllib2.urlopen(url).read())['rows']
+    return d
+
+# Get actual stats from query_log_master
+def getExplicitStuff(tag):
+    query = "select query, sum(count) from query_log_master where query like '%{0}:%' and created_at>=date '{1}' group by query".format(tag, query_date_limit)
+    d = cartodb(query)
+    stuffQ = {}
+    stuffR = {}
+    stuffSgood = []
+    for i in d:
+        records = i['sum']
+        l = i['query'].split()
+        indexes = [i for i,term in enumerate(l) if term.startswith('{0}:'.format(tag))]
+        for j in indexes:
+            if j>0 and l[j-1] == "(NOT":
+                continue
+            stuff0 = str(l[j].split(':')[1]).upper()
+            if stuff0 not in stuffQ.keys():
+                stuffQ[stuff0] = 1
+                stuffR[stuff0] = records
+            else:
+                stuffQ[stuff0] += 1
+                stuffR[stuff0] += records
+    stuffLQ = sorted(stuffQ, key=stuffQ.__getitem__, reverse=True)
+    stuffLR = sorted(stuffR, key=stuffR.__getitem__, reverse=True)
+    
+    for i in stuffLQ:
+        if stuffR[i] > 0:
+            stuffSgood.append([i, stuffQ[i]])
+    
+    return stuffSgood
