@@ -12,7 +12,6 @@ query_date_limit = format(threshold_date, '%Y-%m-%d')
 
 # Update urlfetch limit to 60 seconds
 URLFETCH_DEADLINE = 60
-urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
 
 # Get API key from file
 def apikey():
@@ -31,6 +30,7 @@ def cartodb(query):
         'q': query
     }
     data = urllib.urlencode(params)
+    urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
     res = json.loads(urlfetch.fetch(url=url, payload=data, method=urlfetch.POST).content)
     d = res['rows']
     return d
