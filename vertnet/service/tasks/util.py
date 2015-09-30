@@ -1,35 +1,38 @@
 from datetime import datetime
 import os
 import urllib
-import urllib2
+#import urllib2
 import logging
 import json
-
+from google.appengine.api import urlfetch
 
 # Date when logging started
 threshold_date = datetime(2014, 04, 01)
 query_date_limit = format(threshold_date, '%Y-%m-%d')
+
+# Update urlfetch limit to 60 seconds
+URLFETCH_DEADLINE = 60
+urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
 
 # Get API key from file
 def apikey():
     """Return credentials file as a JSON object."""
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
     key = open(path, "r").read().rstrip()
-    logging.info("CARTODB KEY %s" % key)
     return key
 api_key=apikey()
 
 # CartoDB requests
 def cartodb(query):
     """Launch a query to CartoDB."""
-    urlbase = "https://vertnet.cartodb.com/api/v2/sql"
+    url = "https://vertnet.cartodb.com/api/v2/sql"
     params = {
         'api_key': api_key,
         'q': query
     }
-    url = '?'.join([urlbase, urllib.urlencode(params)])
-    logging.info('QUERY URL: {}'.format(url))
-    d = json.loads(urllib2.urlopen(url).read())['rows']
+    data = urllib.urlencode(params)
+    res = json.loads(urlfetch.fetch(url=url, payload=data, method=urlfetch.POST).content)
+    d = res['rows']
     return d
 
 # Get actual stats from query_log_master

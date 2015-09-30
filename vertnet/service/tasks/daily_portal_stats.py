@@ -1,5 +1,6 @@
 """Service to run cron tasks."""
 
+import ast
 import os
 import urllib
 import urllib2
@@ -9,6 +10,9 @@ import logging
 from google.appengine.api import urlfetch, modules
 
 from util import *
+
+URLFETCH_DEADLINE = 60
+urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
 
 # def getDownloadsData():
 #     # Monthly
@@ -125,7 +129,7 @@ def main(environ, start_response):
 
     # Retrieving RPC objects
     downloadsdata = downloads_call.get_result().content
-    metadata = metadata_call.get_result().content
+    metadata = ast.literal_eval(metadata_call.get_result().content)
     records_queried = records_call.get_result().content
 
     logging.info("Inserting data into CartoDB")
