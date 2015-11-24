@@ -120,7 +120,7 @@ class DownloadApi(webapp2.RequestHandler):
         Example count request:
         http://api.vertnet-portal.appspot.com/api/download?q= \
         {"q":"mappable:1 institutioncode:kstc","n":"kstctestresults.txt", \
-        "e":"you@gmail.com", "c"="True"}
+        "e":"you@gmail.com", "c":"True"}
     """
     def __init__(self, request, response):
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
