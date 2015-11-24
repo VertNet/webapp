@@ -36,6 +36,7 @@ define([
         this.params = options.params;
         this.template = _.template(template);
         mps.publish('spin', [true]);
+        this.geoissues = this.model.getQualityFlags();
         this.githubbers = ['MVZ', 'MLZ', 'DMNS', 'WFVZ', 'DMNH', 'ROM', 'TTRS',
           'UBCBBM', 'CUML', 'PMNS'];
 
@@ -132,27 +133,28 @@ define([
 
         // Handler for quality tab
         this.$('#quality-tab').click(_.bind(function(e) {
-          var issues = this.model.getQualityFlags();
-          console.log(issues);
+          //var issues = this.model.getQualityFlags();
+          var issues = this.geoissues;
+          console.log(this.geoissues);
           
           // Completeness
           if (issues.hasCoordinates) { this.$('#hasCoordinates').text(issues.hasCoordinates.toString()); }
           if (issues.hasCountry) { this.$('#hasCountry').text(issues.hasCountry.toString()); }
-          if (issues.isZero) { this.$('#isZero').text(issues.isZero.toString()); }
-          if (issues.isGoodPrecision) { this.$('#isGoodPrecision').text(issues.isGoodPrecision.toString()); }
+          if (issues.nonZeroCoordinates) { this.$('#nonZeroCoordinates').text(issues.nonZeroCoordinates.toString()); }
+          if (issues.highPrecisionCoordinates) { this.$('#highPrecisionCoordinates').text(issues.highPrecisionCoordinates.toString()); }
           if (issues.hasDatum) { this.$('#hasDatum').text(issues.hasDatum.toString()); }
           
           // Inconsistencies
-          if (issues.isInsideCountry) { this.$('#isInsideCountry').text(issues.isInsideCountry.toString()); }
-          if (issues.distanceToCountry) { this.$('#distanceToCountry').text(issues.distanceToCountry.toString()); }
-          if (issues.distanceToRangemap) { this.$('#distanceToRangemap').text(issues.distanceToRangemap.toString()); }
+          if (issues.coordinatesInsideCountry) { this.$('#coordinatesInsideCountry').text(issues.coordinatesInsideCountry.toString()); }
+          if (issues.distanceToCountryInKm) { this.$('#distanceToCountryInKm').text(issues.distanceToCountryInKm.toString()); }
+          if (issues.distanceToRangeMapInKm) { this.$('#distanceToRangeMapInKm').text(issues.distanceToRangeMapInKm.toString()); }
           
           // Errors
           if (issues.isValidLatitude) { this.$('#isValidLatitude').text(issues.isValidLatitude.toString()); }          
           if (issues.isValidLongitude) { this.$('#isValidLongitude').text(issues.isValidLongitude.toString()); }          
-          if (issues.isTransposed) { this.$('#isTransposed').text(issues.isTransposed.toString()); }
-          if (issues.isGoodSignLatitude) { this.$('#isGoodSignLatitude').text(issues.isGoodSignLatitude.toString()); }
-          if (issues.isGoodSignLongitude) { this.$('#isGoodSignLongitude').text(issues.isGoodSignLongitude.toString()); }
+          if (issues.transposedCoordinates) { this.$('#transposedCoordinates').text(issues.transposedCoordinates.toString()); }
+          if (issues.negatedLatitude) { this.$('#negatedLatitude').text(issues.negatedLatitude.toString()); }
+          if (issues.negatedLongitude) { this.$('#negatedLongitude').text(issues.negatedLongitude.toString()); }
 
 
           // Display warning

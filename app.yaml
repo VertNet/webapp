@@ -17,7 +17,7 @@
 # Note that static assets are sources from www/ which contains full
 # sourcecode without minification.
 application: vertnet-portal
-version: api
+version: stats
 runtime: python27
 threadsafe: true
 api_version: 1
