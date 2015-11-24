@@ -430,7 +430,7 @@
     <!-- <p class="lead">Quality Report</p> -->
     <p></p>
     <blockquote id="quality-warning"></blockquote>
-    <table class="table table-striped">
+    <table class="table">
         <thead>
           <tr>
             <th>Data completeness&nbsp;<a id="show-completeness-tip" href="http://www.vertnet.org/resources/spatialqualitytabguide.html#completeness" target="_blank"><span id="completeness-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a></th>
@@ -441,8 +441,8 @@
         <tbody>
             <tr class="issueRow"><td>Are coordinates present?</td><td><span class="glyphicon"></span></td><td id="hasCoordinates"></td></tr>
             <tr class="issueRow"><td>Is the country value present?</td><td><span class="glyphicon"></span></td><td id="hasCountry"></td></tr>
-            <tr class="issueRow"><td>Are both coordinates 0 (zero)?</td><td><span class="glyphicon"></span></td><td id="isZero"></td></tr>
-            <tr class="issueRow"><td>Do coordinates have three or more decimal figures?</td><td><span class="glyphicon"></span></td><td id="isGoodPrecision"></td></tr>
+            <tr class="issueRow"><td>Are both coordinates 0 (zero)?</td><td><span class="glyphicon"></span></td><td id="nonZeroCoordinates"></td></tr>
+            <tr class="issueRow"><td>Do coordinates have three or more decimal figures?</td><td><span class="glyphicon"></span></td><td id="highPrecisionCoordinates"></td></tr>
             <tr class="issueRow"><td>Do coordinates have datum?</td><td><span class="glyphicon"></span></td><td id="hasDatum"></td></tr>
             <tr><td></td><td></td><td></td></tr>
         </tbody>
@@ -454,9 +454,9 @@
           </tr>
         </thead>
         <tbody>
-            <tr class="issueRow"><td>Are coordinates within specified country?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="isInsideCountry"></td></tr>
-            <tr class="issueRow"><td>Distance outside of specified country (in degrees)<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="distanceToCountry"></td></tr>
-            <tr class="issueRow"><td>Distance outside of species range map (in degrees)<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="distanceToRangemap"></td></tr>
+            <tr class="issueRow"><td>Are coordinates within specified country?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="coordinatesInsideCountry"></td></tr>
+            <tr class="issueRow"><td>Distance outside of specified country in Km<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="distanceToCountryInKm"></td></tr>
+            <tr class="issueRow"><td>Distance outside of species range map in Km<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="distanceToRangeMapInKm"></td></tr>
             <tr><td></td><td></td><td></td></tr>
         </tbody>
         <thead>
@@ -469,9 +469,9 @@
         <tbody>
             <tr class="issueRow"><td>Is latitude between 90 and -90?</td><td><span class="glyphicon"></span></td><td id="isValidLatitude"></td></tr>
             <tr class="issueRow"><td>Is longitude between 180 and -180?</td><td><span class="glyphicon"></span></td><td id="isValidLongitude"></td></tr>
-            <tr class="issueRow"><td>Are coordinates transposed?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="isTransposed"></td></tr>
-            <tr class="issueRow"><td>Is latitude hemisphere correct?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="isGoodSignLatitude"></td></tr>
-            <tr class="issueRow"><td>Is longitude hemisphere correct?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="isGoodSignLongitude"></td></tr>
+            <tr class="issueRow"><td>Are coordinates transposed?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="transposedCoordinates"></td></tr>
+            <tr class="issueRow"><td>Is latitude hemisphere correct?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="negatedLatitude"></td></tr>
+            <tr class="issueRow"><td>Is longitude hemisphere correct?<sup>1</sup></td><td><span class="glyphicon"></span></td><td id="negatedLongitude"></td></tr>
         </tbody>
         <tfoot>
           <tr>
