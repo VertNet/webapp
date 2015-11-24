@@ -117,216 +117,161 @@ define([
 
 
     getQualityFlags: function() {
+
       var lat = this.get('decimallatitude');
       var lon = this.get('decimallongitude');
       var country = this.get('country');
-      console.log('country');
       var datum = this.get('geodeticdatum');
-      if (country == 'Not specified' || country == 'N/A') {
-        country = null;
-      // PATCH: Convert 'USA' and 'U.S.A.' into 'US' for the quality api
-      } else if (country == 'USA' || country == 'U.S.A.') {
-        country = 'US';
-      }
-      var binomial = this.get('scientificname');
-      
+
       // default value: not assessed
       var issues_final = {
-        'hasCoordinates': 'Could not be assessed',
-        'hasCountry': 'Could not be assessed',
-        'isZero': 'Could not be assessed',
-        'isGoodPrecision': 'Could not be assessed',
-        'hasDatum': 'Could not be assessed',
-        'isInsideCountry': 'Could not be assessed',
-        'distanceToCountry': 'Could not be assessed',
-        'distanceToRangemap': 'Could not be assessed',
-        'isValidLatitude': 'Could not be assessed',
-        'isValidLongitude': 'Could not be assessed',
-        'isTransposed': 'Could not be assessed',
-        'isGoodSignLatitude': 'Could not be assessed',
-        'isGoodSignLongitude': 'Could not be assessed'
-      };
-      
-      // If coordinates are present...
-      if (lat && lon) {
-          // ... run the quality api query
-          url = 'https://jot-mol-qualityapi.appspot.com/_ah/api/qualityapi/v1/geospatial/'
-          lat = lat.trim()
-          lon = lon.trim()
-          url = url.concat(lat,'/',lon,'/',country,'/',binomial)
-          console.log(url);
-          var issues = null;
-          $.ajax({
-              url: url,
-              type: 'get',
-              dataType: 'json',
-              async: false,
-              success: function(data) {
-                  issues = data;
-              }
-          });
+        "hasCoordinates": "Could not be assessed",
+        "hasCountry": "Could not be assessed",
+        "nonZeroCoordinates": "Could not be assessed",
+        "highPrecisionCoordinates": "Could not be assessed",
+        "hasDatum": "Could not be assessed",
+        "coordinatesInsideCountry": "Could not be assessed",
+        "distanceToCountryInKm": "Could not be assessed",
+        "distanceToRangeMapInKm": "Could not be assessed",
+        "isValidLatitude": "Could not be assessed",
+        "isValidLongitude": "Could not be assessed",
+        "transposedCoordinates": "Could not be assessed",
+        "negatedLatitude": "Could not be assessed",
+        "negatedLongitude": "Could not be assessed"
       }
+
+
+      if (country == 'Not specified' || country == 'N/A') {
+        country = null;    
+      } else if (country == 'USA' || country == 'U.S.A.') {  // PATCH: Convert 'USA' and 'U.S.A.' into 'US' for the quality api
+        country = 'US';
+      };
+
+      var binomial = this.get('scientificname');
+
+      // Call the Quality API      
+      url = 'http://api-geospatial.vertnet-portal.appspot.com/geospatial';
       
+      if (lat) {
+        lat = lat.trim();
+      } else {
+        lat = "";
+      }
+
+      if (lon) {
+        lon = lon.trim();
+      } else {
+        lon = "";
+      }
+
+
+      url = url.concat('?decimalLatitude=',lat,'&decimalLongitude=',lon,'&countryCode=',country,'&scientificName=',binomial);
+      console.log(url);
+
+      var issues = null;
+      
+      $.ajax({
+        url: url,
+        type: 'get',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+          issues = data;
+        }
+      });
+
       // By default, turn off warning or error message
-      
+
       issues_final['showMissing'] = false;
       issues_final['showWarning'] = false;
       issues_final['showError'] = false;
-      
-      // Completeness
-      
-      if (lat && lon) {
-        issues_final['hasCoordinates'] = 'Yes';
-      } else {
-        issues_final['hasCoordinates'] = 'NO';
-        issues_final['showError'] = true;
-      }
 
-      if (country) {
-        issues_final['hasCountry'] = 'Yes';
-      } else {
-        issues_final['hasCountry'] = 'NO';
-        issues_final['showError'] = true;
-      }
-      
-      if (issues && 'isLowPrecision' in issues) {
-        if (issues['isLowPrecision'].toString() == "false") {
-           issues_final['isGoodPrecision'] = 'Yes';
-        } else {
-          issues_final['isGoodPrecision'] = 'NO';
-          issues_final['showWarning'] = true;
-        }
-      } else {
-        if (lat && lon && typeof lat == 'number' && typeof lon == 'number') {
-          if (lat.toString().split('.').length == 1 || lon.toString().split('.') == 1) {
-            issues_final['isGoodPrecision'] = 'NO';
-            issues_final['showWarning'] = true;
-          } else if (lat.toString().split('.')[1].length <= 2 && lon.toString().split('.')[1].length <= 2) {
-            issues_final['isGoodPrecision'] = 'NO';
-            issues_final['showWarning'] = true;
+
+      if (issues) {
+        if ('flags' in issues) {
+          var fl = issues.flags;
+          console.log(fl);
+
+          if (fl.hasCoordinates === true) issues_final.hasCoordinates = "Yes";
+          if (fl.hasCoordinates === false) {
+            issues_final.hasCoordinates = "NO";
+            issues_final.showError = true;
+          }
+
+          if (fl.hasCountry === true) issues_final.hasCountry = "Yes";
+          if (fl.hasCountry === false) {
+            issues_final.hasCountry = "NO";
+            issues_final.showError = true;
+          }
+
+          if (fl.nonZeroCoordinates === true) issues_final.nonZeroCoordinates = "No";
+          if (fl.nonZeroCoordinates === false) {
+            issues_final.nonZeroCoordinates = "YES";
+            issues_final.showWarning = true;
+          }
+
+          if (fl.highPrecisionCoordinates === true) issues_final.highPrecisionCoordinates = "Yes";
+          if (fl.highPrecisionCoordinates === false) {
+            issues_final.highPrecisionCoordinates = "NO";
+            issues_final.showWarning = true;
+          }
+
+          if (datum) {
+            issues_final.hasDatum = "Yes";
           } else {
-            issues_final['isGoodPrecision'] = 'Yes';
+            issues_final.hasDatum = "NO";
+            issues_final.showWarning = true;
+          }
+
+          if (fl.coordinatesInsideCountry === true) {
+            issues_final.coordinatesInsideCountry = "Yes";
+            issues_final.transposedCoordinates = "No";
+            issues_final.negatedLatitude = "Yes";
+            issues_final.negatedLongitude = "Yes";
+            issues_final.distanceToCountryInKm = "0";
+          }
+          if (fl.coordinatesInsideCountry === false) {
+            issues_final.coordinatesInsideCountry = "NO";
+            issues_final.transposedCoordinates = (fl.transposedCoordinates ? "YES" : "No");
+            issues_final.negatedLatitude = (fl.negatedLatitude ? "NO" : "Yes");
+            issues_final.negatedLongitude = (fl.negatedLongitude ? "NO" : "Yes");
+            issues_final.distanceToCountryInKm = fl.distanceToCountryInKm;
+            issues_final.showError = true;
+          }
+
+          if (fl.coordinatesInsideRangeMap === true) {
+            issues_final.distanceToRangeMapInKm = "0";
+          }
+          if (fl.coordinatesInsideRangeMap === false) {
+            issues_final.distanceToRangeMapInKm = fl.distanceToRangeMapInKm;
+            issues_final.showWarning = true;
+          }
+
+          if (lat) {
+            if (lat<=90 && lat>=-90) {
+              issues_final.isValidLatitude = "Yes";
+            } else {
+              issues_final.isValidLatitude = "NO";
+              issues_final.showError = true;
+            }
+          }
+          
+          if (lon) {
+            if (lon<=180 && lon>=-180) {
+              issues_final.isValidLongitude = "Yes";
+            } else {
+              issues_final.isValidLongitude = "NO";
+              issues_final.showError = true;
+            }       
           }
         } else {
-          issues_final['isGoodPrecision'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
+          issues_final.showMissing = true;
         }
       }
-
-      if (lat && lon) {
-          if (lat == 0 && lon == 0) {
-            issues_final['isZero'] = 'YES';
-            issues_final['isGoodPrecision'] = 'NO';
-            issues_final['showWarning'] = true;
-          } else {
-            issues_final['isZero'] = 'No';
-          }
-      } else {
-          issues_final['isZero'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-
-      if (datum) {
-        issues_final['hasDatum'] = 'Yes';
-      } else {
-        issues_final['hasDatum'] = 'NO';
-        issues_final['showWarning'] = true;
-      }
       
-      
-      // Inconsistencies
-      
-      if (issues && 'isOutOfCountry' in issues) {
-        if (issues['isOutOfCountry'].toString() == "false") {
-           issues_final['isInsideCountry'] = 'Yes';
-        } else {
-          issues_final['isInsideCountry'] = 'NO';
-          issues_final['showError'] = true;
-        }
-      } else {
-          issues_final['isInsideCountry'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-      
-      issues_final['distanceToCountry'] = (issues && 'distanceToCountry' in issues) ? issues['distanceToCountry'].toString() : "Could not be assessed";
-      if (issues_final['distanceToCountry'] == "Could not be assessed") {
-        issues_final['showWarning'] = true;
-      } else if (issues_final['distanceToCountry'] != '0') {
-        issues_final['showError'] = true;
-      }
-      
-      issues_final['distanceToRangemap'] = (issues && 'distanceToRangemap' in issues) ? issues['distanceToRangemap'].toString() : "Could not be assessed";
-      if (issues_final['distanceToRangemap'] == "Could not be assessed") {
-        issues_final['showMissing'] = true;
-      } else if (issues_final['distanceToRangemap'] != '0') {
-        issues_final['showError'] = true;
-      }
-      
-      
-      // Errors
-      
-      if (lat && lon ) {
-          if (lat <= 90 && lat >=-90) {
-            issues_final['isValidLatitude'] = 'Yes';
-          } else {
-            issues_final['isValidLatitude'] = 'NO';
-            issues_final['showError'] = true;
-          }
-      } else {
-          issues_final['isValidLatitude'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-      
-      if (lat && lon) {
-          if (lon <= 180 && lon >=-180) {
-            issues_final['isValidLongitude'] = 'Yes';
-          } else {
-            issues_final['isValidLongitude'] = 'NO';
-            issues_final['showError'] = true;
-          }
-      } else {
-          issues_final['isValidLongitude'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-      
-      if (issues && 'isTransposed' in issues) {
-        if (issues['isTransposed'].toString() == "false") {
-           issues_final['isTransposed'] = 'No';
-        } else {
-          issues_final['isTransposed'] = 'YES';
-          issues_final['showError'] = true;
-        }
-      } else {
-          issues_final['isTransposed'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-
-      if (issues && 'isNegatedLatitude' in issues) {
-        if (issues['isNegatedLatitude'].toString() == "false") {
-           issues_final['isGoodSignLatitude'] = 'Yes';
-        } else {
-          issues_final['isGoodSignLatitude'] = 'NO';
-          issues_final['showError'] = true;
-        }
-      } else {
-          issues_final['isGoodSignLatitude'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-      
-      if (issues && 'isNegatedLongitude' in issues) {
-        if (issues['isNegatedLongitude'].toString() == "false") {
-           issues_final['isGoodSignLongitude'] = 'Yes';
-        } else {
-          issues_final['isGoodSignLongitude'] = 'NO';
-          issues_final['showError'] = true;
-        }
-      } else {
-          issues_final['isGoodSignLongitude'] = 'Could not be assessed';
-          issues_final['showMissing'] = true;
-      }
-
       return issues_final;
     },
+
 
     
     getOccIdentifier: function() {
