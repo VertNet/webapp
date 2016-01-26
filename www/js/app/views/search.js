@@ -43,7 +43,8 @@ define([
       this.app = app;
       this.NUMBER_FOUND_ACCURACY = 10000;
       this.DOWNLOAD_THRES = 1000;
-      this.PAGE_SIZE = 100;
+      this.PAGE_SIZE = 100; // For optimal browser performance
+//      this.PAGE_SIZE = 400; // For optimal query performance
       this.keywords = []; // Search query keywords
       this.terms = {}; // Search query terms
       this.occList = new OccList();
@@ -282,7 +283,154 @@ define([
         }
         store.set('search-carat-closed', true);
       }, this));
+	  
+		//Tooltips
+		  this.$('#show-thesefilters-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Use filters to find records that are or contain fossils, types, tissues, media, mappable or located within a custom area on a map.<br><br>Read more...',
+			  container: '#thesefilters-tip'
+			});
+		  this.$('#thesefilters-tip').mouseover(_.bind(function(e) {
+			this.$('#show-thesefilters-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-thesefilters-tip').tooltip('hide');
+		  }, this));
+		  
+		  this.$('#show-hasTissues-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'This filter searches the preparations field in each record.  <br><br>There is no standardized vocabulary for this field, so the VertNet team has identified 24 terms that are very likely to be, or contain, a tissue sample. <br><br>For more information about the tissues, click to see &quot;Why can’t I find tissue information using the tissue filter?&quot;',
+			  container: '#hasTissues-tip'
+			});
+		  this.$('#hasTissues-tip').mouseover(_.bind(function(e) {
+			this.$('#show-hasTissues-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-hasTissues-tip').tooltip('hide');
+		  }, this));
+		  		  	
+		  this.$('#show-allTheseWords-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records containing ALL of the terms submitted.<br><br>Read more...',
+			  container: '#allTheseWords-tip'
+			});
+		  this.$('#allTheseWords-tip').mouseover(_.bind(function(e) {
+			this.$('#show-allTheseWords-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-allTheseWords-tip').tooltip('hide');
+		  }, this));	
+		  
+		  this.$('#show-exactPhrase-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records that contain the exact phrase submitted.<br><br>Quotation marks (&quot;&quot;) are required to identify the extent of the phrase.<br><br>Read more...',
+			  container: '#exactPhrase-tip'
+			});
+		  this.$('#exactPhrase-tip').mouseover(_.bind(function(e) {
+			this.$('#show-exactPhrase-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-exactPhrase-tip').tooltip('hide');
+		  }, this));			  
 
+		  this.$('#show-anyWords-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records that contain at least one of the terms submitted. Operators OR and AND can help to focus queries.<br><br>Read more...',
+			  container: '#anyWords-tip'
+			});
+		  this.$('#anyWords-tip').mouseover(_.bind(function(e) {
+			this.$('#show-anyWords-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-anyWords-tip').tooltip('hide');
+		  }, this));
+		  
+		  this.$('#show-noneWords-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records that do NOT contain the terms submitted.<br><br>Read more...',
+			  container: '#noneWords-tip'
+			});
+		  this.$('#noneWords-tip').mouseover(_.bind(function(e) {
+			this.$('#show-noneWords-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-noneWords-tip').tooltip('hide');
+		  }, this));		  		  
+
+		  this.$('#show-recordType-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records of the selected type: specimen, observation, or both specimen and observation.<br><br>Read more...',
+			  container: '#recordType-tip'
+			});
+		  this.$('#recordType-tip').mouseover(_.bind(function(e) {
+			this.$('#show-recordType-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-recordType-tip').tooltip('hide');
+		  }, this));		  		  
+
+		  this.$('#show-instCode-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records with the exact terms contained within the specified Darwin Core field(s).<br><br>Read more...',
+			  container: '#instCode-tip'
+			});
+		  this.$('#instCode-tip').mouseover(_.bind(function(e) {
+			this.$('#show-instCode-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-instCode-tip').tooltip('hide');
+		  }, this));
+
+		  this.$('#show-dcTerms-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records with the exact terms contained within the specified Darwin Core field(s).<br><br>Read more...',
+			  container: '#dcTerms-tip'
+			});
+		  this.$('#dcTerms-tip').mouseover(_.bind(function(e) {
+			this.$('#show-dcTerms-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-dcTerms-tip').tooltip('hide');
+		  }, this));		  		  
+
+		  this.$('#show-years-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records contained within the range of years submitted. Use four-digit format.',
+			  container: '#years-tip'
+			});
+		  this.$('#years-tip').mouseover(_.bind(function(e) {
+			this.$('#show-years-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-years-tip').tooltip('hide');
+		  }, this));
+		  
+		  this.$('#show-months-tip').tooltip({
+			  placement: 'top',
+			  html: 'true',
+			  title: 'Search will identify all records contained within the range of months submitted. Use numerical values 1 through 12.',
+			  container: '#months-tip'
+			});
+		  this.$('#months-tip').mouseover(_.bind(function(e) {
+			this.$('#show-months-tip').tooltip('show');
+		  }, this)).mouseout(_.bind(function(e) {
+			this.$('#show-months-tip').tooltip('hide');
+		  }, this));		  
+		  
+	//Get List of institutions and institutionCodes for institutionCode select
+	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
+         var listItems = '<option value="">Select institution code</option>';
+
+		$.each(institutions.rows, function(key, val) {
+ 
+             listItems += "<option value='" + val.icode + "'>" + val.instcombo + "</option>";
+ 
+         $("#inst-dropdown").html(listItems);
+     });
+	 });	
+	  	
+	//end institution list	  		  		  
+ 		  		  
       this.$('#close-advanced-search').click(_.bind(function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -392,7 +540,7 @@ define([
       this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "");
       setTimeout(_.bind(function() {
         if (!store.get('search-carat-closed') && !this.options.query.advanced) {
-          this.$('#search-carat').popover({placement: 'top', content: 'More search options'});
+          this.$('#search-carat').popover({placement: 'top', content: ''});
           this.$('#search-carat').popover('show');
         } 
       }, this), 2000);
@@ -428,7 +576,7 @@ define([
         this._executeSearch(null, true);
       }
     },
-
+	
     _getQuery: function() {
       var query = '';
       var all = this.$('#allwords').val();
@@ -437,8 +585,12 @@ define([
       var none = this.$('#nonewords').val();
       var start = this.$('#datestart').val();
       var end = this.$('#dateend').val();
+      var mstart = this.$('#monthstart').val();
+      var mend = this.$('#monthend').val();
+      var dstart = this.$('#daystart').val();
+      var dend = this.$('#dayend').val();
+	  var inst = this.$('#inst-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
-
 
       if (type === 'Specimen or Observation') {
         type = 'both';
@@ -480,6 +632,38 @@ define([
         end = Number(end);
         query += [ ' year >= ', start, ' year <= ', end].join('');      
       }
+
+      if (mstart && !mend) {
+        mstart = Number(mstart);
+        query += [ ' month >= ', mstart].join('');      
+      }
+      if (!mstart && mend) {
+        mend = Number(mend);
+        query += [' month <= ', mend].join('');
+      }
+      if (mstart && mend) {
+        mstart = Number(mstart);
+        mend = Number(mend);
+        query += [ ' month >= ', mstart, ' month <= ', mend].join('');      
+      }
+
+      if (dstart && !dend) {
+        dstart = Number(dstart);
+        query += [ ' day >= ', dstart].join('');      
+      }
+      if (!dstart && dend) {
+        dend = Number(dend);
+        query += [' day <= ', dend].join('');
+      }
+      if (dstart && dend) {
+        dstart = Number(dstart);
+        dend = Number(dend);
+        query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
+      }
+	  	  
+	  if (inst !== '') {
+		  query += [' institutioncode:', inst].join('');
+	  }
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
@@ -744,6 +928,9 @@ define([
           this.$('#click-row-tip').show();       
         } 
         table.show();
+		$('html, body').animate({
+    		scrollTop: $('#resultTabs').offset().top
+	}, 1000);
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();

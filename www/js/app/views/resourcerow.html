@@ -19,8 +19,10 @@
   sourcecode without minification. 
 -->
 <td><%= this.model.get('title')%></td>
-<td><%= this.model.get('license')%></td>
-<td><%= this.model.get('migrator')%></td>
-<td><%= this.model.getDate()%></td>
-<td><%= this.model.get('lastindexed')%></td>
-<td><%= this.model.records()%></td>
+<td style="text-align:center"><%= this.model.get('license')%></td>
+<td style="text-align:center"><%= this.model.get('migrator')%></td>
+<td style="text-align:center"><%= this.model.get('pubdate')%></td>
+<td style="text-align:center"><%= this.model.get('lastindexed')%></td>
+<td style="text-align:right"><%= this.model.records()%></td>
+<td style="text-align:center"><a href="<%= this.model.get('source_url')%>" target="_blank"><span class="glyphicon glyphicon-file"></span></a></td>
+<td style="text-align:center"><a href="/search?q=gbifdatasetid:<%= this.model.get('gbifdatasetid')%>"><span class="glyphicon glyphicon-search"></span></a></td>

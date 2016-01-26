@@ -204,7 +204,7 @@ define([
       if (!this.publisherCache) {
         map.init(_.bind(function() {
           var sql = new cartodb.SQL({ user: 'vertnet' });
-          var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url,license,migrator,lastindexed FROM resource GROUP BY orgname,icode,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url,license,migrator,lastindexed ORDER BY title";
+          var query = "SELECT orgname,icode,sum(count) AS records,count(title) AS resources,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url,license,migrator,lastindexed,gbifdatasetid,gbifpublisherid,source_url FROM resource GROUP BY orgname,icode,citation,contact,count,description,dwca,email,eml,emlrights,pubdate,title,url,license,migrator,lastindexed,gbifdatasetid,gbifpublisherid,source_url ORDER BY title";
           sql.execute(query, {})
             .done(_.bind(function(data) {
               this.publisherCache = _.groupBy(data.rows, _.bind(function(row) {
