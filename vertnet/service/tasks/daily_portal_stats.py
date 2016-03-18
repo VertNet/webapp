@@ -12,83 +12,6 @@ from google.appengine.api import urlfetch, modules
 from util import *
 
 URLFETCH_DEADLINE = 60
-urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
-
-# def getDownloadsData():
-#     # Monthly
-#     query = "select concat(year,'-',month) as date, queries, records from ( select extract(month from date(created_at)) as month, extract(year from date(created_at)) as year, count(*) as queries, sum(count) as records from query_log_master where type='download' and created_at>=date '{0}' group by extract(month from date(created_at)), extract(year from date(created_at)) order by extract(year from date(created_at)), extract(month from date(created_at))) as foo".format(query_date_limit)
-#     # Daily
-#     #url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}q=select%20date%28created_at%29,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20date%28created_at%29%20order%20by%20date%28created_at%29".format(query_date_limit, api_key)
-#     d = cartodb(query)
-#     downloadsdata = []
-#     for i in d:
-#         date = str(i['date'])
-#         queries = i['queries']
-#         downloadsdata.append([date, queries])
-#     return downloadsdata
-
-# def getMetadata():
-#     query = "select type, count(*) as searches, sum(count) as records from query_log_master where created_at>=date '{0}' group by type".format(query_date_limit)
-#     d = cartodb(query)
-#     metadata = {}
-#     for i in d:
-#         t = i['type']
-#         searches = i['searches']
-#         records = i['records']
-#         metadata[t] = {'searches':searches, 'records':records}
-#     return metadata
-
-# def getRecordsQueried():
-#     records_queried = 0
-#     query = "select count(*) from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}'" % (query_date_limit)
-#     count = cartodb(query)[0]['count']
-    
-#     for r in [1, 2, 3]:
-#         if r == 1:
-#             limit_string = "limit {0}".format(count/3)
-#         elif r == 2:
-#             limit_string = "limit {0} offset {0}".format(count/3)
-#         elif r == 3:
-#             limit_string = "offset {0}".format(count/3*2)
-
-#         logging.info("ROUND {0}".format(r))
-#         query = "select results_by_resource from query_log_master where client='portal-prod' and results_by_resource is not null and created_at>=date '%s' and results_by_resource <> '{}' %s" % (query_date_limit, limit_string)
-#         d = cartodb(query)
-#         for x in list(range(len(d))):
-#             try:
-#                 records_queried += sum(json.loads(d[x]['results_by_resource']).values())
-#             except:
-#                 pass
-
-#     logging.info("{0} records queried".format(records_queried))
-#     return records_queried
-
-def getMaxDate():
-    query = "select max(created_at) as d from query_log_master"
-    d = cartodb(query)[0]['d']
-    
-    formatin = '%Y-%m-%dT%H:%M:%SZ'
-    formatout = '%b %d, %Y'
-    
-    d2 = datetime.strptime(d,formatin).strftime(formatout)
-    return d2
-
-def insertDataCartoDB(mindate, searches, records_viewed, records_downloaded, downloads, download_data, class_data, institution_data):
-    record = "'{0}', {1}, {2}, {3}, {4}, '[{5}]', '[{6}]', '[{7}]'".format(mindate, searches, records_viewed, records_downloaded, downloads, download_data.replace("'", '"'), class_data.replace("'", '"'), institution_data.replace("'", '"'))
-    q = "insert into daily_portal_stats (mindate, searches, records_viewed, records_downloaded, downloads, download_data, class_data, institution_data) values ({0})".format(record)
-    
-    url = "https://vertnet.cartodb.com/api/v2/sql"
-    vals = {
-        'api_key': api_key,
-        'q': q
-    }
-    data = urllib.urlencode(vals)
-    req = urllib2.Request(url, data)
-    res = urllib2.urlopen(req).read()
-    logging.info("Result: {0}".format(res))
-
-    return
-
 
 def main(environ, start_response):
     logging.info("Main stats function called")
@@ -97,25 +20,34 @@ def main(environ, start_response):
     logging.info("Starting response")
     start_response(status, headers)
     logging.info("Response started")
+
     mindate = format(threshold_date, '%b %d, %Y')
     
-    logging.info("Getting Max Date")
-    maxdate = getMaxDate()
-    logging.info("Got Max Date")
+    # Get last entry in daily_portal_stats
+    last_vals = get_last_entry()
+
+    # Check if new data is available
+    newdata = check_new_data()
+    if newdata is False:
+        logging.warning("There is no new data in this period. Aborting.")
+        return
     
     # Launching RPCs    
     logging.info("Getting Downloads data")
     downloads_url = 'http://'+modules.get_hostname()+'/tasks/get_downloads'
+    urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
     downloads_rpc = urlfetch.create_rpc()
     downloads_call = urlfetch.make_fetch_call(downloads_rpc, downloads_url)
 
     logging.info("Getting Metadata")
     metadata_url = 'http://'+modules.get_hostname()+'/tasks/get_metadata'
+    urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
     metadata_rpc = urlfetch.create_rpc()
     metadata_call = urlfetch.make_fetch_call(metadata_rpc, metadata_url)
 
     logging.info("Getting Records Queried")
     records_url = 'http://'+modules.get_hostname()+'/tasks/get_records'
+    urlfetch.set_default_fetch_deadline(URLFETCH_DEADLINE)
     records_rpc = urlfetch.create_rpc()
     records_call = urlfetch.make_fetch_call(records_rpc, records_url)
     
@@ -129,14 +61,47 @@ def main(environ, start_response):
 
     # Retrieving RPC objects
     downloadsdata = downloads_call.get_result().content
+    downloadsdata = ast.literal_eval(downloadsdata)
     metadata = ast.literal_eval(metadata_call.get_result().content)
     records_queried = records_call.get_result().content
+    records_queried = int(records_queried)
 
+    # Adding new values to last entry in daily_portal_stats
+    last_vals['searches'] += metadata['query']['searches']
+    last_vals['records_viewed'] += records_queried
+    last_vals['records_downloaded'] += metadata['download']['records']
+    last_vals['downloads'] += metadata['download']['searches']
+    
+    for i in downloadsdata:
+        new_download = True
+        for j in list(range(len(last_vals['download_data']))):
+            if last_vals['download_data'][j][0] == i[0]:
+                last_vals['download_data'][j][1] += i[1]
+                new_download = False
+        if new_download is True:
+            last_vals['download_data'].append(i)
+
+    for i in explicitClassGood:
+        new_class = True
+        for j in list(range(len(last_vals['class_data']))):
+            if last_vals['class_data'][j][0] == i[0]:
+                last_vals['class_data'][j][1] += i[1]
+                new_class = False
+        if new_class is True:
+            last_vals['class_data'].append(i)
+
+    for i in explicitInstitutionsGood:
+        new_class = True
+        for j in list(range(len(last_vals['institution_data']))):
+            if last_vals['institution_data'][j][0] == i[0]:
+                last_vals['institution_data'][j][1] += i[1]
+                new_class = False
+        if new_class is True:
+            last_vals['institution_data'].append(i)
+    
     logging.info("Inserting data into CartoDB")
-    res = insertDataCartoDB(str(mindate),
-        str(metadata['query']['searches']), str(records_queried),
-        str(metadata['download']['records']), str(metadata['download']['searches']),
-        str(downloadsdata)[1:-1], str(explicitClassGood)[1:-1], str(explicitInstitutionsGood)[1:-1])
+
+    res = insertDataCartoDB(last_vals, mindate)
     
     logging.info("FINISHED PROCESSING")
     return

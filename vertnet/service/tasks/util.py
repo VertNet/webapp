@@ -1,14 +1,12 @@
 from datetime import datetime
 import os
 import urllib
-#import urllib2
 import logging
 import json
 from google.appengine.api import urlfetch
 
 # Date when logging started
 threshold_date = datetime(2014, 04, 01)
-query_date_limit = format(threshold_date, '%Y-%m-%d')
 
 # Update urlfetch limit to 60 seconds
 URLFETCH_DEADLINE = 60
@@ -34,6 +32,20 @@ def cartodb(query):
     res = json.loads(urlfetch.fetch(url=url, payload=data, method=urlfetch.POST).content)
     d = res['rows']
     return d
+
+def get_date_limit():
+    """Extract the value in 'created_at' from the last entry of daily_portal_stats."""
+    query = "select created_at from daily_portal_stats order by created_at desc limit 1;"
+    d = cartodb(query)
+    return d[0]['created_at']
+query_date_limit = get_date_limit()
+
+# Get last entry of daily_portal_stats table
+def get_last_entry():
+    """Retrieve last data from daily_portal_stats."""
+    query = "select * from daily_portal_stats order by created_at desc limit 1;"
+    d = cartodb(query)
+    return d[0]
 
 # Get actual stats from query_log_master
 def getExplicitStuff(tag):
@@ -64,3 +76,38 @@ def getExplicitStuff(tag):
             stuffSgood.append([i, stuffQ[i]])
     
     return stuffSgood
+
+def check_new_data():
+    """Check if new data exists in query_log_master."""
+    q = "select count(*) as entries from query_log_master where created_at>date '%s'" % query_date_limit
+    entries = cartodb(q)[0]['entries']
+    return entries > 0
+
+def insertDataCartoDB(vals, mindate):
+    """Insert a new record in daily_portal_stats table."""
+    record = "'{0}', {1}, {2}, {3}, {4}, '{5}', '{6}', '{7}'".format(
+        mindate,
+        vals['searches'],
+        vals['records_viewed'],
+        vals['records_downloaded'],
+        vals['downloads'],
+        json.dumps(vals['download_data']),
+        json.dumps(vals['class_data']),
+        json.dumps(vals['institution_data'])
+    )
+    
+    q = "insert into daily_portal_stats "
+    q += "(mindate, searches, records_viewed, records_downloaded, downloads, download_data, class_data, institution_data) "
+    q += "values ({0})".format(record)
+
+    url = "https://vertnet.cartodb.com/api/v2/sql"
+    params = {
+        'api_key': api_key,
+        'q': q
+    }
+
+    data = urllib.urlencode(params)
+    req = urllib2.Request(url, data)
+    res = urllib2.urlopen(req).read()
+    logging.info("Result: {0}".format(res))
+    return

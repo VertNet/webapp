@@ -12,7 +12,7 @@ def main(environ, start_response):
     start_response(status, headers)
     logging.info("Response started")
 
-    query = "select type, count(*) as searches, sum(count) as records from query_log_master where created_at>=date '{0}' group by type".format(query_date_limit)
+    query = "select type, count(*) as searches, sum(count) as records from query_log_master where created_at>date '{0}' group by type".format(query_date_limit)
     d = cartodb(query)
     metadata = {}
     for i in d:
