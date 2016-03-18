@@ -24,5 +24,6 @@
 <td style="text-align:center"><%= this.model.get('pubdate')%></td>
 <td style="text-align:center"><%= this.model.get('lastindexed')%></td>
 <td style="text-align:right"><%= this.model.records()%></td>
+<td style="text-align:center"><a href="http://tools-usagestats.vertnet-portal.appspot.com/reports/<%= this.model.get('gbifdatasetid')%>/"  target="_blank"><span class="glyphicon glyphicon-dashboard"></span></a></td>
 <td style="text-align:center"><a href="<%= this.model.get('source_url')%>" target="_blank"><span class="glyphicon glyphicon-file"></span></a></td>
 <td style="text-align:center"><a href="/search?q=gbifdatasetid:<%= this.model.get('gbifdatasetid')%>"><span class="glyphicon glyphicon-search"></span></a></td>
