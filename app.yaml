@@ -107,3 +107,7 @@ handlers:
 
 - url: /.*
   script: app.handler
+
+# Ignore 'data' folder
+skip_files:
+- ^data$
