@@ -72,6 +72,8 @@ queue:
     min_backoff_seconds: 30
     max_backoff_seconds: 500
     max_doublings: 5
+- name: usagestatsqueue
+  rate: 35/s
 # index-clean is dangerous - turn it on only if you really need to
 #- name: index-clean
 #  rate: 35/s
