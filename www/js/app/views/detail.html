@@ -19,26 +19,9 @@
   sourcecode without minification. 
 -->
 <div id="occ-detail-content" class="container">
-
   <div class="page-header">
-<!--
-    <h1><%= this.model.get('institutioncode') + ' ' + this.model.get('collectioncode') + ' ' + this.model.get('catalognumber')%> <small><%= this.model.getSciName() %> </small></h1>
--->
     <h1><% var occid = this.model.getOccIdentifier() %> <%= occid %> <small><%= this.model.getSciName() %> </small></h1>
   </div>
-
-  <!--   <div class="row">
-    <div class="col-lg-10">
-      <span class="lead">
-        Hi
-      </span>  
-    </div>
-    <div class="col-lg-1">
-      <button id="pubsearch" type="button" class="btn btn-primary btn-lg">
-        Search this publisher <span class="glyphicon glyphicon-search icon-white"></span>
-      </button>
-    </div>
-  </div> -->
 
   <ul id="detailTabs" class="nav nav-tabs">
     <button id="subissue" type="button" class="btn btn-success">
@@ -54,23 +37,9 @@
         <li><a href="#location" data-toggle="tab">Location</a></li>
         <li><a href="#identification" data-toggle="tab">Identification</a></li>
         <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
+        <li><a href="#trait" data-toggle="tab">Trait</a></li>
       </ul>
     </li>
-<!--    <li class="active">
-      <a href="#summary" data-toggle="tab">Detail</a>
-    </li>
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core<b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        <li><a href="#allterms" data-toggle="tab">All Terms</a></li>
-        <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
-        <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
-        <li><a href="#event" data-toggle="tab">Event</a></li>
-        <li><a href="#location" data-toggle="tab">Location</a></li>
-        <li><a href="#identification" data-toggle="tab">Identification</a></li>
-        <li><a href="#taxon" data-toggle="tab">Taxon</a></li>
-      </ul>
-    </li> -->
     <li>
       <a class="" href="#datasource" data-toggle="tab">Rights</a>
     </li>
@@ -95,10 +64,11 @@
       </thead>
       <tbody>
             <tr><td>Rank</td><td id="rank"></td></tr> 
-            <tr><td>HarvestID</td><td id="harvestid"></td></tr> 
             <tr><td>Networks</td><td id="networks"></td></tr> 
             <tr><td>Keyname</td><td id="keyname"></td></tr> 
             <tr><td>Icode</td><td id="icode"></td></tr> 
+            <tr><td>GBIF Dataset ID</td><td id="gbifdatasetid"></td></tr> 
+            <tr><td>GBIF Publisher ID</td><td id="gbifpublisherid"></td></tr> 
 <!--
             <tr><td>Fossil</td><td id="fossil"></td></tr> 
             <tr><td>Tissue</td><td id="tissue"></td></tr> 
@@ -113,8 +83,7 @@
   </div>
 
   <div class="tab-pane fade active in" id="summary">
-    <p>
-    
+    <p>    
     <!-- <p class="lead">Overview</p> -->
     <%if (this.model.get('associatedmedia')) { 
         var link = this.model.get('associatedmedia'); %>
@@ -360,6 +329,36 @@
         </tbody>
       </table> 
     </div>
+
+    <!-- Trait tab.  -->
+  <div class="tab-pane fade" id="trait">
+    <p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Trait Term</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(this.model.VN_TRAIT, _.bind(function(key) { 
+          var val = this.model.trait()[key]; 
+          if (val) { %>
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+      </tbody>
+    </table> 
+  </div>
 
     <!-- All tab.  -->
     <div class="tab-pane" id="allterms">

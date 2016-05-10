@@ -76,8 +76,12 @@ DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 'ParentNameUs
     'ScientificNameAuthorship', 'VernacularName', 'NomenclaturalCode', 'TaxonomicStatus', 
     'NomenclaturalStatus', 'TaxonRemarks']
 
+VN_TRAIT = ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred',
+    'DerivedLifeStage', 'DerivedSex']
+
 DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_ORGANISM + DWC_SAMPLE + DWC_EVENT + DWC_LOCATION \
-    + DWC_GEO + DWC_ID + DWC_TAXON
+    + DWC_GEO + DWC_ID + DWC_TAXON + VN_TRAIT
+
 DWC_ALL_LOWER = [x.lower() for x in DWC_ALL]
 DWC_HEADER_LIST = DWC_ALL_LOWER + ADD_TO_DOWNLOAD_RESULTS
 DWC_HEADER = '\t'.join(DWC_HEADER_LIST)

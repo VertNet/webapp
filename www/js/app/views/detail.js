@@ -31,28 +31,18 @@ define([
   ], function ($, Backbone, _, util, template, OccDetailMap, store, map, mps, rpc, user) {
     return Backbone.View.extend({
 
+      // INITIALIZE
       initialize: function(options, app) {
         this.app = app;
         this.params = options.params;
         this.template = _.template(template);
         mps.publish('spin', [true]);
         this.geoissues = this.model.getQualityFlags();
-        this.githubbers = ['MVZ', 'MLZ', 'DMNS', 'WFVZ', 'DMNH', 'ROM', 'TTRS',
-          'UBCBBM', 'CUML', 'PMNS'];
-
-        // testers
-        // MVZ (Arctos) - Birds, Herps, Mammals, Observations (Carla, Dusty) 
-        // MLZ (Arctos) - Birds and Mammals (John McCormick, Dusty)
-        // DMNS (Arctos) - Birds and Mammals (John Demboski, Dusty)
-        // WFVZ - Birds (Rene Corado and Linnea Hall)
-        // DMNH - Birds (Jean Woods)
-        // ROM - Birds, Herps, Mammals, Fish (Brad Millen)
-        // TTRS - Birds and Mammals (Gil Nelson)
-        // UBCBBM - Birds, Mammals, Herps (Grant Hurley and Ildiko Szabo)
-        // CUML - Audio/Video (Brian Maltzan)
-        // PSMN - Birds and Herps (Teresa Mayfield and Karen Morton)
+//        this.githubbers = ['MVZ', 'MLZ', 'DMNS', 'WFVZ', 'DMNH', 'ROM', 'TTRS',
+//          'UBCBBM', 'CUML', 'PMNS'];
       }, 
 
+      // RENDER
       render: function() {
         var data = _.extend(this.model.attributes, this.model.replaceURLWithHTMLLinks);
         this.$el.html(this.template(data));
@@ -88,20 +78,12 @@ define([
         return this;
       },
 
-     setup: function () {
+      // SETUP
+      setup: function () {
         var orgSlug = this.model.get('keyname').split('/')[0];
         var icode = this.model.get('icode');
 
-        console.log(icode, this.githubbers);
-
-/*
-        if (!_.contains(this.githubbers, icode)) {
-          this.$('#subissue').hide();
-          mps.publish('spin', [false]);
-          return this;
-        }
-*/
-    
+//        console.log(icode, this.githubbers);
         this.$('#subissue').popover({placement: 'top', content: 'Submit data issue'});
         this.$('#subissue').popover('show');
         
@@ -117,11 +99,15 @@ define([
         this.$('#index-tab').click(_.bind(function(e) {
           var issues = this.model.getIndexFields();
           console.log(issues);
+//        For every indexfield defined here, there must be a corresponding reference in
+//        getIndexFields in webapp/www/js/app/models/detail.js
+//        and a corresponding UI object in webapp/www/js/app/views/detail.html
           if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
-          if (issues.harvestid) { this.$('#harvestid').text(issues.harvestid.toString()); }
           if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
           if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
           if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
+          if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
+          if (issues.gbifpublisherid) { this.$('#gbifpublisherid').text(issues.gbifpublisherid.toString()); }
           // if (issues.fossil) { this.$('#fossil').text(issues.fossil.toString()); }
           // if (issues.tissue) { this.$('#tissue').text(issues.tissue.toString()); }
           // if (issues.media) { this.$('#media').text(issues.media.toString()); }
@@ -296,6 +282,7 @@ define([
         return this;
       },
 
+      // SHOWISSUEMODAL
       showIssueModal: function(show) {
         if (show) {
           this.$('#myModalLabel').text('Submit data issue');
