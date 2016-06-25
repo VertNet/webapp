@@ -23,7 +23,7 @@
   <div class="page-header">
     <h1>Search <small>VertNet</small></h1>
   </div>
-    <p><a href="http://vertnet.org/resources/help.html#t-tab2" title="Link to VN Portal Help page" target="_blank"> Need Help?</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" title="Link to VN Portal Advanced Search Guide" target="_blank"> Advanced Search Guide</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="http://vertnet.org/publishers" title="Link to VN Portal Publishers" target="_blank"> Institution Codes</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small></p>
+    <p><a href="http://vertnet.org/resources/help.html#t-tab2" title="Link to VN Portal Help page" target="_blank"> Need Help?</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" title="Link to VN Portal Advanced Search Guide" target="_blank"> Advanced Search Guide</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="../publishers" title="Link to VN Portal Publishers" target="_blank"> Institution Codes</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small></p>
   <div id="whoops" class="alert fade in">
     <button type="button" class="close" data-dismiss="alert">×</button>
     Search is a little slow right now. Automatically retrying ...
@@ -43,86 +43,8 @@
       <VNlegend>Find records with...</VNlegend>
 
       <form class="form-horizontal" role="form">
-        <div id="filters">
-          <div class="form-group">
-            <label class="col-lg-2 control-label"><!--<a id="show-thesefilters-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="thesefilters-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; These filters</label>
-            <div class="vncheckbox">
-              <label class="vn-col-md-2-ckbx control-label">
-               Is fossil <input id="fossil" type="checkbox"> 
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
-               <a id="show-hasTissues-tip" href="http://vertnet.org/resources/help.html#t-tab3" target="_blank"><span id="hasTissues-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Has tissues <input id="tissue" type="checkbox">
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
-               Has media <input id="media" type="checkbox"> 
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
-               Has type status <input id="hastypestatus" type="checkbox"> 
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
-                Is mappable <input id="mappable" type="checkbox"> 
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
-                In circle on map <input id="spatialfilter" type="checkbox"> 
-              </label>              
-            </div>
-          </div>
-        </div>
-
-        <div id="spatialsearch">
-          <div>
-            <div>
-              <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-              </a>
-            </div>
-            <div id="collapseOne" class="accordion-body collapse" style="height: 0px;">
-              <div class="accordion-inner">
-                <div id="searchmap"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><!--<a id="show-allTheseWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="allTheseWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; All these words</label>
-          <div class="col-lg-10">
-            <input type="text" class="form-control" id="allwords" placeholder="Identify records containing all of the words submitted. For exact phrase, quotation marks are required.">
-          </div>
-        </div>
-
-        <!--<div class="form-group">
-          <label class="col-lg-2 control-label"><a id="show-exactPhrase-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="exactPhrase-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Exact phrase</label>
-          <div class="col-lg-9">
-            <input type="text" class="form-control" id="exactphrase" placeholder='"butorides virescens"'>
-          </div>
-        </div> -->                
-
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><!--<a id="show-anyWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="anyWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Any of these words</label>
-          <div class="col-lg-10">
-            <input type="text" class="form-control" id="anywords" placeholder='Identify all records that contain at least one of the words submitted. Operators OR and AND can help to focus queries.'>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><!--<a id="show-noneWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="noneWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; None of these words</label>
-          <div class="col-lg-10">
-            <input type="text" class="form-control" id="nonewords" placeholder='Exclude records by including NOT along with the word to be excluded.'>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><!--<a id="show-recordType-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="recordType-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Record type</label>
-          <div class="col-lg-10">
-            <select class="form-control" id="recordtype">
-              <option value="Any type">Any type</option>
-              <option>Specimen</option>
-              <option>Observation</option>
-              <option>Specimen or Observation</option>
-            </select>
-          </div>
-        </div>
-        
+      
+<!-- START DWC -->       
              <div class="form-group">
             <label class="col-lg-2 control-label"><!--<a id="show-instCode-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="instCode-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Institution Code</label>
               <div class="col-lg-10">
@@ -225,7 +147,34 @@
               </div>            
             </div>
           </div> 
+<!-- END DWC --> 
 
+        <div class="form-group">
+          <label class="col-lg-2 control-label"> &nbsp; </label>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="datestart" placeholder="Year (e.g. 1941)">
+          </div>
+          <div id="dateto" class="col-md-0">
+          	to
+          </div>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="dateend" placeholder="Year (e.g. 1952)">
+          </div>
+           <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="monthstart" placeholder="Month (e.g. 3)">
+          </div>
+          <div id="dateto" class="col-md-0">
+          	to
+          </div>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="monthend" placeholder="Month (e.g. 5)">
+          </div>                            
+        </div>
+
+<!-- START DATES 
         <div class="form-group">
           <label class="col-lg-2 control-label"><a id="show-years-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="years-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Years from </label>
           <div class="vn-col-md-2">
@@ -236,8 +185,9 @@
           </div>
           <div class="vn-col-md-2">
             <input class="form-control" type="text" id="dateend">
-          </div>
+          </div>                  
         </div>
+        
         <div class="form-group">
           <label class="col-lg-2 control-label"><a id="show-months-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="months-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Months from </label>
           <div class="vn-col-md-2">
@@ -249,7 +199,149 @@
           <div class="vn-col-md-2">
             <input class="form-control" type="text" id="monthend">
           </div>
+        </div> 
+ END DATES -->      
+      
+      <!-- START FILTERS -->
+        <div id="filters">
+          <div class="form-group">
+            <label class="col-lg-2 control-label"><!--<a id="show-thesefilters-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="thesefilters-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; These filters</label>
+            <div class="vncheckbox">
+              <label class="vn-col-md-2-ckbx control-label">
+               Is fossil <input id="fossil" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               <a id="show-hasTissues-tip" href="http://vertnet.org/resources/help.html#t-tab3" target="_blank"><span id="hasTissues-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Has tissues <input id="tissue" type="checkbox">
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has media <input id="media" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has type status <input id="hastypestatus" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+                Is mappable <input id="mappable" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+                In circle on map <input id="spatialfilter" type="checkbox"> 
+              </label>              
+            </div>
+          </div>
         </div>
+
+        <div id="spatialsearch">
+          <div>
+            <div>
+              <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+              </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <div id="searchmap"></div>
+              </div>
+            </div>
+          </div>
+        </div> 
+		<!-- END FILTERS -->
+
+       <!-- START TRAITS -->
+        <div id="filters">
+          <div class="form-group">
+            <label class="col-lg-2 control-label">&nbsp; These traits</label>
+            <div class="vncheckbox">
+              <label class="vn-col-md-2-ckbx control-label">
+               Has length <input id="haslength" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has lifestage <input id="haslifestage" type="checkbox">
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has mass <input id="hasmass" type="checkbox"> 
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has sex <input id="hassex" type="checkbox"> 
+              </label>             
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-2 control-label">&nbsp; </label>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="lengthstart" placeholder="length in mm">
+          </div>
+          <div id="lengthto" class="col-md-0">
+          to
+          </div>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="lengthend" placeholder="length in mm">
+          </div>
+           <div class="col-md-0">
+           	&nbsp;&nbsp;&nbsp;
+          </div>            
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="massstart" placeholder="mass in g">
+          </div>
+          <div id="massto" class="col-md-0">
+          to
+          </div>
+          <div class="vn-col-md-2">
+            <input class="form-control" type="text" id="massend" placeholder="mass in g">
+          </div>          
+        </div>
+<!-- END TRAITS --> 
+
+<!-- START RECORD TYPE -->       
+        <div class="form-group">
+          <label class="col-lg-2 control-label"><!--<a id="show-recordType-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="recordType-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Record type</label>
+          <div class="col-lg-10">
+            <select class="form-control" id="recordtype">
+              <option value="Any type">Any type</option>
+              <option>Specimen</option>
+              <option>Observation</option>
+              <option>Specimen or Observation</option>
+            </select>
+          </div>
+        </div>
+<!-- END RECORD TYPE --> 
+
+<!-- START KEYWORDS -->
+
+        <div class="form-group">
+          <label class="col-lg-2 control-label"><!--<a id="show-allTheseWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="allTheseWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; All these words</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="allwords" placeholder="Identify records containing all of the words submitted. For exact phrase, quotation marks are required.">
+          </div>
+        </div>
+
+        <!--<div class="form-group">
+          <label class="col-lg-2 control-label"><a id="show-exactPhrase-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="exactPhrase-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Exact phrase</label>
+          <div class="col-lg-9">
+            <input type="text" class="form-control" id="exactphrase" placeholder='"butorides virescens"'>
+          </div>
+        </div> -->                
+
+        <div class="form-group">
+          <label class="col-lg-2 control-label"><!--<a id="show-anyWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="anyWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Any of these words</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="anywords" placeholder='Identify all records that contain at least one of the words submitted. Operators OR and AND can help to focus queries.'>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-2 control-label"><!--<a id="show-noneWords-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="noneWords-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; None of these words</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="nonewords" placeholder='Exclude records by including NOT along with the word to be excluded.'>
+          </div>
+        </div>
+<!-- END KEYWORDS --> 
+
+        
+ 
+          
+          
+          
+ 
         <!--<div class="form-group">
           <label class="col-lg-2 control-label"><a id="show-years-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="years-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Days ranging from</label>
           <div class="vn-col-md-2">
@@ -261,7 +353,8 @@
           <div class="vn-col-md-2">
             <input class="form-control" type="text" id="dayend" placeholder='15'>
           </div>
-        </div> -->                
+        </div> -->
+                               
       </form>
       
       <div class="spacer"></div>
