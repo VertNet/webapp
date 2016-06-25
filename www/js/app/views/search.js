@@ -418,7 +418,7 @@ define([
 		  }, this));		  
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
-	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
+	$.getJSON("https://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
          var listItems = '<option value="">Select institution code</option>';
 
 		$.each(institutions.rows, function(key, val) {
@@ -589,6 +589,10 @@ define([
       var mend = this.$('#monthend').val();
       var dstart = this.$('#daystart').val();
       var dend = this.$('#dayend').val();
+	  var massingstart = this.$('#massstart').val();
+	  var massingend = this.$('#massend').val();
+	  var lengthinmmstart = this.$('#lengthstart').val();
+	  var lengthinmmend = this.$('#lengthend').val();
 	  var inst = this.$('#inst-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
 
@@ -660,6 +664,34 @@ define([
         dend = Number(dend);
         query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
       }
+	  
+      if (massingstart && !massingend) {
+        massingstart = Number(massingstart);
+        query += [ ' massing >= ', massingstart].join('');      
+      }
+      if (!massingstart && massingend) {
+        massingend = Number(massingend);
+        query += [' massing <= ', massingend].join('');
+      }
+      if (massingstart && massingend) {
+        massingstart = Number(massingstart);
+        massingend = Number(massingend);
+        query += [ ' massing >= ', massingstart, ' massing <= ', massingend].join('');      
+      }
+
+      if (lengthinmmstart && !lengthinmmend) {
+        lengthinmmstart = Number(lengthinmmstart);
+        query += [ ' lengthinmm >= ', lengthinmmstart].join('');      
+      }
+      if (!lengthinmmstart && lengthinmmend) {
+        lengthinmmend = Number(lengthinmmend);
+        query += [' lengthinmm <= ', lengthinmmend].join('');
+      }
+      if (lengthinmmstart && lengthinmmend) {
+        lengthinmmstart = Number(lengthinmmstart);
+        lengthinmmend = Number(lengthinmmend);
+        query += [ ' lengthinmm >= ', lengthinmmstart, ' lengthinmm <= ', lengthinmmend].join('');      
+      }	  
 	  	  
 	  if (inst !== '') {
 		  query += [' institutioncode:', inst].join('');
