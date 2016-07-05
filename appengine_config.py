@@ -44,7 +44,9 @@ def namespace_manager_default_namespace_for_request():
         # index-2014-02-11a is an index with the dwc2015 schema indexing from 
         # gulo with [org.gbif/dwca-reader "1.20-SNAPSHOT"] and 
         # [dwca-reader-clj "0.10.1-SNAPSHOT"]
-    	return 'index-2014-02-11a'
+#    	return 'index-2014-02-11a'
+    	# DwC2015-style index with traits and days of year
+    	return 'index-2014-02-11'
 
 engineauth = {
     # Login uri. The user will be returned here if an error occurs.

@@ -80,12 +80,15 @@ define([
       'Preparations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
-    VN_INDEX: ['Rank', 'Harvestid', 'Networks', 'Keyname', 'ICode', 'Fossil', 'Tissue', 
+    VN_INDEX: ['Rank', 'Networks', 'Keyname', 'ICode', 'Fossil', 'Tissue', 
       'Media', 'HasTypeStatus', 'Mappable', 'Resource', 'Type'],
+
+    VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
+      'DerivedLifeStage', 'DerivedSex'],
 
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
-        this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON);
+        this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON, this.VN_TRAIT);
     },
     
     QUALITY: ['noCoords', 'noCountry', 'isZero', 'isOutOfWorld', 'isLowPrecision',
@@ -94,17 +97,15 @@ define([
 
     getIndexFields: function() {
       var indexfields = {};
-//      var indexkeys = this.vnindex();
-//      for (var key in indexkeys) {
-//        if (this.key){
-//          indexfields[key]=this.get(key);
-//        }
-//      }  
+//    For every indexfield defined here, there must be a corresponding reference in the 
+//    index handler in webapp/www/js/app/views/detail.js
+//    and a corresponding UI object in webapp/www/js/app/views/detail.html
       if (rank) indexfields['rank']=this.get('rank');
-      if (harvestid) indexfields['harvestid']=this.get('harvestid');
       if (networks) indexfields['networks']=this.get('networks');
       if (keyname) indexfields['keyname']=this.get('keyname');
       if (icode) indexfields['icode']=this.get('icode');
+      if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
+      if (gbifpublisherid) indexfields['gbifpublisherid']=this.get('gbifpublisherid');
 //      if (fossil) indexfields['fossil']=this.get('fossil');
 //      if (tissue) indexfields['tissue']=this.get('tissue');
 //      if (media) indexfields['media']=this.get('media');
@@ -399,9 +400,13 @@ define([
       return this._terms(this.DWC_TAXON);
     },
 
+    trait: function() {
+      return this._terms(this.VN_TRAIT);
+    },
+
     all: function() {
       return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.event(), this.geo(),
-        this.iden(), this.taxon());
+        this.iden(), this.taxon(), this.trait());
     },
 
     summary: function() {
