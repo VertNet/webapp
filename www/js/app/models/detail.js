@@ -21,7 +21,7 @@ define([
   'backbone'
 ], function (_, Backbone) {
   return Backbone.Model.extend({
-    DWC_RECLEVEL: ['Type', 'Modified', 'Language', 'Rights', 'RightsHolder', 
+    DWC_RECLEVEL: ['Type', 'Modified', 'Language', 'License', 'RightsHolder', 
       'AccessRights', 'BibliographicCitation', 'References', 'InstitutionID', 
       'CollectionID', 'DatasetID', 'InstitutionCode', 'CollectionCode', 
       'DatasetName', 'OwnerInstitutionCode', 'BasisOfRecord', 'InformationWithheld', 
@@ -84,7 +84,7 @@ define([
       'Media', 'HasTypeStatus', 'Mappable', 'Resource', 'Type'],
 
     VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
-      'DerivedLifeStage', 'DerivedSex'],
+      'LifeStage', 'DerivedLifeStage', 'Sex', 'DerivedSex'],
 
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
