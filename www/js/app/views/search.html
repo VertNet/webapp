@@ -46,7 +46,7 @@
       
 <!-- START DWC -->       
              <div class="form-group">
-            <label class="col-lg-2 control-label"><!--<a id="show-instCode-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="instCode-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Institution Code</label>
+            <label class="col-lg-2 control-label"><!--<a id="show-instCode-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="instCode-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Darwin Core terms</label>
               <div class="col-lg-10">
             <select class="form-control" id="inst-dropdown">             
             </select>
@@ -55,7 +55,7 @@
 
         <div id="dwcterm">
           <div class="form-group">
-            <label class="col-lg-2 control-label"><!--<a id="show-dcTerms-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="dcTerms-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Darwin Core terms</label>         
+            <label class="col-lg-2 control-label"><!--<a id="show-dcTerms-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="dcTerms-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; </label>         
               <div class="vn-col-md-2">
                 <input id="collectioncode" class="form-control" type="text" placeholder="CollectionCode">
               </div>
@@ -63,28 +63,59 @@
                  &nbsp;&nbsp;&nbsp;
           </div>               
               <div class="vn-col-md-2">
+                <input id="basisofrecord" class="form-control" type="text" placeholder="BasisOfRecord">
+              </div>
+           <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>              
+              <div class="vn-col-md-2">
+                <input id="iptrecordid" class="form-control" type="text" placeholder="OccurrenceID">
+              </div> 
+           <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>                                       
+              <div class="vn-col-md-2">
                 <input id="catalognumber" class="form-control" type="text" placeholder="CatalogNumber">
               </div>
            <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
           </div>               
               <div class="vn-col-md-2">
-                <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
-              </div>
-           <div class="col-md-0">
-                 &nbsp;&nbsp;&nbsp;
-          </div>               
+                <input id="license" class="form-control" type="text" placeholder="License">
+              </div>                                                          
+            </div>
+            
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>            
               <div class="vn-col-md-2">
-                <input id="preparations" class="form-control" type="text" placeholder="Preparations">
-              </div>                        
+                <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
+              </div> 
            <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
-          </div>               
+          </div>                             
+            <div class="vn-col-md-2">
+                <input id="preparations" class="form-control" type="text" placeholder="Preparations">
+              </div>  
+           <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>                             
               <div class="vn-col-md-2">
                 <input id="sex" class="form-control" type="text" placeholder="Sex">
-              </div>                        
+              </div> 
+            <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>               
+              <div class="vn-col-md-2">
+                <input id="lifestage" class="form-control" type="text" placeholder="LifeStage">
+              </div> 
+            <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>               
+                                                      
             </div>
+            
 
+        
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
                 <div class="vn-col-md-2">
@@ -146,9 +177,21 @@
                 <input id="specificepithet" class="form-control" type="text" placeholder="SpecificEpithet">
               </div>            
             </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>            
+              <div class="vn-col-md-2">
+                <input id="startdayofyear" class="form-control" type="text" placeholder="StartDayOfYear">
+              </div>
+             <div class="col-md-0">
+                 &nbsp;&nbsp;&nbsp;
+          </div>               
+               <div class="vn-col-md-2">
+                <input id="enddayofyear" class="form-control" type="text" placeholder="EndDayOfYear">
+              </div> 
+              </div>            
           </div> 
 <!-- END DWC --> 
-
+<!-- START DATES -->
         <div class="form-group">
           <label class="col-lg-2 control-label"> &nbsp; </label>
           <div class="vn-col-md-2">
@@ -173,6 +216,7 @@
             <input class="form-control" type="text" id="monthend" placeholder="Month (e.g. 5)">
           </div>                            
         </div>
+<!-- END DATES -->        
 
 <!-- START DATES 
         <div class="form-group">
@@ -253,14 +297,14 @@
                Has length <input id="haslength" type="checkbox"> 
               </label>
               <label class="vn-col-md-2-ckbx control-label">
-               Has lifestage <input id="haslifestage" type="checkbox">
-              </label>
-              <label class="vn-col-md-2-ckbx control-label">
                Has mass <input id="hasmass" type="checkbox"> 
               </label>
               <label class="vn-col-md-2-ckbx control-label">
                Has sex <input id="hassex" type="checkbox"> 
-              </label>             
+              </label>
+              <label class="vn-col-md-2-ckbx control-label">
+               Has lifestage <input id="haslifestage" type="checkbox">
+              </label>                           
             </div>
           </div>
         </div>
@@ -289,11 +333,13 @@
             <input class="form-control" type="text" id="massend" placeholder="mass in g">
           </div>          
         </div>
-<!-- END TRAITS --> 
+<!-- END TRAITS -->
 
-<!-- START RECORD TYPE -->       
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><!--<a id="show-recordType-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="recordType-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Record type</label>
+ 
+<!-- START RECORD TYPE -->
+      
+<!--        <div class="form-group">
+          <label class="col-lg-2 control-label"> &nbsp; Record type</label>
           <div class="col-lg-10">
             <select class="form-control" id="recordtype">
               <option value="Any type">Any type</option>
@@ -302,8 +348,10 @@
               <option>Specimen or Observation</option>
             </select>
           </div>
-        </div>
-<!-- END RECORD TYPE --> 
+        </div>-->
+        
+<!-- END RECORD TYPE -->
+
 
 <!-- START KEYWORDS -->
 
