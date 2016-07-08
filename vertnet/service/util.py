@@ -1,6 +1,6 @@
 import json
 
-UTIL_VERSION='util.py 2015-08-30T17:48:59+02:00'
+UTIL_VERSION='util.py 2016-07-08T16:08+02:00'
 
 ADD_TO_DOWNLOAD_RESULTS = ['url', 'gbifdatasetid', 'gbifpublisherid', 'email', 
     'contact', 'migrator', 'pubdate', 'lastindexed', 'iptlicense']
@@ -77,7 +77,7 @@ DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 'ParentNameUs
     'NomenclaturalStatus', 'TaxonRemarks']
 
 VN_TRAIT = ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred',
-    'DerivedLifeStage', 'DerivedSex']
+    'LifeStageVerbatim', 'SexVerbatim']
 
 DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_ORGANISM + DWC_SAMPLE + DWC_EVENT + DWC_LOCATION \
     + DWC_GEO + DWC_ID + DWC_TAXON + VN_TRAIT
