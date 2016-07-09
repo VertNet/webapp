@@ -1,10 +1,11 @@
 import json
 
-UTIL_VERSION='util.py 2016-07-08T16:08+02:00'
+UTIL_VERSION='util.py 2016-07-09T10:36+02:00'
 
 ADD_TO_DOWNLOAD_RESULTS = ['url', 'gbifdatasetid', 'gbifpublisherid', 'email', 
     'contact', 'migrator', 'pubdate', 'lastindexed', 'iptlicense']
 
+# TODO: update to match new full index with vntype, hasmass, isfossil, etc.
 OMIT_FROM_DOWNLOADS = ['location', 'record', 'verbatim_record', 'count', 'icode',
     'harvestid', 'eml', 'dwca', 'title', 'description', 'orgname', 'emlrights', 
     'citation', 'networks', 'hashid', 'rank', 'haslicense', 'id', 'media', 'tissue', 
@@ -77,7 +78,7 @@ DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 'ParentNameUs
     'NomenclaturalStatus', 'TaxonRemarks']
 
 VN_TRAIT = ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred',
-    'LifeStageVerbatim', 'SexVerbatim']
+    'UnderivedLifeStage', 'UnderivedSex']
 
 DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_ORGANISM + DWC_SAMPLE + DWC_EVENT + DWC_LOCATION \
     + DWC_GEO + DWC_ID + DWC_TAXON + VN_TRAIT
@@ -165,18 +166,3 @@ def search_resource_counts(recs, old_res_counts=None):
         else:
             res_counts[gbifdatasetid] += 1
     return res_counts
-
-# def search_resource_counts(recs, old_res_counts=None):
-#     # Build dictionary of resources with their record counts
-#     res_counts = {}
-#     url = None
-#     for rec in recs:
-#         if 'url' in rec:
-#             url=rec['url']
-#         else:
-#             url=rec[TRANSLATE_HEADER['url']]
-#         if url not in res_counts:
-#             res_counts[url] = 1
-#         else:
-#             res_counts[url] += 1
-#     return res_counts

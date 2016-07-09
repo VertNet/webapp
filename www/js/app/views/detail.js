@@ -38,11 +38,9 @@ define([
         this.template = _.template(template);
         mps.publish('spin', [true]);
         this.geoissues = this.model.getQualityFlags();
-//        this.githubbers = ['MVZ', 'MLZ', 'DMNS', 'WFVZ', 'DMNH', 'ROM', 'TTRS',
-//          'UBCBBM', 'CUML', 'PMNS'];
       }, 
 
-      // RENDER
+      // RENDER MAP
       render: function() {
         var data = _.extend(this.model.attributes, this.model.replaceURLWithHTMLLinks);
         this.$el.html(this.template(data));
@@ -102,19 +100,26 @@ define([
 //        For every indexfield defined here, there must be a corresponding reference in
 //        getIndexFields in webapp/www/js/app/models/detail.js
 //        and a corresponding UI object in webapp/www/js/app/views/detail.html
-          if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
-          if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
-          if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
           if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
-          if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
           if (issues.gbifpublisherid) { this.$('#gbifpublisherid').text(issues.gbifpublisherid.toString()); }
-          // if (issues.fossil) { this.$('#fossil').text(issues.fossil.toString()); }
-          // if (issues.tissue) { this.$('#tissue').text(issues.tissue.toString()); }
-          // if (issues.media) { this.$('#media').text(issues.media.toString()); }
-          // if (issues.hastypestatus) { this.$('#hastypestatus').text(issues.hastypestatus.toString()); }
-          // if (issues.mappable) { this.$('#mappable').text(issues.mappable.toString()); }
-          // if (issues.resource) { this.$('#resource').text(issues.resource.toString()); }
-          // if (issues.type) { this.$('#type').text(issues.type.toString()); }
+          if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
+          if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
+          if (issues.occurrenceid) { this.$('#occurrenceid').text(issues.occurrenceid.toString()); }
+          if (issues.id) { this.$('#id').text(issues.id.toString()); }
+          if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
+          if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
+          if (issues.haslicense) { this.$('#haslicense').text(issues.haslicense.toString()); }
+          if (issues.hastypestatus) { this.$('#hastypestatus').text(issues.hastypestatus.toString()); }
+          if (issues.hastissue) { this.$('#hastissue').text(issues.hastissue.toString()); }
+          if (issues.hasmedia) { this.$('#hasmedia').text(issues.hasmedia.toString()); }
+          if (issues.haslength) { this.$('#haslength').text(issues.haslength.toString()); }
+          if (issues.hasmass) { this.$('#hasmass').text(issues.hasmass.toString()); }
+          if (issues.hassex) { this.$('#hassex').text(issues.hassex.toString()); }
+          if (issues.haslifestage) { this.$('#haslifestage').text(issues.haslifestage.toString()); }
+          if (issues.isfossil) { this.$('#isfossil').text(issues.isfossil.toString()); }
+          if (issues.wascaptive) { this.$('#wascaptive').text(issues.wascaptive.toString()); }
+          if (issues.mappable) { this.$('#mappable').text(issues.mappable.toString()); }
+          if (issues.hashid) { this.$('#hashid').text(issues.hashid.toString()); }
         }, this));
 
         // Handler for quality tab

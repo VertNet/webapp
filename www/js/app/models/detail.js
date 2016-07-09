@@ -21,37 +21,40 @@ define([
   'backbone'
 ], function (_, Backbone) {
   return Backbone.Model.extend({
-    DWC_RECLEVEL: ['Type', 'Modified', 'Language', 'License', 'RightsHolder', 
-      'AccessRights', 'BibliographicCitation', 'References', 'InstitutionID', 
-      'CollectionID', 'DatasetID', 'InstitutionCode', 'CollectionCode', 
-      'DatasetName', 'OwnerInstitutionCode', 'BasisOfRecord', 'InformationWithheld', 
-      'DataGeneralizations', 'DynamicProperties'],
+    DWC_RECLEVEL: ['InstitutionCode', 'CollectionCode', 'DatasetName', 
+      'OwnerInstitutionCode', 'References', 'BibliographicCitation', 
+      'BasisOfRecord', 'VNType', 'DCType', 'InformationWithheld', 'DataGeneralizations', 
+      'License', 'AccessRights', 'RightsHolder', 
+      'InstitutionID', 'CollectionID', 'DatasetID', 'Modified', 'Language' 
+      ],
 
-    DWC_OCC: ['OccurrenceID', 'CatalogNumber', 'OccurrenceRemarks', 'RecordNumber', 
-      'RecordedBy', 'IndividualID', 'IndividualCount', 'Sex', 'LifeStage', 
+    DWC_OCC: ['OccurrenceID', 'MaterialSampleID', 'CatalogNumber', 'OtherCatalogNumbers', 
+      'RecordNumber', 'RecordedBy', 'IndividualCount', 'Sex', 'LifeStage', 
       'ReproductiveCondition', 'Behavior', 'EstablishmentMeans', 'OccurrenceStatus', 
-      'Preparations', 'Disposition', 'OtherCatalogNumbers', 'PreviousIdentifications', 
-      'AssociatedMedia', 'AssociatedReferences', 'AssociatedOccurrences', 
-      'AssociatedSequences', 'AssociatedTaxa'],
+      'Preparations', 'Disposition',
+      'AssociatedMedia', 'AssociatedReferences', 'AssociatedSequences', 'AssociatedTaxa',
+      'OccurrenceRemarks', 'DynamicProperties'],
 
-    DWC_EVENT: ['EventID', 'SamplingProtocol', 'SamplingEffort', 'EventDate', 
-      'EventTime', 'StartDayOfYear', 'EndDayOfYear', 'Year', 'Month', 'Day', 
-      'VerbatimEventDate', 'Habitat', 'FieldNumber', 'FieldNotes', 'EventRemarks'],
+    DWC_ORGANISM: ['OrganismID', 'OrganismName', 'OrganismScope', 'OrganismRemarks', 
+      'AssociatedOccurrences', 'AssociatedOrganisms'],
+
+    DWC_EVENT: ['EventID', 'FieldNumber', 'EventDate', 'EventTime', 'StartDayOfYear', 
+      'EndDayOfYear', 'Year', 'Month', 'Day', 'VerbatimEventDate', 'Habitat', 
+      'SamplingProtocol', 'SamplingEffort', 'FieldNotes', 'EventRemarks'],
 
     DWC_LOCATION: ['LocationID', 'HigherGeographyID', 'HigherGeography', 
       'Continent', 'WaterBody', 'IslandGroup', 'Island', 'Country', 'CountryCode', 
       'StateProvince', 'County', 'Municipality', 'Locality', 'VerbatimLocality', 
-      'VerbatimElevation', 'MinimumElevationInMeters', 'MaximumElevationInMeters', 
-      'VerbatimDepth', 'MinimumDepthInMeters', 'MaximumDepthInMeters', 
+      'MinimumElevationInMeters', 'MaximumElevationInMeters', 'VerbatimElevation', 
+      'MinimumDepthInMeters', 'MaximumDepthInMeters', 'VerbatimDepth', 
       'MinimumDistanceAboveSurfaceInMeters', 'MaximumDistanceAboveSurfaceInMeters', 
-      'LocationAccordingTo', 'LocationRemarks', 'VerbatimCoordinates', 
-      'VerbatimLatitude', 'VerbatimLongitude', 'VerbatimCoordinateSystem', 
-      'VerbatimSRS', 'DecimalLatitude', 'DecimalLongitude', 'GeodeticDatum', 
-      'CoordinateUncertaintyInMeters', 'CoordinatePrecision', 
-      'PointRadiusSpatialFit', 'FootprintWKT', 'FootprintSRS', 
-      'FootprintSpatialFit', 'GeoreferencedBy', 'GeoreferencedDate', 
-      'GeoreferenceProtocol', 'GeoreferenceSources', 
-      'GeoreferenceVerificationStatus', 'GeoreferenceRemarks'],
+      'LocationAccordingTo', 'LocationRemarks', 'DecimalLatitude', 'DecimalLongitude', 
+      'GeodeticDatum', 'CoordinateUncertaintyInMeters', 'CoordinatePrecision', 
+      'PointRadiusSpatialFit', 'VerbatimCoordinates', 'VerbatimLatitude', 
+      'VerbatimLongitude', 'VerbatimCoordinateSystem', 'VerbatimSRS', 'FootprintWKT', 
+      'FootprintSRS', 'FootprintSpatialFit', 'GeoreferencedBy', 'GeoreferencedDate', 
+      'GeoreferenceProtocol', 'GeoreferenceSources', 'GeoreferenceVerificationStatus', 
+      'GeoreferenceRemarks'],
 
     DWC_GEO: ['GeologicalContextID', 'EarliestEonOrLowestEonothem', 
       'LatestEonOrHighestEonothem', 'EarliestEraOrLowestErathem', 
@@ -62,32 +65,31 @@ define([
       'HighestBiostratigraphicZone', 'LithostratigraphicTerms', 'Group', 'Formation', 
       'Member', 'Bed'],
 
-    DWC_ID: ['IdentificationID', 'IdentifiedBy', 'DateIdentified', 
-      'IdentificationReferences', 'IdentificationVerificationStatus', 
-      'IdentificationRemarks', 'IdentificationQualifier', 'TypeStatus'],
+    DWC_ID: ['IdentificationID', 'IdentificationQualifier', 'TypeStatus', 'IdentifiedBy', 
+      'DateIdentified', 'IdentificationReferences', 'IdentificationVerificationStatus', 
+      'IdentificationRemarks', 'PreviousIdentifications'],
 
-    DWC_TAXON: ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 
-      'ParentNameUsageID', 'OriginalNameUsageID', 'NameAccordingToID', 
-      'NamePublishedInID', 'TaxonConceptID', 'ScientificName', 'AcceptedNameUsage', 
-      'ParentNameUsage', 'OriginalNameUsage', 'NameAccordingTo', 'NamePublishedIn', 
-      'NamePublishedInYear', 'HigherClassification', 'Kingdom', 'Phylum', 'Class', 
-      'Order', 'Family', 'Genus', 'Subgenus', 'SpecificEpithet', 
+    DWC_TAXON: ['ScientificNameID',  
+      'NamePublishedInID', 'ScientificName', 'AcceptedNameUsage', 'OriginalNameUsage', 
+      'NamePublishedIn', 'NamePublishedInYear', 'HigherClassification', 'Kingdom', 
+      'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Subgenus', 'SpecificEpithet', 
       'InfraspecificEpithet', 'TaxonRank', 'VerbatimTaxonRank', 
       'ScientificNameAuthorship', 'VernacularName', 'NomenclaturalCode', 
-      'TaxonomicStatus', 'NomenclaturalStatus', 'TaxonRemarks'],
+      'TaxonomicStatus'],
 
     DWC_SUMMARY: ['InstitutionCode', 'CollectionCode', 'CatalogNumber',
       'Preparations', 'BasisOfRecord', 'Year', 'Country', 'State', 'County',
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
-    VN_INDEX: ['Rank', 'Networks', 'Keyname', 'ICode', 'Fossil', 'Tissue', 
-      'Media', 'HasTypeStatus', 'Mappable', 'Resource', 'Type'],
+    VN_INDEX: ['Keyname', 'HasLicense', 'Rank', 'Mappable', 'HashID', 
+      'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'HasLength', 
+      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks'],
 
     VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
-      'LifeStage', 'DerivedLifeStage', 'Sex', 'DerivedSex'],
+      'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
 
     DWC_ALL: function() {
-      return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_EVENT, 
+      return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_ORGANISM, this.DWC_EVENT, 
         this.DWC_LOCATION, this.DWC_GEO, this.DWC_ID, this.DWC_TAXON, this.VN_TRAIT);
     },
     
@@ -100,22 +102,28 @@ define([
 //    For every indexfield defined here, there must be a corresponding reference in the 
 //    index handler in webapp/www/js/app/views/detail.js
 //    and a corresponding UI object in webapp/www/js/app/views/detail.html
-      if (rank) indexfields['rank']=this.get('rank');
-      if (networks) indexfields['networks']=this.get('networks');
-      if (keyname) indexfields['keyname']=this.get('keyname');
       if (icode) indexfields['icode']=this.get('icode');
-      if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
       if (gbifpublisherid) indexfields['gbifpublisherid']=this.get('gbifpublisherid');
-//      if (fossil) indexfields['fossil']=this.get('fossil');
-//      if (tissue) indexfields['tissue']=this.get('tissue');
-//      if (media) indexfields['media']=this.get('media');
-//      if (hastypestatus) indexfields['hastypestatus']=this.get('hastypestatus');
-//      if (mappable) indexfields['mappable']=this.get('mappable');
-//      if (resource) indexfields['resource']=this.get('resource');
-//      if (type) indexfields['type']=this.get('type');
+      if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
+      if (keyname) indexfields['keyname']=this.get('keyname');
+      if (occurrenceid) indexfields['occurrenceid']=this.get('occurrenceid');
+      if (id) indexfields['id']=this.get('id');
+      if (networks) indexfields['networks']=this.get('networks');
+      if (rank) indexfields['rank']=this.get('rank');
+      if (haslicense) indexfields['haslicense']=this.get('haslicense');
+      if (hastypestatus) indexfields['hastypestatus']=this.get('hastypestatus');
+      if (hastissue) indexfields['hastissue']=this.get('hastissue');
+      if (hasmedia) indexfields['hasmedia']=this.get('hasmedia');
+      if (haslength) indexfields['haslength']=this.get('haslength');
+      if (hasmass) indexfields['hasmass']=this.get('hasmass');
+      if (hassex) indexfields['hassex']=this.get('hassex');
+      if (haslifestage) indexfields['haslifestage']=this.get('haslifestage');
+      if (isfossil) indexfields['isfossil']=this.get('isfossil');
+      if (wascaptive) indexfields['wascaptive']=this.get('wascaptive');
+      if (mappable) indexfields['mappable']=this.get('mappable');
+      if (hashid) indexfields['hashid']=this.get('hashid');
       return indexfields;
     },
-
 
     getQualityFlags: function() {
 
@@ -141,7 +149,6 @@ define([
         "negatedLongitude": "Could not be assessed"
       }
 
-
       if (country == 'Not specified' || country == 'N/A') {
         country = null;    
       } else if (country == 'USA' || country == 'U.S.A.') {  // PATCH: Convert 'USA' and 'U.S.A.' into 'US' for the quality api
@@ -165,7 +172,6 @@ define([
         lon = "";
       }
 
-
       url = url.concat('?decimalLatitude=',lat,'&decimalLongitude=',lon,'&countryCode=',country,'&scientificName=',binomial);
       console.log(url);
 
@@ -186,7 +192,6 @@ define([
       issues_final['showMissing'] = false;
       issues_final['showWarning'] = false;
       issues_final['showError'] = false;
-
 
       if (issues) {
         if ('flags' in issues) {
@@ -273,8 +278,6 @@ define([
       return issues_final;
     },
 
-
-    
     getOccIdentifier: function() {
       var occid = this.get('institutioncode');
       if (this.get('collectioncode')) {
@@ -330,18 +333,21 @@ define([
       if (this.get('country')) {
         loc += this.get('country');
       }
+
       if (this.get('stateprovince')) {
         if (this.get('country')) {
           loc += ', ';
         }
         loc += this.get('stateprovince');
       }
+
       if (this.get('county')) {
         if (this.get('stateprovince')) {
           loc += ', ';
         }
         loc += this.get('county');
       }
+
       if (locality) {
         if (loc.length > 0) {
           loc += ': ';
@@ -379,10 +385,12 @@ define([
     },
 
     occ: function() {
-      var results = this._terms(this.DWC_OCC);
-      results['OccurrenceID'] = this.get('id');
-      return results;
-    }, 
+      return this._terms(this.DWC_OCC);
+    },
+
+    organism: function() {
+      return this._terms(this.DWC_ORGANISM);
+    },
 
     event: function() {
       return this._terms(this.DWC_EVENT);
@@ -405,8 +413,8 @@ define([
     },
 
     all: function() {
-      return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.event(), this.geo(),
-        this.iden(), this.taxon(), this.trait());
+      return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.organism(), 
+        this.event(), this.geo(), this.iden(), this.taxon(), this.trait());
     },
 
     summary: function() {
