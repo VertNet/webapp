@@ -145,10 +145,14 @@
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
-              <% if (val.startsWith('http')) { %>
-                <%= this.model.replaceURLWithHTMLLinks(val) %>
-              <% } else { %>
+              <% if (key == 'BibliographicCitation') { %>
                 <%= val %>
+              <% } else { %>
+                <% if (val.startsWith('http')) { %>
+                  <%= this.model.replaceURLWithHTMLLinks(val) %>
+                <% } else { %>
+                <%= val %>
+                <% } %>
               <% } %>
             </td>
           </tr>
@@ -205,18 +209,20 @@
           <tr>
             <td><%= key %></td>
             <td id="<%= key %>">
-              <% if (val.startsWith('http')) { %>
-                <%= this.model.replaceURLWithHTMLLinks(val) %>
-              <% } else { %>
+              <% if (key == 'BibliographicCitation') { %>
                 <%= val %>
+              <% } else { %>
+                <% if (val.startsWith('http')) { %>
+                  <%= this.model.replaceURLWithHTMLLinks(val) %>
+                <% } else { %>
+                <%= val %>
+                <% } %>
               <% } %>
             </td>
           </tr>
           <% } %>
         <% }, this)); %>
         </tbody>
-      </table> 
-    </div>    
 
     <!-- Occurrence tab.  -->
     <div class="tab-pane" id="occ">
@@ -440,8 +446,11 @@
       <dt>Organization</dt>
       <dd><%= this.model.get('orgname') %></dd>
       <br>
-      <dt>Organization Country</dt>
+      <dt>Organization Location: Country</dt>
       <dd><%= this.model.get('orgcountry') %></dd>
+      <br>
+      <dt>Organization Location: State/Province</dt>
+      <dd><%= this.model.get('orgstateprovince') %></dd>
       <br>
       <dt>Contact</dt>
       <dd>
@@ -467,7 +476,7 @@
       <dt>Migrator</dt>
       <dd><%= this.model.get('migrator') %></dd>
       <br>
-      <dt>Citation</dt>
+      <dt>Data Set Citation</dt>
       <dd><%= this.model.get('citation') %></dd>
     </dl>
   </div>
