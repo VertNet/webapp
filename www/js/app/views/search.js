@@ -275,7 +275,7 @@ define([
         e.preventDefault();
         this.$('#advanced-search-form').show();
         this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
-        this.$('#allwords').focus();
+        this.$('#inst-dropdown').focus();
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
         if (this.spatialMap) {
@@ -603,8 +603,10 @@ $('#return-to-top').click(function() {      // When arrow is clicked
       var mend = this.$('#monthend').val();
       var dstart = this.$('#daystart').val();
       var dend = this.$('#dayend').val();
-      var startdy = this.$('#startdayyear').val();
-      var enddy = this.$('#enddayyear').val();	  
+      var startdyst = this.$('#startdayyearstart').val();
+      var startdye = this.$('#startdayyearend').val();
+      var enddyst = this.$('#enddayyearstart').val();
+      var enddye = this.$('#enddayyearend').val();	  	  
 	  var massingstart = this.$('#massstart').val();
 	  var massingend = this.$('#massend').val();
 	  var lengthinmmstart = this.$('#lengthstart').val();
@@ -682,19 +684,33 @@ $('#return-to-top').click(function() {      // When arrow is clicked
         query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
       }
 	  
-      if (startdy && !enddy) {
-        startdy = Number(startdy);
-        query += [ ' startdayofyear >= ', startdy].join('');      
+      if (startdyst && !startdye) {
+        startdyst = Number(startdyst);
+        query += [ ' startdayofyear >= ', startdyst].join('');      
       }
-      if (!startdy && enddy) {
-        enddy = Number(enddy);
-        query += [' enddayofyear <= ', enddy].join('');
+      if (!startdyst && startdye) {
+        startdye = Number(startdye);
+        query += [' startdayofyear <= ', startdye].join('');
       }
-      if (startdy && enddy) {
-        startdy = Number(startdy);
-        enddy = Number(enddy);
-        query += [ ' startdayofyear >= ', startdy, ' enddayofyear <= ', enddy].join('');      
+      if (startdyst && startdye) {
+        startdyst = Number(startdyst);
+        startdye = Number(startdye);
+        query += [ ' startdayofyear >= ', startdyst, ' startdayofyear <= ', startdye].join('');      
       }	  
+
+      if (enddyst && !enddye) {
+        enddyst = Number(enddyst);
+        query += [ ' enddayofyear >= ', enddyst].join('');      
+      }
+      if (!enddyst && enddye) {
+        enddye = Number(enddye);
+        query += [' enddayofyear <= ', enddye].join('');
+      }
+      if (enddyst && enddye) {
+        enddyst = Number(enddyst);
+        enddye = Number(enddye);
+        query += [ ' enddayofyear >= ', enddyst, ' enddayofyear <= ', enddye].join('');      
+      }	 
 	  
       if (massingstart && !massingend) {
         massingstart = Number(massingstart);
