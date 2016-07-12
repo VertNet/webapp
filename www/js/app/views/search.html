@@ -23,44 +23,49 @@
   <div class="page-header">
     <h1>Search <small>VertNet</small></h1>
   </div>
+
+<!-- BEGIN HELP LINKS -->  
     <p><a href="http://vertnet.org/resources/help.html#t-tab2" title="Link to VN Portal Help page" target="_blank"> Need Help?</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" title="Link to VN Portal Advanced Search Guide" target="_blank"> Advanced Search Guide</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small>&nbsp;<a href="../publishers" title="Link to VN Portal Publishers" target="_blank"> Institution Codes</a>&nbsp;<small><b class="glyphicon glyphicon-share-alt"></b></small></p>
+<!-- END HELP LINKS -->
+ 
   <div id="whoops" class="alert fade in">
     <button type="button" class="close" data-dismiss="alert">×</button>
     Search is a little slow right now. Automatically retrying ...
   </div>
+<!-- BEGIN SEARCH FORM -->   
   <div id="search-form">
     <div class="row">
      <div class="col-lg-11">
-      <div id="search-keywords-div">
-        <input id="search-keywords-box" type="text" placeholder="full text record search...">
-        <a id="show-search-options" href="#">
-          <span id="search-carat" class="caretAdvanced"><h7 class="small">advanced search options</h7></span>
-        </a>
-      </input>
-    </div>            
+      	<div id="search-keywords-div">
+        	<input id="search-keywords-box" type="text" placeholder="full text record search...">
+        		<a id="show-search-options" href="#">
+          			<span id="search-carat" class="caretAdvanced"><h7 class="small">advanced search options</h7></span>
+        		</a>
+      		</input>
+    	</div>
+<!-- BEGIN ADVANCED SEARCH FORM -->                     
     <div id="advanced-search-form">
       <button id="close-advanced-search" type="button" class="close" data-dismiss="alert">×</button>
-      
-
       <form class="form-horizontal" role="form">
       <div class="form-group">
       	<label class="col-lg-10 control-label"><VNlegend>Find records with...</VNlegend></label>
           <div class ="col-lg-2">
           	<button type="reset" class="btn btn-sm btn-info">Clear all search terms</button>
           </div>
-      </div>
-<!-- START DWC -->       
+      </div>      
              <div class="form-group">
+<!-- START ROW 1 -->
             <label class="col-lg-2 control-label"><!--<a id="show-instCode-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="instCode-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; Darwin Core terms</label>
               <div class="col-lg-10">
             <select class="form-control" id="inst-dropdown">             
             </select>
               </div>
               </div>
-
+<!-- START DWC -->
         <div id="dwcterm">
+<!-- START ROW 2 -->        
           <div class="form-group">
-            <label class="col-lg-2 control-label"><!--<a id="show-dcTerms-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="dcTerms-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; </label>         
+            <label class="col-lg-2 control-label"> &nbsp; </label>         
               <div class="vn-col-md-2">
                 <input id="collectioncode" class="form-control" type="text" placeholder="CollectionCode">
               </div>
@@ -68,19 +73,8 @@
                  &nbsp;&nbsp;&nbsp;
           </div>
               <div class="vn-col-md-2">
-            <select class="form-control" id="bofr-dropdown" placeholder="BasisOfRecord">
-              <option value="">basisOfRecord</option>
-              <option>PreservedSpecimen</option>
-              <option>FossilSpecimen</option>
-              <option>LivingSpecimen</option>                            
-              <option>HumanObservation</option>              
-              <option>MachineObservation</option>              
-            </select>
-              </div>          
-                         
-<!--              <div class="vn-col-md-2">
-                <input id="basisofrecord" class="form-control" type="text" placeholder="BasisOfRecord">
-              </div>-->
+                <input id="catalognumber" class="form-control" type="text" placeholder="CatalogNumber">
+              </div>                        
            <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
           </div>              
@@ -91,21 +85,28 @@
                  &nbsp;&nbsp;&nbsp;
           </div>                                       
               <div class="vn-col-md-2">
-                <input id="catalognumber" class="form-control" type="text" placeholder="CatalogNumber">
-              </div>
+                <input id="fieldnumber" class="form-control" type="text" placeholder="FieldNumber">
+              </div>  
            <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
           </div>               
               <div class="vn-col-md-2">
-                <input id="license" class="form-control" type="text" placeholder="License">
+                <input id="recordnumber" class="form-control" type="text" placeholder="RecordNumber">
               </div>                                                          
             </div>
-            
+<!-- START ROW 3 -->            
             <div class="form-group">
-              <label class="col-md-2 control-label"></label>            
+              <label class="col-md-2 control-label"></label>
               <div class="vn-col-md-2">
-                <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
-              </div> 
+            <select class="form-control" id="bofr-dropdown" placeholder="BasisOfRecord">
+              <option value="">basisOfRecord</option>
+              <option>PreservedSpecimen</option>
+              <option>FossilSpecimen</option>
+              <option>LivingSpecimen</option>                            
+              <option>HumanObservation</option>              
+              <option>MachineObservation</option>              
+            </select>
+              </div>     
            <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
           </div>                             
@@ -127,11 +128,11 @@
             <div class="col-md-0">
                  &nbsp;&nbsp;&nbsp;
           </div>               
-                                                      
+              <div class="vn-col-md-2">
+                <input id="recordedby" class="form-control" type="text" placeholder="RecordedBy">
+              </div>                                                       
             </div>
-            
-
-        
+ <!-- START ROW 4 -->                   
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
                 <div class="vn-col-md-2">
@@ -162,7 +163,7 @@
                   <input id="locality" class="form-control" type="text" placeholder="Locality">
                 </div>                
             </div>
-            
+<!-- START ROW 5 -->            
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
               <div class="vn-col-md-2">
@@ -192,23 +193,36 @@
               <div class="vn-col-md-2">
                 <input id="specificepithet" class="form-control" type="text" placeholder="SpecificEpithet">
               </div>            
-            </div>
-           
+            </div>           
           </div> 
 <!-- END DWC --> 
 <!-- START DATES -->
-            <div class="form-group">
-              <label class="col-md-2 control-label"></label>            
-              <div class="vn-col-md-2">
-                <input id="startdayyear" class="form-control" type="text" placeholder="StartDayOfYear">
-              </div>
-             <div id="dateto" class="col-md-0">
-                 to
-          </div>               
-               <div class="vn-col-md-2">
-                <input id="enddayyear" class="form-control" type="text" placeholder="EndDayOfYear">
-              </div> 
-              </div> 
+<!-- START ROW 6 -->
+<div class="form-group">
+    <label class="col-md-2 control-label"></label>            
+    <div class="vn-col-md-2">
+    	<input id="startdayyearstart" class="form-control" type="text" placeholder="StartDayOfYear">
+    </div>
+    <div id="dateto" class="col-md-0">
+     to
+    </div>               
+    <div class="vn-col-md-2">
+    	<input id="startdayyearend" class="form-control" type="text" placeholder="StartDayOfYear">
+    </div> 
+    <div class="col-md-0">
+         &nbsp;&nbsp;&nbsp;
+    </div>     
+    <div class="vn-col-md-2">
+    	<input id="enddayyearstart" class="form-control" type="text" placeholder="EndDayOfYear">
+    </div>
+    <div id="dateto" class="col-md-0">
+     to
+    </div>               
+    <div class="vn-col-md-2">
+    	<input id="enddayyearend" class="form-control" type="text" placeholder="EndDayOfYear">
+    </div>               
+</div>
+<!-- START ROW 7 -->               
         <div class="form-group">
           <label class="col-lg-2 control-label"> &nbsp; </label>
           <div class="vn-col-md-2">
@@ -233,46 +247,22 @@
             <input class="form-control" type="text" id="monthend" placeholder="Month (e.g. 5)">
           </div>                            
         </div>
-<!-- END DATES -->        
-
-<!-- START DATES 
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><a id="show-years-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="years-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Years from </label>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="datestart">
-          </div>
-          <div id="dateto" class="col-md-0">
-          to
-          </div>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="dateend">
-          </div>                  
-        </div>
-        
-        <div class="form-group">
-          <label class="col-lg-2 control-label"><a id="show-months-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="months-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Months from </label>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="monthstart">
-          </div>
-          <div id="dateto" class="col-md-0">
-          to
-          </div>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="monthend">
-          </div>
-        </div> 
- END DATES -->      
+<!-- END DATES -->     
       
-      <!-- START FILTERS -->
+<!-- START FILTERS -->
         <div id="filters">
           <div class="form-group">
-            <label class="col-lg-2 control-label"><!--<a id="show-thesefilters-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="thesefilters-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a> --> &nbsp; These filters</label>
+            <label class="col-lg-2 control-label"> &nbsp; These filters</label>
             <div class="vncheckbox">
               <label class="vn-col-md-2-ckbx control-label">
                Is fossil <input id="fossil" type="checkbox"> 
               </label>
               <label class="vn-col-md-2-ckbx control-label">
-               <a id="show-hasTissues-tip" href="http://vertnet.org/resources/help.html#t-tab3" target="_blank"><span id="hasTissues-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Has tissues <input id="tissue" type="checkbox">
+                   <a id="show-hasTissues-tip" href="http://vertnet.org/resources/help.html#t-tab3" target="_blank">
+                    <span id="hasTissues-tip" class="infotipDisplay">
+                        <b class="glyphicon glyphicon-info-sign infotip"></b>
+                    </span>
+                   </a>Has tissues <input id="tissue" type="checkbox">
               </label>
               <label class="vn-col-md-2-ckbx control-label">
                Has media <input id="media" type="checkbox"> 
@@ -365,9 +355,7 @@
             </select>
           </div>
         </div>
-        
 <!-- END RECORD TYPE -->
-
 
 <!-- START KEYWORDS -->
 
@@ -399,27 +387,7 @@
           </div>
         </div>
 <!-- END KEYWORDS --> 
-
-        
- 
-          
-          
-          
- 
-        <!--<div class="form-group">
-          <label class="col-lg-2 control-label"><a id="show-years-tip" href="http://www.vertnet.org/resources/advancedsearchoptionsguide.html" target="_blank"><span id="years-tip" class="infotipDisplay"><b class="glyphicon glyphicon-info-sign infotip"></b></span></a>Days ranging from</label>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="daystart" placeholder='9'>
-          </div>
-          <div id="dateto" class="col-md-0">
-          to
-          </div>
-          <div class="vn-col-md-2">
-            <input class="form-control" type="text" id="dayend" placeholder='15'>
-          </div>
-        </div> -->
-                               
-      </form>
+</form>
       
       <div class="spacer"></div>
     </div>
@@ -488,8 +456,9 @@
       </tbody>
     </table>
 
-    <!-- Return to Top -->
-<a href="javascript:" id="return-to-top"><i class="glyphicon glyphicon-arrow-up"></i></a>    
+<!-- BEGIN RETURN TO TOP -->
+<a href="javascript:" id="return-to-top"><i class="glyphicon glyphicon-arrow-up"></i></a>
+<!-- END RETURN TO TOP -->    
     
     <div id="bottom-pager" class="row">
       <div class="col-lg-6">
