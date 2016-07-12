@@ -105,7 +105,7 @@ define([
           if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
           if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
           if (issues.occurrenceid) { this.$('#occurrenceid').text(issues.occurrenceid.toString()); }
-          if (issues.id) { this.$('#id').text(issues.id.toString()); }
+          if (issues.iptrecordid) { this.$('#iptrecordid').text(issues.iptrecordid.toString()); }
           if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
           if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
           if (issues.haslicense) { this.$('#haslicense').text(issues.haslicense.toString()); }

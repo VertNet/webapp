@@ -107,7 +107,7 @@ define([
       if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
       if (keyname) indexfields['keyname']=this.get('keyname');
       if (occurrenceid) indexfields['occurrenceid']=this.get('occurrenceid');
-      if (id) indexfields['id']=this.get('id');
+      if (iptrecordid) indexfields['iptrecordid']=this.get('iptrecordid');
       if (networks) indexfields['networks']=this.get('networks');
       if (rank) indexfields['rank']=this.get('rank');
       if (haslicense) indexfields['haslicense']=this.get('haslicense');
