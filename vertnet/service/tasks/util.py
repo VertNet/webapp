@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import urllib
+import urllib2
 import logging
 import json
 from google.appengine.api import urlfetch
