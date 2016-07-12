@@ -630,7 +630,7 @@ $('#return-to-top').click(function() {      // When arrow is clicked
 
       query = [all, exact].join(' ');
       if (type !== '') {
-        query += [' type:', type].join('');
+        query += [' vntype:', type].join('');
       }
       
       this._prepTerms();
