@@ -589,20 +589,23 @@ define([
       var mend = this.$('#monthend').val();
       var dstart = this.$('#daystart').val();
       var dend = this.$('#dayend').val();
+      var startdy = this.$('#startdayyear').val();
+      var enddy = this.$('#enddayyear').val();	  
 	  var massingstart = this.$('#massstart').val();
 	  var massingend = this.$('#massend').val();
 	  var lengthinmmstart = this.$('#lengthstart').val();
 	  var lengthinmmend = this.$('#lengthend').val();
 	  var inst = this.$('#inst-dropdown :selected').val();
+	  var bofr = this.$('#bofr-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
 
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
-      if (type === 'Specimen') {
+      if (type === 'specimen') {
         type = 'specimen';
       }
-      if (type === 'Observation') {
+      if (type === 'observation') {
         type = 'observation';
       }
       if (type === 'Any type') {
@@ -665,6 +668,20 @@ define([
         query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
       }
 	  
+      if (startdy && !enddy) {
+        startdy = Number(startdy);
+        query += [ ' startdayofyear >= ', startdy].join('');      
+      }
+      if (!startdy && enddy) {
+        enddy = Number(enddy);
+        query += [' enddayofyear <= ', enddy].join('');
+      }
+      if (startdy && enddy) {
+        startdy = Number(startdy);
+        enddy = Number(enddy);
+        query += [ ' startdayofyear >= ', startdy, ' enddayofyear <= ', enddy].join('');      
+      }	  
+	  
       if (massingstart && !massingend) {
         massingstart = Number(massingstart);
         query += [ ' massing >= ', massingstart].join('');      
@@ -696,6 +713,10 @@ define([
 	  if (inst !== '') {
 		  query += [' institutioncode:', inst].join('');
 	  }
+	  
+	  if (bofr !== '') {
+		  query += [' basisofrecord:', bofr].join('');
+	  }	  
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
@@ -881,8 +902,8 @@ define([
         if (val) { 
           // Enclose country, stateprovince and county search terms in double quotes to
           // support, for example, a search on "Virginia" that does not return records for
-          // "West Virginia".
-          if (key == 'country' || key == 'stateprovince' || key == 'county'){
+          // "West Virginia". Also include iptrecordid/occurrenceID and license in double quotes as these two terms often have punctuation in the values.
+          if (key == 'country' || key == 'stateprovince' || key == 'county' || key == 'iptrecordid' || key == 'license'){
             return key + ':"' + val + '" ' + memo;
           }
           return key + ':' + val + ' ' + memo;
@@ -959,10 +980,15 @@ define([
         if (!store.get('protip-closed')) {
           this.$('#click-row-tip').show();       
         } 
-        table.show();
-		$('html, body').animate({
-    		scrollTop: $('#resultTabs').offset().top
-	}, 1000);
+        
+		this.$('#advanced-search-form').hide(); 
+		this.$('#search-keywords-div').show();
+		table.show();
+               
+
+//		$('html, body').animate({
+//    		scrollTop: $('#resultTabs').offset().top
+//	}, 1000);
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();
