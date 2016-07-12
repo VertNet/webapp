@@ -415,7 +415,21 @@ define([
 			this.$('#show-months-tip').tooltip('show');
 		  }, this)).mouseout(_.bind(function(e) {
 			this.$('#show-months-tip').tooltip('hide');
-		  }, this));		  
+		  }, this));	
+		  
+// ===== Scroll to Top ==== 
+$(window).scroll(function() {
+    if ($(this).scrollTop() >= 50) {        // If page is scrolled more than 50px
+        $('#return-to-top').fadeIn(200);    // Fade in the arrow
+    } else {
+        $('#return-to-top').fadeOut(200);   // Else fade out the arrow
+    }
+});
+$('#return-to-top').click(function() {      // When arrow is clicked
+    $('body,html').animate({
+        scrollTop : 0                       // Scroll to top of body
+    }, 500);
+});		  	  
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
 	$.getJSON("https://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
