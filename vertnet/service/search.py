@@ -9,7 +9,13 @@ import os
 import json
 import logging
 
-SEARCH_VERSION='search.py 2015-08-29T21:04:44+02:00'
+# In an attempt to overcome timeouts in searches that produce the following exception
+# message:
+# 
+from google.appengine.api import urlfetch
+urlfetch.set_default_fetch_deadline(60)
+
+SEARCH_VERSION='search.py 2016-07-19T15:18+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
@@ -48,6 +54,10 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
         expressions.append(SortExpression(expression=sort, default_value='z', 
             direction=SortExpression.ASCENDING))
         sort_options = SortOptions(expressions=expressions, limit=limit)
+        s = 'Sorting is supposedly disabled, '
+        s += 'this code should never be executed: %s' % sort_options
+        s += '\nVersion: %s' % SEARCH_VERSION
+        logging.info(s)
 #        logging.info('Sort options: %s\nVersion: %s' % (sort_options, SEARCH_VERSION) )
     
         options = search.QueryOptions(
@@ -73,7 +83,11 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
         try:
             query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
-            results = search.Index(name=index_name, namespace=namespace).search(query)
+            logging.info('Trying Query: %s\nOptions: %s\nVersion: %s' % (q, options, SEARCH_VERSION))
+#            results = search.Index(name=index_name, namespace=namespace).search(query)
+            # Trying with an explicitly set deadline of 20s to overcome failed queries on
+            # multiple "booleans" such as haslength, hasmass, hasmedia, isfossil, etc.
+            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
             if results:
                 recs = map(_get_rec, results)
 #                logging.info('Query: %s results from search.Index() for namespace=%s \
@@ -86,7 +100,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
                     SEARCH_VERSION))
                 return [], None, 0, SEARCH_VERSION
         except Exception, e:
-            logging.error('Search failed.\nQUERY:\n %s\nERROR:\n%s\nVersion: %s' 
+            logging.error('Search failed.\nQUERY: %s\nERROR:%s\nVersion: %s' 
                 % (q,e,SEARCH_VERSION) )
             error = e
             retry_count += 1
@@ -130,7 +144,10 @@ def query_rec_counter(q, limit, index_name='dwc', sort=None, curs=search.Cursor(
         try:
             query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
-            results = search.Index(name=index_name, namespace=namespace).search(query)
+#            results = search.Index(name=index_name, namespace=namespace).search(query)
+            # Trying with an explicitly set deadline of 20s to overcome failed queries on
+            # multiple "booleans" such as haslength, hasmass, hasmedia, isfossil, etc.
+            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
             if results:
                 recs = len(results.results)
                 return recs, results.cursor, SEARCH_VERSION

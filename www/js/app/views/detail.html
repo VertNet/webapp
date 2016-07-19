@@ -31,7 +31,7 @@
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Record Detail<b class="caret"></b></a>
       <ul class="dropdown-menu">
         <li><a href="#summary" data-toggle="tab">All Terms</a></li>
-        <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
+        <li><a href="#reclevel" data-toggle="tab">Record-level</a></li>
         <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
         <li><a href="#organism" data-toggle="tab">Organism</a></li>
         <li><a href="#event" data-toggle="tab">Event</a></li>
@@ -143,18 +143,20 @@
           var val = this.model.all()[key]; 
           if (val) { %>
           <tr>
-            <td><%= key %></td>
-            <td id="<%= key %>">
-              <% if (key == 'BibliographicCitation') { %>
-                <%= val %>
+            <% if (key == 'BibliographicCitation') { %>
+              <td>Record Citation</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %>
+              <td><%= key %></td>
+              <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
-                <% if (val.startsWith('http')) { %>
-                  <%= this.model.replaceURLWithHTMLLinks(val) %>
-                <% } else { %>
                 <%= val %>
-                <% } %>
               <% } %>
-            </td>
+              </td>
+            <% } %>
           </tr>
           <% } %>
         <% }, this)); %>
@@ -198,7 +200,7 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>RecordLevel Term</th>
+            <th>Record-level Term</th>
             <th>Value</th>
           </tr>
         </thead>
@@ -207,18 +209,20 @@
           var val = this.model.reclevel()[key]; 
           if (val) { %>
           <tr>
-            <td><%= key %></td>
-            <td id="<%= key %>">
-              <% if (key == 'BibliographicCitation') { %>
-                <%= val %>
+            <% if (key == 'BibliographicCitation') { %>
+              <td>Record Citation</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %>
+              <td><%= key %></td>
+              <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
-                <% if (val.startsWith('http')) { %>
-                  <%= this.model.replaceURLWithHTMLLinks(val) %>
-                <% } else { %>
                 <%= val %>
-                <% } %>
               <% } %>
-            </td>
+              </td>
+            <% } %>
           </tr>
           <% } %>
         <% }, this)); %>
@@ -442,17 +446,22 @@
     <p>
     <!-- <p class="lead">Data rights</p> -->
     <dl class="">
-      <dt>Resource Title</dt>
-      <dd><%= this.model.get('title') %></dd>
+      <dt>Data Set</dt>
+      <dd><%= this.model.get('title') %> <a target="_blank" href="http://gbif.org/dataset/<%= this.model.get('gbifdatasetid') %>">http://gbif.org/dataset/<%= this.model.get('gbifdatasetid') %></a></dd>
+      <br>
+      <dt>Data Set Citation</dt>
+      <dd><%= this.model.get('citation') %></dd>
       <br>
       <dt>Organization</dt>
-      <dd><%= this.model.get('orgname') %></dd>
+      <dd><%= this.model.get('orgname') %> <a target="_blank" href="http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %>">http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %></a></dd>
       <br>
-      <dt>Organization Location: Country</dt>
-      <dd><%= this.model.get('orgcountry') %></dd>
+      <dt>Organization Location</dt>
+      <dd><%= this.model.get('orgcountry') %> <%= this.model.get('orgstateprovince') %></dd>
+<!--
       <br>
       <dt>Organization Location: State/Province</dt>
       <dd><%= this.model.get('orgstateprovince') %></dd>
+-->
       <br>
       <dt>Contact</dt>
       <dd>
@@ -472,14 +481,11 @@
               Please contact the <a target="_blank" href="<%= this.model.get('source_url') %>">data publisher</a> for details concerning the use of these data.
             <% } %></dd>
       <br>
-      <dt>Published</dt>
+      <dt>Source Published Date</dt>
       <dd><%= this.model.get('pubdate') %></dd>
       <br>
-      <dt>Migrator</dt>
+      <dt>VertNet Migrator Date</dt>
       <dd><%= this.model.get('migrator') %></dd>
-      <br>
-      <dt>Data Set Citation</dt>
-      <dd><%= this.model.get('citation') %></dd>
     </dl>
   </div>
     
