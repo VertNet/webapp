@@ -100,7 +100,8 @@ define([
 //        For every indexfield defined here, there must be a corresponding reference in
 //        getIndexFields in webapp/www/js/app/models/detail.js
 //        and a corresponding UI object in webapp/www/js/app/views/detail.html
-          if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
+          if (issues.lastindexed) { this.$('#lastindexed').text(issues.lastindexed.toString()); }
+		  if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
           if (issues.gbifpublisherid) { this.$('#gbifpublisherid').text(issues.gbifpublisherid.toString()); }
           if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
           if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
