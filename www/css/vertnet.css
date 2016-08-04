@@ -345,8 +345,8 @@ input.span2.search {
 
 #show-search-options {
 	height:20px;
-	padding: 5px;
-	margin-left:-35px
+	padding: 0px;
+	margin-left:-5px
 
 }
 
@@ -425,7 +425,7 @@ input.span2.search {
 	box-shadow:none !important;
 	padding-left: 15px;
 	border: none; 
-	width: 95%; 
+	width: 94%; 
 	/*line-height: 52px; */
 	/*padding: 0px 0px 0px 0px;	*/
 	font-size: 30px;
