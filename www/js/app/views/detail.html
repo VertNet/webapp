@@ -424,8 +424,13 @@
             <% } else if (key == 'LengthUnitsInferred') { %>
               <td>Are length units inferred?</td>
               <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else if (val == 1) { %>
+              Yes
+              <% } else { %>
               <%= val %>              
-            <% } else if (key == 'MassUnitsInferred') { %>
+            <% }} else if (key == 'MassUnitsInferred') { %>
               <td>Are mass units inferred?</td>
               <td id="<%= key %>">
               <%= val %>                             
