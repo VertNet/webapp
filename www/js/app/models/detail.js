@@ -83,7 +83,7 @@ define([
 
     VN_INDEX: ['Keyname', 'HasLicense', 'Rank', 'Mappable', 'HashID', 
       'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'HasLength', 
-      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 'LastIndexed'],
+      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 'lastindexed'],
 
     VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
       'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
