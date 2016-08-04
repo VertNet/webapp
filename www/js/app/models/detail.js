@@ -102,7 +102,8 @@ define([
 //    For every indexfield defined here, there must be a corresponding reference in the 
 //    index handler in webapp/www/js/app/views/detail.js
 //    and a corresponding UI object in webapp/www/js/app/views/detail.html
-      if (icode) indexfields['icode']=this.get('icode');
+      if (lastindexed) indexfields['lastindexed']=this.get('lastindexed');
+	  if (icode) indexfields['icode']=this.get('icode');
       if (gbifpublisherid) indexfields['gbifpublisherid']=this.get('gbifpublisherid');
       if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
       if (keyname) indexfields['keyname']=this.get('keyname');
