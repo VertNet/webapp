@@ -152,8 +152,8 @@
               <td>Sex from source</td>
               <td id="<%= key %>">
               <%= val %>
-            <% } else if (key == 'UnderivedLifestage') { %>
-              <td>Lifestage from source</td>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
               <td id="<%= key %>">
               <%= val %>
             <% } else if (key == 'LengthUnitsInferred') { %>
@@ -417,8 +417,8 @@
               <td>Sex from source</td>
               <td id="<%= key %>">
               <%= val %>
-            <% } else if (key == 'UnderivedLifestage') { %>
-              <td>Lifestage from source</td>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
               <td id="<%= key %>">
               <%= val %>
             <% } else if (key == 'LengthUnitsInferred') { %>
@@ -491,7 +491,7 @@
       <dd><%= this.model.get('orgname') %> <a target="_blank" href="http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %>">http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %></a></dd>
       <br>
       <dt>Organization Location</dt>
-      <dd><%= this.model.get('orgcountry') %> <%= this.model.get('orgstateprovince') %> <%= this.model.get('orgcity') %></dd>
+      <dd><%= this.model.get('orgcountry') %> <%= this.model.get('orgstateprovince') %></dd>
 <!--
       <br>
       <dt>Organization Location: State/Province</dt>
