@@ -100,12 +100,13 @@ define([
 //        For every indexfield defined here, there must be a corresponding reference in
 //        getIndexFields in webapp/www/js/app/models/detail.js
 //        and a corresponding UI object in webapp/www/js/app/views/detail.html
-          if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
+		  if (issues.icode) { this.$('#icode').text(issues.icode.toString()); }
           if (issues.gbifpublisherid) { this.$('#gbifpublisherid').text(issues.gbifpublisherid.toString()); }
           if (issues.gbifdatasetid) { this.$('#gbifdatasetid').text(issues.gbifdatasetid.toString()); }
           if (issues.keyname) { this.$('#keyname').text(issues.keyname.toString()); }
           if (issues.occurrenceid) { this.$('#occurrenceid').text(issues.occurrenceid.toString()); }
           if (issues.iptrecordid) { this.$('#iptrecordid').text(issues.iptrecordid.toString()); }
+          if (issues.lastindexed) { this.$('#lastindexed').text(issues.lastindexed.toString()); }
           if (issues.networks) { this.$('#networks').text(issues.networks.toString()); }
           if (issues.rank) { this.$('#rank').text(issues.rank.toString()); }
           if (issues.haslicense) { this.$('#haslicense').text(issues.haslicense.toString()); }

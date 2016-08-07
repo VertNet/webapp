@@ -28,9 +28,9 @@
       <span class="glyphicon glyphicon-flag icon-white"></span>
     </button>
     <li class="active, dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Record Detail<b class="caret"></b></a>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Record detail<b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="#summary" data-toggle="tab">All Terms</a></li>
+        <li><a href="#summary" data-toggle="tab">All terms</a></li>
         <li><a href="#reclevel" data-toggle="tab">Record-level</a></li>
         <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
         <li><a href="#organism" data-toggle="tab">Organism</a></li>
@@ -70,6 +70,7 @@
             <tr><td>Keyname</td><td id="keyname"></td></tr> 
             <tr><td>Occurrence ID</td><td id="occurrenceid"></td></tr> 
             <tr><td>IPT Record ID</td><td id="iptrecordid"></td></tr> 
+            <tr><td>Last indexed</td><td id="lastindexed"></td></tr>
             <tr><td>Networks</td><td id="networks"></td></tr> 
             <tr><td>Rank</td><td id="rank"></td></tr> 
             <tr><td>Has license</td><td id="haslicense"></td></tr> 
@@ -147,7 +148,29 @@
               <td>Record Citation</td>
               <td id="<%= key %>">
               <%= val %>
-            <% } else { %>
+            <% } else if (key == 'UnderivedSex') { %>
+              <td>Sex from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthUnitsInferred') { %>
+              <td>Are length units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes              
+            <% }} else if (key == 'MassUnitsInferred') { %>
+              <td>Are mass units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes                             
+            <% }} else { %> 
               <td><%= key %></td>
               <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
@@ -396,6 +419,29 @@
           var val = this.model.trait()[key]; 
           if (val) { %>
           <tr>
+            <% if (key == 'UnderivedSex') { %>
+              <td>Sex from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthUnitsInferred') { %>
+              <td>Are length units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+			  Yes              
+            <% }} else if (key == 'MassUnitsInferred') { %>
+              <td>Are mass units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes                            
+            <% }} else { %>          
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
@@ -404,6 +450,7 @@
                 <%= val %>
               <% } %>
             </td>
+            <% } %>            
           </tr>
           <% } %>
         <% }, this)); %>
