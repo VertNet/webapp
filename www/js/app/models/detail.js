@@ -83,7 +83,7 @@ define([
 
     VN_INDEX: ['Keyname', 'HasLicense', 'Rank', 'Mappable', 'HashID', 
       'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'HasLength', 
-      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks'],
+      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 'LastIndexed'],
 
     VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
       'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
@@ -99,15 +99,17 @@ define([
 
     getIndexFields: function() {
       var indexfields = {};
+      console.log(this);
 //    For every indexfield defined here, there must be a corresponding reference in the 
 //    index handler in webapp/www/js/app/views/detail.js
 //    and a corresponding UI object in webapp/www/js/app/views/detail.html
-      if (icode) indexfields['icode']=this.get('icode');
+	  if (icode) indexfields['icode']=this.get('icode');
       if (gbifpublisherid) indexfields['gbifpublisherid']=this.get('gbifpublisherid');
       if (gbifdatasetid) indexfields['gbifdatasetid']=this.get('gbifdatasetid');
       if (keyname) indexfields['keyname']=this.get('keyname');
       if (occurrenceid) indexfields['occurrenceid']=this.get('occurrenceid');
       if (iptrecordid) indexfields['iptrecordid']=this.get('iptrecordid');
+      if (lastindexed) indexfields['lastindexed']=this.get('lastindexed');
       if (networks) indexfields['networks']=this.get('networks');
       if (rank) indexfields['rank']=this.get('rank');
       if (haslicense) indexfields['haslicense']=this.get('haslicense');
@@ -412,17 +414,17 @@ define([
       return this._terms(this.VN_TRAIT);
     },
 
+    vnindex: function() {
+      return this._terms(this.VN_INDEX);
+    },
+
     all: function() {
       return _.extend({}, this.loc(), this.reclevel(), this.occ(), this.organism(), 
-        this.event(), this.geo(), this.iden(), this.taxon(), this.trait());
+        this.event(), this.geo(), this.iden(), this.taxon(), this.trait(), this.vnindex());
     },
 
     summary: function() {
       return this._terms(this.DWC_ALL);      
-    },
-
-    vnindex: function() {
-      return this._terms(this.VN_INDEX);
     },
 
     _terms: function(terms) {

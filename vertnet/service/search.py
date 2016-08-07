@@ -15,16 +15,23 @@ import logging
 from google.appengine.api import urlfetch
 urlfetch.set_default_fetch_deadline(60)
 
-SEARCH_VERSION='search.py 2016-07-19T15:18+02:00'
+SEARCH_VERSION='search.py 2016-08-07T19:37+02:00'
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 def _get_rec(doc):
     """ Construct an output record from the index document """
+    lastindexed = None
     for field in doc.fields:
         if field.name == 'verbatim_record':
             rec = json.loads(field.value)
+            # The following are not in the verbatim_record, as they are provided by the 
+            # indexer in their own fields.
             rec['rank'] = doc._rank
+        elif field.name == 'lastindexed':
+            lastindexed = field.value
+#            logging.debug('search.py:_get_rec() doc.fields: %s' % doc.fields)
+    rec['lastindexed'] = lastindexed
     return rec
 
 def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
