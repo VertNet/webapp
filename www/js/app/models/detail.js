@@ -85,8 +85,8 @@ define([
       'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'HasLength', 
       'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 'LastIndexed'],
 
-    VN_TRAIT: ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred', 
-      'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
+    VN_TRAIT: ['LengthInMM', 'LengthType', 'LengthUnitsInferred', 'MassInG', 
+      'MassUnitsInferred', 'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
 
     DWC_ALL: function() {
       return _.union(this.DWC_RECLEVEL, this.DWC_OCC, this.DWC_ORGANISM, this.DWC_EVENT, 
