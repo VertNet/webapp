@@ -613,6 +613,7 @@ $('#return-to-top').click(function() {      // When arrow is clicked
 	  var lengthinmmend = this.$('#lengthend').val();
 	  var inst = this.$('#inst-dropdown :selected').val();
 	  var bofr = this.$('#bofr-dropdown :selected').val();
+	  var ltype = this.$('#ltype-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
 
       if (type === 'Specimen or Observation') {
@@ -746,7 +747,11 @@ $('#return-to-top').click(function() {      // When arrow is clicked
 	  
 	  if (bofr !== '') {
 		  query += [' basisofrecord:', bofr].join('');
-	  }	  
+	  }
+	  
+	  if (ltype !== '') {
+		  query += [' lengthtype:', ltype].join('');
+	  }		  	  
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
