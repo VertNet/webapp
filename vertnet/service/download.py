@@ -10,6 +10,7 @@ from google.appengine.api import mail
 from google.appengine.api import taskqueue
 from google.appengine.api import search
 from vertnet.service import util as vnutil
+from vertnet.service.util import UTIL_VERSION
 from vertnet.service import search as vnsearch
 import webapp2
 import json
@@ -17,7 +18,7 @@ import logging
 import uuid
 import sys
 
-DOWNLOAD_VERSION='download.py 2015-09-03T10:52:50+02:00'
+DOWNLOAD_VERSION='download.py 2016-08-14T12:06+02:00'
 
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
@@ -25,7 +26,7 @@ COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
 COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
 TEMP_BUCKET='vn-dltest' # bucket for temp compositions
 DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
-FILE_EXTENSION='tsv'
+FILE_EXTENSION='txt'
 
 def _tsv(json):
     # These should be the names of the original fields in the index document.
@@ -40,6 +41,9 @@ def _tsv(json):
                 values.append(unicode(json[x]).rstrip())        
         else:
             values.append(u'')
+#     logging.debug('%s: JSON: %s' % (DOWNLOAD_VERSION, json))
+#     logging.debug('%s: DOWNLOAD_FIELDS: %s' % (UTIL_VERSION, download_fields))
+#     logging.debug('%s: VALUES: %s' % (DOWNLOAD_VERSION, values))
     return u'\t'.join(values).encode('utf-8')
 
 def _get_tsv_chunk(records):
@@ -159,6 +163,7 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
             records, cursor, count, query_version = vnsearch.query(q, count)
+            # logging.debug('%s: RECORDS: %s' % (DOWNLOAD_VERSION, records))
 
             # Build dictionary for search counts
             res_counts = vnutil.search_resource_counts(records)
@@ -317,9 +322,9 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-                    logging.info('Download chunk saved to %s: Total %s records. Has next \
-cursor: %s \nVersion: %s' 
-                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
+#                    logging.info('Download chunk saved to %s: Total %s records. Has next \
+#cursor: %s \nVersion: %s' 
+#                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
             except Exception, e:
                 logging.error("Error writing chunk to FILE: %s for\nQUERY: %s \
 Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
@@ -499,8 +504,9 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
         try:
             gcs.copy2(src, dest)
         except Exception, e:
-            logging.error("Error copying %s to %s \nError: %s\
-Version: %s" % (src, dest, e, DOWNLOAD_VERSION) )
+            s = 'Error copying %s to %s\n' % (src, dest)
+            s += 'Error: %s Version: %s' % (e, DOWNLOAD_VERSION) 
+            logging.error()
 
         # Change the ACL so that the download file is publicly readable.
         mbody=acl_update_request()
