@@ -1,25 +1,26 @@
 import json
+import logging
 
-UTIL_VERSION='util.py 2016-07-09T10:36+02:00'
+UTIL_VERSION='util.py 2016-08-14T11:24+02:00'
 
-ADD_TO_DOWNLOAD_RESULTS = ['url', 'gbifdatasetid', 'gbifpublisherid', 'email', 
-    'contact', 'migrator', 'pubdate', 'lastindexed', 'iptlicense']
+ADD_TO_DOWNLOAD_RESULTS = ['url', 'citation', 'gbifdatasetid', 'gbifpublisherid', 'email', 
+    'contact', 'pubdate', 'lastindexed', 'migrator', 'hasmedia', 'hastissue',
+    'wascaptive', 'isfossil', 'vntype', 'haslength']
 
-# TODO: update to match new full index with vntype, hasmass, isfossil, etc.
 OMIT_FROM_DOWNLOADS = ['location', 'record', 'verbatim_record', 'count', 'icode',
-    'harvestid', 'eml', 'dwca', 'title', 'description', 'orgname', 'emlrights', 
-    'citation', 'networks', 'hashid', 'rank', 'haslicense', 'id', 'media', 'tissue', 
-    'mappable', 'wascaptive', 'source_url', 'fossil', 'hastypestatus', 'type',
-    'language', 'iptrecordid']
+    'title', 'orgname', 'emlrights', 'networks', 'hashid', 'rank', 'haslicense', 
+    'mappable', 'source_url', 'hastypestatus', 'language', 'iptrecordid',
+    'ownerinstitutioncode', 'organismquantity', 'organismquantitytype', 'parenteventid', 
+    'samplesizevalue', 'samplesizeunit', 'pointradiusspatialfit', 'footprintspatialfit', 
+    'taxonid', 'acceptednameusageid', 'parentnameusageid', 'originalnameusageid', 
+    'nameaccordingtoid', 'taxonconceptid', 'parentnameusage', 'nameaccordingto', 
+    'nomenclaturalstatus']
 
 TRANSLATE_HEADER = {'pubdate':'dataset_pubdate', 'url':'dataset_url', 
-    'eml':'dataset_eml', 'dwca':'dataset_dwca', 'title':'dataset_title',
-    'description':'dataset_description', 'contact':'dataset_contact',
-    'orgname':'dataset_orgname', 'email':'dataset_contact_email',
-    'emlrights':'dataset_rights', 'citation':'dataset_citation', 
-    'networks':'dataset_networks', 'dctype':'type', 'migrator':'migrator_version'}
-                     
-DWC_RECLEVEL = ['Type', 'Modified', 'Language', 'License', 'RightsHolder', 
+    'title':'dataset_title', 'contact':'dataset_contact', 'email':'dataset_contact_email',
+    'citation':'dataset_citation', 'dctype':'type', 'migrator':'migrator_version'}
+
+DWC_RECLEVEL = ['DCType', 'Modified', 'Language', 'License', 'RightsHolder', 
     'AccessRights', 'BibliographicCitation', 'References', 'InstitutionID', 
     'CollectionID', 'DatasetID', 'InstitutionCode', 'CollectionCode', 'DatasetName', 
     'OwnerInstitutionCode', 'BasisOfRecord', 'InformationWithheld', 
@@ -77,7 +78,7 @@ DWC_TAXON = ['TaxonID', 'ScientificNameID', 'AcceptedNameUsageID', 'ParentNameUs
     'ScientificNameAuthorship', 'VernacularName', 'NomenclaturalCode', 'TaxonomicStatus', 
     'NomenclaturalStatus', 'TaxonRemarks']
 
-VN_TRAIT = ['LengthInMM', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred',
+VN_TRAIT = ['LengthInMM', 'LengthType', 'LengthUnitsInferred', 'MassInG', 'MassUnitsInferred',
     'UnderivedLifeStage', 'UnderivedSex']
 
 DWC_ALL = DWC_RECLEVEL + DWC_OCC + DWC_ORGANISM + DWC_SAMPLE + DWC_EVENT + DWC_LOCATION \
@@ -92,23 +93,27 @@ def format_json(json):
 
 def download_field_list():
     """Create a list of the fields in a download. These are the original field names."""
-    field_list=DWC_HEADER_LIST
+    field_list = []
+    for f in DWC_HEADER_LIST:
+        field_list.append(f)
     for f in OMIT_FROM_DOWNLOADS:
         try:
             field_list.remove(f)
         except:
             pass
+#    logging.debug('%s: FIELD_LIST: %s' % (UTIL_VERSION, field_list))
     return field_list
 
 def download_header():
     """Create a list of the fields in a download. These are the original field names."""
     fieldlist=download_field_list()
-    i = 0
+    translated = []
     for f in fieldlist:
         if f in TRANSLATE_HEADER:
-            fieldlist[i]=TRANSLATE_HEADER[f]
-        i = i+1            
-    return '\t'.join(fieldlist)
+            translated.append(TRANSLATE_HEADER[f])
+        else:
+            translated.append(f)
+    return '\t'.join(translated)
 
 def classify(record):
     result = dict(meta=record, reclevel={}, occ={}, organism={}, sample={}, event={}, 
