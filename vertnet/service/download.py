@@ -1,4 +1,21 @@
-"""Download service."""
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "John Wieczorek"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "download.py 2016-08-15T15:54+02:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -17,9 +34,9 @@ import json
 import logging
 import uuid
 import sys
+import gc
 
-DOWNLOAD_VERSION='download.py 2016-08-14T12:06+02:00'
-
+DOWNLOAD_VERSION=__version__
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
@@ -284,6 +301,7 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = None
 
+        gc.collect()
         # Write single chunk to file, GCS does not support append
         records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)

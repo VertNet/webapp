@@ -1,22 +1,38 @@
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "John Wieczorek"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "search.py 2016-08-15T16:43+02:00"
+
 from google.appengine.api import namespace_manager
 from google.appengine.api import search
 from google.appengine.api.search import SortOptions, SortExpression
 from vertnet.service import util as vnutil
 from datetime import datetime
+import time
 import re
 import htmlentitydefs
 import os
 import json
 import logging
-
-# In an attempt to overcome timeouts in searches that produce the following exception
-# message:
-# 
 from google.appengine.api import urlfetch
-urlfetch.set_default_fetch_deadline(60)
+# In an attempt to overcome timeouts in searches
+urlfetch.set_default_fetch_deadline(20)
 
-SEARCH_VERSION='search.py 2016-08-07T19:37+02:00'
-
+SEARCH_VERSION=__version__
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 def _get_rec(doc):
@@ -38,9 +54,9 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
     if not curs:
         curs = search.Cursor()
     
+    namespace = namespace_manager.get_namespace()
     if q.startswith('id:'):
         did = q.split(':')[1].strip()
-        namespace = namespace_manager.get_namespace()
         results = search.Index(name=index_name, namespace=namespace).get_range(
             start_id=did, limit=1)
         if results:
@@ -89,13 +105,15 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
     while retry_count < max_retries:
         try:
             query = search.Query(query_string=q, options=options)
-            namespace = namespace_manager.get_namespace()
             logging.info('Trying Query: %s\nOptions: %s\nVersion: %s' % (q, options, SEARCH_VERSION))
-#            results = search.Index(name=index_name, namespace=namespace).search(query)
-            # Trying with an explicitly set deadline of 20s to overcome failed queries on
+            start_time = time.time()
+            results = search.Index(name=index_name, namespace=namespace).search(query)
+            elapsed_time = time.time() - start_time
+            # Try with an explicitly set deadline to overcome failed queries on
             # multiple "booleans" such as haslength, hasmass, hasmedia, isfossil, etc.
-            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
+#            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
             if results:
+                logging.info('Found %s records in %.1fs' % (results.number_found, elapsed_time))
                 recs = map(_get_rec, results)
 #                logging.info('Query: %s results from search.Index() for namespace=%s \
 #                    index_name=%s query=%s\nVersion: %s' % (q, results.number_found, 
@@ -151,10 +169,10 @@ def query_rec_counter(q, limit, index_name='dwc', sort=None, curs=search.Cursor(
         try:
             query = search.Query(query_string=q, options=options)
             namespace = namespace_manager.get_namespace()
-#            results = search.Index(name=index_name, namespace=namespace).search(query)
-            # Trying with an explicitly set deadline of 20s to overcome failed queries on
+            results = search.Index(name=index_name, namespace=namespace).search(query)
+            # Try with an explicitly set deadline to overcome failed queries on
             # multiple "booleans" such as haslength, hasmass, hasmedia, isfossil, etc.
-            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
+#            results = search.Index(name=index_name, namespace=namespace).search(query, deadline=50)
             if results:
                 recs = len(results.results)
                 return recs, results.cursor, SEARCH_VERSION
