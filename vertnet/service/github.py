@@ -1,4 +1,21 @@
-"""This module provides GitHub interop services."""
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "John Wieczorek"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "github.py 2016-08-15T15:54+02:00"
 
 from google.appengine.api import mail
 from google.appengine.api import urlfetch
@@ -18,7 +35,8 @@ def load_githubbers():
     global GITHUBBERS
     if GITHUBBERS is not None:
         return GITHUBBERS
-    cdb_url = "http://vertnet.cartodb.com/api/v1/sql?%s"
+#    cdb_url = "http://vertnet.cartodb.com/api/v1/sql?%s"
+    cdb_url = "http://vertnet.carto.com/api/v2/sql?%s"
     sql = "SELECT url, split_part(url,'=', 2) as resource, icode, github_reponame as repo, github_orgname as owner FROM resource_staging order by icode, url"
     rpc = urlfetch.create_rpc()
     url = cdb_url % (urllib.urlencode(dict(q=sql)))
@@ -125,7 +143,7 @@ class GitHubHandler(webapp2.RequestHandler):
             html_url = json.loads(response)['html_url']
          
             # FOR TESTING
-            email = "eightysteele@gmail.com"
+            email = "gtuco.btuco@gmail.com"
 
             # Email contact
             mail.send_mail("VertNet <vertnetinfo@vertnet.org>", 

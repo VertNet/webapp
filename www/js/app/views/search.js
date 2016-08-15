@@ -432,7 +432,7 @@ $('#return-to-top').click(function() {      // When arrow is clicked
 });		  	  
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
-	$.getJSON("https://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
+	$.getJSON("https://vertnet.carto.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
          var listItems = '<option value="">Select institution code</option>';
 
 		$.each(institutions.rows, function(key, val) {

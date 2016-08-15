@@ -1,7 +1,26 @@
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "John Wieczorek"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "util.py 2016-08-15T15:54+02:00"
+
 import json
 import logging
 
-UTIL_VERSION='util.py 2016-08-14T11:24+02:00'
+UTIL_VERSION=__version__
 
 ADD_TO_DOWNLOAD_RESULTS = ['url', 'citation', 'gbifdatasetid', 'gbifpublisherid', 'email', 
     'contact', 'pubdate', 'lastindexed', 'migrator', 'hasmedia', 'hastissue',
@@ -101,7 +120,7 @@ def download_field_list():
             field_list.remove(f)
         except:
             pass
-#    logging.debug('%s: FIELD_LIST: %s' % (UTIL_VERSION, field_list))
+#    logging.debug('%s: FIELD_LIST: %s' % (__version__, field_list))
     return field_list
 
 def download_header():
