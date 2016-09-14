@@ -44,9 +44,11 @@
     <li>
       <a class="" href="#datasource" data-toggle="tab">Data set</a>
     </li>
+<!--
     <li>
         <a class="" id="quality-tab" href="#quality" data-toggle="tab">Spatial quality</a>
     </li>
+-->
     <li>
         <a class="" id="index-tab" href="#indextab" data-toggle="tab">Index</a>
     </li>
@@ -145,7 +147,7 @@
           if (val) { %>
           <tr>
             <% if (key == 'BibliographicCitation') { %>
-              <td>Record Citation</td>
+              <td>Record Citation test</td>
               <td id="<%= key %>">
               <%= val %>
             <% } else if (key == 'UnderivedSex') { %>
@@ -561,8 +563,9 @@
   </div>
     
     <!-- Quality tab -->
-    <div id="quality" class="tab-pane fade">
+<!--    <div id="quality" class="tab-pane fade">  -->
     <!-- <p class="lead">Quality Report</p> -->
+<!--
     <p></p>
     <blockquote id="quality-warning"></blockquote>
     <table class="table">
@@ -616,7 +619,7 @@
         </tfoot>
       </table> 
     </div>
-
+-->
      <!-- Feedback tab -->
     <div id="feedback" class="tab-pane fade"> 
       <p>
