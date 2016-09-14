@@ -162,15 +162,27 @@
               <% if (val == 0) { %>
               No
               <% } else { %>
-              Yes              
+              Yes
             <% }} else if (key == 'MassUnitsInferred') { %>
               <td>Are mass units inferred?</td>
               <td id="<%= key %>">
               <% if (val == 0) { %>
               No
               <% } else { %>
-              Yes                             
-            <% }} else { %> 
+              Yes
+            <% }} else if (key == 'LengthInMM') { %>
+              <td>Length in mm</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthType') { %>
+              <td>Length type</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'MassInG') { %>
+              <td>Mass in grams</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %> 
               <td><%= key %></td>
               <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
@@ -433,15 +445,27 @@
               <% if (val == 0) { %>
               No
               <% } else { %>
-			  Yes              
+			  Yes
             <% }} else if (key == 'MassUnitsInferred') { %>
               <td>Are mass units inferred?</td>
               <td id="<%= key %>">
               <% if (val == 0) { %>
               No
               <% } else { %>
-              Yes                            
-            <% }} else { %>          
+              Yes
+            <% }} else if (key == 'LengthInMM') { %>
+              <td>Length in mm</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthType') { %>
+              <td>Length type</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'MassInG') { %>
+              <td>Mass in grams</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %>          
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>

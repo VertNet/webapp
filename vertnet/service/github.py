@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "github.py 2016-08-15T15:54+02:00"
+__version__ = "github.py 2016-08-16T13:37+02:00"
 
 from google.appengine.api import mail
 from google.appengine.api import urlfetch
@@ -82,7 +82,7 @@ def markdown(text):
     return result.content
     
 def repos(action, user, access_token, params):
-    """Execute repo reqeust based on action."""
+    """Execute repo request based on action."""
     if action == 'create':
         data = json.dumps(params)
         result = urlfetch.fetch(

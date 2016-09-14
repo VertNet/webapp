@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "download.py 2016-08-15T15:54+02:00"
+__version__ = "download.py 2016-09-14T11:47+02:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -113,6 +113,8 @@ class DownloadHandler(webapp2.RequestHandler):
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
             source=source, fromapi=fromapi)
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         if countonly is not None and len(countonly)>0:
             taskqueue.add(url='/service/download/count', params=params, 
                 queue_name="count")
@@ -232,6 +234,8 @@ class CountHandler(webapp2.RequestHandler):
         cursor = self.request.get('cursor')
         email = self.request.get('email')
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
         else:
@@ -301,6 +305,7 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = None
 
+        # Attempt to keep memory usage at a minimum
         gc.collect()
         # Write single chunk to file, GCS does not support append
         records, next_cursor, count, query_version = \
@@ -427,6 +432,8 @@ class ComposeHandler(webapp2.RequestHandler):
         total_files_to_compose = int(self.request.get('fileindex'))+1
         compositions=total_files_to_compose
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 
@@ -543,7 +550,7 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your truncated VertNet download is ready!",
                 body="""
-Your VertNet download file is now available for a limited time at 
+Your VertNet download file is now available for a limited time (roughly 60 days) at 
 https://storage.googleapis.com/%s/%s.\n
 The results in this file are not complete based on your query\n
 %s\n
@@ -561,7 +568,7 @@ Matching records: %s\nRequest submitted: %s\nRequest fulfilled: %s"""
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-Your VertNet download file is now available for a limited time at 
+Your VertNet download file is now available for a limited time (roughly 60 days) at 
 https://storage.googleapis.com/%s/%s.\n
 Query: %s\nMatching records: %s\nRequest submitted: %s\nRequest fulfilled: %s""" 
                     % (DOWNLOAD_BUCKET, composed_filename, q, reccount, requesttime, 
@@ -583,6 +590,8 @@ class CleanupHandler(webapp2.RequestHandler):
         composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         total_files_to_compose = int(self.request.get('fileindex'))
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 
