@@ -36,8 +36,9 @@ define([
         this.app = app;
         this.params = options.params;
         this.template = _.template(template);
-        mps.publish('spin', [true]);
-        this.geoissues = this.model.getQualityFlags();
+// Attempting to disable quality flags until we can get them to work
+//        mps.publish('spin', [true]);
+//        this.geoissues = this.model.getQualityFlags();
       }, 
 
       // RENDER MAP
@@ -123,6 +124,7 @@ define([
           if (issues.hashid) { this.$('#hashid').text(issues.hashid.toString()); }
         }, this));
 
+/*
         // Handler for quality tab
         this.$('#quality-tab').click(_.bind(function(e) {
           //var issues = this.model.getQualityFlags();
@@ -184,7 +186,7 @@ define([
           });
           
         }, this));
-		
+*/		
 		//Tooltips
 		  this.$('#show-completeness-tip').tooltip({
 			  placement: 'top',
