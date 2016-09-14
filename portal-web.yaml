@@ -1,0 +1,123 @@
+# This file is part of VertNet: https://github.com/VertNet/webapp
+#
+# VertNet is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# VertNet is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Foobar.  If not, see: http://www.gnu.org/licenses
+
+# This is the App Engine configuration file for local development.
+# Note that static assets are sources from www/ which contains full
+# sourcecode without minification.
+
+# CODEBASE INFO
+# Last pushed to master branch: 2016-05-17T12:44:22+CEST
+# Last change to master branch: Basic download portal works
+#
+# DEPLOYMENT INFO
+# Last deployed tuco version: 
+# Last deployed pagodarose version: 
+# Last deployed prod version: 2016-05-17T12:44:22+CEST (from VertNet/portal-web, not VertNet/webapp)
+# command: gcloud app deploy portal-web.yaml
+# args:
+#   --project vertnet-portal  # Optional, no need if gcloud is configured to use this project
+#   --version prod|dev  # Indicates version to use. If 'prod', --promote flag should be used
+#   --promote  # Optional, removes the version id from the deployment URL. Skip for testing and/or dev version
+
+# This is the App Engine configuration file for using gcloud.
+# To deploy for production at http://portal-web.vertnet-portal.appspot.com:
+#   gcloud app deploy portal-web.yaml --version prod --promote
+#
+# Or to deploy for testing at http://dev.portal-web.vertnet-portal.appspot.com
+#   gcloud app deploy portal-web.yaml --version dev --no-promote
+
+# Or to deploy for testing at http://pagodarose.vertnet-portal.appspot.com
+#   gcloud app deploy portal-web.yaml --version pagodarose --no-promote
+
+service: default
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: jinja2
+  version: "latest"
+# - name: webapp2
+#   version: "2.5.1"
+
+handlers:
+
+# Static assets
+
+- url: /js/lib/*.
+  static_dir: www/lib
+
+- url: /js
+  static_dir: www/js
+
+- url: /css
+  static_dir: www/css
+
+- url: /fonts
+  static_dir: www/fonts
+
+- url: /img
+  static_dir: www/img
+
+# APIs
+
+# - url: /api/search.*
+#   script: vertnet.service.api.handlers
+
+# - url: /api/download.*
+#   script: vertnet.service.api.handlers
+
+- url: /api/user/get
+  script: vertnet.service.user.handler
+
+- url: /api/github.*
+  script: vertnet.service.github.handler
+
+# - url: /service/download.*
+#   script: vertnet.service.download.api
+
+# - url: /apitracker.*
+#   script: vertnet.service.tracker.api
+
+- url: /service/rpc/record.*
+  script: vertnet.service.record.rpc
+
+- url: /service/organization.*
+  script: vertnet.service.organization.rpc
+
+- url: /api/user.*
+  script: vertnet.service.user.handler
+
+- url: /api/organization.*
+  script: vertnet.api.organization.rpc
+
+# - url: /api/stats.*
+#   script: vertnet.api.stats.rpc
+
+- url: /service/stats.*
+  script: vertnet.service.stats.main
+
+# - url: /service/repochecker.*
+#   script: vertnet.service.repochecker.main
+
+# CRON tasks
+
+# - url: /tasks/daily_portal_stats.*
+#   script: vertnet.service.tasks.daily_portal_stats.main
+
+# Main handler
+
+- url: /.*
+  script: app.handler
