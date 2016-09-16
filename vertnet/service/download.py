@@ -1,4 +1,21 @@
-"""Download service."""
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "John Wieczorek"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "download.py 2016-09-14T11:47+02:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -10,22 +27,23 @@ from google.appengine.api import mail
 from google.appengine.api import taskqueue
 from google.appengine.api import search
 from vertnet.service import util as vnutil
+from vertnet.service.util import UTIL_VERSION
 from vertnet.service import search as vnsearch
 import webapp2
 import json
 import logging
 import uuid
 import sys
+import gc
 
-DOWNLOAD_VERSION='download.py 2015-09-03T10:52:50+02:00'
-
+DOWNLOAD_VERSION=__version__
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
 OPTIMUM_CHUNK_SIZE=500 # See api_cnt_performance_analysis.pdf at https://goo.gl/xbLIGz
 COMPOSE_FILE_LIMIT=32 # limit on the number of files in a single compose request
 COMPOSE_OBJECT_LIMIT=1024 # limit on the number of files in a composition
 TEMP_BUCKET='vn-dltest' # bucket for temp compositions
 DOWNLOAD_BUCKET='vn-downloads2' # production bucket for downloads
-FILE_EXTENSION='tsv'
+FILE_EXTENSION='txt'
 
 def _tsv(json):
     # These should be the names of the original fields in the index document.
@@ -40,6 +58,9 @@ def _tsv(json):
                 values.append(unicode(json[x]).rstrip())        
         else:
             values.append(u'')
+#     logging.debug('%s: JSON: %s' % (DOWNLOAD_VERSION, json))
+#     logging.debug('%s: DOWNLOAD_FIELDS: %s' % (UTIL_VERSION, download_fields))
+#     logging.debug('%s: VALUES: %s' % (DOWNLOAD_VERSION, values))
     return u'\t'.join(values).encode('utf-8')
 
 def _get_tsv_chunk(records):
@@ -92,6 +113,8 @@ class DownloadHandler(webapp2.RequestHandler):
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
             source=source, fromapi=fromapi)
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         if countonly is not None and len(countonly)>0:
             taskqueue.add(url='/service/download/count', params=params, 
                 queue_name="count")
@@ -159,6 +182,7 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
             records, cursor, count, query_version = vnsearch.query(q, count)
+            # logging.debug('%s: RECORDS: %s' % (DOWNLOAD_VERSION, records))
 
             # Build dictionary for search counts
             res_counts = vnutil.search_resource_counts(records)
@@ -210,6 +234,8 @@ class CountHandler(webapp2.RequestHandler):
         cursor = self.request.get('cursor')
         email = self.request.get('email')
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
         else:
@@ -279,6 +305,8 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = None
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         # Write single chunk to file, GCS does not support append
         records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
@@ -317,9 +345,9 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
-                    logging.info('Download chunk saved to %s: Total %s records. Has next \
-cursor: %s \nVersion: %s' 
-                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
+#                    logging.info('Download chunk saved to %s: Total %s records. Has next \
+#cursor: %s \nVersion: %s' 
+#                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
             except Exception, e:
                 logging.error("Error writing chunk to FILE: %s for\nQUERY: %s \
 Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
@@ -404,6 +432,8 @@ class ComposeHandler(webapp2.RequestHandler):
         total_files_to_compose = int(self.request.get('fileindex'))+1
         compositions=total_files_to_compose
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 
@@ -499,8 +529,9 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
         try:
             gcs.copy2(src, dest)
         except Exception, e:
-            logging.error("Error copying %s to %s \nError: %s\
-Version: %s" % (src, dest, e, DOWNLOAD_VERSION) )
+            s = 'Error copying %s to %s\n' % (src, dest)
+            s += 'Error: %s Version: %s' % (e, DOWNLOAD_VERSION) 
+            logging.error()
 
         # Change the ACL so that the download file is publicly readable.
         mbody=acl_update_request()
@@ -519,7 +550,7 @@ Version: %s" % (src, dest, e, DOWNLOAD_VERSION) )
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your truncated VertNet download is ready!",
                 body="""
-Your VertNet download file is now available for a limited time at 
+Your VertNet download file is now available for a limited time (roughly 60 days) at 
 https://storage.googleapis.com/%s/%s.\n
 The results in this file are not complete based on your query\n
 %s\n
@@ -537,7 +568,7 @@ Matching records: %s\nRequest submitted: %s\nRequest fulfilled: %s"""
             mail.send_mail(sender="VertNet Downloads <vertnetinfo@vertnet.org>", 
                 to=email, subject="Your VertNet download is ready!",
                 body="""
-Your VertNet download file is now available for a limited time at 
+Your VertNet download file is now available for a limited time (roughly 60 days) at 
 https://storage.googleapis.com/%s/%s.\n
 Query: %s\nMatching records: %s\nRequest submitted: %s\nRequest fulfilled: %s""" 
                     % (DOWNLOAD_BUCKET, composed_filename, q, reccount, requesttime, 
@@ -559,6 +590,8 @@ class CleanupHandler(webapp2.RequestHandler):
         composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         total_files_to_compose = int(self.request.get('fileindex'))
 
+        # Attempt to keep memory usage at a minimum
+        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 

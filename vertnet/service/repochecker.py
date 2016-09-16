@@ -1,11 +1,27 @@
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "Javier Otegui"
+__contributors__ = "Javier Otegui, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "search.py 2016-08-15T15:54+02:00"
+
 import os
 import json
 import logging
 import urllib
 import urllib2
-
-__author__ = '@jotegui'
-
 
 # Get API key from file
 def apikey(serv):
@@ -18,7 +34,8 @@ cdb_key=apikey('cdb')
 gh_key=apikey('gh')
 
 ghb_url = 'https://api.github.com'
-cdb_url = "https://vertnet.cartodb.com/api/v2/sql"
+#cdb_url = "https://vertnet.cartodb.com/api/v2/sql"
+cdb_url = "https://vertnet.carto.com/api/v2/sql"
 testing = False
 headers = {
     'User-Agent': 'VertNet',  # Authenticate as VertNet
@@ -27,7 +44,7 @@ headers = {
 }
 
 def get_all_repos():
-    """Extract a list of all github_orgnames and github_reponames from CartoDB."""
+    """Extract a list of all github_orgnames and github_reponames from Carto."""
     query = "select github_orgname, github_reponame from resource_staging where ipt is true and networks like '%VertNet%';"
     vals = {
         'api_key': cdb_key,
@@ -39,11 +56,11 @@ def get_all_repos():
     try:
         res = urllib2.urlopen(req)
     except:
-        logging.error("Something went wrong querying CartoDB")
+        logging.error("Something went wrong querying Carto")
         return None
 
     all_repos = json.loads(res.read())['rows']
-    logging.info("Got {0} repos currently in CartoDB".format(len(all_repos)))
+    logging.info("Got {0} repos currently in Carto".format(len(all_repos)))
     return all_repos
 
 
@@ -70,7 +87,7 @@ def list_org(org):
 
 
 def check_failed_repos():
-    """Check repository name consistency between CartoDB and GitHub."""
+    """Check repository name consistency between Carto and GitHub."""
     failed_repos = []
     all_repos = get_all_repos()
     
@@ -104,7 +121,7 @@ def main(environ, start_response):
     logging.info("Response started")
 
 
-    logging.info("Checking consistency of repository names between CartoDB and GitHub.")
+    logging.info("Checking consistency of repository names between Carto and GitHub.")
     failed_repos = check_failed_repos()
     
     res = {

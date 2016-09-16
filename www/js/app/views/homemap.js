@@ -49,7 +49,7 @@ define([
         this.map = new google.maps.Map($('#homemap').get(0), this.options);
       }
       map = this.map;
-      cartodb.createLayer(map, 'http://vertnet.cartodb.com/api/v1/viz/loc/viz.json', {
+      cartodb.createLayer(map, 'http://vertnet.carto.com/api/v2/viz/loc/viz.json', {
         query: 'select * from {{table_name}}',
         interactivity: null, 
         infowindows: false 

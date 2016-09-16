@@ -275,7 +275,7 @@ define([
         e.preventDefault();
         this.$('#advanced-search-form').show();
         this.$('#sort').val(this.options.query.sort ? this.options.query.sort : "No sort");
-        this.$('#allwords').focus();
+        this.$('#inst-dropdown').focus();
         this.$('#search-keywords-div').hide();
         this.$('#search-carat').popover('destroy');
         if (this.spatialMap) {
@@ -415,10 +415,24 @@ define([
 			this.$('#show-months-tip').tooltip('show');
 		  }, this)).mouseout(_.bind(function(e) {
 			this.$('#show-months-tip').tooltip('hide');
-		  }, this));		  
+		  }, this));	
+		  
+// ===== Scroll to Top ==== 
+$(window).scroll(function() {
+    if ($(this).scrollTop() >= 50) {        // If page is scrolled more than 50px
+        $('#return-to-top').fadeIn(200);    // Fade in the arrow
+    } else {
+        $('#return-to-top').fadeOut(200);   // Else fade out the arrow
+    }
+});
+$('#return-to-top').click(function() {      // When arrow is clicked
+    $('body,html').animate({
+        scrollTop : 0                       // Scroll to top of body
+    }, 500);
+});		  	  
 		  
 	//Get List of institutions and institutionCodes for institutionCode select
-	$.getJSON("http://vertnet.cartodb.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
+	$.getJSON("https://vertnet.carto.com/api/v2/sql?q=SELECT icode, orgname, concat(icode,' - ',orgname) AS instcombo FROM resource where ipt=TRUE AND networks LIKE %27%25VertNet%25%27 GROUP BY icode, orgname ORDER BY icode, orgname",function(institutions) {
          var listItems = '<option value="">Select institution code</option>';
 
 		$.each(institutions.rows, function(key, val) {
@@ -589,16 +603,26 @@ define([
       var mend = this.$('#monthend').val();
       var dstart = this.$('#daystart').val();
       var dend = this.$('#dayend').val();
+      var startdyst = this.$('#startdayyearstart').val();
+      var startdye = this.$('#startdayyearend').val();
+      var enddyst = this.$('#enddayyearstart').val();
+      var enddye = this.$('#enddayyearend').val();	  	  
+	  var massingstart = this.$('#massstart').val();
+	  var massingend = this.$('#massend').val();
+	  var lengthinmmstart = this.$('#lengthstart').val();
+	  var lengthinmmend = this.$('#lengthend').val();
 	  var inst = this.$('#inst-dropdown :selected').val();
+	  var bofr = this.$('#bofr-dropdown :selected').val();
+	  var ltype = this.$('#ltype-dropdown :selected').val();
       var type = this.$('#recordtype :selected').val();
 
       if (type === 'Specimen or Observation') {
         type = 'both';
       } 
-      if (type === 'Specimen') {
+      if (type === 'specimen') {
         type = 'specimen';
       }
-      if (type === 'Observation') {
+      if (type === 'observation') {
         type = 'observation';
       }
       if (type === 'Any type') {
@@ -607,7 +631,7 @@ define([
 
       query = [all, exact].join(' ');
       if (type !== '') {
-        query += [' type:', type].join('');
+        query += [' vntype:', type].join('');
       }
       
       this._prepTerms();
@@ -660,10 +684,74 @@ define([
         dend = Number(dend);
         query += [ ' day >= ', dstart, ' day <= ', dend].join('');      
       }
+	  
+      if (startdyst && !startdye) {
+        startdyst = Number(startdyst);
+        query += [ ' startdayofyear >= ', startdyst].join('');      
+      }
+      if (!startdyst && startdye) {
+        startdye = Number(startdye);
+        query += [' startdayofyear <= ', startdye].join('');
+      }
+      if (startdyst && startdye) {
+        startdyst = Number(startdyst);
+        startdye = Number(startdye);
+        query += [ ' startdayofyear >= ', startdyst, ' startdayofyear <= ', startdye].join('');      
+      }	  
+
+      if (enddyst && !enddye) {
+        enddyst = Number(enddyst);
+        query += [ ' enddayofyear >= ', enddyst].join('');      
+      }
+      if (!enddyst && enddye) {
+        enddye = Number(enddye);
+        query += [' enddayofyear <= ', enddye].join('');
+      }
+      if (enddyst && enddye) {
+        enddyst = Number(enddyst);
+        enddye = Number(enddye);
+        query += [ ' enddayofyear >= ', enddyst, ' enddayofyear <= ', enddye].join('');      
+      }	 
+	  
+      if (massingstart && !massingend) {
+        massingstart = Number(massingstart);
+        query += [ ' massing >= ', massingstart].join('');      
+      }
+      if (!massingstart && massingend) {
+        massingend = Number(massingend);
+        query += [' massing <= ', massingend].join('');
+      }
+      if (massingstart && massingend) {
+        massingstart = Number(massingstart);
+        massingend = Number(massingend);
+        query += [ ' massing >= ', massingstart, ' massing <= ', massingend].join('');      
+      }
+
+      if (lengthinmmstart && !lengthinmmend) {
+        lengthinmmstart = Number(lengthinmmstart);
+        query += [ ' lengthinmm >= ', lengthinmmstart].join('');      
+      }
+      if (!lengthinmmstart && lengthinmmend) {
+        lengthinmmend = Number(lengthinmmend);
+        query += [' lengthinmm <= ', lengthinmmend].join('');
+      }
+      if (lengthinmmstart && lengthinmmend) {
+        lengthinmmstart = Number(lengthinmmstart);
+        lengthinmmend = Number(lengthinmmend);
+        query += [ ' lengthinmm >= ', lengthinmmstart, ' lengthinmm <= ', lengthinmmend].join('');      
+      }	  
 	  	  
 	  if (inst !== '') {
 		  query += [' institutioncode:', inst].join('');
 	  }
+	  
+	  if (bofr !== '') {
+		  query += [' basisofrecord:', bofr].join('');
+	  }
+	  
+	  if (ltype !== '') {
+		  query += [' lengthtype:', ltype].join('');
+	  }		  	  
 
       query += _.reduce(this.$('#filters input'), function(memo, input) {
         var input = $(input);
@@ -849,8 +937,8 @@ define([
         if (val) { 
           // Enclose country, stateprovince and county search terms in double quotes to
           // support, for example, a search on "Virginia" that does not return records for
-          // "West Virginia".
-          if (key == 'country' || key == 'stateprovince' || key == 'county'){
+          // "West Virginia". Also include iptrecordid/occurrenceID and license in double quotes as these two terms often have punctuation in the values.
+          if (key == 'country' || key == 'stateprovince' || key == 'county' || key == 'iptrecordid' || key == 'license'){
             return key + ':"' + val + '" ' + memo;
           }
           return key + ':' + val + ' ' + memo;
@@ -927,10 +1015,15 @@ define([
         if (!store.get('protip-closed')) {
           this.$('#click-row-tip').show();       
         } 
-        table.show();
-		$('html, body').animate({
-    		scrollTop: $('#resultTabs').offset().top
-	}, 1000);
+        
+		this.$('#advanced-search-form').hide(); 
+		this.$('#search-keywords-div').show();
+		table.show();
+               
+
+//		$('html, body').animate({
+//    		scrollTop: $('#resultTabs').offset().top
+//	}, 1000);
         this.$('#bottom-pager').show();
         // this.$('#no-results').hide();
         this.$('.counter').show();

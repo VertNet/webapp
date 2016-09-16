@@ -46,6 +46,10 @@ handlers:
 
 - url: /img
   static_dir: www/img
+  
+- url: /favicon\.ico
+  static_files: img/favicon.ico
+  upload: img/favicon\.ico    
 
 # APIs
 
