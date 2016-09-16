@@ -37,8 +37,8 @@
 # To deploy for production at http://portal-web.vertnet-portal.appspot.com:
 #   gcloud app deploy portal-web.yaml --version prod --promote
 #
-# Or to deploy for testing at http://dev.portal-web.vertnet-portal.appspot.com
-#   gcloud app deploy portal-web.yaml --version dev --no-promote
+# Or to deploy for testing at http://tuco.portal-web.vertnet-portal.appspot.com
+#   gcloud app deploy portal-web.yaml --version tuco --no-promote
 
 # Or to deploy for testing at http://pagodarose.vertnet-portal.appspot.com
 #   gcloud app deploy portal-web.yaml --version pagodarose --no-promote
@@ -87,8 +87,8 @@ handlers:
 - url: /api/github.*
   script: vertnet.service.github.handler
 
-# - url: /service/download.*
-#   script: vertnet.service.download.api
+- url: /service/download.*
+  script: vertnet.service.download.api
 
 # - url: /apitracker.*
 #   script: vertnet.service.tracker.api
