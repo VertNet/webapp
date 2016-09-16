@@ -16,24 +16,42 @@
 # This is the App Engine configuration file for local development.
 # Note that static assets are sources from www/ which contains full
 # sourcecode without minification.
-application: vertnet-portal
-version: stats
+
+# CODEBASE INFO
+# Repository: VertNet/webapp
+# Pushed to branch feature/laura-trait-ui 2016-09-14T23:30_02:00
+# Last pushed to master branch: 
+#
+# DEPLOYMENT INFO
+# Last deployed tuco version: 2016-09-15T20:51+02:00 index-2013-08-08
+# Last deployed pagodarose version: 2016-09-15T20:51+02:00 index-2013-08-08
+# Last deployed prod version: 2016-09-15T20:51+02:00 index-2013-08-08 (from VertNet/webapp repo)
+# command: gcloud app deploy portal-web.yaml
+# args:
+#   --project vertnet-portal  # Optional, no need if gcloud is configured to use this project
+#   --version prod|dev  # Indicates version to use. If 'prod', --promote flag should be used
+#   --promote  # Optional, removes the version id from the deployment URL. Skip for testing and/or dev version
+
+# This is the App Engine configuration file for using gcloud.
+# To deploy for production at http://portal-web.vertnet-portal.appspot.com:
+#   gcloud app deploy portal-web.yaml --version prod --promote
+#
+# Or to deploy for testing at http://tuco.portal-web.vertnet-portal.appspot.com
+#   gcloud app deploy portal-web.yaml --version tuco --no-promote
+
+# Or to deploy for testing at http://pagodarose.vertnet-portal.appspot.com
+#   gcloud app deploy portal-web.yaml --version pagodarose --no-promote
+
+service: default
 runtime: python27
-threadsafe: true
 api_version: 1
+threadsafe: true
 
 libraries:
 - name: jinja2
   version: "latest"
 # - name: webapp2
 #   version: "2.5.1"
-
-# Try the following to see if it overcomes the out of memory issues in the traits version
-# of the app. It didn't.
-#instance_class: B2
-#basic_scaling:
-#  max_instances: 4
-#  idle_timeout: 5m
 
 handlers:
 
@@ -53,18 +71,14 @@ handlers:
 
 - url: /img
   static_dir: www/img
-  
-- url: /favicon\.ico
-  static_files: img/favicon.ico
-  upload: img/favicon\.ico  
 
 # APIs
 
-- url: /api/search.*
-  script: vertnet.service.api.handlers
+# - url: /api/search.*
+#   script: vertnet.service.api.handlers
 
-- url: /api/download.*
-  script: vertnet.service.api.handlers
+# - url: /api/download.*
+#   script: vertnet.service.api.handlers
 
 - url: /api/user/get
   script: vertnet.service.user.handler
@@ -75,8 +89,8 @@ handlers:
 - url: /service/download.*
   script: vertnet.service.download.api
 
-- url: /apitracker.*
-  script: vertnet.service.tracker.api
+# - url: /apitracker.*
+#   script: vertnet.service.tracker.api
 
 - url: /service/rpc/record.*
   script: vertnet.service.record.rpc
@@ -96,13 +110,13 @@ handlers:
 - url: /service/stats.*
   script: vertnet.service.stats.main
 
-- url: /service/repochecker.*
-  script: vertnet.service.repochecker.main
+# - url: /service/repochecker.*
+#   script: vertnet.service.repochecker.main
 
 # CRON tasks
 
-- url: /tasks/daily_portal_stats.*
-  script: vertnet.service.tasks.daily_portal_stats.main
+# - url: /tasks/daily_portal_stats.*
+#   script: vertnet.service.tasks.daily_portal_stats.main
 
 # Main handler
 

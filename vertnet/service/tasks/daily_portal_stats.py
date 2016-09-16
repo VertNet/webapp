@@ -1,3 +1,22 @@
+#!/usr/bin/env python
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "Javier Otegui"
+__contributors__ = "Javier Otegui, John Wieczorek"
+__copyright__ = "Copyright 2016 vertnet.org"
+__version__ = "search.py 2016-08-15T16:07+02:00"
+
 """Service to run cron tasks."""
 
 import os
@@ -16,13 +35,14 @@ def apikey():
     """Return credentials file as a JSON object."""
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'cdbkey.txt')
     key = open(path, "r").read().rstrip()
-    logging.info("CARTODB KEY %s" % key)
+    logging.info("CARTO KEY %s" % key)
     return key
 api_key=apikey()
 
 # Get actual stats from query_log_master
 def getExplicitStuff(tag):
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={2}&q=select+query,%20sum%28count%29+from+query_log_master+where+query+like+%27%25{0}%3A%25%27%20and%20created_at%3E=date%20%27{1}%27%20group%20by%20query".format(tag, query_date_limit, api_key)
+#    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={2}&q=select+query,%20sum%28count%29+from+query_log_master+where+query+like+%27%25{0}%3A%25%27%20and%20created_at%3E=date%20%27{1}%27%20group%20by%20query".format(tag, query_date_limit, api_key)
+    url = "https://vertnet.carto.com/api/v2/sql?api_key={2}&q=select+query,%20sum%28count%29+from+query_log_master+where+query+like+%27%25{0}%3A%25%27%20and%20created_at%3E=date%20%27{1}%27%20group%20by%20query".format(tag, query_date_limit, api_key)
     logging.info('QUERY URL: %s' % url)
     d = json.loads(urllib2.urlopen(url).read())['rows']
     stuffQ = {}
@@ -53,7 +73,8 @@ def getExplicitStuff(tag):
 
 def getDownloadsData():
     # Monthly
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20concat%28year,%27-%27,month%29%20as%20date,%20queries,%20records%20from%20%28%20select%20extract%28month%20from%20date%28created_at%29%29%20as%20month,%20extract%28year%20from%20date%28created_at%29%29%20as%20year,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20extract%28month%20from%20date%28created_at%29%29,%20extract%28year%20from%20date%28created_at%29%29%20order%20by%20extract%28year%20from%20date%28created_at%29%29,%20extract%28month%20from%20date%28created_at%29%29%29%20as%20foo".format(query_date_limit, api_key)
+#    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20concat%28year,%27-%27,month%29%20as%20date,%20queries,%20records%20from%20%28%20select%20extract%28month%20from%20date%28created_at%29%29%20as%20month,%20extract%28year%20from%20date%28created_at%29%29%20as%20year,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20extract%28month%20from%20date%28created_at%29%29,%20extract%28year%20from%20date%28created_at%29%29%20order%20by%20extract%28year%20from%20date%28created_at%29%29,%20extract%28month%20from%20date%28created_at%29%29%29%20as%20foo".format(query_date_limit, api_key)
+    url = "https://vertnet.carto.com/api/v2/sql?api_key={1}&q=select%20concat%28year,%27-%27,month%29%20as%20date,%20queries,%20records%20from%20%28%20select%20extract%28month%20from%20date%28created_at%29%29%20as%20month,%20extract%28year%20from%20date%28created_at%29%29%20as%20year,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20extract%28month%20from%20date%28created_at%29%29,%20extract%28year%20from%20date%28created_at%29%29%20order%20by%20extract%28year%20from%20date%28created_at%29%29,%20extract%28month%20from%20date%28created_at%29%29%29%20as%20foo".format(query_date_limit, api_key)
     # Daily
     #url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}q=select%20date%28created_at%29,%20count%28*%29%20as%20queries,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20type=%27download%27%20and%20created_at%3E=date%20%27{0}%27%20group%20by%20date%28created_at%29%20order%20by%20date%28created_at%29".format(query_date_limit, api_key)
     logging.info('QUERY URL: %s' % url)
@@ -66,7 +87,8 @@ def getDownloadsData():
     return downloadsdata
 
 def getMetadata():
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20type,%20count%28*%29%20as%20searches,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20created_at%3E=date%20%27{0}%27%20group%20by%20type".format(query_date_limit, api_key)
+#    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20type,%20count%28*%29%20as%20searches,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20created_at%3E=date%20%27{0}%27%20group%20by%20type".format(query_date_limit, api_key)
+    url = "https://vertnet.carto.com/api/v2/sql?api_key={1}&q=select%20type,%20count%28*%29%20as%20searches,%20sum%28count%29%20as%20records%20from%20query_log_master%20where%20created_at%3E=date%20%27{0}%27%20group%20by%20type".format(query_date_limit, api_key)
     logging.info('QUERY URL: %s' % url)
     d = json.loads(urllib2.urlopen(url).read())['rows']
     metadata = {}
@@ -78,14 +100,16 @@ def getMetadata():
     return metadata
 
 def getRecordsQueried():
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20results_by_resource%20from%20query_log_master%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%27".format(query_date_limit, api_key)
+#    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={1}&q=select%20results_by_resource%20from%20query_log_master%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%27".format(query_date_limit, api_key)
+    url = "https://vertnet.carto.com/api/v2/sql?api_key={1}&q=select%20results_by_resource%20from%20query_log_master%20where%20client=%27portal-prod%27%20and%20results_by_resource%20is%20not%20null%20and%20created_at%3E=date%20%27{0}%27%20and%20results_by_resource%20%3C%3E%20%27%27".format(query_date_limit, api_key)
     logging.info('QUERY URL: %s' % url)
     d = json.loads(urllib2.urlopen(url).read())['rows']
     records_queried = sum([sum(json.loads(d[x]['results_by_resource']).values()) for x in list(range(len(d)))])
     return records_queried
 
 def getMaxDate():
-    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={0}&q=select%20max%28created_at%29%20from%20query_log_master".format(api_key)
+#    url = "https://vertnet.cartodb.com/api/v2/sql?api_key={0}&q=select%20max%28created_at%29%20from%20query_log_master".format(api_key)
+    url = "https://vertnet.carto.com/api/v2/sql?api_key={0}&q=select%20max%28created_at%29%20from%20query_log_master".format(api_key)
     logging.info('QUERY URL: %s' % url)
     d = json.loads(urllib2.urlopen(url).read())['rows'][0]['max']
     
@@ -99,7 +123,8 @@ def insertDataCartoDB(mindate, searches, records_viewed, records_downloaded, dow
     record = "'{0}', {1}, {2}, {3}, {4}, '[{5}]', '[{6}]', '[{7}]'".format(mindate, searches, records_viewed, records_downloaded, downloads, download_data.replace("'", '"'), class_data.replace("'", '"'), institution_data.replace("'", '"'))
     q = "insert into daily_portal_stats (mindate, searches, records_viewed, records_downloaded, downloads, download_data, class_data, institution_data) values ({0})".format(record)
     
-    url = "https://vertnet.cartodb.com/api/v2/sql"
+#    url = "https://vertnet.cartodb.com/api/v2/sql"
+    url = "https://vertnet.carto.com/api/v2/sql"
     vals = {
         'api_key': api_key,
         'q': q
@@ -139,7 +164,7 @@ def main(environ, start_response):
     explicitClassGood = getExplicitStuff('class')
     logging.info("Got Explicit class")
     
-    logging.info("Inserting data into CartoDB")
+    logging.info("Inserting data into Carto")
     res = insertDataCartoDB(str(mindate),
         str(metadata['query']['searches']), str(records_queried),
         str(metadata['download']['records']), str(metadata['download']['searches']),

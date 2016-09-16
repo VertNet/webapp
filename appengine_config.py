@@ -46,7 +46,12 @@ def namespace_manager_default_namespace_for_request():
         # [dwca-reader-clj "0.10.1-SNAPSHOT"]
 #    	return 'index-2014-02-11a'
     	# DwC2015-style index with traits and days of year
-    	return 'index-2014-02-11'
+#    	return 'index-2014-02-11'
+    	# DwC2015-style index with traits and Atom fields for booleans and some others
+    	return 'index-2013-08-08'
+    	# DwC2015-style small-size test index with lengthtype in addition to traits and 
+    	# Atom fields
+    	#return 'index-2014-02-06t2'
 
 engineauth = {
     # Login uri. The user will be returned here if an error occurs.

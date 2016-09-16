@@ -28,11 +28,12 @@
       <span class="glyphicon glyphicon-flag icon-white"></span>
     </button>
     <li class="active, dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Darwin Core<b class="caret"></b></a>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Record detail<b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="#summary" data-toggle="tab">All Terms</a></li>
-        <li><a href="#reclevel" data-toggle="tab">RecordLevel</a></li>
+        <li><a href="#summary" data-toggle="tab">All terms</a></li>
+        <li><a href="#reclevel" data-toggle="tab">Record-level</a></li>
         <li><a href="#occ" data-toggle="tab">Occurrence</a></li>
+        <li><a href="#organism" data-toggle="tab">Organism</a></li>
         <li><a href="#event" data-toggle="tab">Event</a></li>
         <li><a href="#location" data-toggle="tab">Location</a></li>
         <li><a href="#identification" data-toggle="tab">Identification</a></li>
@@ -41,11 +42,13 @@
       </ul>
     </li>
     <li>
-      <a class="" href="#datasource" data-toggle="tab">Rights</a>
+      <a class="" href="#datasource" data-toggle="tab">Data set</a>
     </li>
+<!--
     <li>
         <a class="" id="quality-tab" href="#quality" data-toggle="tab">Spatial quality</a>
     </li>
+-->
     <li>
         <a class="" id="index-tab" href="#indextab" data-toggle="tab">Index</a>
     </li>
@@ -63,21 +66,27 @@
         </tr>
       </thead>
       <tbody>
-            <tr><td>Rank</td><td id="rank"></td></tr> 
-            <tr><td>Networks</td><td id="networks"></td></tr> 
-            <tr><td>Keyname</td><td id="keyname"></td></tr> 
-            <tr><td>Icode</td><td id="icode"></td></tr> 
-            <tr><td>GBIF Dataset ID</td><td id="gbifdatasetid"></td></tr> 
+            <tr><td>ICode</td><td id="icode"></td></tr> 
             <tr><td>GBIF Publisher ID</td><td id="gbifpublisherid"></td></tr> 
-<!--
-            <tr><td>Fossil</td><td id="fossil"></td></tr> 
-            <tr><td>Tissue</td><td id="tissue"></td></tr> 
-            <tr><td>Media</td><td id="media"></td></tr> 
-            <tr><td>HasTypeStatus</td><td id="hastypestatus"></td></tr> 
+            <tr><td>GBIF Dataset ID</td><td id="gbifdatasetid"></td></tr> 
+            <tr><td>Keyname</td><td id="keyname"></td></tr> 
+            <tr><td>Occurrence ID</td><td id="occurrenceid"></td></tr> 
+            <tr><td>IPT Record ID</td><td id="iptrecordid"></td></tr> 
+            <tr><td>Last indexed</td><td id="lastindexed"></td></tr>
+            <tr><td>Networks</td><td id="networks"></td></tr> 
+            <tr><td>Rank</td><td id="rank"></td></tr> 
+            <tr><td>Has license</td><td id="haslicense"></td></tr> 
+            <tr><td>Has typestatus</td><td id="hastypestatus"></td></tr> 
+            <tr><td>Has tissue</td><td id="hastissue"></td></tr> 
+            <tr><td>Has media</td><td id="hasmedia"></td></tr> 
+            <tr><td>Has length</td><td id="haslength"></td></tr> 
+            <tr><td>Has mass</td><td id="hasmass"></td></tr> 
+            <tr><td>Has sex</td><td id="hassex"></td></tr> 
+            <tr><td>Has life stage</td><td id="haslifestage"></td></tr> 
+            <tr><td>Is fossil</td><td id="isfossil"></td></tr> 
+            <tr><td>Was captive</td><td id="wascaptive"></td></tr> 
             <tr><td>Mappable</td><td id="mappable"></td></tr> 
-            <tr><td>Resource</td><td id="resource"></td></tr> 
-            <tr><td>Type</td><td id="type"></td></tr> 
--->
+            <tr><td>Hash ID</td><td id="hashid"></td></tr> 
       </tbody>
     </table> 
   </div>
@@ -124,6 +133,7 @@
           </div> 
       </div>
  -->
+    <!-- All tab.  -->
     <table class="table table-striped">
       <thead>
         <tr>
@@ -136,14 +146,54 @@
           var val = this.model.all()[key]; 
           if (val) { %>
           <tr>
-            <td><%= key %></td>
-            <td id="<%= key %>">
+            <% if (key == 'BibliographicCitation') { %>
+              <td>Record Citation test</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'UnderivedSex') { %>
+              <td>Sex from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthUnitsInferred') { %>
+              <td>Are length units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes
+            <% }} else if (key == 'MassUnitsInferred') { %>
+              <td>Are mass units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes
+            <% }} else if (key == 'LengthInMM') { %>
+              <td>Length in mm</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthType') { %>
+              <td>Length type</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'MassInG') { %>
+              <td>Mass in grams</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %> 
+              <td><%= key %></td>
+              <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
                 <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
-            </td>
+              </td>
+            <% } %>
           </tr>
           <% } %>
         <% }, this)); %>
@@ -151,6 +201,7 @@
     </table> 
   </div>
 
+    <!-- Location tab.  -->
   <div class="tab-pane fade" id="location">
     <p>
     <table class="table table-striped">
@@ -180,12 +231,13 @@
     </table> 
   </div>
 
+    <!-- Record-level tab.  -->
     <div class="tab-pane" id="reclevel">
       <p>
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>RecordLevel Term</th>
+            <th>Record-level Term</th>
             <th>Value</th>
           </tr>
         </thead>
@@ -194,20 +246,26 @@
           var val = this.model.reclevel()[key]; 
           if (val) { %>
           <tr>
-            <td><%= key %></td>
-            <td id="<%= key %>">
+            <% if (key == 'BibliographicCitation') { %>
+              <td>Record Citation</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %>
+              <td><%= key %></td>
+              <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
                 <%= this.model.replaceURLWithHTMLLinks(val) %>
               <% } else { %>
                 <%= val %>
               <% } %>
-            </td>
+              </td>
+            <% } %>
           </tr>
           <% } %>
         <% }, this)); %>
         </tbody>
       </table> 
-    </div>    
+    </div>
 
     <!-- Occurrence tab.  -->
     <div class="tab-pane" id="occ">
@@ -222,6 +280,36 @@
         <tbody>
         <% _.each(this.model.DWC_OCC, _.bind(function(key) { 
           var val = this.model.occ()[key]; 
+          if (val) { %>          
+          <tr>
+            <td><%= key %></td>
+            <td id="<%= key %>">
+              <% if (val.startsWith('http')) { %>
+                <%= this.model.replaceURLWithHTMLLinks(val) %>
+              <% } else { %>
+                <%= val %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        <% }, this)); %>
+        </tbody>
+      </table> 
+    </div>
+
+    <!-- Organism tab.  -->
+    <div class="tab-pane" id="organism">
+      <p>      
+       <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Organism Term</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% _.each(this.model.DWC_ORGANISM, _.bind(function(key) { 
+          var val = this.model.organism()[key]; 
           if (val) { %>          
           <tr>
             <td><%= key %></td>
@@ -345,6 +433,41 @@
           var val = this.model.trait()[key]; 
           if (val) { %>
           <tr>
+            <% if (key == 'UnderivedSex') { %>
+              <td>Sex from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'UnderivedLifeStage') { %>
+              <td>LifeStage from source</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthUnitsInferred') { %>
+              <td>Are length units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+			  Yes
+            <% }} else if (key == 'MassUnitsInferred') { %>
+              <td>Are mass units inferred?</td>
+              <td id="<%= key %>">
+              <% if (val == 0) { %>
+              No
+              <% } else { %>
+              Yes
+            <% }} else if (key == 'LengthInMM') { %>
+              <td>Length in mm</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'LengthType') { %>
+              <td>Length type</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else if (key == 'MassInG') { %>
+              <td>Mass in grams</td>
+              <td id="<%= key %>">
+              <%= val %>
+            <% } else { %>          
             <td><%= key %></td>
             <td id="<%= key %>">
               <% if (val.startsWith('http')) { %>
@@ -353,6 +476,7 @@
                 <%= val %>
               <% } %>
             </td>
+            <% } %>            
           </tr>
           <% } %>
         <% }, this)); %>
@@ -395,6 +519,34 @@
     <p>
     <!-- <p class="lead">Data rights</p> -->
     <dl class="">
+      <dt>Data Set</dt>
+      <dd><%= this.model.get('title') %> <a target="_blank" href="http://gbif.org/dataset/<%= this.model.get('gbifdatasetid') %>">http://gbif.org/dataset/<%= this.model.get('gbifdatasetid') %></a></dd>
+      <br>
+      <dt>Data Set Citation</dt>
+      <dd><%= this.model.get('citation') %></dd>
+      <br>
+      <dt>Organization</dt>
+      <dd><%= this.model.get('orgname') %> <a target="_blank" href="http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %>">http://gbif.org/publisher/<%= this.model.get('gbifpublisherid') %></a></dd>
+      <br>
+      <dt>Organization Location</dt>
+      <dd><%= this.model.get('orgcountry') %> <%= this.model.get('orgstateprovince') %></dd>
+<!--
+      <br>
+      <dt>Organization Location: State/Province</dt>
+      <dd><%= this.model.get('orgstateprovince') %></dd>
+-->
+      <br>
+      <dt>Contact</dt>
+      <dd>
+        <%= this.model.get('contact') %> <<a target="_blank" href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
+      </dd>
+      <br>
+      <dt>Source URL</dt>
+      <dd><a target="_blank" href="<%= this.model.get('source_url') %>"><%= this.model.get('source_url') %></a></dd>
+      <br>
+      <dt>License</dt>
+      <dd><%= this.model.get('license') %></dd>
+      <br>
       <dt>Rights</dt>
       <dd><% if (this.model.get('emlrights')) { %>
               <%= this.model.getRights() %>
@@ -402,31 +554,18 @@
               Please contact the <a target="_blank" href="<%= this.model.get('source_url') %>">data publisher</a> for details concerning the use of these data.
             <% } %></dd>
       <br>
-      <dt>Citation</dt>
-      <dd><%= this.model.get('citation') %></dd>
-      <br>
-      <dt>Organisation</dt>
-      <dd><%= this.model.get('orgname') %></dd>
-      <br>
-      <dt>Resource</dt>
-      <dd><%= this.model.get('title') %></dd>
-      <br>
-      <dt>Contact</dt>
-      <dd>
-        <%= this.model.get('contact') %> <<a target="_blank" href="mailto:<%= this.model.get('email') %>"><%= this.model.get('email') %></a>>
-      </dd>
-      <br>
-      <dt>Published</dt>
+      <dt>Source Published Date</dt>
       <dd><%= this.model.get('pubdate') %></dd>
       <br>
-      <dt>Source URL</dt>
-      <dd><a target="_blank" href="<%= this.model.get('source_url') %>"><%= this.model.get('source_url') %></a></dd>
+      <dt>VertNet Migrator Date</dt>
+      <dd><%= this.model.get('migrator') %></dd>
     </dl>
   </div>
     
     <!-- Quality tab -->
-    <div id="quality" class="tab-pane fade">
+<!--    <div id="quality" class="tab-pane fade">  -->
     <!-- <p class="lead">Quality Report</p> -->
+<!--
     <p></p>
     <blockquote id="quality-warning"></blockquote>
     <table class="table">
@@ -480,7 +619,7 @@
         </tfoot>
       </table> 
     </div>
-
+-->
      <!-- Feedback tab -->
     <div id="feedback" class="tab-pane fade"> 
       <p>
