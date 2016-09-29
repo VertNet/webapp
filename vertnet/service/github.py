@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "github.py 2016-08-16T13:37+02:00"
+__version__ = "github.py 2016-09-29T03:33+02:00"
 
 from google.appengine.api import mail
 from google.appengine.api import urlfetch
@@ -35,20 +35,19 @@ def load_githubbers():
     global GITHUBBERS
     if GITHUBBERS is not None:
         return GITHUBBERS
-#    cdb_url = "http://vertnet.cartodb.com/api/v1/sql?%s"
     cdb_url = "http://vertnet.carto.com/api/v2/sql?%s"
-    sql = "SELECT url, split_part(url,'=', 2) as resource, icode, github_reponame as repo, github_orgname as owner FROM resource_staging order by icode, url"
+    sql = "SELECT icode, gbifdatasetid, github_reponame as repo, github_orgname as owner FROM resource_staging WHERE ipt=True and networks LIKE '%VertNet%' order by icode, gbifdatasetid"
     rpc = urlfetch.create_rpc()
-    url = cdb_url % (urllib.urlencode(dict(q=sql)))
-    urlfetch.make_fetch_call(rpc, url)
-    logging.info(url)
+    carto_url = cdb_url % (urllib.urlencode(dict(q=sql)))
+    urlfetch.make_fetch_call(rpc, carto_url)
+    logging.info('CARTO URL: %s\nversion: %s' % (carto_url,__version__))
     try:
         result = rpc.get_result()
-        logging.info('RESULTS: %s' % result)
         GITHUBBERS = json.loads(result.content)
+        # logging.info('GITHUBBERS: %s\nversion: %s' % (GITHUBBERS,__version__))
         return GITHUBBERS
     except urlfetch.DownloadError:
-        logging.error("Error github module - %s" % (sql))   
+        logging.error("Error github module - %s\nversion: %s" % (sql,__version__))
         GITHUBBERS = {}
 
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
@@ -63,13 +62,11 @@ PUBLISHER_ORGS = {
     'museum-of-vertebrate-zoology-uc-berkeley': 'museum-of-vertebrate-zoology'    
 }
 
-def get_owner_repo(url):
-    """Return 2-tuple owner,repo for supplied resource URL."""
+def get_owner_repo(gbifdatasetid):
+    """Return 2-tuple owner,repo for supplied resource gbifdatasetid."""
     GITHUBBERS = load_githubbers()
-    logging.info(GITHUBBERS)
-    logging.info(url)
     for row in GITHUBBERS['rows']:
-        if row['url'] == url:
+        if row['gbifdatasetid'] == gbifdatasetid:
             return (row['owner'], row['repo'])
 
 def markdown(text):
@@ -91,7 +88,7 @@ def repos(action, user, access_token, params):
             method=urlfetch.POST,
             headers={'Authorization': 'token %s' % access_token})
         if result.status_code == 201:
-            logging.info('Repo created %s' % result.content)
+            logging.info('Repo created %s\nversion: %s' % (result.content,__version__))
             return result.content
         else:
             logging.info(result.status_code)
@@ -101,14 +98,16 @@ def issues(action, owner, repo, access_token, params):
     if action == 'create':
         data = json.dumps(params)
         url = 'https://api.github.com/repos/%s/%s/issues' % (owner, repo)
-        logging.info('DATA:%s URL:%s TOKEN:%s' % (data, url, access_token))
+        s = 'ISSUES data: %s url: %s ' % (data, url)
+        s += 'access_token: %s\nversion: %s' % (access_token,__version__)
+        logging.info(s)
         result = urlfetch.fetch(
             url=url,
             payload=data,
             method=urlfetch.POST,
             headers={'Authorization': 'token %s' % access_token})
         if result.status_code == 201:
-            logging.info('Repo created %s' % result.content)
+            logging.info('Issue created %s\nversion: %s' % (result.content,__version__))
             return result.content
         else:
             logging.info(result.status_code)
@@ -123,8 +122,9 @@ class GitHubHandler(webapp2.RequestHandler):
         contact = data.get('contact')
         email = data.get('email')
 
-        url  = data.get('url')
-        owner, repo = get_owner_repo(url)
+        gbifdatasetid  = data.get('gbifdatasetid')
+        # logging.info('CREATE_ISSUE data: %s\nversion: %s' % (data,__version__))
+        owner, repo = get_owner_repo(gbifdatasetid)
 
         html_body = body
 
@@ -162,7 +162,7 @@ class GitHubHandler(webapp2.RequestHandler):
         user = self.request.user if self.request.user else None
         request = self.request.get('q') if self.request.get('q') \
             else self.request.body
-        logging.info('REQUEST: %s' % request)
+        logging.info('ISSUE_CREATE REQUEST: %s\nversion: %s' % (request,__version__))
         owner, repo, title, body, record, link, data = map(json.loads(request).get, 
             ['owner', 'repo', 'title', 'body', 'record', 'link', 'data'])
         self.create_issue(user, owner, repo, title, body, record, link, data)
