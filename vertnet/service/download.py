@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "download.py 2016-09-14T11:47+02:00"
+__version__ = "download.py 2016-10-25T10:56+02:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -113,8 +113,6 @@ class DownloadHandler(webapp2.RequestHandler):
             latlon=latlon, fileindex=0, reccount=0, requesttime=requesttime, 
             source=source, fromapi=fromapi)
 
-        # Attempt to keep memory usage at a minimum
-        gc.collect()
         if countonly is not None and len(countonly)>0:
             taskqueue.add(url='/service/download/count', params=params, 
                 queue_name="count")
@@ -182,6 +180,7 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
             self.response.headers['Content-Disposition'] = "attachment; filename=%s" \
                 % filename
             records, cursor, count, query_version = vnsearch.query(q, count)
+            record_count = len(records)
             # logging.debug('%s: RECORDS: %s' % (DOWNLOAD_VERSION, records))
 
             # Build dictionary for search counts
@@ -189,6 +188,11 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
 
             # Write the header for the output file 
             data = '%s\n%s' % (vnutil.download_header(), _get_tsv_chunk(records))
+            # Cleanup records in attempt to conserve memory
+            records = None
+            # Attempt to keep memory usage at a minimum by garbage collecting
+            gc.collect()
+            # Write the data
             self.response.out.write(data)
 
             # Write single chunk to file in DOWNLOAD_BUCKET
@@ -198,10 +202,10 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
 
             # Parameters for the coming apitracker taskqueue
             apitracker_params = dict(
-                api_version=fromapi, count=len(records), download=filename, 
+                api_version=fromapi, count=record_count, download=filename, 
                 downloader=email, error=None, latlon=latlon, 
-                matching_records=len(records), query=q, query_version=query_version, 
-                request_source=source, response_records=len(records), 
+                matching_records=record_count, query=q, query_version=query_version, 
+                request_source=source, response_records=record_count, 
                 res_counts=json.dumps(res_counts), type='download')
 
             max_retries = 2
@@ -213,6 +217,10 @@ Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s'
                             options={'x-goog-acl': 'public-read'}) as f:
                         f.write(data)
                         success = True
+                        # Cleanup data in attempt to conserve memory
+                        data = None
+                        # Attempt to keep memory usage at a minimum by garbage collecting
+                        gc.collect()
 #                        logging.info('Sending small res_counts to apitracker: %s' 
 #                            % res_counts ) 
                         taskqueue.add(url='/apitracker', params=apitracker_params, 
@@ -234,8 +242,6 @@ class CountHandler(webapp2.RequestHandler):
         cursor = self.request.get('cursor')
         email = self.request.get('email')
 
-        # Attempt to keep memory usage at a minimum
-        gc.collect()
         if cursor:
             curs = search.Cursor(web_safe_string=cursor)
         else:
@@ -305,11 +311,10 @@ class WriteHandler(webapp2.RequestHandler):
         else:
             curs = None
 
-        # Attempt to keep memory usage at a minimum
-        gc.collect()
         # Write single chunk to file, GCS does not support append
         records, next_cursor, count, query_version = \
             vnsearch.query(q, SEARCH_CHUNK_SIZE, curs=curs)
+        this_record_count = len(records)
         # Build dict for search counts
         res_counts = vnutil.search_resource_counts(records, total_res_counts)
 
@@ -325,10 +330,14 @@ class WriteHandler(webapp2.RequestHandler):
                     total_res_counts[r]=res_counts[r]
 
         # Update the total number of records retrieved
-        reccount = reccount+len(records)
+        reccount = reccount+this_record_count
 
         # Make a chunk to write to a file
         chunk = '%s\n' % _get_tsv_chunk(records)
+        # Cleanup records in attempt to conserve memory
+        records = None
+        # Attempt to keep memory usage at a minimum by garbage collecting
+        gc.collect()
         
         if fileindex==0 and not next_cursor:
             # This is a query with fewer than SEARCH_CHUNK_SIZE results
@@ -345,6 +354,10 @@ class WriteHandler(webapp2.RequestHandler):
                         f.write('%s\n' % vnutil.download_header())
                     f.write(chunk)
                     success = True
+                    # Cleanup chunk in attempt to conserve memory
+                    chunk = None
+                    # Attempt to keep memory usage at a minimum by garbage collecting
+                    gc.collect()
 #                    logging.info('Download chunk saved to %s: Total %s records. Has next \
 #cursor: %s \nVersion: %s' 
 #                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
@@ -363,8 +376,7 @@ Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
             curs = ''
 
         # Parameters for the coming apitracker taskqueue
-        finalfilename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, 
-            FILE_EXTENSION)
+        finalfilename = '/%s/%s.%s' % (DOWNLOAD_BUCKET, filepattern, FILE_EXTENSION)
 
         if curs:
             fileindex = fileindex + 1
@@ -378,7 +390,7 @@ Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
                     api_version=fromapi, count=reccount, download=finalfilename, 
                     downloader=email, error=None, latlon=latlon, 
                     matching_records=reccount, query=q, query_version=query_version, 
-                    request_source=source, response_records=len(records), 
+                    request_source=source, response_records=this_record_count, 
                     res_counts=json.dumps(total_res_counts), type='download')
 
                 composeparams=dict(email=email, name=name, filepattern=filepattern, q=q,
@@ -409,8 +421,8 @@ Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
                 api_version=fromapi, count=reccount, download=finalfilename, 
                 downloader=email, error=None, latlon=latlon, matching_records=reccount, 
                 query=q, query_version=query_version, request_source=source, 
-                response_records=len(records), res_counts=json.dumps(total_res_counts), 
-                type='download')
+                response_records=this_record_count, 
+                res_counts=json.dumps(total_res_counts), type='download')
 
             composeparams=dict(email=email, name=name, filepattern=filepattern, q=q,
                 fileindex=fileindex, reccount=reccount, requesttime=requesttime)
@@ -432,8 +444,6 @@ class ComposeHandler(webapp2.RequestHandler):
         total_files_to_compose = int(self.request.get('fileindex'))+1
         compositions=total_files_to_compose
 
-        # Attempt to keep memory usage at a minimum
-        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 
@@ -531,7 +541,7 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
         except Exception, e:
             s = 'Error copying %s to %s\n' % (src, dest)
             s += 'Error: %s Version: %s' % (e, DOWNLOAD_VERSION) 
-            logging.error()
+            logging.error(s)
 
         # Change the ACL so that the download file is publicly readable.
         mbody=acl_update_request()
@@ -590,8 +600,6 @@ class CleanupHandler(webapp2.RequestHandler):
         composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         total_files_to_compose = int(self.request.get('fileindex'))
 
-        # Attempt to keep memory usage at a minimum
-        gc.collect()
         # Get the application default credentials.
         credentials = GoogleCredentials.get_application_default()
 
