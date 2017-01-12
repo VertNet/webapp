@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2017-01-12T11:26-03:00'
+API_VERSION='api.py 2017-01-12T20:08-03:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -131,21 +131,24 @@ class DownloadApi(webapp2.RequestHandler):
 
     def get(self):
         # Receive the download request and redirect it to the download service URL
-#        logging.info('Version: %s\nAPI download request: %s' 
-#            % (API_VERSION, self.request) )
+        logging.info('Version: %s\nAPI download request: %s' 
+            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
         q, e, n, countonly = map(request.get, ['q', 'e', 'n', 'c'])
+
         # Abandon requests from stuff@things.com
         if e == 'stuff@things.com':
+            logging.info('Ignoring request from stuff@things.com %s\nVersion: %s' 
+                % (self.request, API_VERSION) )
             return
         
         keywords = q.split()
         if countonly is not None:
             params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
-                email=e, countonly=True, api=API_VERSION))
+                email=e, countonly=True, api=API_VERSION, jrwspecialparam='kidding'))
         else:
             params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0, 
-                email=e, name=n, api=API_VERSION))
+                email=e, name=n, api=API_VERSION, jrwspecialparam='just kidding'))
         url = '/service/download?%s' % params
         self.redirect(url)
 

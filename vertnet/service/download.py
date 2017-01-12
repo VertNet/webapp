@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "download.py 2017-01-12T11:31-03:00"
+__version__ = "download.py 2017-01-12T20:09-03:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -126,9 +126,6 @@ class DownloadHandler(webapp2.RequestHandler):
     def get(self):
         count, keywords, email, name = map(self.request.get, 
             ['count', 'keywords', 'email', 'name'])
-        # Abandon requests from stuff@things.com
-        if email=='stuff@things.com':
-            return
 
         q = ' '.join(json.loads(keywords))
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
@@ -161,15 +158,15 @@ class DownloadHandler(webapp2.RequestHandler):
                 body += 'Request headers: %s<br>' % self.request.headers
             
             self.response.out.write(body)
-            logging.info('API download request. API: %s Source: %s Count: %s \
-Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+            logging.info('API download request. API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
                 % (fromapi, source, count, keywords, email, name, latlon, 
                 DOWNLOAD_VERSION) )
-            if email is None or len(email)==0:
+            if email is None or len(email)==0 or email=='stuff@things.com':
+                logging.info('Ignoring download request from email: %s. Version: %s' 
+                   % (email, DOWNLOAD_VERSION) )
                 return
         else:
-            logging.info('Portal download request. API: %s Source: %s Count: %s \
-Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
+            logging.info('Portal download request. API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
                 % (fromapi, source, count, keywords, email, name, latlon, 
                 DOWNLOAD_VERSION) )
 
