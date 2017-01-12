@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "download.py 2016-10-25T10:56+02:00"
+__version__ = "download.py 2017-01-12T11:31-03:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -126,6 +126,10 @@ class DownloadHandler(webapp2.RequestHandler):
     def get(self):
         count, keywords, email, name = map(self.request.get, 
             ['count', 'keywords', 'email', 'name'])
+        # Abandon requests from stuff@things.com
+        if email=='stuff@things.com':
+            return
+
         q = ' '.join(json.loads(keywords))
         latlon = self.request.headers.get('X-AppEngine-CityLatLong')
         fromapi = self.request.get('api')

@@ -23,7 +23,7 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2015-09-02T11:09:38+02:00'
+API_VERSION='api.py 2017-01-12T11:26-03:00'
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
@@ -87,7 +87,7 @@ class SearchApi(webapp2.RequestHandler):
             response = json.dumps(dict(recs=recs, cursor=cursor, matching_records=count,
                 limit=limit, response_records=len(recs), api_version=API_VERSION, 
                 query_version=query_version, request_date=d.isoformat(),
-                request_origin=self.cityLatLong))
+                request_origin=self.cityLatLong, submitted_query=q))
 
 #            logging.info('API search recs: %s\nVersion: %s' % (recs, API_VERSION) )
             res_counts = vnutil.search_resource_counts(recs)
@@ -135,6 +135,10 @@ class DownloadApi(webapp2.RequestHandler):
 #            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
         q, e, n, countonly = map(request.get, ['q', 'e', 'n', 'c'])
+        # Abandon requests from stuff@things.com
+        if e == 'stuff@things.com':
+            return
+        
         keywords = q.split()
         if countonly is not None:
             params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
