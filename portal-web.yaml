@@ -96,8 +96,9 @@ handlers:
 - url: /service/download.*
   script: vertnet.service.download.api
 
-# - url: /apitracker.*
-#   script: vertnet.service.tracker.api
+# Turn this on to track usage of the search, download, and feedback APIs
+- url: /apitracker.*
+  script: vertnet.service.tracker.api
 
 - url: /service/rpc/record.*
   script: vertnet.service.record.rpc
