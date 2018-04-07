@@ -15,7 +15,7 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "download.py 2017-01-12T20:09-03:00"
+__version__ = "download.py 2017-11-25T12:42-03:00"
 
 # Removing dependency on Files API due to its deprecation by Google
 import cloudstorage as gcs
@@ -33,8 +33,10 @@ import webapp2
 import json
 import logging
 import uuid
-import sys
 import gc
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 DOWNLOAD_VERSION=__version__
 SEARCH_CHUNK_SIZE=1000 # limit on documents in a search result: rows per file
@@ -158,17 +160,26 @@ class DownloadHandler(webapp2.RequestHandler):
                 body += 'Request headers: %s<br>' % self.request.headers
             
             self.response.out.write(body)
-            logging.info('API download request. API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
-                % (fromapi, source, count, keywords, email, name, latlon, 
-                DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nAPI download request from API: %s' % fromapi
+            s += '\nSource: %s Count: %s' % (source, count)
+            s += '\nKeywords: %s' % keywords
+            s += '\nEmail: %s Name: %s' % (email, name)
+            s += '\nLatLon: %s' % latlon
+            logging.info(s)
             if email is None or len(email)==0 or email=='stuff@things.com':
-                logging.info('Ignoring download request from email: %s. Version: %s' 
-                   % (email, DOWNLOAD_VERSION) )
+                s = 'Download version: %s' % DOWNLOAD_VERSION
+                s += '\nIgnoring download request from email: %s' % email
+                logging.info(s)
                 return
         else:
-            logging.info('Portal download request. API: %s Source: %s Count: %s Keywords: %s Email: %s Name: %s LatLon: %s\nVersion: %s' 
-                % (fromapi, source, count, keywords, email, name, latlon, 
-                DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nPortal download request from API: %s' % fromapi
+            s += '\nSource: %s Count: %s' % (source, count)
+            s += '\nKeywords: %s' % keywords
+            s += '\nEmail: %s Name: %s' % (email, name)
+            s += '\nLatLon: %s' % latlon
+            logging.info(s)
 
         if count==0 or count > SEARCH_CHUNK_SIZE:
             # The results are larger than SEARCH_CHUNK_SIZE, compose a file for download
@@ -227,8 +238,10 @@ class DownloadHandler(webapp2.RequestHandler):
                         taskqueue.add(url='/apitracker', params=apitracker_params, 
                             queue_name="apitracker") 
                 except Exception, e:
-                    logging.error("Error writing small result set to %s.\nError: %s \n\
-Version: %s" % (filename,e,DOWNLOAD_VERSION) )
+                    s = 'Download version: %s' % DOWNLOAD_VERSION
+                    s += '\nError writing small result set to %s.' % filename
+                    s += '\nError: %s' % e
+                    logging.error(s)
                     retry_count += 1
 #                    raise e
 
@@ -264,16 +277,24 @@ class CountHandler(webapp2.RequestHandler):
                 requesttime=requesttime, fromapi=fromapi, source=source, latlon=latlon,
                 email=email)
 
-            logging.info('Record counter. Count: %s Email: %s Query: %s Cursor: %s\
-Version: %s' % (reccount, q, next_cursor, DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nRecord counter. Count: %s' % reccount
+            s += '\nEmail: %s' % email
+            s += '\nQuery: %s' % q
+            s += '\nCursor: %s' % next_cursor
+            logging.info(s)
             # Keep counting
             taskqueue.add(url='/service/download/count', params=countparams,
                 queue_name="count")
 
         else:
             # Finished counting. Log the results and send email.
-            logging.info('Finished counting. Record total: %s Email: %s Query %s \
-Cursor: %s\nVersion: %s' % (reccount, email, q, next_cursor, DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nFinished counting. Record total: %s' % reccount
+            s += '\nEmail: %s' % email
+            s += '\nQuery: %s' % q
+            s += '\nCursor: %s' % next_cursor
+            logging.info(s)
 
             apitracker_params = dict(
                 api_version=fromapi, count=reccount, query=q, latlon=latlon,
@@ -363,8 +384,11 @@ class WriteHandler(webapp2.RequestHandler):
 #cursor: %s \nVersion: %s' 
 #                        % (filename, reccount, not next_cursor is None, DOWNLOAD_VERSION))
             except Exception, e:
-                logging.error("Error writing chunk to FILE: %s for\nQUERY: %s \
-Error: %s\nVersion: %s" % (filename, q, e, DOWNLOAD_VERSION) )
+                s = 'Download version: %s' % DOWNLOAD_VERSION
+                s += '\nError writing chunk to %s' % filename
+                s += '\nQuery: %s' % q
+                s += '\nError: %s' % e
+                logging.error(s)
                 retry_count += 1
 #                raise e
 
@@ -489,9 +513,12 @@ class ComposeHandler(webapp2.RequestHandler):
                 except Exception, e:
                     # There is a timeout fetching the url for the response. This
                     # tends to happen in compose requests for LARGE downloads.
-                    logging.warning("Deadline exceeded error (not to worry) \
-composing file: %s Query: %s Email: %s Error: %s\nVersion: %s" 
-                        % (composed_filename, q, email, e, DOWNLOAD_VERSION) )
+                    s = 'Download version: %s' % DOWNLOAD_VERSION
+                    s += '\nDeadline exceeded error (not to worry). '
+                    s += 'Composing file: %s' % composed_filename
+                    s += '\nQuery: %s' % q
+                    s += '\nError: %s' % e
+                    logging.warning(s)
                     pass
                         
                 begin=begin+COMPOSE_FILE_LIMIT
@@ -499,8 +526,9 @@ composing file: %s Query: %s Email: %s Error: %s\nVersion: %s"
 
         composed_filename='%s.%s' % (filepattern,FILE_EXTENSION)
         if compositions==1:
-            logging.info('%s requires no composition.\nVersion: %s' 
-                % (composed_filename, DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nFile %s requires no composition.' % composed_filename
+            logging.info(s)
         else:
             # Compose remaining files
             fp = filepattern
@@ -523,8 +551,11 @@ composing file: %s Query: %s Email: %s Error: %s\nVersion: %s"
                 # There is a timeout fetching the url for the response. This
                 # tends to happen in compose requests for LARGE downloads when composing
                 # already composed files. Just log it and hope for the best.
-                logging.warning("Deadline exceeded error (not to worry) composing \
-file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
+                s = 'Download version: %s' % DOWNLOAD_VERSION
+                s += '\nDeadline exceeded error (not to worry). '
+                s += 'Composing file: %s' % composed_filename
+                s += '\nError: %s' % e
+                logging.warning(s)
                 pass
 #                    logging.error("Error composing file: %s Error: %s\nVersion: %s" 
 #                        % (composed_filename, e, DOWNLOAD_VERSION) )
@@ -540,8 +571,9 @@ file: %s Error: %s\nVersion: %s" % (composed_filename, e, DOWNLOAD_VERSION) )
         try:
             gcs.copy2(src, dest)
         except Exception, e:
-            s = 'Error copying %s to %s\n' % (src, dest)
-            s += 'Error: %s Version: %s' % (e, DOWNLOAD_VERSION) 
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s = '\nError copying %s to %s' % (src, dest)
+            s += '\nError: %s' % e
             logging.error(s)
 
         # Change the ACL so that the download file is publicly readable.
@@ -585,8 +617,9 @@ Query: %s\nMatching records: %s\nRequest submitted: %s\nRequest fulfilled: %s"""
                     % (DOWNLOAD_BUCKET, composed_filename, q, reccount, requesttime, 
                     resulttime))
 
-        logging.info('Finalized writing /%s/%s\nVersion: %s' 
-            % (DOWNLOAD_BUCKET, composed_filename, DOWNLOAD_VERSION) )
+        s = 'Download version: %s' % DOWNLOAD_VERSION
+        s += '\nFinalized writing /%s/%s' % (DOWNLOAD_BUCKET, composed_filename)
+        logging.info(s)
 
         cleanupparams = dict(filepattern=filepattern, fileindex=total_files_to_compose, 
             compositions=compositions)
@@ -622,8 +655,11 @@ class CleanupHandler(webapp2.RequestHandler):
                         resp = req.execute()
                         success=True
                     except Exception, e:
-                        logging.error("Error deleting composed file %s \
-attempt %s\nError: %s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERSION) )
+                        s = 'Download version: %s' % DOWNLOAD_VERSION
+                        s += '\nError deleting composed file %s' % filename
+                        s += ' attempt %s' % retry_count+1
+                        s += '\nError: %s' % e
+                        logging.error(s)
                         retry_count += 1
 #                            raise e
 
@@ -642,8 +678,11 @@ attempt %s\nError: %s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERS
                         resp = req.execute()
                         success=True
                     except Exception, e:
-                        logging.error("Error deleting chunk file %s attempt %s\nError: \
-%s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERSION) )
+                        s = 'Download version: %s' % DOWNLOAD_VERSION
+                        s += '\nError deleting chunk file %s' % filename
+                        s += ' attempt %s' % retry_count+1
+                        s += '\nError: %s' % e
+                        logging.error(s)
                         retry_count += 1
 #                        raise e
 
@@ -653,11 +692,14 @@ attempt %s\nError: %s\nVersion: %s" % (filename, retry_count+1, e, DOWNLOAD_VERS
         try:
             resp=req.execute()
         except Exception, e:
-            logging.error("Error deleting temporary composed file %s \nError: %s\n\
-Version: %s" % (filename, e, DOWNLOAD_VERSION) )
+            s = 'Download version: %s' % DOWNLOAD_VERSION
+            s += '\nError deleting temporary composed file %s' % filename
+            s += '\nError: %s' % e
+            logging.error(s)
 
-        logging.info('Finalized cleaning temporary files from /%s\nVersion: %s' 
-            % (TEMP_BUCKET, DOWNLOAD_VERSION) )
+        s = 'Download version: %s' % DOWNLOAD_VERSION
+        s += '\nFinalized cleaning temporary files from /%s' % TEMP_BUCKET
+        logging.info(s)
 
 routes = [
     webapp2.Route(r'/service/download', handler=DownloadHandler),

@@ -13,6 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with VertNet.  If not, see: http://www.gnu.org/licenses
 
+__author__ = "Aaron Steele"
+__contributors__ = "Aaron Steele, John Wieczorek"
+__copyright__ = "Copyright 2017 vertnet.org"
+__version__ = "api.py 2017-11-24T12:16-03:00"
+
 from google.appengine.api import search, taskqueue
 from vertnet.service import search as vnsearch
 from vertnet.service import util as vnutil
@@ -23,20 +28,24 @@ import logging
 import urllib
 import webapp2
 
-API_VERSION='api.py 2017-01-12T20:08-03:00'
+API_VERSION=__version__
 
 class SearchApi(webapp2.RequestHandler):
     def __init__(self, request, response):
         self.cityLatLong = request.headers.get('X-AppEngine-CityLatLong')
-#        logging.info('Init Request headers: %s\nVersion: %s' 
-#            % (request.headers, API_VERSION) )
+#        s = 'API Version: %s' % API_VERSION
+#        s += '\nAPI request headers: %s' % request.headers
+#        logging.info(s)
         self.initialize(request, response)
 
     def post(self):
         self.get()
 
     def get(self):
-#        logging.info('API search request: %s\nVersion: %s' % (self.request, API_VERSION) )
+        s = 'API Version: %s' % API_VERSION
+        s += '\nAPI search request: %s' % self.request
+        logging.info(s)
+
         request = json.loads(self.request.get('q'))
         q, c, limit = map(request.get, ['q', 'c', 'l'])
 
@@ -130,16 +139,18 @@ class DownloadApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
+        s = 'API Version: %s' % API_VERSION
+        s += '\nAPI download request: %s' % self.request
+        logging.info(s)
+
         # Receive the download request and redirect it to the download service URL
-        logging.info('Version: %s\nAPI download request: %s' 
-            % (API_VERSION, self.request) )
         request = json.loads(self.request.get('q'))
         q, e, n, countonly = map(request.get, ['q', 'e', 'n', 'c'])
 
-        # Abandon requests from stuff@things.com
+        # Block requests from stuff@things.com
         if e == 'stuff@things.com':
-            logging.info('Ignoring request from stuff@things.com %s\nVersion: %s' 
-                % (self.request, API_VERSION) )
+            s = 'API Version: %s' % API_VERSION
+            s += '\nIgnoring request from stuff@things.com %s' % self.request
             return
         
         keywords = q.split()
@@ -157,8 +168,10 @@ class FeedbackApi(webapp2.RequestHandler):
         self.get()
 
     def get(self):
-#        logging.info('API feedback request: %s\nVersion: %s' 
-#            % (self.request, API_VERSION) )
+        s = 'API Version: %s' % API_VERSION
+        s += '\nAPI feedback request: %s' % self.request
+        logging.info(s)
+
         request = json.loads(self.request.get('q'))
         url = '/api/github/issue/create?q=%s' % request
         self.redirect(url)

@@ -14,8 +14,8 @@
 
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
-__copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "tracker.py 2016-08-15T17:20+02:00"
+__copyright__ = "Copyright 2017 vertnet.org"
+__version__ = "tracker.py 2017-11-24T12:16-03:00"
 
 import webapp2
 import urllib
@@ -77,31 +77,40 @@ class TrackerHandler(webapp2.RequestHandler):
             res_counts = {}
             
         log_sql = """INSERT INTO query_log_master( \
-            api_version, client, count, download, downloader, error, lat, lon, \
-            matching_records, query, query_version, request_source, response_records, \
-            results_by_resource, type) VALUES ( \
-            '%s', '%s', %s, '%s', '%s', '%s', %s, %s, \
-            %s, '%s', '%s', '%s', %s, \
-            '%s', '%s');
-            update query_log_master set the_geom = CDB_LatLng(lat,lon)"""
+            api_version, tracker_version, query_version, client, count, \
+            download, downloader, error, lat, lon, \
+            matching_records, query, request_source, response_records, \
+            results_by_resource, type, the_geom) VALUES ( \
+            '%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', %s, %s, \
+            '%s', '%s', '%s', %s, \
+            '%s', '%s', %s);"""
+        the_geom = 'ST_SetSRID(ST_Point(%s, %s),4326)' % (lat, lon)
         log_sql = log_sql % (
-            api_version, CLIENT, count, download, downloader, error, lat, lon,
-            matching_records, query, query_version, request_source, response_records,
-            res_counts, type)
+            api_version, TRACKER_VERSION, query_version, CLIENT, count, 
+            download, downloader, error, lat, lon,
+            matching_records, query, request_source, response_records,
+            res_counts, type, the_geom)
+
+        s = 'Tracker version: %s' % TRACKER_VERSION
+        s += '\nLog SQL: %s' % log_sql 
+        logging.info(s)            
         
         rpc = urlfetch.create_rpc(deadline=50)
         log_url = cdb_url % (urllib.urlencode(dict(q=log_sql, api_key=apikey())))
+#        s = 'Tracker version: %s' % TRACKER_VERSION
+#        s += '\nLog URL: %s' % log_url
+#        logging.info(s)            
+
         urlfetch.make_fetch_call(rpc, log_url)
         try:
-            logging.info("Trying SQL: %s\nURL: %s\nVersion:%s" 
-                % (log_sql, log_url, TRACKER_VERSION))            
 #            resp = rpc.get_result()
             # Don't wait for the response
             start_time = time.time()
             rpc.get_result()
             elapsed_time = time.time() - start_time
-            s = 'Tracked successfully in %.1fs.' % elapsed_time
-            s += '\nVersion:%s' % TRACKER_VERSION
+
+            s = 'Tracker version: %s' % TRACKER_VERSION
+            s += ' Tracked successfully in %.1fs.' % elapsed_time
             logging.info(s)
         except urlfetch.DownloadError, e:
             # Even though INSERT to Carto is successful, an error 'Deadline exceeded 
@@ -109,8 +118,9 @@ class TrackerHandler(webapp2.RequestHandler):
             errorstr = ("%s" % e)
 #            if e is not None and errorstr.find('Deadline exceeded while waiting') == -1:
             elapsed_time = time.time() - start_time
-            s = 'RPC warning (%.1fs): %s' % (elapsed_time, errorstr)
-            s += '\nVersion:%s' % TRACKER_VERSION
+
+            s = 'Tracker version: %s' % TRACKER_VERSION
+            s += ' RPC warning (%.1fs): %s' % (elapsed_time, errorstr)
             logging.warning(s)
             pass
             
