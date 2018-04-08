@@ -82,8 +82,9 @@ define([
       'Locality', 'DecimalLatitude', 'DecimalLongitude'],
 
     VN_INDEX: ['Keyname', 'HasLicense', 'Rank', 'Mappable', 'HashID', 
-      'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'HasLength', 
-      'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 'LastIndexed'],
+      'HasTypeStatus', 'WasCaptive', 'HasTissue', 'HasMedia', 'IsFossil', 'IsArch',
+      'HasLength', 'HasLifeStage', 'HasMass', 'HasSex', 'ICode', 'Networks', 
+      'LastIndexed'],
 
     VN_TRAIT: ['LengthInMM', 'LengthType', 'LengthUnitsInferred', 'MassInG', 
       'MassUnitsInferred', 'LifeStage', 'UnderivedLifeStage', 'Sex', 'UnderivedSex'],
@@ -121,6 +122,7 @@ define([
       if (hassex) indexfields['hassex']=this.get('hassex');
       if (haslifestage) indexfields['haslifestage']=this.get('haslifestage');
       if (isfossil) indexfields['isfossil']=this.get('isfossil');
+      if (isarch) indexfields['isarch']=this.get('isarch');
       if (wascaptive) indexfields['wascaptive']=this.get('wascaptive');
       if (mappable) indexfields['mappable']=this.get('mappable');
       if (hashid) indexfields['hashid']=this.get('hashid');

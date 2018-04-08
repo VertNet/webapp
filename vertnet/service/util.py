@@ -14,8 +14,8 @@
 
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
-__copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "util.py 2016-08-15T15:54+02:00"
+__copyright__ = "Copyright 2018 vertnet.org"
+__version__ = "util.py 2018-04-07T20:26-03:00"
 
 import json
 import logging
@@ -24,7 +24,7 @@ UTIL_VERSION=__version__
 
 ADD_TO_DOWNLOAD_RESULTS = ['url', 'citation', 'gbifdatasetid', 'gbifpublisherid', 'email', 
     'contact', 'pubdate', 'lastindexed', 'migrator', 'hasmedia', 'hastissue',
-    'wascaptive', 'isfossil', 'vntype', 'haslength']
+    'wascaptive', 'isfossil', 'isarch', 'vntype', 'haslength']
 
 OMIT_FROM_DOWNLOADS = ['location', 'record', 'verbatim_record', 'count', 'icode',
     'title', 'orgname', 'emlrights', 'networks', 'hashid', 'rank', 'haslicense', 
