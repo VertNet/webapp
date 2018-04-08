@@ -119,6 +119,7 @@ define([
           if (issues.hassex) { this.$('#hassex').text(issues.hassex.toString()); }
           if (issues.haslifestage) { this.$('#haslifestage').text(issues.haslifestage.toString()); }
           if (issues.isfossil) { this.$('#isfossil').text(issues.isfossil.toString()); }
+          if (issues.isarch) { this.$('#isarch').text(issues.isarch.toString()); }
           if (issues.wascaptive) { this.$('#wascaptive').text(issues.wascaptive.toString()); }
           if (issues.mappable) { this.$('#mappable').text(issues.mappable.toString()); }
           if (issues.hashid) { this.$('#hashid').text(issues.hashid.toString()); }
