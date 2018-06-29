@@ -15,8 +15,8 @@
 
 __author__ = "Aaron Steele"
 __contributors__ = "Aaron Steele, John Wieczorek"
-__copyright__ = "Copyright 2017 vertnet.org"
-__version__ = "api.py 2017-11-24T12:16-03:00"
+__copyright__ = "Copyright 2018 vertnet.org"
+__version__ = "api.py 2018-06-29T04:51-03:00"
 
 from google.appengine.api import search, taskqueue
 from vertnet.service import search as vnsearch
@@ -27,6 +27,7 @@ import json
 import logging
 import urllib
 import webapp2
+import re
 
 API_VERSION=__version__
 
@@ -152,7 +153,10 @@ class DownloadApi(webapp2.RequestHandler):
             s = 'API Version: %s' % API_VERSION
             s += '\nIgnoring request from stuff@things.com %s' % self.request
             return
-        
+
+        # Don't allow any of the following characters in filenames, substitute '_'
+        n = re.sub(r'[~`!@#$%^&*()_+={\[}\]|\\:;"<,>?\'/]', '_', n)
+
         keywords = q.split()
         if countonly is not None:
             params = urllib.urlencode(dict(keywords=json.dumps(keywords), count=0,
