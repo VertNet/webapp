@@ -1058,7 +1058,7 @@ $('#return-to-top').click(function() {      // When arrow is clicked
         var request = {
           count: count,
           email: email, 
-          name: name.replace(/ /g,'_'), 
+          name: name.replace(/[\ \`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\{\[\}\]\:\;\"\'\<\,\>\?\/\|\\]/g,'_'), 
           keywords: JSON.stringify(this.keywords)}
 
         e.preventDefault();
