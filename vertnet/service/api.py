@@ -16,7 +16,7 @@
 __author__ = "Aaron Steele"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2018 vertnet.org"
-__version__ = "api.py 2018-06-29T04:51-03:00"
+__version__ = "api.py 2018-07-21T13:18-04:00"
 
 from google.appengine.api import search, taskqueue
 from vertnet.service import search as vnsearch
@@ -155,7 +155,7 @@ class DownloadApi(webapp2.RequestHandler):
             return
 
         # Don't allow any of the following characters in filenames, substitute '_'
-        n = re.sub(r'[~`!@#$%^&*()_+={\[}\]|\\:;"<,>?\'/]', '_', n)
+        n = re.sub(r'[ ~`!@#$%^&*()_+={\[}\]|\\:;"<,>?\'/]', '_', n)
 
         keywords = q.split()
         if countonly is not None:
