@@ -19,21 +19,19 @@
 
 # CODEBASE INFO
 # Repository: VertNet/webapp
-# Pushed to branch feature/laura-trait-ui 2016-09-14T23:30_02:00
-# Last pushed to master branch: 
+# Last pushed to master branch: 2019-04-13
 #
 # DEPLOYMENT INFO
 # Last deployed api version: 2017-01-12T20:09-03:00 index-2013-08-08
-# Last deployed tuco version: 2016-09-15T20:51+02:00 index-2013-08-08
+# Last deployed tuco version: 2019-04-13T13:09-03:00 index-2013-08-08
 # Last deployed pagodarose version: 2016-09-15T20:51+02:00 index-2013-08-08
-# Last deployed prod version: 2016-09-15T20:51+02:00 index-2013-08-08 (from VertNet/webapp repo)
-# command: gcloud app deploy portal-web.yaml
-# args:
-#   --project vertnet-portal  # Optional, no need if gcloud is configured to use this project
-#   --version prod|[other]  # Indicates version to use. If 'prod', --promote flag should be used
-#   --promote  # Optional, removes the version id from the deployment URL. Skip for testing and/or dev version
+# Last deployed prod version: 2019-04-13T13:09-3:00 index-2013-08-08 (from VertNet/webapp repo)
 
 # This is the App Engine configuration file for using gcloud.
+# args:
+#   --version prod|[other]  # Indicates version to use. If 'prod', --promote flag should be used
+#   --promote  # Optional, removes the version id from the deployment URL. Skip for testing and/or dev version
+#
 # To deploy for production at http://portal-web.vertnet-portal.appspot.com:
 #   gcloud app deploy portal-web.yaml --version prod --promote
 #
@@ -52,6 +50,10 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+automatic_scaling:
+  min_instances: 1
+  min_idle_instances: 1
+  
 libraries:
 - name: jinja2
   version: "latest"

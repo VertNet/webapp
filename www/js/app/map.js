@@ -25,7 +25,8 @@ define([
     {
       name: 'maps',
       version: '3',
-      options: { other_params: 'sensor=false' }
+      options: { }
+      // options: { other_params: 'sensor=false' }
     },
     {
       name: 'visualization',
@@ -51,7 +52,7 @@ define([
 
       // Load the jsapi and then grab each lib.
       require(['https://www.google.com/jsapi?callback=?'
-              + '&key=AIzaSyDJdVhfQhecwp0ngAGzN9zwqak8FaEkSTA'], function () {   
+              + '&key=AIzaSyB5Kk0Hpe9SLeB4fNcDV-VaRFTkw_3KZK0'], function () {   
         _.each(libs, function (lib) {
           google.load(lib.name, lib.version,
                     _.extend(lib.options, { callback: done }));
