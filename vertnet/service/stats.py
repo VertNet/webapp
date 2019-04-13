@@ -14,8 +14,9 @@
 
 __author__ = "Javier Otegui"
 __contributors__ = "Javier Otegui, John Wieczorek"
-__copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "search.py 2016-08-15T15:54+02:00"
+__copyright__ = "Copyright 2018 vertnet.org"
+__version__ = "stats.py 2018-10-09T15:46-03:00"
+STATS_VERSION=__version__
 
 """Service to generate stats for the stats page."""
 
@@ -25,9 +26,7 @@ from urllib import urlencode
 import json
 import logging
 
-
 def main(environ, start_response):
-    
     status = 200
     headers={}
     start_response(status, headers)
@@ -36,7 +35,6 @@ def main(environ, start_response):
     api_key = open(path, "r").read().rstrip()
     logging.info("CARTO KEY %s" % api_key)
 
-#    url = "https://vertnet.cartodb.com/api/v2/sql"
     url = "https://vertnet.carto.com/api/v2/sql"
     q = 'select * from daily_portal_stats order by created_at desc limit 1'
 
@@ -47,5 +45,4 @@ def main(environ, start_response):
     d = json.loads(raw)['rows'][0]
     logging.info(d.keys())
 
-#    return [str(d)]
     return [str(d['mindate'].split('T')[0]), "|", str(d['created_at'].split('T')[0]), "|", str(d['searches']), "|", str(d['records_viewed']), "|", str(d['downloads']), "|", str(d['records_downloaded']), "|", str(d['institution_data'])[1:-1], "|", str(d['class_data'])[1:-1], "|", str(d['download_data'])[1:-1]]

@@ -25,7 +25,8 @@ define([
     {
       name: 'maps',
       version: '3',
-      options: { other_params: 'sensor=false' }
+      options: { }
+      // options: { other_params: 'sensor=false' }
     },
     {
       name: 'visualization',

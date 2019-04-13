@@ -352,7 +352,8 @@ input.span2.search {
 
 #search-carat {
 	vertical-align: middle;
-		margin-right: -5px;
+	margin-right: -5px;
+	width: 60px;
 
 }
 
