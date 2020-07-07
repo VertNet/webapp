@@ -22,12 +22,15 @@ define([
 ], function ($, _) {
   
   var libs = [
+/* JRW testing
     {
       name: 'maps',
       version: '3',
+      key: 'AIzaSyB5Kk0Hpe9SLeB4fNcDV-VaRFTkw_3KZK0',
       options: { }
       // options: { other_params: 'sensor=false' }
     },
+*/
     {
       name: 'visualization',
       version: '1',
@@ -50,13 +53,16 @@ define([
         require(['cartodb'], cb);
       });
 
+      // JRW attempting to lad maps separately, jsapi method deprecated
+      require(['https://maps.googleapis.com/maps/api/js?key=AIzaSyB5Kk0Hpe9SLeB4fNcDV-VaRFTkw_3KZK0&libraries=maps'], );
       // Load the jsapi and then grab each lib.
       require(['https://www.google.com/jsapi?callback=?'
               + '&key=AIzaSyB5Kk0Hpe9SLeB4fNcDV-VaRFTkw_3KZK0'], function () {   
         _.each(libs, function (lib) {
           google.load(lib.name, lib.version,
                     _.extend(lib.options, { callback: done }));
-          google.maps.visualRefresh = true;
+          // JRW disabled for testing
+          // google.maps.visualRefresh = true;
         });
       });
     }

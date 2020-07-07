@@ -964,7 +964,8 @@ $('#return-to-top').click(function() {      // When arrow is clicked
       }
       displayCount = this.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       if (response.count > 10000) {
-        displayCount = '>10k';
+        // JRW modified 2020-06-28
+        displayCount = '>10k, estimated: ' + response.count;
       }
       this.countLoaded = items.length + this.occList.length;
 
