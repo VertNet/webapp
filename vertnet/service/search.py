@@ -15,7 +15,8 @@
 __author__ = "John Wieczorek"
 __contributors__ = "Aaron Steele, John Wieczorek"
 __copyright__ = "Copyright 2016 vertnet.org"
-__version__ = "search.py 2016-08-15T16:43+02:00"
+#__version__ = "search.py 2016-08-15T16:43+02:00"
+__version__ = "search.py 2020-07-04T11:35-03:00"
 
 from google.appengine.api import namespace_manager
 from google.appengine.api import search
@@ -30,7 +31,7 @@ import json
 import logging
 from google.appengine.api import urlfetch
 # In an attempt to overcome timeouts in searches
-urlfetch.set_default_fetch_deadline(20)
+urlfetch.set_default_fetch_deadline(30)
 
 SEARCH_VERSION=__version__
 IS_DEV = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
@@ -107,7 +108,7 @@ def query(q, limit, index_name='dwc', sort=None, curs=search.Cursor()):
             query = search.Query(query_string=q, options=options)
             logging.info('Trying Query: %s\nOptions: %s\nVersion: %s' % (q, options, SEARCH_VERSION))
             start_time = time.time()
-            results = search.Index(name=index_name, namespace=namespace).search(query)
+            results = search.Index(name=index_name, namespace=namespace).search(query,deadline=30)
             elapsed_time = time.time() - start_time
             # Try with an explicitly set deadline to overcome failed queries on
             # multiple "booleans" such as haslength, hasmass, hasmedia, isfossil, etc.

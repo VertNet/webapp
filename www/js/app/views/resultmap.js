@@ -223,6 +223,7 @@ define([
     },
 
     resize: function() {
+      // JRW attempting workaround
       google.maps.event.trigger(this.map, 'resize');
       this.map.setZoom(this.map.getZoom());
       this.map.setCenter(this.map.getCenter());
