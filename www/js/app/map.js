@@ -22,15 +22,6 @@ define([
 ], function ($, _) {
   
   var libs = [
-/* JRW testing
-    {
-      name: 'maps',
-      version: '3',
-      key: 'REMOVED_GEMINI_API_KEY',
-      options: { }
-      // options: { other_params: 'sensor=false' }
-    },
-*/
     {
       name: 'visualization',
       version: '1',
@@ -51,19 +42,6 @@ define([
       // After each lib is loaded, get the cartodb lib.
       var done = _.after(libs.length, function () {
         require(['cartodb'], cb);
-      });
-
-      // JRW attempting to lad maps separately, jsapi method deprecated
-      require(['https://maps.googleapis.com/maps/api/js?key=REMOVED_GEMINI_API_KEY&libraries=maps'], );
-      // Load the jsapi and then grab each lib.
-      require(['https://www.google.com/jsapi?callback=?'
-              + '&key=REMOVED_GEMINI_API_KEY'], function () {   
-        _.each(libs, function (lib) {
-          google.load(lib.name, lib.version,
-                    _.extend(lib.options, { callback: done }));
-          // JRW disabled for testing
-          // google.maps.visualRefresh = true;
-        });
       });
     }
   }
